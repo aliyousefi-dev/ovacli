@@ -1,0 +1,53 @@
+<div *ngIf="videoId" class="flex flex-col items-end gap-4 w-full">
+  <!-- Actions + Trim Controls -->
+  <div class="flex flex-wrap items-center justify-end gap-2 w-full">
+
+    <!-- Materials -->
+    <a class="btn" routerLink="/materials">
+      <i class='bx bxs-folder bx-xs'></i>
+      <span class="hidden sm:inline">Attachments</span>
+    </a>
+
+    <!-- Version History -->
+    <a class="btn" [routerLink]="['/version-history', videoId]">
+      <i class='bx bx-git-branch bx-xs'></i>
+      <span class="hidden sm:inline">Version History</span>
+    </a>
+
+    <!-- Add to Playlist -->
+    <button class="btn" (click)="openPlaylistModal()" aria-label="Add to Playlist">
+      <i class='bx  bxs-share bx-xs'></i>
+      <span class="hidden sm:inline">Send to</span>
+    </button>
+
+    <!-- Download -->
+    <button class="btn" (click)="downloadVideo()" aria-label="Download">
+      <i class="bx bxs-download bx-xs"></i>
+      <span class="hidden sm:inline">Download</span>
+    </button>
+
+
+
+    <!-- Save/Unsave -->
+    <button class="btn flex items-center" [ngClass]="
+                isSaved ? 'btn-error' : ''
+              " (click)="toggleSaved.emit()" [disabled]="loadingSavedVideo" [attr.aria-label]="
+                isSaved ? 'Unsave from favorites' : 'Save to favorites'
+              ">
+      <ng-container *ngIf="isSaved; else notFavoriteIcon">
+        <i class="bx bxs-bookmark bx-xs"></i>
+        <span class="hidden sm:inline">Saved</span>
+      </ng-container>
+      <ng-template #notFavoriteIcon>
+        <i class="bx bx-bookmark bx-xs"></i>
+        <span class="hidden sm:inline">Save</span>
+      </ng-template>
+    </button>
+
+
+  </div>
+</div>
+
+<!-- Playlist Modal -->
+<app-sendto-modal [showModal]="playlistModalVisible" [selectedVideoId]="videoId!"
+  (close)="closePlaylistModal()"></app-sendto-modal>

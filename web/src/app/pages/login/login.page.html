@@ -1,0 +1,40 @@
+<div class="hero bg-base-200 min-h-screen">
+  <div class="hero-content flex-col lg:flex-row-reverse ">
+    <div class="text-center lg:text-left prose m-5">
+      <h1>Login now!</h1>
+      <p>
+        Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
+        quasi. In deleniti eaque aut repudiandae et a id nisi.
+      </p>
+    </div>
+    <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+      <div class="card-body">
+
+        <form (ngSubmit)="onSubmit()">
+          <fieldset class="fieldset">
+            <label class="label">Username</label>
+            <label class="input w-full">
+              <i class='bx bx-user'></i>
+              <input type="text" placeholder="Enter username" [(ngModel)]="username" name="username" required
+                autocomplete="username" />
+            </label>
+
+
+
+            <label class="label">Password</label>
+            <label class="input w-full">
+              <i class='bx bx-key'></i>
+              <input type="password" placeholder="Password" id="password" [(ngModel)]="password" name="password"
+                required minlength="8" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                title="Must be more than 8 characters, including number, lowercase letter, uppercase letter"
+                autocomplete="current-password" />
+            </label>
+            <div *ngIf="error" class="text-red-500 text-sm font-medium">{{ error }}</div>
+            <div><a class="link link-hover">Forgot password?</a></div>
+            <button type="submit" class="btn btn-neutral mt-4">Login</button>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

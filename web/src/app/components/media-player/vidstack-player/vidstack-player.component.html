@@ -1,0 +1,19 @@
+<media-player #mediaPlayer view-type="video" stream-type="on-demand" crossorigin playsinline [poster]="thumbnailUrl"
+  storage="video-player-options" class="z-100">
+  <media-provider>
+    <source [src]="videoUrl" type="video/mp4" />
+    <!-- <track kind="chapters" [src]="markerFileUrl ? markerFileUrl : null" default /> -->
+  </media-provider>
+
+
+  @if (videoData.isCooked) {
+
+  <media-video-layout small-when="never" [thumbnails]="previewThumbsUrl || null"></media-video-layout>
+  } @else {
+  <media-video-layout></media-video-layout>
+  }
+</media-player>
+
+@if (isFullscreenOverlay){
+<div class="fullscreen-block-overlay"></div>
+}

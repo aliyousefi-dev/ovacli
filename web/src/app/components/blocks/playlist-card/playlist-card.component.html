@@ -1,0 +1,63 @@
+<!-- Playlist Card -->
+<div class="flex bg-base-200 w-full items-center gap-3">
+
+  <!-- Thumbnail -->
+  <div class="h-26 overflow-hidden">
+    @if ( getThumbnailUrl() ) {
+    <img [src]="getThumbnailUrl()" alt="thumbnail" class="w-full h-full object-cover" />
+    }
+    @else {
+    <div class="flex items-center justify-center w-full h-full text-xs bg-base-200 rounded-box">
+      No videos
+    </div>
+    }
+  </div>
+
+  <!-- Info Section -->
+  <div class="flex-1 flex flex-col justify-center items-start">
+    <h3 class="text-sm font-semibold truncate link " [title]="playlist.title"
+      (click)="goToPlaylistContent();$event.stopPropagation();">
+      {{ playlist.title }}
+    </h3>
+    <!-- Description -->
+    <p class="text-xs truncate mt-0.5 min-w-0" [title]="playlist.description || 'No description provided.'">
+      {{ playlist.description || "No description provided." }}
+    </p>
+  </div>
+
+  <!-- Total Videos -->
+  <span class="text-[10px] font-medium bg-base-100 rounded-full px-2 py-0.5 ">
+    {{ playlist.totalVideos || 0 }} videos
+  </span>
+
+  <!-- Drop Down -->
+  <div class="dropdown mr-2 " (click)="$event.stopPropagation();">
+    <div tabindex="0" role=" button" class="btn btn-xs btn-ghost"><i class='bx bx-dots-vertical-rounded bx-xs'></i>
+    </div>
+    <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+      <li>
+        <button class="w-full text-left px-3 py-1 text-xs hover:bg-base-300 rounded-t-md" (click)="onEdit();">
+          Edit
+        </button>
+      </li>
+      <li>
+        <button class="w-full text-left px-3 py-1 text-xs hover:bg-base-300 rounded-t-md" (click)="onEdit();">
+          Share
+        </button>
+      </li>
+      <li>
+        <button class="w-full text-left px-3 py-1 text-xs hover:bg-base-300 rounded-b-md" (click)="onDelete();">
+          Delete
+        </button>
+      </li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- Confirm Modal -->
+<app-confirm-modal #confirmModal (confirmed)="confirmDelete()" (cancelled)="(null)"></app-confirm-modal>
+
+<!-- Edit Playlist Modal -->
+<app-edit-playlist-modal [visible]="editModalVisible" [title]="editTitle" [description]="editDescription"
+  (cancelled)="onEditCancelled()" (saved)="onEditSaved($event)"></app-edit-playlist-modal>

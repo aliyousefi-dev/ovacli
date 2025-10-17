@@ -1,0 +1,80 @@
+<header class="h-14 flex backdrop-blur justify-between items-center bg-base-100/80 z-80">
+
+  <div class="flex items-center justify-start gap-2">
+
+    <!-- Drawer toggle button  -->
+    <button type="button" class="btn btn-ghost " (click)="drawer?.toggle()">
+      <i class='bx bx-menu bx-sm'></i>
+    </button>
+
+
+
+    <div class="text-lg flex-shrink-0">
+      {{ pageTitle || "Home" }}
+    </div>
+
+  </div>
+
+  <app-search-bar class="hidden lg:block"></app-search-bar>
+
+  <!-- Username and Dropdown Icon -->
+  <div class="dropdown dropdown-bottom dropdown-end">
+    <div tabindex="0" role="button" class="btn rounded-box btn-ghost">
+      <!-- Avatar (DaisyUI) -->
+      <div class="avatar">
+        <div class="w-10 rounded-full">
+          <img src="sample-avatar.webp" />
+        </div>
+      </div>
+      {{ username }}
+      <i class="bx bx-chevron-down text-lg"></i>
+    </div>
+
+    <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100  rounded-box w-52">
+      <li>
+        <a routerLink="/profile" class="flex" title="View profile">
+          <img alt="Profile" src="sample-avatar.webp" class="w-8 rounded-full" />
+
+          <div class="flex flex-col">
+            <h3 class="font-bold">{{ username }} </h3>
+            <span class="text-xs">&#64;{{ username }}</span>
+          </div>
+        </a>
+      </li>
+      <div class="divider my-0"></div>
+      <li>
+        <a routerLink="/settings">
+          <i class='bx  bxs-inbox bx-xs'></i>
+          Inbox
+        </a>
+      </li>
+      <div class="divider my-0"></div>
+      <li>
+        <a routerLink="/settings">
+          <i class='bx  bx-cog bx-xs'></i>
+          Settings
+        </a>
+      </li>
+      <li>
+        <a>
+          <i class='bx  bxs-keyboard bx-xs'></i>
+          Keyboard shortcut
+        </a>
+      </li>
+
+      <div class="divider my-0"></div>
+      <li>
+        <a routerLink="/docs">
+          <i class='bx  bx-help-circle bx-xs'></i>
+          Help
+        </a>
+      </li>
+      <li>
+        <a (click)="onLogout()">
+          <i class='bx  bx-log-out bx-xs'></i>
+          Sign out
+        </a>
+      </li>
+    </ul>
+  </div>
+</header>

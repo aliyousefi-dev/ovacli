@@ -1,0 +1,29 @@
+@baseUrl = http://localhost:443
+@session_id = 1f30da92-57f0-46ee-a047-520a9d0f207b
+@videoId = 5acf159bcc385924353435f289e753d967feb5fd11ee827aa0165ecc09ddd1c3
+@folder = 
+
+### Get Video Details by ID
+GET {{baseUrl}}/api/v1/videos/{{videoId}}
+Accept: application/json
+Cookie: session_id={{session_id}}
+
+###
+
+### Get Videos by Folder
+GET {{baseUrl}}/api/v1/videos?folder={{folder}}
+Accept: application/json
+Cookie: session_id={{session_id}}
+
+###
+
+### Get Folder List
+GET {{baseUrl}}/api/v1/folders
+Accept: application/json
+Cookie: session_id={{session_id}}
+
+### Stream Video by ID (with Range header to request partial content)
+GET {{baseUrl}}/api/v1/stream/{{videoId}}
+Accept: video/mp4
+Cookie: session_id={{session_id}}
+Range: bytes=0-2000

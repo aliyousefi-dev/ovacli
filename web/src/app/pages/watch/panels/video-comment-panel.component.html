@@ -1,0 +1,58 @@
+<div class="relative h-[600px] bg-base-100 rounded-xl shadow-lg flex flex-col overflow-hidden">
+  <!-- Sticky Header -->
+  <header
+    class="sticky top-0 z-30 bg-base-100 p-5 border-b border-base-200 shadow-sm flex items-center justify-between">
+    <h3 class="font-semibold text-xl inline-flex items-center gap-4">
+      <i class="bx bx-message-minus"></i>
+      Comments
+    </h3>
+    <button type="button" class="btn btn-sm btn-circle tooltip tooltip-top" aria-label="Refresh comments"
+      title="Refresh comments">
+      <i class="bx bx-refresh text-xl"></i>
+    </button>
+  </header>
+
+  <!-- Comment List -->
+  <section
+    class="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-6 bg-base-100 scrollbar-thin scrollbar-thumb-primary scrollbar-track-base-200">
+    <div *ngFor="let comment of comments" class="flex gap-4 items-start">
+      <!-- Avatar -->
+      <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+        <img [src]="comment.avatar" [alt]="comment.user + ' avatar'" class="w-full h-full object-cover" loading="lazy"
+          decoding="async" />
+      </div>
+
+      <!-- Comment Content -->
+      <div class="flex flex-col">
+        <!-- Header -->
+        <div class="flex items-center gap-2">
+          <span class="font-semibold text-sm text-base-content">{{
+            comment.user
+            }}</span>
+        </div>
+
+        <!-- Text -->
+        <p class="text-sm mt-1 leading-relaxed break-words whitespace-pre-line text-base-content">
+          {{ comment.text }}
+        </p>
+
+        <!-- Footer -->
+        <div class="text-xs opacity-50 mt-1 select-none">
+          <time class="text-xs opacity-60">{{ comment.time }}</time>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Send Message Box -->
+  <form (submit)="sendComment()" class="border-t border-base-200 p-4 bg-base-100 flex gap-3 items-center"
+    aria-label="Send new comment">
+    <input type="text" [(ngModel)]="newCommentText" name="comment" placeholder="Write a comment..."
+      class="input input-md input-bordered w-full rounded-lg " autocomplete="off" spellcheck="false"
+      aria-required="true" />
+    <button class="btn btn-primary btn-md rounded-lg disabled:opacity-50" type="submit"
+      [disabled]="!newCommentText.trim()" [attr.aria-disabled]="!newCommentText.trim()">
+      Send
+    </button>
+  </form>
+</div>

@@ -1,0 +1,11 @@
+{
+	"docname": "OvaCli",
+	"appversion": "v0.1-beta",
+	"disableThemes": true,
+	"disablePrintButton": true,
+	"disableMarkdownButton": true,
+	"ToC": true,
+	"GitUrl": "https://github.com/aliyousefi-dev/ova",
+	"rtl": false,
+	"sort_nav_by": "alphabetical"
+}

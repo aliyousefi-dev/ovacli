@@ -1,0 +1,71 @@
+/* Global styles */
+@import "video.js/dist/video-js.css";
+@import "@videojs/themes/dist/fantasy/index.css";
+
+@import "vidstack/player/styles/base.css";
+@import "vidstack/player/styles/plyr/theme.css";
+@import "vidstack/player/styles/default/theme.css";
+@import "vidstack/player/styles/default/layouts/video.css";
+
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* Load all default DaisyUI themes */
+@plugin "daisyui" {
+  themes: all;
+}
+
+/* Import your custom theme */
+@import "./custom-themes/mytheme.css"; /* Adjust path as needed */
+
+/* Basic reset */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+:root:has(
+    :is(
+        .modal-open,
+        .modal:target,
+        .modal-toggle:checked + .modal,
+        .modal[open]
+      )
+  ) {
+  scrollbar-gutter: unset; /* or auto */
+}
+
+media-google-cast-button {
+  display: none;
+}
+
+media-pip-button {
+  display: none;
+}
+
+.fade-top-bottom-enter,
+.fade-top-bottom-leave {
+  transition: transform 500ms ease-out, opacity 500ms ease-out;
+}
+
+.fade-top-bottom-enter {
+  transform: translateY(-20px);
+  opacity: 0;
+}
+
+.fade-top-bottom-enter-active {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.fade-top-bottom-leave {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.fade-top-bottom-leave-active {
+  transform: translateY(20px);
+  opacity: 0;
+}

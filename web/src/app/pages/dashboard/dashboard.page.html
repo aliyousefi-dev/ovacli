@@ -1,0 +1,127 @@
+<div class="drawer lg:drawer-open h-full">
+  <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
+
+  <!-- Main Content -->
+  <div class="drawer-content flex flex-col">
+    <label for="my-drawer-2" class="btn btn-soft drawer-button lg:hidden mb-4">
+      Menu
+    </label>
+
+    <div class="flex-1 overflow-y-auto p-6">
+      <div class="max-w-2xl mx-auto space-y-4">
+        <!-- Tab Content -->
+        <ng-container [ngSwitch]="activeTab">
+          <app-upload-video
+            *ngSwitchCase="'upload'"
+            [selectedFolder]="selectedFolder"
+            (folderSelected)="onFolderSelected($event)"
+          ></app-upload-video>
+
+          <div *ngSwitchCase="'folder-manager'" class="text-center">
+            Folder Manager tab content...
+          </div>
+
+          <app-user-manager *ngSwitchCase="'users-list'"></app-user-manager>
+
+          <app-create-user *ngSwitchCase="'create-user'"></app-create-user>
+
+          <div *ngSwitchDefault class="text-center">
+            Select an option from the sidebar.
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar Menu -->
+  <div class="drawer-side z-100 h-full">
+    <label
+      for="my-drawer-2"
+      aria-label="close sidebar"
+      class="drawer-overlay"
+    ></label>
+
+    <aside
+      class="w-64 h-full p-6 bg-base-100 border-r border-base-100 flex flex-col overflow-y-auto"
+    >
+      <!-- Navigation -->
+      <nav class="flex flex-col gap-8 flex-grow">
+        <!-- Users Section -->
+        <section>
+          <h3 class="font-semibold text-lg mb-3 border-b border-base-300 pb-1">
+            Users
+          </h3>
+          <ul class="space-y-2">
+            <li>
+              <button
+                class="btn btn-ghost btn-sm w-full normal-case justify-start gap-3 flex items-center"
+                [class.btn-active]="activeTab === 'users-list'"
+                (click)="activeTab = 'users-list'"
+                role="tab"
+                tabindex="0"
+              >
+                <i class="bx bx-user text-xl"></i>
+                List
+              </button>
+            </li>
+            <li>
+              <button
+                class="btn btn-ghost btn-sm w-full normal-case justify-start gap-3 flex items-center"
+                [class.btn-active]="activeTab === 'create-user'"
+                (click)="activeTab = 'create-user'"
+                role="tab"
+                tabindex="0"
+              >
+                <i class="bx bx-user-plus text-xl"></i>
+                Create User
+              </button>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Videos Section -->
+        <section>
+          <h3 class="font-semibold text-lg mb-3 border-b border-base-300 pb-1">
+            Videos
+          </h3>
+          <ul class="space-y-2">
+            <li>
+              <button
+                class="btn btn-ghost btn-sm w-full normal-case justify-start gap-3 flex items-center"
+                [class.btn-active]="activeTab === 'upload'"
+                (click)="activeTab = 'upload'"
+                role="tab"
+                tabindex="0"
+              >
+                <i class="bx bx-upload text-xl"></i>
+                Upload
+              </button>
+            </li>
+            <li>
+              <button
+                class="btn btn-ghost btn-sm w-full normal-case justify-start gap-3 flex items-center"
+                [class.btn-active]="activeTab === 'folder-manager'"
+                (click)="activeTab = 'folder-manager'"
+                role="tab"
+                tabindex="0"
+              >
+                <i class="bx bx-folder text-xl"></i>
+                Folders
+              </button>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Config Section -->
+        <section>
+          <h3 class="font-semibold text-lg mb-3 border-b border-base-300 pb-1">
+            Config
+          </h3>
+          <p class="text-sm text-neutral-600">
+            Settings and configuration go here.
+          </p>
+        </section>
+      </nav>
+    </aside>
+  </div>
+</div>

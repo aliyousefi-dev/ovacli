@@ -1,0 +1,106 @@
+<div class="h-full flex flex-col cursor-pointer overflow-visible relative rounded-lg">
+  <div class="block w-full h-40 rounded-lg overflow-hidden relative" (click)="navigateToWatch()">
+    <figure class="relative w-full h-40 rounded-lg overflow-hidden bg-transparent">
+      <div *ngIf="isSaved" class="absolute bottom-2 left-2 z-30">
+        <button class="btn btn-xs btn-circle bg-black/60 hover:bg-black text-yellow-500 border-none"
+          title="Add to Saved" (click)="$event.preventDefault(); $event.stopPropagation()">
+          <i class="bx bxs-star text-sm"></i>
+        </button>
+      </div>
+
+      @if (isWatched) {
+      <div
+        class="absolute top-2 right-2 bg-black text-white text-xs font-semibold px-2 py-0.5 rounded-full flex items-center gap-1 z-30 shadow">
+        <span>Watched</span>
+      </div>
+      }
+
+      <!-- Thumbnail if PreviewPlayback is false -->
+      @if (!PreviewPlayback) {
+      <div (click)="navigateToWatch()" class="relative w-full h-full">
+        <img [src]="getThumbnailUrl()" [alt]="video.fileName"
+          class="w-full h-full object-cover absolute top-0 left-0" />
+      </div>
+      } @else {
+      <!-- Video playback if PreviewPlayback is true -->
+      <div (click)="navigateToWatch()" class="relative w-full h-full">
+        <video #preview *ngIf="PreviewPlayback" [src]="getPreviewUrl()" muted loop playsinline
+          class="w-full h-full object-cover absolute top-0 left-0"></video>
+      </div>
+      }
+
+
+      <div class="absolute bottom-2 right-2 bg-black text-white bg-opacity-60 text-xs px-2 py-1 rounded">
+        {{ formatDuration(video.codecs.durationSec) }}
+      </div>
+
+      @if (videoQuality) {
+      <div class="absolute top-2 left-2 bg-black bg-opacity-60 text-white text-xs font-semibold px-2 py-0.5 rounded">
+        {{ videoQuality }}
+      </div>
+      }
+
+    </figure>
+  </div>
+
+  <div class="flex flex-col gap-2 p-4 mt-2 rounded-lg shadow-sm hover:shadow-md bg-base-100 z-20"
+    (click)="$event.stopPropagation()">
+
+    <div class="flex justify-between items-center text-xs mt-1">
+
+      <div class="flex justify-start items-center gap-2">
+        <div class="avatar avatar-placeholder">
+          <div class="bg-neutral text-neutral-content w-4 rounded-full">
+            <span class="text-[8px]">{{ video.ownedSpace | slice:0:1 }}</span>
+          </div>
+        </div>
+        <div class="text-xs">{{ video.ownedSpace }}</div>
+        <div class="text-[10px] font-light opacity-50">{{ timeSinceAdded }}</div> <!-- Make time text thinner -->
+
+      </div>
+
+      <div class="dropdown dropdown-end" (click)="$event.stopPropagation()">
+        <div tabindex="0" role="button" class="btn btn-xs btn-ghost z-30">
+          <i class='bx bx-dots-horizontal bx-xs'></i>
+        </div>
+        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-44 z-40">
+          <li><a (click)="download($event)">Download</a></li>
+          <li>
+            <a (click)="toggleSaved($event)">
+              {{ isSaved ? "UnSave" : "Save" }}
+            </a>
+          </li>
+          <li><a (click)="addToPlaylist($event)">Save to Playlist</a></li>
+        </ul>
+      </div>
+    </div>
+
+
+    <div class="flex items-start justify-between">
+
+
+      <div class="flex-1">
+        <h2 class="font-semibold break-all text-ellipsis">
+          {{ truncateTitle(video.fileName, 30) }}
+        </h2>
+
+      </div>
+
+
+    </div>
+
+
+    <div class="flex flex-wrap gap-1">
+      @for (tag of video.tags; track $index) {
+      <app-tag-link [tag]="tag" class="mr-1"></app-tag-link>
+      }
+    </div>
+
+
+  </div>
+</div>
+
+<!-- Updated app-playlist-modal usage -->
+<app-sendto-modal [showModal]="playlistModalVisible" [selectedVideoId]="this.video.videoId"
+  (close)="closePlaylistModal()">
+</app-sendto-modal>
