@@ -4,7 +4,7 @@
 }
 -->
 
-# Upcoming Features
+# Upcoming Features v0.1-beta
 
 here we demonstrate what features we want to add to next versions.
 
@@ -24,3 +24,4 @@ here we demonstrate what features we want to add to next versions.
 - Multi Select and Send to Playlist
 - Protobuf API Support
 - Searching Users , Video
+- Label User profile

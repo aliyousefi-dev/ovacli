@@ -1,6 +1,6 @@
 <!--
 {
-	"nav_order": 1
+	"nav_order": 2
 }
 -->
 
@@ -28,7 +28,7 @@ ovacli index --all
 
 This command will search for videos and add them to your database.
 
-### Start the Development Server
+### Start Server
 
 Launch the server with:
 

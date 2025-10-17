@@ -51,10 +51,10 @@
       <div class="flex justify-start items-center gap-2">
         <div class="avatar avatar-placeholder">
           <div class="bg-neutral text-neutral-content w-4 rounded-full">
-            <span class="text-[8px]">{{ video.ownedSpace | slice:0:1 }}</span>
+            <span class="text-[8px]">R</span>
           </div>
         </div>
-        <div class="text-xs">{{ video.ownedSpace }}</div>
+        <div class="text-xs">ali</div>
         <div class="text-[10px] font-light opacity-50">{{ timeSinceAdded }}</div> <!-- Make time text thinner -->
 
       </div>
@@ -70,7 +70,7 @@
               {{ isSaved ? "UnSave" : "Save" }}
             </a>
           </li>
-          <li><a (click)="addToPlaylist($event)">Save to Playlist</a></li>
+          <li><a (click)="addToPlaylist($event)">Send to</a></li>
         </ul>
       </div>
     </div>

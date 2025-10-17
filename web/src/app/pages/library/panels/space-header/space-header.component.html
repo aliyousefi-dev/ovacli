@@ -10,10 +10,33 @@
                     </div>
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-2xl font-semibold text-base-content">{{ SpaceSelected }}</span>
+
+
+                    <div class="flex items-center  gap-2">
+                        <span class="text-2xl font-semibold text-base-content">ali</span>
+                        <span class="badge badge-sm badge-neutral">editor</span>
+                    </div>
+
+
+                    <div class="flex justify-start items-center gap-2">
+                        @if (false) {
+                        <div class="inline-grid *:[grid-area:1/1]">
+                            <div aria-label="success" class="status status-success animate-ping"></div>
+                            <div aria-label="success" class="status status-success "></div>
+                        </div>
+                        <span>Online</span>
+                        } @else {
+                        <div class="inline-grid *:[grid-area:1/1]">
+                            <div aria-label="success" class="status status-neutral "></div>
+                        </div>
+                        <span class="text-sm">Offline</span>
+                        }
+                    </div>
+
+                    <span class="text-sm text-base-content/70">&#64;Username</span>
                     <div class="flex items-center gap-3 text-sm text-base-content/70">
                         <span id="spaceId" class="truncate max-w-[200px]" title="Space ID">
-                            {{ '#sdkfjs23kdsflkjdsf' }}
+                            {{ '#AccountID' }}
                         </span>
                         <button class="btn btn-xs btn-outline flex items-center gap-1" (click)="copySpaceId()"
                             [attr.aria-label]="copyButtonLabel">
@@ -25,8 +48,7 @@
                             }
                         </button>
                     </div>
-                    <span class="text-sm text-base-content/70">5 members</span>
-                    <span class="text-sm text-base-content/70">10 videos</span>
+
                 </div>
             </div>
 

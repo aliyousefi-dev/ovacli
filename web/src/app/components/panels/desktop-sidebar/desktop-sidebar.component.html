@@ -12,120 +12,68 @@
     <div class="menu w-full rounded-box">
 
       <li>
-        <a routerLink="/new-space" routerLinkActive="menu-active" [routerLinkActiveOptions]="{ exact: true }">
-          <i class="bx bx-plus bx-xs"></i>
-          <span>New Space</span>
+        <a routerLink="/spaces" routerLinkActive="menu-active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class='bx bxs-user-circle bx-xs'></i>
+          <span>Profile</span>
         </a>
       </li>
+
+      <li>
+        <a routerLink="/search" routerLinkActive="menu-active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class='bx bx-search bx-xs'></i>
+          <span>Search</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/upload" routerLinkActive="menu-active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class='bx bxs-plus-circle bx-xs'></i>
+          <span>Upload</span>
+        </a>
+      </li>
+
 
       <li>
         <a routerLink="/global" routerLinkActive="menu-active">
-          <i class="bx bx-play-circle bx-xs"></i>
-          <span>Global</span>
+          <i class='bx bx-globe bx-xs'></i>
+          <span>Global <span class="badge badge-xs badge-neutral">2</span> </span>
         </a>
       </li>
 
-
+      <li> <a routerLink="/saved" routerLinkActive="menu-active">
+          <i class='bx bxs-bookmark bx-xs'></i>
+          <span>Saved</span>
+        </a>
+      </li>
+      <li><a routerLink="/history" routerLinkActive="menu-active">
+          <i class="bx bx-history bx-xs"></i>
+          <span>History</span>
+        </a>
+      </li>
+      <li><a routerLink="/playlists" routerLinkActive="menu-active">
+          <i class='bx bxs-videos bx-xs'></i>
+          <span>Playlists</span>
+        </a>
+      </li>
 
       <li>
-        <a routerLink="/" routerLinkActive="menu-active" [routerLinkActiveOptions]="{ exact: true }">
-          <i class="bx bx-home bx-xs"></i>
-          <span>Home</span>
+        <a routerLink="/settings">
+          <i class="bx bxs-cog bx-xs"></i>
+          Settings
         </a>
       </li>
 
       <li>
-        <a routerLink="/spaces" routerLinkActive="menu-active" [routerLinkActiveOptions]="{ exact: true }">
-          <i class="bx bx-folder bx-xs"></i>
-          <span>Spaces</span>
+        <a>
+          <i class='bx  bx-log-out bx-xs'></i>
+          Sign out
         </a>
-      </li>
-
-
-      <li class="pt-2">
-        <details open>
-          <summary>
-            <span>Private</span>
-          </summary>
-          <ul>
-
-            <li> <a routerLink="/saved" routerLinkActive="menu-active">
-                <i class="bx bx-bookmark bx-xs"></i>
-                <span>Saved</span>
-              </a>
-            </li>
-            <li><a routerLink="/history" routerLinkActive="menu-active">
-                <i class="bx bx-history bx-xs"></i>
-                <span>History</span>
-              </a>
-            </li>
-            <li><a routerLink="/playlists" routerLinkActive="menu-active">
-                <i class="bx bx-list-ul bx-xs"></i>
-                <span>Playlists</span>
-              </a>
-            </li>
-          </ul>
-        </details>
-      </li>
-
-      <li class="pt-2">
-        <details open>
-          <summary>
-            <span>Spaces</span>
-          </summary>
-          <ul>
-            <li><a routerLink="/create-space" routerLinkActive="menu-active">
-                <i class="bx bx-plus bx-xs"></i>
-                <span>Create Space</span>
-              </a>
-            </li>
-            <li> <a routerLink="/create-team-space" routerLinkActive="menu-active">
-                <i class='bx bx-group bx-xs'></i>
-                <span>New Team Space</span>
-              </a>
-            </li>
-            <li> <a routerLink="/join-team-space" routerLinkActive="menu-active">
-                <i class='bx  bx-link bx-xs'></i>
-                <span>Join Team Space</span>
-              </a>
-            </li>
-            <li><a routerLink="/my-spaces" routerLinkActive="menu-active">
-                <i class="bx bx-box bx-xs"></i>
-                <span>My Spaces</span>
-              </a>
-            </li>
-
-          </ul>
-        </details>
       </li>
 
     </div>
   </div>
 
   <div class="mb-8 flex flex-col gap-8">
-    <div class=" px-5">
-
-      <ul class="menu w-full">
-        <li>
-          <a routerLink="/docs">
-            <i class="bx bxs-file-doc bx-xs"></i>
-            Docs
-          </a>
-        </li>
-
-        <li>
-          <a routerLink="/settings">
-            <i class="bx bxs-cog bx-xs"></i>
-            Settings
-          </a>
-        </li>
-
-      </ul>
-
-
-
-
-    </div>
 
     <div class="text-xs text-center opacity-60">OVA Web UI v1.0.0</div>
   </div>

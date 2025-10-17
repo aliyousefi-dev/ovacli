@@ -1,24 +1,33 @@
-- ## Introduction
 - [overview](docs/overview.md)
 - [quick-start](docs/quick-start.md)
-- [architecture](docs/architecture.md)
-- [account-id](docs/account-id.md)
 - [installation](docs/installation.md)
+- [architecture](docs/architecture.md)
 - [upcoming-featrues](docs/upcoming-featrues.md)
-- [self-certs](docs/self-certs.md)
-- [changelog](docs/changelog.md)
-- [configs](docs/configs.md)
+- [account-id](docs/account-id.md)
+- [commands](docs/commands.md)
 - [https-configs](docs/https-configs.md)
+- [configs](docs/configs.md)
+- [changelog](docs/changelog.md)
 - [repository](docs/repository.md)
-- ### datatypes
-  - [sessiondata](docs/datatypes/sessiondata.md)
-  - [spacedata](docs/datatypes/spacedata.md)
-  - [userdata](docs/datatypes/userdata.md)
-  - [videodata](docs/datatypes/videodata.md)
+- [self-certs](docs/self-certs.md)
+- ### go-refrences
+  - [repo-manager](docs/go-refrences/repo-manager.md)
+  - [storage-type](docs/go-refrences/storage-type.md)
+  - ### datatypes
+    - [sessiondata](docs/go-refrences/datatypes/sessiondata.md)
+    - [spacedata](docs/go-refrences/datatypes/spacedata.md)
+    - [userdata](docs/go-refrences/datatypes/userdata.md)
+    - [videodata](docs/go-refrences/datatypes/videodata.md)
+- ### features
+  - [similar-videos](docs/features/similar-videos.md)
+- ### micro-service
+  - [download-server](docs/micro-service/download-server.md)
+  - [stream-server](docs/micro-service/stream-server.md)
+  - [trim-server](docs/micro-service/trim-server.md)
+  - [upload-server](docs/micro-service/upload-server.md)
 - ### technical
   - [api-endpoints](docs/technical/api-endpoints.md)
   - [authentication](docs/technical/authentication.md)
-  - [bucket-fetch](docs/technical/bucket-fetch.md)
   - [checksum](docs/technical/checksum.md)
   - [cooking](docs/technical/cooking.md)
   - [indexing](docs/technical/indexing.md)
@@ -26,10 +35,14 @@
 - ### tools
   - [ts-converter](docs/tools/ts-converter.md)
   - [video-info](docs/tools/video-info.md)
-- ### micro-service
-  - [download-server](docs/micro-service/download-server.md)
-  - [trim-server](docs/micro-service/trim-server.md)
-  - [upload-server](docs/micro-service/upload-server.md)
+- ### api
+  - [rest-api](docs/api/rest-api.md)
+  - [bucket-fetch](docs/api/bucket-fetch.md)
 - ### web-components
+  - [gallery-fetcher](docs/web-components/gallery-fetcher.md)
+  - [gallery-view](docs/web-components/gallery-view.md)
+  - [infinite-fetcher](docs/web-components/infinite-fetcher.md)
   - [mini-video-card](docs/web-components/mini-video-card.md)
+  - [page-fetcher](docs/web-components/page-fetcher.md)
   - [video-card](docs/web-components/video-card.md)
+  - [vidstack-player](docs/web-components/vidstack-player.md)

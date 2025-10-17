@@ -5,7 +5,7 @@
 	"disablePrintButton": true,
 	"disableMarkdownButton": true,
 	"ToC": true,
-	"GitUrl": "https://github.com/aliyousefi-dev/ova",
+	"GitUrl": "https://github.com/aliyousefi-dev/ovacli",
 	"rtl": false,
 	"sort_nav_by": "alphabetical"
 }

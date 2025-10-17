@@ -1,6 +1,6 @@
 <!--
 {
-	"nav_order": 2
+	"nav_order": 3
 }
 -->
 
@@ -27,9 +27,9 @@ flowchart RL
     Disk@{ shape: notch-rect, label: "Local Disk" }
     db[(Disk DB)]
     db2[(Memory DB)]
-    A@{ shape: procs, label: "Indexed Video Data" }
-    B@{ shape: procs, label: "Space Group Data" }
-    C@{ shape: procs, label: "User Data" }
+    A@{ shape: procs, label: "Video Data" }
+    B@{ shape: procs, label: "Video Group Data" }
+    C@{ shape: procs, label: "Accounts Data" }
     D@{ shape: procs, label: "Video Files (mp4)" }
     F@{ shape: procs, label: "Preview Generated (webm)" }
     G@{ shape: procs, label: "Thumbnail (jpg)" }

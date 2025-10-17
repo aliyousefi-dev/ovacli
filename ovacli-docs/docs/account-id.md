@@ -1,12 +1,16 @@
 <!--
 {
-	"nav_order": 2
+	"nav_order": 4
 }
 -->
 
 # Account ID
 
 An **Account ID** is a unique, persistent identifier that is generated when a user creates an account. Unlike a **username**, which can be changed at any time, the **Account ID** remains constant throughout the user's interaction with the system. This makes the Account ID a reliable and unalterable reference to a specific user, even if they change their username or other profile information.
+
+```
+account-id e9e6-4568-afcc-34c70b24a668
+```
 
 ### Key Characteristics:
 
