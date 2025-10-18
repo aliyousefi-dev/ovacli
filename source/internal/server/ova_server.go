@@ -85,6 +85,7 @@ func (s *OvaServer) initRoutes() {
 	api.RegisterLatestVideoRoute(v1, s.RepoManager)
 	api.RegisterSearchSuggestionsRoutes(v1, s.RepoManager)
 	api.RegisterSpaceContentRoutes(v1, s.RepoManager)
+	api.RegisterBatchRoutes(v1, s.RepoManager)
 	api.RegisterStatusRoute(v1)
 
 	if s.ServeFrontend {

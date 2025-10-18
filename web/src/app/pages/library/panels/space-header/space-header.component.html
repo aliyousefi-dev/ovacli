@@ -4,7 +4,9 @@
     <div class="relative z-10 flex flex-col justify-center gap-6">
         <div class="flex justify-between items-center">
             <div class="flex items-center gap-6">
-                <div class="avatar avatar-placeholder">
+
+
+                <div class="avatar avatar-offline avatar-placeholder">
                     <div class="bg-neutral text-neutral-content w-24 rounded-full">
                         <span class="text-3xl">{{ SpaceSelected ? SpaceSelected.charAt(0) : '' }}</span>
                     </div>
@@ -17,21 +19,6 @@
                         <span class="badge badge-sm badge-neutral">editor</span>
                     </div>
 
-
-                    <div class="flex justify-start items-center gap-2">
-                        @if (false) {
-                        <div class="inline-grid *:[grid-area:1/1]">
-                            <div aria-label="success" class="status status-success animate-ping"></div>
-                            <div aria-label="success" class="status status-success "></div>
-                        </div>
-                        <span>Online</span>
-                        } @else {
-                        <div class="inline-grid *:[grid-area:1/1]">
-                            <div aria-label="success" class="status status-neutral "></div>
-                        </div>
-                        <span class="text-sm">Offline</span>
-                        }
-                    </div>
 
                     <span class="text-sm text-base-content/70">&#64;Username</span>
                     <div class="flex items-center gap-3 text-sm text-base-content/70">

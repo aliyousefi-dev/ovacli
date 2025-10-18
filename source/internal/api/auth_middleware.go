@@ -34,7 +34,7 @@ func AuthMiddleware(repoMgr *repo.RepoManager, publicPaths map[string]bool, publ
 		ovaAuthHeader := c.GetHeader("OVA-AUTH")
 		if ovaAuthHeader != "" {
 			// Check for session in the OVA-AUTH header
-			username, ok := repoMgr.GetUsernameBySession(ovaAuthHeader)
+			username, ok := repoMgr.GetAccountIDBySession(ovaAuthHeader)
 			if ok != nil {
 				respondError(c, http.StatusUnauthorized, "Invalid OVA-AUTH session")
 				c.Abort()
@@ -53,14 +53,14 @@ func AuthMiddleware(repoMgr *repo.RepoManager, publicPaths map[string]bool, publ
 			return
 		}
 
-		username, ok := repoMgr.GetUsernameBySession(sessionID)
+		accountID, ok := repoMgr.GetAccountIDBySession(sessionID)
 		if ok != nil {
 			respondError(c, http.StatusUnauthorized, "Invalid session")
 			c.Abort()
 			return
 		}
 
-		c.Set("username", username)
+		c.Set("accountId", accountID)
 		c.Next()
 	}
 }

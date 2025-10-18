@@ -4,7 +4,7 @@ func (r *RepoManager) AddSession(sessionID string, username string) error {
 	return r.sessionDataStorage.AddSession(sessionID, username)
 }
 
-func (r *RepoManager) GetUsernameBySession(sessionID string) (string, error) {
+func (r *RepoManager) GetAccountIDBySession(sessionID string) (string, error) {
 	return r.sessionDataStorage.GetSession(sessionID)
 }
 

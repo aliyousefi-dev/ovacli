@@ -13,7 +13,6 @@ type RepoManager struct {
 	configs            datatypes.ConfigData
 	AuthEnabled        bool
 	diskDataStorage    interfaces.DiskDataStorage
-	memoryDataStorage  interfaces.MemoryDataStorage
 	sessionDataStorage interfaces.SessionDataStorage
 }
 
@@ -56,11 +55,6 @@ func (r *RepoManager) InitDataStorage() error {
 	r.diskDataStorage, err = datastorage.NewDiskStorage(storageType, storagePath)
 	if err != nil {
 		return fmt.Errorf("failed to initialize data storage (%s): %w", storageType, err)
-	}
-
-	r.memoryDataStorage, err = datastorage.NewMemoryStorage()
-	if err != nil {
-		return fmt.Errorf("failed to initialize memory storage: %w", err)
 	}
 
 	r.sessionDataStorage, err = datastorage.NewSessionStorage(storagePath)

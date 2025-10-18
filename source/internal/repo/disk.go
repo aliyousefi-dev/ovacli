@@ -168,7 +168,7 @@ func (r *RepoManager) GetUnindexedVideos() ([]string, error) {
 	// Create a set of video file paths for easy lookup
 	indexedVideoPaths := make(map[string]struct{})
 	for _, video := range indexedVideos {
-		videoPath := filepath.Join(video.OwnedSpace, video.FileName)
+		videoPath := video.FilePath
 		indexedVideoPaths[videoPath] = struct{}{}
 	}
 

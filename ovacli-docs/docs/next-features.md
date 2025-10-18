@@ -4,7 +4,7 @@
 }
 -->
 
-# Upcoming Features v0.1-beta
+# Next Features v0.1-beta
 
 here we demonstrate what features we want to add to next versions.
 
@@ -25,3 +25,8 @@ here we demonstrate what features we want to add to next versions.
 - Protobuf API Support
 - Searching Users , Video
 - Label User profile
+- Search History & Recents
+- Multi Uploads
+- Data Range for Global Search
+- Using Steper for Video Upload : Showing State (Upload / Processing / Complete)
+- Send Task for Other Users

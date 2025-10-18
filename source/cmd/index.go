@@ -80,6 +80,7 @@ var indexCmd = &cobra.Command{
 			// ---- Call IndexMultiVideos ----
 			_, err := repository.IndexMultiVideos(
 				spaceVideos,
+				repository.GetRootAccouuntID(),
 				indexingProgressChan,
 				indexingErrorChan,
 			)

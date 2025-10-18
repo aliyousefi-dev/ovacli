@@ -55,7 +55,7 @@ func uploadVideo(repoMgr *repo.RepoManager) gin.HandlerFunc {
 		// Build minimal video metadata
 		video := datatypes.VideoData{
 			VideoID:  uuid.New().String(),
-			FileName: savePath,
+			FilePath: savePath,
 		}
 
 		respondSuccess(c, http.StatusOK, video, "Video uploaded successfully")

@@ -21,13 +21,13 @@ func (r *RepoManager) AddVideo(video datatypes.VideoData) error {
 }
 
 // AddVideo adds a new video if it does not already exist.
-func (r *RepoManager) AddOneVideo(VideoPath string, cook bool) error {
+func (r *RepoManager) AddOneVideo(VideoPath, accountId string, cook bool) error {
 	if !r.IsDataStorageInitialized() {
 		return fmt.Errorf("data storage is not initialized")
 	}
 
 	// indexing video
-	_, err := r.IndexVideo(VideoPath)
+	_, err := r.IndexVideo(VideoPath, accountId)
 	if err != nil {
 		return fmt.Errorf("failed to index video with path %q: %w", VideoPath, err)
 	}
@@ -45,6 +45,7 @@ func (r *RepoManager) AddOneVideo(VideoPath string, cook bool) error {
 
 func (r *RepoManager) AddMultiVideos(
 	VideoPaths []string,
+	accountId string,
 	indexingProgressChan chan int,
 	stateChan chan string,
 	indexingErrorChan chan error,
@@ -56,7 +57,7 @@ func (r *RepoManager) AddMultiVideos(
 	defer close(stateChan)
 
 	// Index all videos at once with progress and error tracking
-	_, err := r.IndexMultiVideos(VideoPaths, indexingProgressChan, indexingErrorChan)
+	_, err := r.IndexMultiVideos(VideoPaths, accountId, indexingProgressChan, indexingErrorChan)
 	if err != nil {
 		return err // The deferred close statements will handle channel cleanup
 	}
@@ -120,4 +121,29 @@ func (r *RepoManager) GetTotalIndexedVideoCount() (int, error) {
 		return 0, fmt.Errorf("data storage is not initialized")
 	}
 	return r.diskDataStorage.GetTotalVideoCount()
+}
+
+// GetGlobalVideosInRange returns a range of video IDs for global videos.
+func (r *RepoManager) GetGlobalVideosInRange(start, end int) ([]string, error) {
+	if !r.IsDataStorageInitialized() {
+		return nil, fmt.Errorf("data storage is not initialized")
+	}
+
+	// Retrieve the full list of video data
+	videoData, err := r.diskDataStorage.GetAllVideos()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get video data: %v", err)
+	}
+
+	// Validate the range values
+	if start < 0 || end > len(videoData) || start >= end {
+		return nil, fmt.Errorf("invalid range")
+	}
+
+	// Return the video IDs in the specified range
+	var videoIds []string
+	for _, video := range videoData[start:end] {
+		videoIds = append(videoIds, video.VideoID)
+	}
+	return videoIds, nil
 }

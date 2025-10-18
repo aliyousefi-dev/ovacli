@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"path/filepath"
 
 	"ova-cli/source/internal/repo"
 
@@ -28,7 +27,7 @@ func streamVideo(repoManager *repo.RepoManager) gin.HandlerFunc {
 			return
 		}
 
-		videoPath := filepath.Join(video.OwnedSpace, video.FileName+video.Codecs.Format)
+		videoPath := video.FilePath
 		file, err := os.Open(videoPath)
 		if err != nil {
 			if os.IsNotExist(err) {

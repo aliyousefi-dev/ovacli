@@ -26,12 +26,12 @@ var initCmd = &cobra.Command{
 
 		// Prompt for username if not provided
 		if username == "" {
-			fmt.Print("Enter admin username: ")
+			fmt.Print("root username: ")
 			fmt.Scanln(&username)
 		}
 		// Prompt for password if not provided
 		if password == "" {
-			fmt.Print("Enter admin password: ")
+			fmt.Print("root password: ")
 			fmt.Scanln(&password)
 		}
 

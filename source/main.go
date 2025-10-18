@@ -28,8 +28,6 @@ including features for video processing, metadata management, and more.`,
 
 	cmd.InitCommandSpace(rootCmd)
 
-	cmd.InitCommandDocs(rootCmd)
-
 	cmd.InitCommandSSL(rootCmd)
 
 	// server commands

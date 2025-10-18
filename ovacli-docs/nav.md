@@ -2,8 +2,8 @@
 - [quick-start](docs/quick-start.md)
 - [installation](docs/installation.md)
 - [architecture](docs/architecture.md)
-- [upcoming-featrues](docs/upcoming-featrues.md)
 - [account-id](docs/account-id.md)
+- [next-features](docs/next-features.md)
 - [commands](docs/commands.md)
 - [https-configs](docs/https-configs.md)
 - [configs](docs/configs.md)
@@ -25,6 +25,9 @@
   - [stream-server](docs/micro-service/stream-server.md)
   - [trim-server](docs/micro-service/trim-server.md)
   - [upload-server](docs/micro-service/upload-server.md)
+- ### api
+  - [rest-api](docs/api/rest-api.md)
+  - [bucket-fetch](docs/api/bucket-fetch.md)
 - ### technical
   - [api-endpoints](docs/technical/api-endpoints.md)
   - [authentication](docs/technical/authentication.md)
@@ -35,9 +38,6 @@
 - ### tools
   - [ts-converter](docs/tools/ts-converter.md)
   - [video-info](docs/tools/video-info.md)
-- ### api
-  - [rest-api](docs/api/rest-api.md)
-  - [bucket-fetch](docs/api/bucket-fetch.md)
 - ### web-components
   - [gallery-fetcher](docs/web-components/gallery-fetcher.md)
   - [gallery-view](docs/web-components/gallery-view.md)

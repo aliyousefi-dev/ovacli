@@ -4,12 +4,10 @@ import (
 	"fmt"
 	"ova-cli/source/internal/datatypes"
 	"ova-cli/source/internal/utils"
-	"path/filepath"
-	"strings"
 )
 
 // IndexVideo handles hashing, thumbnail/preview generation, and metadata storage.
-func (r *RepoManager) IndexVideo(absolutePath string) (datatypes.VideoData, error) {
+func (r *RepoManager) IndexVideo(absolutePath, accountId string) (datatypes.VideoData, error) {
 	if !r.IsDataStorageInitialized() {
 		return datatypes.VideoData{}, fmt.Errorf("data storage is not initialized")
 	}
@@ -31,8 +29,6 @@ func (r *RepoManager) IndexVideo(absolutePath string) (datatypes.VideoData, erro
 	if err != nil {
 		return datatypes.VideoData{}, fmt.Errorf("failed to generate relative path: %w", err)
 	}
-
-	pathSegments := utils.GetPathSegments(filepath.Dir(relativePath))
 
 	// 4. Generate unique video ID
 	videoID, err := r.GenerateVideoID(absolutePath)
@@ -60,13 +56,10 @@ func (r *RepoManager) IndexVideo(absolutePath string) (datatypes.VideoData, erro
 		return datatypes.VideoData{}, fmt.Errorf("failed to generate preview: %w", err)
 	}
 
-	// 7. Create and populate VideoData
-	title := strings.TrimSuffix(filepath.Base(absolutePath), filepath.Ext(absolutePath))
 	videoData := datatypes.NewVideoData(videoID)
-	videoData.FileName = title
 	videoData.Codecs = codec
-	videoData.OwnedSpace = pathSegments.Root
-	videoData.OwnedGroup = pathSegments.Subroot
+	videoData.SetFilePath(relativePath)
+	videoData.OwnerAccountId = accountId
 
 	r.diskDataStorage.AddVideoIDToSpace(videoID, relativePath)
 
@@ -78,7 +71,7 @@ func (r *RepoManager) IndexVideo(absolutePath string) (datatypes.VideoData, erro
 	return videoData, nil
 }
 
-func (r *RepoManager) IndexMultiVideos(absolutePaths []string, progressChan chan int, errorChan chan error) ([]datatypes.VideoData, error) {
+func (r *RepoManager) IndexMultiVideos(absolutePaths []string, accountId string, progressChan chan int, errorChan chan error) ([]datatypes.VideoData, error) {
 
 	defer close(progressChan)
 	defer close(errorChan)
@@ -97,7 +90,7 @@ func (r *RepoManager) IndexMultiVideos(absolutePaths []string, progressChan chan
 
 	for i, absPath := range absolutePaths {
 		// Index the video
-		videoData, err := r.IndexVideo(absPath)
+		videoData, err := r.IndexVideo(absPath, accountId)
 		if err != nil {
 			if errorChan != nil {
 				errorChan <- fmt.Errorf("failed to index video %s: %w", absPath, err)
@@ -138,13 +131,6 @@ func (r *RepoManager) UnIndexVideo(videoPath string) error {
 	if err != nil {
 		return fmt.Errorf("failed to compute video ID: %w", err)
 	}
-	// 	previewPath := filepath.Join(repoRoot, *videoData.PreviewPath)
-	// 	if err := os.Remove(previewPath); err != nil && !os.IsNotExist(err) {
-	// 		fmt.Printf("Warning: failed to delete preview: %s (%v)\n", previewPath, err)
-	// 	} else {
-	// 		fmt.Printf("Preview deleted: %s\n", previewPath)
-	// 	}
-	// }
 
 	// 4. Remove metadata from storage
 	if err := r.diskDataStorage.DeleteVideoByID(videoID); err != nil {

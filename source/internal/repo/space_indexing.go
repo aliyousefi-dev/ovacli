@@ -17,7 +17,7 @@ func (r *RepoManager) ScanAndAddAllSpaces() error {
 	// 2. Iterate through each SpaceScan and convert it to a SpaceData struct.
 	for _, spaceScan := range spaces {
 		// Use the space name from the scan and the root username for the owner.
-		spaceData := r.convertSpaceScanToSpaceData(spaceScan, r.GetRootUsername())
+		spaceData := r.convertSpaceScanToSpaceData(spaceScan, r.GetRootAccouuntID())
 
 		error := r.CreateSpace(spaceData)
 		if error != nil {

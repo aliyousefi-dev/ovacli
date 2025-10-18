@@ -1,14 +1,14 @@
 <div class="flex items-center justify-start gap-5 p-5">
 
-  <div class="flex items-center justify-start gap-3">
+  <div class="flex items-center justify-start gap-2">
     <div class="avatar avatar-placeholder">
-      <div class="bg-neutral text-neutral-content w-12 rounded-full">
-        <span>N</span>
+      <div class="bg-neutral text-neutral-content w-8 rounded-full">
+        <span>{{ videoData.ownerAccountUsername.charAt(0).toUpperCase() }}</span>
       </div>
     </div>
     <div class="flex flex-col">
-      <span class="text-md">New</span>
-      <span class="text-xs">Root | Bests</span>
+      <span class="text-sm">{{videoData.ownerAccountUsername}}</span>
+      <span class="text-xs">{{ timeSinceAdded }}</span>
     </div>
   </div>
 

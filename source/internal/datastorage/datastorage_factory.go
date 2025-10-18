@@ -3,7 +3,6 @@ package datastorage
 import (
 	"fmt"
 	"ova-cli/source/internal/datastorage/jsondb"
-	"ova-cli/source/internal/datastorage/memorydb"
 	"ova-cli/source/internal/datastorage/sessiondb"
 	"ova-cli/source/internal/interfaces"
 )
@@ -18,10 +17,6 @@ func NewDiskStorage(storageType, dataStoragePath string) (interfaces.DiskDataSto
 	default:
 		return nil, fmt.Errorf("unknown storage type: %s", storageType)
 	}
-}
-
-func NewMemoryStorage() (interfaces.MemoryDataStorage, error) {
-	return memorydb.NewMemoryDB()
 }
 
 func NewSessionStorage(dataStoragePath string) (interfaces.SessionDataStorage, error) {

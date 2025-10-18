@@ -11,12 +11,19 @@
 
     <div class="menu w-full rounded-box">
 
+
+      <li class="menu-title">General</li>
+
       <li>
-        <a routerLink="/spaces" routerLinkActive="menu-active" [routerLinkActiveOptions]="{ exact: true }">
-          <i class='bx bxs-user-circle bx-xs'></i>
-          <span>Profile</span>
+        <a routerLink="/global" routerLinkActive="menu-active">
+          <i class='bx bx-globe bx-xs'></i>
+          <span>Global</span>
+
+          <span class="badge badge-xs badge-neutral">2</span>
         </a>
       </li>
+
+
 
       <li>
         <a routerLink="/search" routerLinkActive="menu-active" [routerLinkActiveOptions]="{ exact: true }">
@@ -33,10 +40,26 @@
       </li>
 
 
+      <li></li>
+
       <li>
-        <a routerLink="/global" routerLinkActive="menu-active">
-          <i class='bx bx-globe bx-xs'></i>
-          <span>Global <span class="badge badge-xs badge-neutral">2</span> </span>
+        <a routerLink="/spaces" routerLinkActive="menu-active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class='bx bxs-user-circle bx-xs'></i>
+          <span>Profile</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/project" routerLinkActive="menu-active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class='bx bxs-layer bx-xs'></i>
+          <span>Projects & Teams</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/tasks" routerLinkActive="menu-active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class='bx bxs-checkbox-checked bx-xs'></i>
+          <span>Tasks</span>
         </a>
       </li>
 
@@ -56,24 +79,82 @@
         </a>
       </li>
 
-      <li>
-        <a routerLink="/settings">
-          <i class="bx bxs-cog bx-xs"></i>
-          Settings
-        </a>
-      </li>
-
-      <li>
-        <a>
-          <i class='bx  bx-log-out bx-xs'></i>
-          Sign out
-        </a>
-      </li>
+      <li class="menu-title">Your Teams</li>
 
     </div>
   </div>
 
   <div class="mb-8 flex flex-col gap-8">
+
+    <!-- Username and Dropdown Icon -->
+    <div class="dropdown dropdown-top dropdown-end">
+      <div tabindex="0" role="button" class="btn btn-outline mx-5 h-15 flex justify-between">
+        <!-- Avatar (DaisyUI) -->
+
+        <div class="flex gap-3">
+          <div class="avatar">
+            <div class="w-10 rounded-full">
+              <img src="sample-avatar.webp" />
+            </div>
+          </div>
+
+          <div class="flex flex-col justify-center items-start">
+            <h3 class="font-bold">ali</h3>
+            <span class="text-xs">&#64;username</span>
+          </div>
+        </div>
+
+
+        <i class="bx bx-chevron-down text-lg"></i>
+      </div>
+
+      <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100  rounded-box w-52">
+        <li>
+          <a routerLink="/profile" class="flex" title="View profile">
+            <img alt="Profile" src="sample-avatar.webp" class="w-8 rounded-full" />
+
+            <div class="flex flex-col">
+              <h3 class="font-bold">ali</h3>
+              <span class="text-xs">&#64;ali</span>
+            </div>
+          </a>
+        </li>
+        <div class="divider my-0"></div>
+        <li>
+          <a routerLink="/settings">
+            <i class='bx  bxs-inbox bx-xs'></i>
+            Inbox
+          </a>
+        </li>
+        <div class="divider my-0"></div>
+        <li>
+          <a routerLink="/settings">
+            <i class='bx  bx-cog bx-xs'></i>
+            Settings
+          </a>
+        </li>
+        <li>
+          <a>
+            <i class='bx  bxs-keyboard bx-xs'></i>
+            Keyboard shortcut
+          </a>
+        </li>
+
+        <div class="divider my-0"></div>
+        <li>
+          <a routerLink="/docs">
+            <i class='bx  bx-help-circle bx-xs'></i>
+            Help
+          </a>
+        </li>
+        <li>
+          <a>
+            <i class='bx  bx-log-out bx-xs'></i>
+            Sign out
+          </a>
+        </li>
+      </ul>
+    </div>
 
     <div class="text-xs text-center opacity-60">OVA Web UI v1.0.0</div>
   </div>

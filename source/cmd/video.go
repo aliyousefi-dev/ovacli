@@ -59,7 +59,7 @@ var videoAddOneCmd = &cobra.Command{
 		cook, _ := cmd.Flags().GetBool("cook")
 
 		// Use AddOneVideo to add the single video
-		err = repository.AddOneVideo(absPath, cook)
+		err = repository.AddOneVideo(absPath, repository.GetRootAccouuntID(), cook)
 		if err != nil {
 			fmt.Println("Failed to add video:", err)
 			return
@@ -195,7 +195,7 @@ var videoListCmd = &cobra.Command{
 			for i, v := range videos {
 				videoData[i] = map[string]string{
 					"ID":   v.VideoID,
-					"Path": v.FileName,
+					"Path": v.FilePath,
 				}
 			}
 
@@ -212,7 +212,7 @@ var videoListCmd = &cobra.Command{
 			// If no --json flag is passed, display data in table format
 			fmt.Println("ID\tPath")
 			for _, v := range videos {
-				fmt.Printf("%s\t%s\n", v.VideoID, v.FileName)
+				fmt.Printf("%s\t%s\n", v.VideoID, v.FilePath)
 			}
 		}
 	},
@@ -243,8 +243,7 @@ var videoInfoCmd = &cobra.Command{
 
 		pterm.Info.Println("Video Info:")
 		pterm.DefaultSection.Println("ID:", video.VideoID)
-		pterm.DefaultSection.Println("File Name:", video.FileName)
-		pterm.DefaultSection.Println("Owned Space:", video.OwnedSpace)
+		pterm.DefaultSection.Println("File Path:", video.FilePath)
 		pterm.DefaultSection.Println("Duration (seconds):", fmt.Sprintf("%d", video.Codecs.DurationSec))
 		pterm.DefaultSection.Println("Tags:", fmt.Sprintf("%v", video.Tags))
 		pterm.DefaultSection.Println("Uploaded At:", video.UploadedAt.Format(time.RFC3339))

@@ -18,9 +18,9 @@ func (r *RepoManager) GetDefaultConfig() *datatypes.ConfigData {
 		return &datatypes.ConfigData{
 			Version:              "1.0.0",
 			ServerHost:           "0.0.0.0",
-			ServerPort:           4040,
+			ServerPort:           8080,
 			EnableAuthentication: true,
-			MaxBucketSize:        20,
+			MaxBucketSize:        30,
 			DataStorageType:      "jsondb",
 			CreatedAt:            time.Now(),
 		}
@@ -37,9 +37,10 @@ func (r *RepoManager) GetDefaultConfigTemplate() (*datatypes.ConfigData, error) 
 		defaultConfig := &datatypes.ConfigData{
 			Version:              "1.0.0",
 			ServerHost:           "0.0.0.0",
-			ServerPort:           4040,
+			ServerPort:           8080,
 			EnableAuthentication: true,
 			DataStorageType:      "jsondb",
+			MaxBucketSize:        30,
 			CreatedAt:            time.Now(),
 		}
 

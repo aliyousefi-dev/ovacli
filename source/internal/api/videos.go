@@ -18,8 +18,7 @@ func RegisterVideoRoutes(rg *gin.RouterGroup, repoMgr *repo.RepoManager) {
 	{
 		videos.GET("/:videoId", getVideoByID(repoMgr)) // GET /api/v1/videos/{videoId}
 		videos.GET("/:videoId/similar", getSimilarVideos(repoMgr))
-		videos.GET("", getVideosByFolder(repoMgr))     // GET /api/v1/videos?folder=...
-		videos.POST("/batch", getVideosByIds(repoMgr)) // POST /api/v1/videos/batch
+		videos.GET("", getVideosByFolder(repoMgr)) // GET /api/v1/videos?folder=...
 	}
 }
 
@@ -28,12 +27,36 @@ func getVideoByID(repoMgr *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		videoId := c.Param("videoId")
 
+		// Retrieve the video by ID
 		video, err := repoMgr.GetVideoByID(videoId)
 		if err != nil {
 			respondError(c, http.StatusNotFound, "Video not found")
 			return
 		}
-		respondSuccess(c, http.StatusOK, video, "Video retrieved successfully")
+
+		// Retrieve user data by OwnerAccountId
+		userdata, err := repoMgr.GetUserByAccountID(video.OwnerAccountId)
+		if err != nil {
+			respondError(c, http.StatusInternalServerError, "Failed to retrieve user data")
+			return
+		}
+
+		// Create the VideoDataAPIResponse from VideoData
+		videoResponse := datatypes.VideoDataAPIResponse{
+			VideoID:              video.VideoID,
+			FileName:             video.GetFileName(),
+			Tags:                 video.Tags,
+			Codecs:               video.Codecs,
+			IsCooked:             video.IsCooked,
+			OwnerAccountUsername: userdata.Username,
+			TotalViews:           video.TotalViews,
+			TotalDownloads:       video.TotalDownloads,
+			IsPublic:             video.IsPublic,
+			UploadedAt:           video.UploadedAt,
+		}
+
+		// Respond with the converted video data
+		respondSuccess(c, http.StatusOK, videoResponse, "Video retrieved successfully")
 	}
 }
 
@@ -54,30 +77,6 @@ func getVideosByFolder(repoMgr *repo.RepoManager) gin.HandlerFunc {
 		}
 
 		respondSuccess(c, http.StatusOK, response, "Videos in folder retrieved")
-	}
-}
-
-// getVideosByIds returns a batch of videos by IDs.
-func getVideosByIds(repoMgr *repo.RepoManager) gin.HandlerFunc {
-	type requestBody struct {
-		IDs []string `json:"ids"`
-	}
-	return func(c *gin.Context) {
-		var body requestBody
-		if err := c.ShouldBindJSON(&body); err != nil {
-			respondError(c, http.StatusBadRequest, "Invalid request")
-			return
-		}
-
-		var matched []datatypes.VideoData
-		for _, id := range body.IDs {
-			video, err := repoMgr.GetVideoByID(id)
-			if err == nil && video != nil {
-				matched = append(matched, *video)
-			}
-		}
-
-		respondSuccess(c, http.StatusOK, matched, "Videos retrieved successfully")
 	}
 }
 

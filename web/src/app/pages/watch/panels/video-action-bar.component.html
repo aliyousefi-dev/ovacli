@@ -3,25 +3,25 @@
   <div class="flex flex-wrap items-center justify-end gap-2 w-full">
 
     <!-- Materials -->
-    <a class="btn" routerLink="/materials">
+    <a class="btn btn-ghost" routerLink="/materials">
       <i class='bx bxs-folder bx-xs'></i>
       <span class="hidden sm:inline">Attachments</span>
     </a>
 
     <!-- Version History -->
-    <a class="btn" [routerLink]="['/version-history', videoId]">
+    <a class="btn btn-ghost" [routerLink]="['/version-history', videoId]">
       <i class='bx bx-git-branch bx-xs'></i>
       <span class="hidden sm:inline">Version History</span>
     </a>
 
     <!-- Add to Playlist -->
-    <button class="btn" (click)="openPlaylistModal()" aria-label="Add to Playlist">
+    <button class="btn btn-ghost" (click)="openPlaylistModal()" aria-label="Add to Playlist">
       <i class='bx  bxs-share bx-xs'></i>
       <span class="hidden sm:inline">Send to</span>
     </button>
 
     <!-- Download -->
-    <button class="btn" (click)="downloadVideo()" aria-label="Download">
+    <button class="btn btn-ghost" (click)="downloadVideo()" aria-label="Download">
       <i class="bx bxs-download bx-xs"></i>
       <span class="hidden sm:inline">Download</span>
     </button>
@@ -29,7 +29,7 @@
 
 
     <!-- Save/Unsave -->
-    <button class="btn flex items-center" [ngClass]="
+    <button class="btn btn-ghost flex items-center" [ngClass]="
                 isSaved ? 'btn-error' : ''
               " (click)="toggleSaved.emit()" [disabled]="loadingSavedVideo" [attr.aria-label]="
                 isSaved ? 'Unsave from favorites' : 'Save to favorites'

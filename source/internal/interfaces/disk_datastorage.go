@@ -9,6 +9,7 @@ type DiskDataStorage interface {
 	CreateUser(user *datatypes.UserData) error
 	DeleteUser(username string) (*datatypes.UserData, error)
 	GetUserByUsername(username string) (*datatypes.UserData, error)
+	GetUserByAccountID(accountID string) (*datatypes.UserData, error)
 	GetAllUsers() ([]datatypes.UserData, error)
 
 	// User favorites management

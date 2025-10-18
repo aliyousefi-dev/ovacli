@@ -18,7 +18,7 @@ func (r *RepoManager) IsRepoExists() bool {
 }
 
 func (r *RepoManager) IsDataStorageInitialized() bool {
-	return r.diskDataStorage != nil && r.memoryDataStorage != nil
+	return r.diskDataStorage != nil
 }
 
 // FolderExists returns true if the folder exists and is a directory.

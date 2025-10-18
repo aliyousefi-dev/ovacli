@@ -16,44 +16,43 @@ func (s *JsonDB) CreateUser(user *datatypes.UserData) error {
 		return fmt.Errorf("failed to load users: %w", err)
 	}
 
-	if _, exists := users[user.Username]; exists {
-		return fmt.Errorf("user with username %q already exists", user.Username)
+	if _, exists := users[user.AccountID]; exists {
+		return fmt.Errorf("user with account ID %q already exists", user.AccountID)
 	}
 
-	users[user.Username] = *user // Store a copy of the UserData
+	users[user.AccountID] = *user // Store a copy of the UserData
 	return s.saveUsers(users)
 }
 
 // DeleteUser removes a user by their username and returns the deleted user data.
 // Returns an error if the user is not found or if there is a problem loading or saving users.
 func (s *JsonDB) DeleteUser(username string) (*datatypes.UserData, error) {
-    s.mu.Lock()
-    defer s.mu.Unlock()
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
-    // Load all users from the data source
-    users, err := s.loadUsers()
-    if err != nil {
-        return nil, fmt.Errorf("failed to load users: %w", err)
-    }
+	// Load all users from the data source
+	users, err := s.loadUsers()
+	if err != nil {
+		return nil, fmt.Errorf("failed to load users: %w", err)
+	}
 
-    // Check if the user exists in the map
-    user, exists := users[username]
-    if !exists {
-        return nil, fmt.Errorf("user %q not found", username)
-    }
+	// Check if the user exists in the map
+	user, exists := users[username]
+	if !exists {
+		return nil, fmt.Errorf("user %q not found", username)
+	}
 
-    // Delete the user from the map
-    delete(users, username)
+	// Delete the user from the map
+	delete(users, username)
 
-    // Save the updated user list
-    if err := s.saveUsers(users); err != nil {
-        return nil, fmt.Errorf("failed to save updated users: %w", err)
-    }
+	// Save the updated user list
+	if err := s.saveUsers(users); err != nil {
+		return nil, fmt.Errorf("failed to save updated users: %w", err)
+	}
 
-    // Return the deleted user data
-    return &user, nil
+	// Return the deleted user data
+	return &user, nil
 }
-
 
 func (s *JsonDB) UpdateUser(updatedUser datatypes.UserData) error { // Takes value, not pointer
 	s.mu.Lock()

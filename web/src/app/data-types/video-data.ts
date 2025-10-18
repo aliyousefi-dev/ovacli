@@ -14,14 +14,14 @@ export interface Resolution {
 }
 
 export interface VideoData {
-  videoId: string; // Unique video ID (e.g., "17299d50dbf02fa79c30baa57d0078c1838238b88f10b74aa2e063975c8776f2")
-  fileName: string; // Name of the video file (e.g., "Hello World")
-  description: string; // Description of the video
-  ownedSpace: string; // Owned space for the video (e.g., ".")
-  ownedGroup: string; // Group that owns the video
+  videoId: string; // Unique video ID (e.g., "087be485e0acad6fb1ba026e75542fed5f52e073496c649bc4a3ce345a63f48f")
+  fileName: string; // Name of the video file without extension (e.g., "pexels-sosa-films-5656141")
   tags: string[]; // Tags associated with the video
-  uploadedAt: string; // ISO 8601 date string when the video was uploaded (e.g., "2025-08-20T18:29:36.050242Z")
+  uploadedAt: string; // ISO 8601 date string when the video was uploaded (e.g., "2025-10-18T16:08:28.7528704Z")
   totalDownloads: number; // Total number of downloads
   codecs: VideoCodecs; // Codec details for the video
   isCooked: boolean; // Indicates if the video is processed (cooked)
+  ownerAccountUsername: string; // Username of the owner account (can be an empty string if not set)
+  totalViews: number; // Total number of views for the video
+  isPublic: boolean; // Whether the video is public or not
 }

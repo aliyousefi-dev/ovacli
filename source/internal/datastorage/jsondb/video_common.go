@@ -72,7 +72,7 @@ func (s *JsonDB) GetVideoByPath(path string) (*datatypes.VideoData, error) {
 	}
 
 	for _, video := range videos {
-		if video.FileName == path {
+		if video.FilePath == path {
 			return &video, nil
 		}
 	}
@@ -114,7 +114,7 @@ func (s *JsonDB) GetFolderList() ([]string, error) {
 
 	for _, video := range allVideosMap {
 		// Ensure paths are consistently slash-separated
-		relPath := filepath.ToSlash(video.FileName)
+		relPath := filepath.ToSlash(video.FilePath)
 		folder := filepath.Dir(relPath)
 
 		// Trim leading/trailing slashes and handle root directory
@@ -166,7 +166,6 @@ func (s *JsonDB) DeleteAllVideos() error {
 	return s.saveVideos(videos)
 }
 
-
 // UpdateVideoLocalPath updates the file path of a video by its ID.
 // Returns an error if the video is not found.
 func (s *JsonDB) UpdateVideoLocalPath(videoID, newPath string) error {
@@ -183,7 +182,7 @@ func (s *JsonDB) UpdateVideoLocalPath(videoID, newPath string) error {
 		return fmt.Errorf("video %q not found", videoID)
 	}
 
-	video.FileName = newPath
+	video.FilePath = newPath
 	videos[videoID] = video
 
 	return s.saveVideos(videos)

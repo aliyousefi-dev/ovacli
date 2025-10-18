@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"strconv"
 
 	"ova-cli/source/internal/repo"
@@ -31,7 +30,7 @@ func downloadVideo(rm *repo.RepoManager) gin.HandlerFunc {
 			return
 		}
 
-		videoPath := filepath.Join(video.OwnedSpace, video.FileName)
+		videoPath := video.FilePath
 		info, err := os.Stat(videoPath)
 		if os.IsNotExist(err) {
 			respondError(c, http.StatusNotFound, "Video file not found on disk")
@@ -42,7 +41,7 @@ func downloadVideo(rm *repo.RepoManager) gin.HandlerFunc {
 		}
 
 		// Set headers for download
-		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.mp4\"", video.FileName))
+		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.mp4\"", video.GetFileName()))
 		c.Header("Content-Type", "application/octet-stream")
 		c.Header("Content-Length", fmt.Sprintf("%d", info.Size()))
 
@@ -81,7 +80,7 @@ func downloadTrimmedVideo(rm *repo.RepoManager) gin.HandlerFunc {
 			return
 		}
 
-		videoPath := filepath.Join(video.OwnedSpace, video.FileName)
+		videoPath := video.FilePath
 		if _, err := os.Stat(videoPath); os.IsNotExist(err) {
 			respondError(c, http.StatusNotFound, "Video file not found on disk")
 			return
@@ -124,7 +123,7 @@ func downloadTrimmedVideo(rm *repo.RepoManager) gin.HandlerFunc {
 			return
 		}
 
-		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s_trimmed.mp4\"", video.FileName))
+		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s_trimmed.mp4\"", video.GetFileName()))
 		c.Header("Content-Type", "video/mp4")
 
 		if err := cmd.Start(); err != nil {

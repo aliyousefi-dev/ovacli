@@ -3,6 +3,7 @@ package repo
 import (
 	"fmt"
 	"os"
+	"ova-cli/source/internal/datatypes"
 )
 
 func (r *RepoManager) CreateDefaultConfigFile() error {
@@ -39,8 +40,10 @@ func (r *RepoManager) CreateRepoWithUser(username, password string, useBoltDB bo
 		storageType = "boltdb"
 	}
 
+	userdata := datatypes.NewUserData(username, password)
+
 	// Create default config with desired storage type
-	if err := r.CreateDefaultConfigFileWithStorageType(username, storageType); err != nil {
+	if err := r.CreateDefaultConfigFileWithStorageType(userdata.AccountID, storageType); err != nil {
 		return err
 	}
 
@@ -50,7 +53,7 @@ func (r *RepoManager) CreateRepoWithUser(username, password string, useBoltDB bo
 	}
 
 	// Create admin user
-	if _, err := r.CreateUser(username, password, "admin"); err != nil {
+	if err := r.CreateUser(&userdata); err != nil {
 		return err
 	}
 

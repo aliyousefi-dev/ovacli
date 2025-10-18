@@ -51,10 +51,10 @@
       <div class="flex justify-start items-center gap-2">
         <div class="avatar avatar-placeholder">
           <div class="bg-neutral text-neutral-content w-4 rounded-full">
-            <span class="text-[8px]">R</span>
+            <span class="text-[8px]">{{ video.ownerAccountUsername.charAt(0).toUpperCase() }}</span>
           </div>
         </div>
-        <div class="text-xs">ali</div>
+        <div class="text-xs">{{video.ownerAccountUsername}}</div>
         <div class="text-[10px] font-light opacity-50">{{ timeSinceAdded }}</div> <!-- Make time text thinner -->
 
       </div>

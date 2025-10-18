@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"ova-cli/source/internal/datatypes"
 	"ova-cli/source/internal/logs"
 	"ova-cli/source/internal/repo"
 
@@ -49,7 +50,6 @@ var userListCmd = &cobra.Command{
 			return
 		}
 
-
 		users, err := repository.GetAllUsers()
 		if err != nil {
 			fmt.Printf("Error loading users: %v\n", err)
@@ -64,7 +64,6 @@ var userListCmd = &cobra.Command{
 			for i, u := range users {
 				userData[i] = map[string]string{
 					"Username":  u.Username,
-					"Roles":     strings.Join(u.Roles, ", "),
 					"CreatedAt": u.CreatedAt.Format("2006-01-02 15:04:05"), // Format time for JSON
 				}
 			}
@@ -89,14 +88,12 @@ var userListCmd = &cobra.Command{
 			for _, user := range users {
 				fmt.Printf("%s\t%s\t%s\n",
 					user.Username,
-					strings.Join(user.Roles, ", "),
 					user.CreatedAt.Format("2006-01-02 15:04:05"), // Consistent time format
 				)
 			}
 		}
 	},
 }
-
 
 var userAddCmd = &cobra.Command{
 	Use:   "add",
@@ -135,9 +132,10 @@ var userAddCmd = &cobra.Command{
 			return
 		}
 
+		userdata := datatypes.NewUserData(username, password)
 
 		// Create the user using the CreateUser method, which handles hashing and role assignment
-		newUser, err := repository.CreateUser(username, password, role)
+		err = repository.CreateUser(&userdata)
 		if err != nil {
 			pterm.Error.Printf("Error adding user '%s': %v\n", username, err)
 			os.Exit(1)
@@ -146,7 +144,7 @@ var userAddCmd = &cobra.Command{
 		// If --json flag is set, return user data as JSON
 		if jsonFlag {
 			// Marshal newUser directly into JSON format
-			jsonOutput, err := json.Marshal(newUser)
+			jsonOutput, err := json.Marshal(userdata)
 			if err != nil {
 				pterm.Error.Printf("Failed to marshal user data to JSON: %v\n", err)
 				os.Exit(1)
@@ -154,8 +152,8 @@ var userAddCmd = &cobra.Command{
 			fmt.Println(string(jsonOutput))
 		} else {
 			// If no --json flag, print user info in a readable format
-			pterm.Success.Printf("Successfully added user: %s\n", newUser.Username)
-			fmt.Printf("Username: %s\nRoles: %s\nCreated At: %s\n", newUser.Username, strings.Join(newUser.Roles, ", "), newUser.CreatedAt.Format("2006-01-02 15:04:05"))
+			pterm.Success.Printf("Successfully added user: %s\n", userdata.Username)
+			fmt.Printf("Username: %s\nCreated At: %s\n", userdata.Username, userdata.CreatedAt.Format("2006-01-02 15:04:05"))
 		}
 	},
 }
@@ -178,7 +176,6 @@ var userRmCmd = &cobra.Command{
 			fmt.Println("Failed to initialize repository:", err)
 			return
 		}
-
 
 		// Attempt to delete the user and get the deleted user data
 		deletedUser, err := repository.DeleteUser(username)
@@ -213,7 +210,6 @@ var userRmCmd = &cobra.Command{
 	},
 }
 
-
 var userInfoCmd = &cobra.Command{
 	Use:   "info <username>",
 	Short: "Show detailed information about a user",
@@ -233,7 +229,6 @@ var userInfoCmd = &cobra.Command{
 			return
 		}
 
-
 		user, err := repository.GetUserByUsername(username)
 		if err != nil {
 			pterm.Error.Printf("Error retrieving user '%s': %v\n", username, err)
@@ -244,7 +239,6 @@ var userInfoCmd = &cobra.Command{
 		pterm.Println(strings.Repeat("-", 30))
 
 		pterm.DefaultSection.Println("Username:", user.Username)
-		pterm.DefaultSection.Println("Roles:", strings.Join(user.Roles, ", "))
 		pterm.DefaultSection.Println("Created At:", user.CreatedAt.Format("2006-01-02 15:04:05 MST"))
 
 		if !user.LastLoginAt.IsZero() {
@@ -281,10 +275,9 @@ var userInfoCmd = &cobra.Command{
 	},
 }
 
-
 // InitCommandUsers adds user-related commands to rootCmd
 func InitCommandUsers(rootCmd *cobra.Command) {
-	
+
 	userListCmd.Flags().BoolP("json", "j", false, "Output the data in JSON format")
 	userListCmd.Flags().StringP("repository", "r", "", "Specify the repository directory")
 

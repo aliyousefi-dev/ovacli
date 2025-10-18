@@ -30,17 +30,16 @@ func getUserPlaylists(rm *repo.RepoManager) gin.HandlerFunc {
 			return
 		}
 
-		var headVideoId string
-
-		if len(user.Playlists) > 0 && len(user.Playlists[0].VideoIDs) > 0 {
-			headVideoId = user.Playlists[0].VideoIDs[0]
-		} else {
-			headVideoId = "" // or nil in JSON
-		}
-
-		// Process each playlist to add headVideoId and totalVideos
+		// Process each playlist to add its specific headVideoId and totalVideos
 		playlists := []map[string]interface{}{}
 		for _, playlist := range user.Playlists {
+			var headVideoId string
+			if len(playlist.VideoIDs) > 0 {
+				headVideoId = playlist.VideoIDs[0] // First video ID in the current playlist
+			} else {
+				headVideoId = "" // or nil in JSON
+			}
+
 			playlists = append(playlists, map[string]interface{}{
 				"title":       playlist.Title,
 				"description": playlist.Description,
