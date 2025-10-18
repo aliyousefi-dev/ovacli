@@ -1,14 +1,8 @@
-import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  OnChanges,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VideoData } from '../../../data-types/video-data'; // Assuming path
 import { VideoApiService } from '../../../services/ova-backend/video-api.service'; // Assuming path
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-similar-videos-panel', // Changed selector
@@ -20,13 +14,12 @@ import { VideoApiService } from '../../../services/ova-backend/video-api.service
 export class SimilarVideosPanelComponent implements OnChanges {
   // Changed class name
   @Input() currentVideoId!: string;
-  @Output() navigateToVideo = new EventEmitter<string>();
 
   similarVideos: VideoData[] = [];
   similarVideosLoading = false;
   similarVideosError = false;
 
-  constructor(public videoapi: VideoApiService) {}
+  constructor(public videoapi: VideoApiService, private router: Router) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['currentVideoId'] && this.currentVideoId) {
@@ -48,6 +41,14 @@ export class SimilarVideosPanelComponent implements OnChanges {
         this.similarVideosLoading = false;
         this.similarVideosError = true;
       },
+    });
+  }
+
+  navigateToVideo(videoId: string) {
+    // Navigate to the video detail page
+    this.router.navigate(['/watch', videoId], { replaceUrl: true }).then(() => {
+      // Force the page to reload after navigation
+      window.location.reload();
     });
   }
 }

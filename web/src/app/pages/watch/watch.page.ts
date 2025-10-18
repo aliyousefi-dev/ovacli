@@ -141,20 +141,6 @@ export class WatchPage implements AfterViewInit {
     });
   }
 
-  navigateToVideo(videoId: string) {
-    if (videoId === this.videoId) return;
-
-    // Reset states for new video loading
-    this.loading = true;
-    this.error = false;
-
-    this.router.navigate(['/watch', videoId], { replaceUrl: true }).then(() => {
-      this.videoId = videoId;
-      this.fetchVideo(videoId);
-      window.scrollTo(0, 0);
-    });
-  }
-
   persistTab(tab: 'tag' | 'marker') {
     localStorage.setItem('watch-selected-tab', tab);
   }

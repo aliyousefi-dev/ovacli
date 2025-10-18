@@ -5,25 +5,25 @@
     <!-- Materials -->
     <a class="btn btn-ghost" routerLink="/materials">
       <i class='bx bxs-folder bx-xs'></i>
-      <span class="hidden sm:inline">Attachments</span>
+
     </a>
 
     <!-- Version History -->
     <a class="btn btn-ghost" [routerLink]="['/version-history', videoId]">
       <i class='bx bx-git-branch bx-xs'></i>
-      <span class="hidden sm:inline">Version History</span>
+
     </a>
 
     <!-- Add to Playlist -->
     <button class="btn btn-ghost" (click)="openPlaylistModal()" aria-label="Add to Playlist">
       <i class='bx  bxs-share bx-xs'></i>
-      <span class="hidden sm:inline">Send to</span>
+
     </button>
 
     <!-- Download -->
     <button class="btn btn-ghost" (click)="downloadVideo()" aria-label="Download">
       <i class="bx bxs-download bx-xs"></i>
-      <span class="hidden sm:inline">Download</span>
+
     </button>
 
 
@@ -36,11 +36,9 @@
               ">
       <ng-container *ngIf="isSaved; else notFavoriteIcon">
         <i class="bx bxs-bookmark bx-xs"></i>
-        <span class="hidden sm:inline">Saved</span>
       </ng-container>
       <ng-template #notFavoriteIcon>
         <i class="bx bx-bookmark bx-xs"></i>
-        <span class="hidden sm:inline">Save</span>
       </ng-template>
     </button>
 
