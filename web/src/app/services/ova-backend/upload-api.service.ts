@@ -11,14 +11,8 @@ export class UploadApiService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Upload a video file to a specific folder with progress tracking
-   * @param folderPath Folder path relative to repo root (e.g., "movies/comedy")
-   * @param file The video file (File object from input)
-   */
-  uploadVideo(folderPath: string, file: File): Observable<HttpEvent<any>> {
+  uploadVideo(file: File): Observable<HttpEvent<any>> {
     const formData = new FormData();
-    formData.append('folder', folderPath);
     formData.append('file', file);
 
     const req = new HttpRequest('POST', `${this.baseUrl}/upload`, formData, {

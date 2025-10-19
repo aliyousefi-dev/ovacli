@@ -6,30 +6,14 @@
 
 # Overview
 
-online video archive (OVA) designed for professional content creators and teams. It enables seamless collaboration, video sharing, and media asset management within a secure, private infrastructure.
-
-it designed for being a library of videos.
-
-It ensures efficient workflows for uploading, organizing, and accessing videos in real time, all within your local network.
+online video archive (OVA) is A local online Database for mp4 videos and providing a centralized archive solution for MP4 videos
+It offers features like searchable tags, collections, team collaboration, and version control, making it easy to store, manage, and access video content across teams.
 
 ## Features
 
 - Stream Watching
 - Searchable with tags
-- Playlist support
+- Collection support
 - Search suggestions
 - Team Group Support
 - Video Version Control
-
-what you thinking about the switch between workspaces.
-we need first index all videos in that format.
-it index them with the root user.
-
-define a root user ..
-
-i thinking about a feature that is mode board. its like the pure ref.
-but we put all images on that canvas and we can move.
-
-its a block that name is mood board.
-and i thinking connect the some node base like the videos to that mood board. and we can play that videos.
-

@@ -30,3 +30,5 @@ here we demonstrate what features we want to add to next versions.
 - Data Range for Global Search
 - Using Steper for Video Upload : Showing State (Upload / Processing / Complete)
 - Send Task for Other Users
+- Support Attachment to Video (Files)
+- Define Permissions for user (Read/Upload)

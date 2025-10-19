@@ -1,50 +1,157 @@
-<div class="space-y-4 p-5">
-    <h2 class="text-2xl font-semibold">Upload a New Video</h2>
+<div class="space-y-6 p-10">
+    <h2 class="text-3xl font-bold">Video Uploader</h2>
 
-    <!-- Drag & Drop Zone -->
-    <div class="border-2 border-dashed border-primary rounded-lg p-8 text-center cursor-pointer bg-base-100 hover:bg-base-200"
-        (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)"
-        [ngClass]="{ 'bg-primary/10': dragging }" (click)="fileInput.click()">
-        <p class="text-lg mb-2">Drag and drop a video file here</p>
-        <p class="text-sm opacity-60">or click to choose a file</p>
-        <input type="file" accept="video/mp4" hidden #fileInput (change)="onFileSelected($event)" />
+    <div class="border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 ease-in-out cursor-pointer"
+        [ngClass]="{
+            'border-primary bg-primary/10': dragging,
+            'border-base-content/20 bg-base-200 hover:bg-base-300': !dragging
+        }" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)"
+        (click)="fileInput.click()">
+
+        <i class='bx bx-cloud-upload bx-lg'></i>
+
+        <p class="text-lg font-medium mb-1">
+            Drag and drop videos here
+        </p>
+        <p class="text-sm opacity-70">
+            (Only MP4 videos are allowed) or click to browse
+        </p>
+
+        <input type="file" accept="video/mp4" multiple hidden #fileInput (change)="onFileSelected($event)" />
     </div>
 
+    <div class="flex justify-center gap-2">
 
-    <div *ngIf="selectedFile" class="text-sm opacity-70">
-        Selected: <strong>{{ selectedFile.name }}</strong>
-    </div>
+        <button class="btn btn-xs sm:btn-md" [disabled]="pendingFiles.length === 0" (click)="uploadAll()">
+            <i class='bx bxs-cloud-upload bx-xs'></i>
+            <span>Upload All ({{ pendingFiles.length }})</span>
+        </button>
 
-    <!-- ✅ Show currently selected folder -->
-    <div class="text-sm text-primary-content opacity-80 mt-1">
-        Selected Space: <strong>{{ selectedFolder === '' ? 'Root' : selectedFolder }}</strong>
-    </div>
-
-    <!-- Upload Progress Bar -->
-    <div *ngIf="uploading" class="mt-3">
-        <div class="w-full h-4 bg-base-200 rounded overflow-hidden">
-            <div class="h-full bg-primary transition-all duration-300" [style.width.%]="progress">
-            </div>
-        </div>
-        <p class="text-sm text-center mt-1">{{ progress }}%</p>
-    </div>
-
-    <!-- Upload Button -->
-    <div class="pt-2">
-        <button class="btn btn-primary w-full" [disabled]="!selectedFile || uploading" (click)="onSubmit()">
-            {{ uploading ? 'Uploading...' : 'Upload Video' }}
+        <button class="btn btn-xs sm:btn-md" [disabled]="selectedFiles.length === 0" (click)="clearAll()">
+            <i class='bx bx-x bx-xs'></i>
+            <span>Clear List</span>
         </button>
     </div>
 
-    <!-- Folder Selector -->
-    <div>
-
-
-
-        <label class="label text-sm font-medium mb-1">Select a Space</label>
-        <app-space-tree-view [currentFolder]="selectedFolder" (folderSelected)="onFolderSelected($event)">
-        </app-space-tree-view>
-
-
+    @if (selectedFiles.length > 0) {
+    <div class="flex flex-col items-end w-full">
+        <span class="text-sm font-semibold opacity-80 mb-2">
+            Total Uploads: {{ totalUploadProgress }}%
+        </span>
+        <progress class="progress transition-all duration-300  w-full" [value]="totalUploadProgress" max="100">
+        </progress>
     </div>
+    }
+
+    @if (pendingFiles.length > 0) {
+    <ul class="list bg-base-100 rounded-box shadow-md">
+
+
+        <li class="p-4 pb-2 text-xs tracking-wide">Pending Uploads ({{ pendingFiles.length }})</li>
+
+        @for (uploadFile of pendingFiles; track $index) {
+        <li class="list-row">
+
+
+            <div class="flex-1 min-w-0">
+                <span class="font-semibold text-ellipsis overflow-hidden whitespace-nowrap block">{{
+                    uploadFile.file.name }}</span>
+                <span class="text-xs opacity-70">{{ formatSize(uploadFile.file.size) }}</span>
+
+            </div>
+
+            <div>
+                <div class="badge badge-xs p-2 w-20 " [ngClass]="{
+                                'badge-warning': uploadFile.status === 'PENDING',
+                                'badge-info': uploadFile.status === 'UPLOADING',
+                                'badge-error': uploadFile.status === 'FAILED'
+                            }">
+                    {{ uploadFile.status }}
+                </div>
+            </div>
+
+            @if (uploadFile.status === 'UPLOADING') {
+            <div class=" flex gap-2">
+                <span>{{ uploadFile.progress }}%</span>
+            </div>
+            }
+
+            <button class="btn btn-ghost btn-sm btn-circle" (click)="removeFile(uploadFile)">
+                <i class='bx bx-x bx-xs'></i>
+            </button>
+
+
+        </li>
+        }
+
+    </ul>
+    }
+
+    @if (processingFiles.length > 0) {
+    <ul class="list bg-base-100 rounded-box shadow-md">
+
+        <li class="p-4 pb-2 text-xs tracking-wide">
+            <div class="inline-grid *:[grid-area:1/1] mr-2">
+                <div class="status status-info animate-ping"></div>
+                <div class="status status-info"></div>
+            </div>
+            Processing ({{ processingFiles.length }})
+        </li>
+
+
+        @for (uploadFile of processingFiles; track $index) {
+        <li class="list-row">
+
+            <div class="flex-1 min-w-0">
+                <span class="font-semibold text-ellipsis overflow-hidden whitespace-nowrap block">{{
+                    uploadFile.file.name }}</span>
+                <span class="text-xs opacity-70">{{ formatSize(uploadFile.file.size) }}</span>
+            </div>
+
+            <div>
+                <div class="badge badge-xs w-20  p-2 badge-info">PROCESSING</div>
+            </div>
+
+            <button class="btn btn-ghost  btn-sm btn-circle" (click)="removeFile(uploadFile)">
+                <i class='bx bx-x bx-xs'></i>
+            </button>
+        </li>
+        }
+
+    </ul>
+    }
+
+    @if (completedFiles.length > 0) {
+    <ul class="list bg-base-100 rounded-box shadow-md">
+
+        <li class="p-4 pb-2 text-xs tracking-wide">Done ({{ completedFiles.length }})</li>
+
+        @for (uploadFile of completedFiles; track $index) {
+        <li class="list-row">
+
+            <div class="flex-1 min-w-0">
+                <span class="font-semibold text-ellipsis overflow-hidden whitespace-nowrap block">{{
+                    uploadFile.file.name }}</span>
+                <span class="text-xs opacity-70">{{ formatSize(uploadFile.file.size) }}</span>
+            </div>
+
+            <div>
+                <div class="badge badge-xs w-20  p-2 badge-success">COMPLETED</div>
+            </div>
+
+            <button class="btn btn-ghost  btn-sm btn-circle" (click)="removeFile(uploadFile)">
+                <i class='bx bx-x bx-xs'></i>
+            </button>
+        </li>
+        }
+
+    </ul>
+    }
+
+    @if (selectedFiles.length === 0) {
+    <div class="alert mt-6">
+        <i class='bx bx-info-circle bx-xs'></i>
+        <span>No files selected. Drag and drop or click 'Choose Files' to start.</span>
+    </div>
+    }
 </div>

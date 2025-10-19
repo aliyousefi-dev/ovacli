@@ -5,7 +5,6 @@ import { GlobalPage } from './pages/global/global.page';
 import { HistoryPage } from './pages/history/history.page';
 import { LibraryPage } from './pages/library/library.page';
 import { WatchPage } from './pages/watch/watch.page';
-import { DashboardPage } from './pages/dashboard/dashboard.page';
 import { CreateSpacePage } from './pages/create-space/create-space.page';
 import { CreateTeamSpacePage } from './pages/create-team-space/create-team-space.page';
 import { JoinTeamSpacePage } from './pages/join-team-space/join-team-space.page';
@@ -22,6 +21,7 @@ import { PlaylistsPage } from './pages/playlists/playlists.page';
 import { MaterialsPage } from './pages/materials/materials.page';
 import { VersionHistoryPage } from './pages/version-history/version-history.page';
 import { PlaylistContentPage } from './pages/playlists-content/playlist-content.page';
+import { StatsPage } from './pages/stats/stats.page';
 
 export const MainRoutes: Routes = [
   {
@@ -37,6 +37,11 @@ export const MainRoutes: Routes = [
     data: { reuse: true },
   },
   {
+    path: 'stats',
+    component: StatsPage,
+    canActivate: [AuthGuard],
+  },
+  {
     path: 'history',
     component: HistoryPage,
     canActivate: [AuthGuard],
@@ -50,11 +55,6 @@ export const MainRoutes: Routes = [
   {
     path: 'watch/:videoId',
     component: WatchPage,
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'dashboard',
-    component: DashboardPage,
     canActivate: [AuthGuard],
   },
   {

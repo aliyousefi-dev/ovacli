@@ -5,11 +5,12 @@ import { Location } from '@angular/common';
 
 import { UtilsService } from '../../../services/utils.service';
 import { AuthApiService } from '../../../services/ova-backend/auth-api.service';
+import { SearchBarComponent } from '../../utility/search-bar/search-bar.component';
 
 @Component({
   selector: 'app-top-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, SearchBarComponent],
   templateUrl: './top-navbar.component.html',
 })
 export class TopNavbarComponent implements OnInit {

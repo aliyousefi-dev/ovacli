@@ -3,7 +3,10 @@
 <div class="flex flex-col h-full bg-base-100 overflow-hidden border-r-1 border-r-base-300">
 
   <div class="flex items-center p-5">
-    <div class="text-md">Online Video Archive</div>
+    <div class="flex gap-2 items-center">
+      <i class='bx bxs-data bx-xs'></i>
+      <span class="font-semibold">OVA Platform</span>
+    </div>
   </div>
 
 
@@ -23,13 +26,11 @@
         </a>
       </li>
 
-
-
       <li>
         <a routerLink="/search" routerLinkActive="menu-active" [routerLinkActiveOptions]="{ exact: true }">
           <i class='bx bx-search bx-xs'></i>
           <span>Search</span>
-          <kbd class="kbd kbd-xs opacity-50"><span>⌘</span>K</kbd>
+          <kbd class="kbd kbd-xs opacity-50 text-base-content"><span>⌘</span>K</kbd>
         </a>
       </li>
 
@@ -37,6 +38,13 @@
         <a routerLink="/upload" routerLinkActive="menu-active" [routerLinkActiveOptions]="{ exact: true }">
           <i class='bx bxs-plus-circle bx-xs'></i>
           <span>Upload</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/stats" routerLinkActive="menu-active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class='bx bx-stats bx-xs'></i>
+          <span>Stats</span>
         </a>
       </li>
 
@@ -57,13 +65,6 @@
         </a>
       </li>
 
-      <li>
-        <a routerLink="/tasks" routerLinkActive="menu-active" [routerLinkActiveOptions]="{ exact: true }">
-          <i class='bx bxs-checkbox-checked bx-xs'></i>
-          <span>Tasks</span>
-        </a>
-      </li>
-
       <li> <a routerLink="/saved" routerLinkActive="menu-active">
           <i class='bx bxs-bookmark bx-xs'></i>
           <span>Saved</span>
@@ -71,7 +72,7 @@
       </li>
       <li><a routerLink="/history" routerLinkActive="menu-active">
           <i class="bx bx-history bx-xs"></i>
-          <span>History</span>
+          <span>Recent</span>
         </a>
       </li>
       <li><a routerLink="/playlists" routerLinkActive="menu-active">
@@ -80,8 +81,6 @@
         </a>
       </li>
 
-      <li class="menu-title">Your Teams</li>
-
     </div>
   </div>
 
@@ -89,7 +88,7 @@
 
     <!-- Username and Dropdown Icon -->
     <div class="dropdown dropdown-top dropdown-end">
-      <div tabindex="0" role="button" class="btn btn-outline mx-5 h-15 flex justify-between">
+      <div tabindex="0" role="button" class="btn mx-5 h-15 flex justify-between">
         <!-- Avatar (DaisyUI) -->
 
         <div class="flex gap-3">

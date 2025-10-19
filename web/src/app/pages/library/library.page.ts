@@ -16,9 +16,7 @@ import { FormsModule } from '@angular/forms';
 
 import { SpaceHeaderComponent } from './panels/space-header/space-header.component';
 import { VideoListComponent } from './panels/video-list/video-list.component';
-import { MemberListComponent } from './panels/member-list/member-list.component';
 import { SpaceSettingsComponent } from './panels/space-settings/space-settings.component';
-import { SpaceUploadComponent } from './panels/space-upload/space-upload.component';
 
 @Component({
   selector: 'app-video',
@@ -26,11 +24,9 @@ import { SpaceUploadComponent } from './panels/space-upload/space-upload.compone
   imports: [
     SpaceHeaderComponent,
     VideoListComponent,
-    MemberListComponent,
     SpaceSettingsComponent,
     FormsModule,
     CommonModule,
-    SpaceUploadComponent,
   ],
   templateUrl: './library.page.html',
 })
