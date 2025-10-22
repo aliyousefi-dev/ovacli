@@ -10,6 +10,8 @@
 </div>
 
 
-<div id="chart">
-    <apx-chart [labels]="chartOptions.labels"></apx-chart>
+<div id="chart" class="text-base-content">
+    <apx-chart [series]="userChart.series!" [chart]="userChart.chart!" [dataLabels]="userChart.dataLabels!"
+        [stroke]="userChart.stroke!">
+    </apx-chart>
 </div>

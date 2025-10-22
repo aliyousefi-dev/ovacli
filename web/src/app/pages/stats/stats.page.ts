@@ -1,19 +1,16 @@
 import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ChartComponent } from 'ng-apexcharts';
 import { NgApexchartsModule } from 'ng-apexcharts';
 
-import {
-  ApexNonAxisChartSeries,
-  ApexResponsive,
-  ApexChart,
-} from 'ng-apexcharts';
+import { ApexChart, ApexAxisChartSeries, ApexDataLabels } from 'ng-apexcharts';
 
+// Use 'string[]' for labels instead of 'any' for better type safety
 export type ChartOptions = {
-  series: ApexNonAxisChartSeries;
+  series: ApexAxisChartSeries;
   chart: ApexChart;
-  responsive: ApexResponsive[];
-  labels: any;
+  stroke: ApexStroke;
+  xaxis: ApexXAxis;
+  dataLabels: ApexDataLabels;
 };
 
 @Component({
@@ -23,30 +20,31 @@ export type ChartOptions = {
   templateUrl: './stats.page.html',
 })
 export class StatsPage {
-  @ViewChild('chart') chart!: ChartComponent;
-  public chartOptions: Partial<ChartOptions>;
+  public userChart: Partial<ChartOptions>;
 
   constructor() {
-    this.chartOptions = {
-      series: [44, 55, 13, 43, 22],
-      chart: {
-        width: 380,
-        type: 'pie',
-      },
-      labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
-      responsive: [
+    // The data assigned here MUST match the ChartOptions structure exactly
+    this.userChart = {
+      series: [
         {
-          breakpoint: 480,
-          options: {
-            chart: {
-              width: 200,
-            },
-            legend: {
-              position: 'bottom',
-            },
-          },
+          name: 'TotalVideos',
+          data: [10, 41, 35, 51, 49, 62, 69, 91, 148],
+        },
+        {
+          name: 'TotalUsers',
+          data: [2, 3, 2, 5, 10, 20, 30, 50, 60],
         },
       ],
+      chart: {
+        width: 500,
+        type: 'area',
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      stroke: {
+        curve: 'smooth',
+      },
     };
   }
 }
