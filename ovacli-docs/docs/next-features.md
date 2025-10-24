@@ -33,3 +33,5 @@ here we demonstrate what features we want to add to next versions.
 - Support Attachment to Video (Files)
 - Define Permissions for user (Read/Upload)
 - Searchable (AccountID / Username / VideoID / Video Tags / Collection )
+- show elapsed time after indexing
+- show estimated time after cooking

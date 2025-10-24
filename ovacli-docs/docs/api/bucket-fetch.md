@@ -8,18 +8,18 @@ This feature on the api lets you to fetch a bucket of data. with this feature yo
 
 Here is a snapshot of bucket fetch data:
 
-```
+```json
 {
-  "data": {
-    "bucketContentSize": 15,
-    "currentBucket": 1,
-    "totalBuckets": 41,
-    "totalVideos": 610,
-    "videoIds": [
-      "e9a82f95729c2c4d244dafb67c7964d390878ce4ff7388092741e9774b2bac5a"
-    ]
-  },
-  "message": "Latest videos retrieved successfully",
-  "status": "success"
+	"data": {
+		"bucketContentSize": 15,
+		"currentBucket": 1,
+		"totalBuckets": 41,
+		"totalVideos": 610,
+		"videoIds": [
+			"e9a82f95729c2c4d244dafb67c7964d390878ce4ff7388092741e9774b2bac5a"
+		]
+	},
+	"message": "Latest videos retrieved successfully",
+	"status": "success"
 }
 ```

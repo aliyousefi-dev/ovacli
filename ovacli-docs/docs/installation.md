@@ -17,3 +17,11 @@ Get the latest version from the [GitHub releases page](https://github.com/aliyou
 ## Adding to Environment Variable
 
 you need to add the ovacli to your environment variable.
+
+## Test Installation
+
+To test if the installation was successful, run the following command in your terminal:
+
+```
+ovacli version
+```

@@ -4,23 +4,11 @@
 - [architecture](docs/architecture.md)
 - [account-id](docs/account-id.md)
 - [next-features](docs/next-features.md)
-- [repository](docs/repository.md)
-- [self-certs](docs/self-certs.md)
-- [https-configs](docs/https-configs.md)
+- [commands](docs/commands.md)
+- [configs](docs/configs.md)
 - [changelog](docs/changelog.md)
 - [process-queue](docs/process-queue.md)
-- [configs](docs/configs.md)
-- [commands](docs/commands.md)
-- ### micro-service
-  - [download-server](docs/micro-service/download-server.md)
-  - [stream-server](docs/micro-service/stream-server.md)
-  - [trim-server](docs/micro-service/trim-server.md)
-  - [upload-server](docs/micro-service/upload-server.md)
-- ### features
-  - [similar-videos](docs/features/similar-videos.md)
-- ### api
-  - [rest-api](docs/api/rest-api.md)
-  - [bucket-fetch](docs/api/bucket-fetch.md)
+- [repository](docs/repository.md)
 - ### go-refrences
   - [repo-manager](docs/go-refrences/repo-manager.md)
   - [storage-type](docs/go-refrences/storage-type.md)
@@ -29,7 +17,20 @@
     - [spacedata](docs/go-refrences/datatypes/spacedata.md)
     - [userdata](docs/go-refrences/datatypes/userdata.md)
     - [videodata](docs/go-refrences/datatypes/videodata.md)
+- ### micro-service
+  - [download-server](docs/micro-service/download-server.md)
+  - [stream-server](docs/micro-service/stream-server.md)
+  - [trim-server](docs/micro-service/trim-server.md)
+  - [upload-server](docs/micro-service/upload-server.md)
+- ### api
+  - [response-types](docs/api/response-types.md)
+  - [rest-api](docs/api/rest-api.md)
+  - [bucket-fetch](docs/api/bucket-fetch.md)
+- ### ssl
+  - [https-configs](docs/ssl/https-configs.md)
+  - [self-certs](docs/ssl/self-certs.md)
 - ### technical
+  - [similar-videos](docs/technical/similar-videos.md)
   - [api-endpoints](docs/technical/api-endpoints.md)
   - [authentication](docs/technical/authentication.md)
   - [checksum](docs/technical/checksum.md)

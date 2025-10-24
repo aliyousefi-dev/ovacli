@@ -8,7 +8,7 @@ When you create a ova repository it create an `.ova-repo` folder inside that fol
 
 you can see the default port and ip and configs that ova create automatically them.
 
-```
+```json
 {
 	"version": "1.0.0",
 	"serverHost": "0.0.0.0",

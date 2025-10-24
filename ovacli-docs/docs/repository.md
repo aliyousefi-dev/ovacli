@@ -2,6 +2,10 @@
 
 when you doing the `ovacli init .` it create an `.ova-repo folder` inside that that keep every thing needed for the project.
 
+you need to create a `root disk`.
+and then you can attach other disks to it.
+in attached disk it create `.ova-repo-<disk-id>`
+
 ---
 
 ## How it Find and Index Videos

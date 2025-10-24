@@ -6,14 +6,13 @@
 
 # Overview
 
-online video archive (OVA) is A local online Database for mp4 videos and providing a centralized archive solution for MP4 videos
-It offers features like searchable tags, collections, team collaboration, and version control, making it easy to store, manage, and access video content across teams.
+Ova is an online database for storing and managing MP4 videos. It provides easy access, powerful search features, and collaboration tools to help teams efficiently organize and work with video content.
 
 ## Features
 
-- Stream Watching
-- Searchable with tags
-- Collection support
-- Search suggestions
-- Team Group Support
-- Video Version Control
+- Stream videos directly from the database
+- Search with tags for quick video discovery
+- Organize into collections for better management
+- Smart search suggestions for improved results
+- Team collaboration support within the database
+- Version control to track video updates
