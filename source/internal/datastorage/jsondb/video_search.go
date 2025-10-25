@@ -119,7 +119,7 @@ func (s *JsonDB) GetSimilarVideos(videoID string) ([]datatypes.VideoData, error)
 // SearchVideos searches videos based on the provided criteria.
 // It returns a slice of matching videos.
 // Returns an error if no meaningful search criteria are provided.
-func (s *JsonDB) SearchVideos(criteria datatypes.VideoSearchCriteria) ([]datatypes.VideoData, error) {
+func (s *JsonDB) SearchVideos(criteria datatypes.VideoSearchCriteria) ([]string, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -138,8 +138,8 @@ func (s *JsonDB) SearchVideos(criteria datatypes.VideoSearchCriteria) ([]datatyp
 		return nil, fmt.Errorf("failed to load videos for search: %w", err)
 	}
 
-	// Use a map to track videos already added by ID, to avoid duplicates
-	resultsMap := make(map[string]datatypes.VideoData)
+	// Use a map to track video IDs
+	resultsMap := make(map[string]struct{})
 
 	// Helper function to apply rating and duration filters
 	filterExtras := func(video datatypes.VideoData) bool {
@@ -154,7 +154,7 @@ func (s *JsonDB) SearchVideos(criteria datatypes.VideoSearchCriteria) ([]datatyp
 		for _, video := range videos {
 			if strings.Contains(strings.ToLower(video.GetFileName()), query) {
 				if filterExtras(video) {
-					resultsMap[video.VideoID] = video
+					resultsMap[video.VideoID] = struct{}{}
 				}
 			}
 		}
@@ -176,7 +176,7 @@ func (s *JsonDB) SearchVideos(criteria datatypes.VideoSearchCriteria) ([]datatyp
 				}
 			}
 			if matchesTags && filterExtras(video) {
-				resultsMap[video.VideoID] = video
+				resultsMap[video.VideoID] = struct{}{}
 			}
 		}
 	}
@@ -185,15 +185,15 @@ func (s *JsonDB) SearchVideos(criteria datatypes.VideoSearchCriteria) ([]datatyp
 	if query == "" && len(tags) == 0 {
 		for _, video := range videos {
 			if filterExtras(video) {
-				resultsMap[video.VideoID] = video
+				resultsMap[video.VideoID] = struct{}{}
 			}
 		}
 	}
 
-	// Convert map to slice
-	var results []datatypes.VideoData
-	for _, video := range resultsMap {
-		results = append(results, video)
+	// Convert map keys (video IDs) to slice
+	var results []string
+	for videoID := range resultsMap {
+		results = append(results, videoID)
 	}
 
 	return results, nil

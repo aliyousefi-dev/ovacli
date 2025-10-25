@@ -53,3 +53,45 @@ and limit the suggsion results.
 and adding a view all
 
 when delete a user .. it delete completly her. also the content that he shared.
+
+the searhcing what gives us ?
+just video ids ? yes it give us just video ids.
+
+we have the gallery fetcher
+and it fetch the content based the route
+
+we have two type of route . one is the playlist content that need parameters
+and another is the like recent or global that don't need any parameters.
+
+now we need to add another route that is search route that need multiple paramters . like query , tags , bucket
+
+i thikning abuot make the centerla fetch separet function
+
+- fetch serach
+- fetch recents
+- fetch global
+- fetch saved
+- fetch playlist content
+
+then we have two type of ui (gallery-page , gallery-infinite)
+tehy are fetch based the routes. but i thinking the maybe there is a better approace
+like make the fetch logics outside of them like this
+for the gallery page having this output funcitons
+
+- OnPageSelect()
+- @input Video Datas []
+- @Total Videos
+
+and for the Inifinite Fetch
+
+- OnScrollHit()
+- @TotalVideso
+- Videos Data[]
+
+for example the paginations have a fetcher funciton with
+and an initialBucket
+
+also the infinite have this
+
+but i thinking about this fetcher must be something that same like interface
+what doing with that fetchre that are complext ?

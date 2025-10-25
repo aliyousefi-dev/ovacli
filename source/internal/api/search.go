@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 
 	apitypes "ova-cli/source/internal/api-types"
@@ -11,14 +12,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// SearchRequest represents the structure of the incoming search request.
-type SearchRequest struct {
-	Query       string   `json:"query"`
-	Tags        []string `json:"tags"`
-	MinRating   float64  `json:"minRating"`
-	MaxDuration int      `json:"maxDuration"`
-}
-
 // RegisterSearchRoutes adds the /search endpoint to the router group.
 func RegisterSearchRoutes(rg *gin.RouterGroup, repoManager *repo.RepoManager) {
 	rg.POST("/search", searchVideos(repoManager))
@@ -27,7 +20,7 @@ func RegisterSearchRoutes(rg *gin.RouterGroup, repoManager *repo.RepoManager) {
 // searchVideos handles POST /search with a JSON body containing search criteria.
 func searchVideos(repoManager *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var req SearchRequest
+		var req apitypes.SearchRequest
 		if err := c.ShouldBindJSON(&req); err != nil {
 			apitypes.RespondError(c, http.StatusBadRequest, "Invalid JSON payload")
 			return
@@ -46,17 +39,45 @@ func searchVideos(repoManager *repo.RepoManager) gin.HandlerFunc {
 			return
 		}
 
-		results, err := repoManager.SearchVideos(criteria)
+		// Get pagination params
+		currentBucket := 0
+		bucketSize := repoManager.GetConfigs().MaxBucketSize // Adjust to your preferred bucket size
+		if bucket, ok := c.GetQuery("bucket"); ok {
+			// Parse and handle the bucket pagination if provided in the request query
+			currentBucketParam, err := strconv.Atoi(bucket)
+			if err != nil {
+				apitypes.RespondError(c, http.StatusBadRequest, "Invalid bucket parameter")
+				return
+			}
+			currentBucket = currentBucketParam
+		}
+
+		// Search with pagination (bucket logic)
+		results, err := repoManager.SearchVideosWithBuckets(criteria, currentBucket, bucketSize)
 		if err != nil {
 			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to search videos")
 			return
 		}
 
-		apitypes.RespondSuccess(c, http.StatusOK, gin.H{
-			"query":      req.Query,
-			"tags":       req.Tags,
-			"results":    results,
-			"totalCount": len(results),
-		}, "Search completed successfully")
+		// Calculate total buckets
+		totalVideos := len(results) // Assuming `results` contains video IDs
+		totalBuckets := (totalVideos + bucketSize - 1) / bucketSize
+
+		// Create the response with pagination
+		response := apitypes.SearchResponse{
+			Criteria: apitypes.SearchCriteria{
+				Query: req.Query,
+				Tags:  req.Tags,
+			},
+			Result: apitypes.VideoBucketResponse{
+				VideoIDs:          results, // Video IDs only
+				TotalVideos:       totalVideos,
+				CurrentBucket:     currentBucket,
+				BucketContentSize: bucketSize,
+				TotalBuckets:      totalBuckets,
+			},
+		}
+		// Respond with the paginated search result
+		apitypes.RespondSuccess(c, http.StatusOK, response, "Search completed successfully")
 	}
 }

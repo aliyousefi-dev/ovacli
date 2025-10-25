@@ -41,7 +41,7 @@ type DiskDataStorage interface {
 	GetVideoByID(id string) (*datatypes.VideoData, error)
 	GetVideoByPath(path string) (*datatypes.VideoData, error)
 
-	SearchVideos(criteria datatypes.VideoSearchCriteria) ([]datatypes.VideoData, error)
+	SearchVideos(criteria datatypes.VideoSearchCriteria) ([]string, error)
 	GetAllVideos() ([]datatypes.VideoData, error)
 	GetSimilarVideos(videoID string) ([]datatypes.VideoData, error)
 
