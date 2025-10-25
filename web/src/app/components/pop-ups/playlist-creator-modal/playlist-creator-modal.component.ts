@@ -12,7 +12,7 @@ import { AfterViewInit } from '@angular/core';
   imports: [CommonModule, FormsModule],
   templateUrl: './playlist-creator-modal.component.html',
 })
-export class PlaylistCreatorModalComponent implements AfterViewInit {
+export class PlaylistCreatorModal implements AfterViewInit {
   @ViewChild('playlistInput') playlistInput!: HTMLInputElement;
   isVisible = false;
   playlistName = '';

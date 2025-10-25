@@ -24,33 +24,32 @@ some one create project and then allocate the teams to that .
 
 project give more abilility like QC (Quality Control) and Auto Publish and also Version Control.
 
-
 ok now i thinking about the recent and saved api.
 
-we need also thinking about the searching api how we can doing this also ? 
+we need also thinking about the searching api how we can doing this also ?
 
 also supporting hte context menu can be good for pc and desktop.
 
+i need thinking about the saved and watched .
+i think its good to bundle them with batch ?
 
-i need thinking about the saved and watched . 
-i think its good to bundle them with batch ? 
+i Thinking for global as
+what af
 
-
-i Thinking for global as 
-what af 
-
-we can sort that localy but the problem is it using the bucket 
+we can sort that localy but the problem is it using the bucket
 and it not have a global sorting.
 
-we need some how support global sorting. 
+we need some how support global sorting.
 
-sort them based the uploadtime ? 
+sort them based the uploadtime ?
 
-i think the 
+i think the
 
-we need to update the search suggsion to support other things liek video or tags. 
-also contatin the video title with the video id . 
+we need to update the search suggsion to support other things liek video or tags.
+also contatin the video title with the video id .
 
-and limit the suggsion results. 
+and limit the suggsion results.
 
-and adding a view all 
+and adding a view all
+
+when delete a user .. it delete completly her. also the content that he shared.

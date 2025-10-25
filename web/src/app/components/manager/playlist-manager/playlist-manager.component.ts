@@ -4,7 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 
 import { PlaylistAPIService } from '../../../services/ova-backend-service/playlist-api.service';
 import { PlaylistGridComponent } from '../../containers/playlists-view/playlists-view.component';
-import { PlaylistCreatorModalComponent } from '../../pop-ups/playlist-creator-modal/playlist-creator-modal.component';
+import { PlaylistCreatorModal } from '../../pop-ups/playlist-creator-modal/playlist-creator-modal.component';
 import { ConfirmModalComponent } from '../../pop-ups/confirm-modal/confirm-modal.component';
 import { UtilsService } from '../../../services/utils.service';
 import { PlaylistSummary } from '../../../services/ova-backend-service/api-responses/playlist-response';
@@ -16,15 +16,15 @@ import { PlaylistSummary } from '../../../services/ova-backend-service/api-respo
     CommonModule,
     RouterModule,
     PlaylistGridComponent,
-    PlaylistCreatorModalComponent,
+    PlaylistCreatorModal,
     ConfirmModalComponent,
   ],
   templateUrl: './playlist-manager.component.html',
 })
 export class PlaylistManagerComponent implements OnInit {
   @ViewChild(ConfirmModalComponent) confirmModal!: ConfirmModalComponent;
-  @ViewChild(PlaylistCreatorModalComponent)
-  createPlaylistModal!: PlaylistCreatorModalComponent;
+  @ViewChild(PlaylistCreatorModal)
+  createPlaylistModal!: PlaylistCreatorModal;
 
   manageMode = false;
   username: string | null = null;
@@ -109,7 +109,10 @@ export class PlaylistManagerComponent implements OnInit {
   }
 
   OnCreatePlaylistButton(): void {
-    this.createPlaylistModal.openModal();
+    const modal: any = document.getElementById('playlist_modal');
+    if (modal && typeof modal.showModal === 'function') {
+      modal.showModal();
+    }
   }
 
   onPlaylistCreated(title: string): void {

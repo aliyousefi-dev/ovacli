@@ -46,45 +46,44 @@
   <div class="flex flex-col gap-2 p-4 mt-2 rounded-lg shadow-sm hover:shadow-md bg-base-100 z-20"
     (click)="$event.stopPropagation()">
 
-    <div class="flex justify-between items-center text-xs mt-1">
 
-      <div class="flex justify-start items-center gap-2">
-        <div class="avatar avatar-placeholder">
-          <div class="bg-neutral text-neutral-content w-4 rounded-full">
-            <span class="text-[8px]">{{ video.ownerAccountUsername.charAt(0).toUpperCase() }}</span>
-          </div>
+    <div class="flex items-center gap-3">
+
+
+      <div class="avatar avatar-placeholder">
+        <div class="bg-base-300 w-12 rounded-full">
+          <span class="text-sm">{{ video.ownerAccountUsername.charAt(0).toUpperCase() }}</span>
         </div>
-        <div class="text-xs">{{video.ownerAccountUsername}}</div>
-        <div class="text-[10px] font-light opacity-50">{{ timeSinceAdded }}</div> <!-- Make time text thinner -->
-
       </div>
-
-      <div class="dropdown dropdown-end" (click)="$event.stopPropagation()">
-        <div tabindex="0" role="button" class="btn btn-xs btn-ghost z-30">
-          <i class='bx bx-dots-horizontal bx-xs'></i>
-        </div>
-        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-44 z-40">
-          <li><a (click)="download($event)">Download</a></li>
-          <li>
-            <a (click)="toggleSaved($event)">
-              {{ isSaved ? "UnSave" : "Save" }}
-            </a>
-          </li>
-          <li><a (click)="addToPlaylist($event)">Send to</a></li>
-        </ul>
-      </div>
-    </div>
-
-
-    <div class="flex items-start justify-between">
-
 
       <div class="flex-1">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center gap-2">
+            <div>{{video.ownerAccountUsername}}</div>
+            <div class="text-[10px] font-light">{{ timeSinceAdded }}</div> <!-- Make time text thinner -->
+          </div>
+          <div class="dropdown dropdown-end" (click)="$event.stopPropagation()">
+            <div tabindex="0" role="button" class="btn btn-xs btn-ghost z-30">
+              <i class='bx bx-dots-horizontal bx-xs'></i>
+            </div>
+            <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-44 z-40">
+              <li><a (click)="download($event)">Download</a></li>
+              <li>
+                <a (click)="toggleSaved($event)">
+                  {{ isSaved ? "UnSave" : "Save" }}
+                </a>
+              </li>
+              <li><a (click)="addToPlaylist($event)">Send to</a></li>
+            </ul>
+          </div>
+        </div>
+
         <h2 class="font-semibold break-all text-ellipsis">
           {{ truncateTitle(video.fileName, 30) }}
         </h2>
 
       </div>
+
 
 
     </div>
