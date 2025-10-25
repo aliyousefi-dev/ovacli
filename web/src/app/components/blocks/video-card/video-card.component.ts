@@ -7,6 +7,7 @@ import {
   ViewChild,
   ElementRef,
   AfterViewInit,
+  OnInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
@@ -35,7 +36,7 @@ import { UtilsService } from '../../../services/utils.service';
     TagLinkComponent,
   ],
 })
-export class VideoCardComponent implements OnChanges, AfterViewInit {
+export class VideoCardComponent implements OnChanges, OnInit {
   @Input() video!: VideoData;
   @Input() PreviewPlayback: boolean = false;
   isSaved: boolean = false;
@@ -55,7 +56,7 @@ export class VideoCardComponent implements OnChanges, AfterViewInit {
     private utilsService: UtilsService
   ) {}
 
-  ngAfterViewInit() {
+  ngOnInit() {
     this.isSaved = this.video.userVideoStatus.isSaved;
     this.isWatched = this.video.userVideoStatus.isWatched;
 
@@ -85,7 +86,7 @@ export class VideoCardComponent implements OnChanges, AfterViewInit {
         this.cd.detectChanges();
         setTimeout(() => {
           if (this.videoElement?.nativeElement) {
-            this.ngAfterViewInit();
+            this.ngOnInit();
           }
         }, 0);
       } else {

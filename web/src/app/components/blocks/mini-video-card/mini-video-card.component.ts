@@ -7,6 +7,7 @@ import {
   ViewChild,
   ElementRef,
   AfterViewInit,
+  OnInit,
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -29,7 +30,7 @@ import { UtilsService } from '../../../services/utils.service';
 }`,
   imports: [CommonModule, RouterModule, FormsModule, SendtoModalComponent],
 })
-export class MiniVideoCardComponent implements OnChanges, AfterViewInit {
+export class MiniVideoCardComponent implements OnChanges, OnInit {
   @Input() video!: VideoData;
   @Input() username: string = '';
   @Input() PreviewPlayback: boolean = false;
@@ -42,7 +43,7 @@ export class MiniVideoCardComponent implements OnChanges, AfterViewInit {
   private observer: IntersectionObserver | null = null;
 
   // Updated ngAfterViewInit
-  ngAfterViewInit() {
+  ngOnInit() {
     this.isSaved = this.video.userVideoStatus.isSaved;
     this.isWatched = this.video.userVideoStatus.isWatched;
 
@@ -73,7 +74,7 @@ export class MiniVideoCardComponent implements OnChanges, AfterViewInit {
         this.cd.detectChanges(); // Ensure change detection to make videoElement ready
         setTimeout(() => {
           if (this.videoElement?.nativeElement) {
-            this.ngAfterViewInit(); // Re-initialize observer safely
+            this.ngOnInit(); // Re-initialize observer safely
           }
         }, 0);
       } else {
