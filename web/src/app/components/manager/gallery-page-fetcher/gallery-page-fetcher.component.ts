@@ -1,9 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { VideoData } from '../../../data-types/video-data';
+import { VideoData } from '../../../services/ova-backend-service/api-types/video-data';
 import { GalleryViewComponent } from '../../containers/gallery-view/gallery-view.component';
-import { CentralFetchService } from '../../../services/ova-backend/central-fetch';
+import { CentralFetchService } from '../../../services/ova-backend-service/central-fetch';
 import { MatPaginatorModule } from '@angular/material/paginator';
 
 @Component({

@@ -2,17 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { ApiResponse } from './response-type';
+import { ApiSuccessResponse } from './api-responses/core-response';
 
 import { environment } from '../../../environments/environment';
-
-export interface WatchedResponse {
-  videoIds: string[]; // Array of video IDs
-  totalVideos: number; // Total number of videos cached
-  currentBucket: number; // The current bucket requested
-  bucketContentSize: number; // Size of each bucket (fixed to 20)
-  totalBuckets: number; // Total number of buckets
-}
+import { VideoBucketResponse } from './api-responses/video-bucket';
 
 @Injectable({
   providedIn: 'root',
@@ -26,10 +19,10 @@ export class WatchedApiService {
   getUserWatched(
     username: string,
     bucket: number = 1
-  ): Observable<ApiResponse<WatchedResponse>> {
+  ): Observable<ApiSuccessResponse<VideoBucketResponse>> {
     // Use ApiResponse wrapper
     return this.http
-      .get<ApiResponse<WatchedResponse>>(
+      .get<ApiSuccessResponse<VideoBucketResponse>>(
         `${this.baseUrl}/users/${username}/recent?bucket=${bucket}`,
         this.httpOptions
       )

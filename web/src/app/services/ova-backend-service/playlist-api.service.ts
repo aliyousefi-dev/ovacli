@@ -4,34 +4,11 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { PlaylistData } from '../../data-types/playlist-data';
+import { PlaylistData } from './api-types/playlist-data';
 
-import { ApiResponse } from './response-type';
+import { ApiSuccessResponse } from './api-responses/core-response';
 
-export interface PlaylistSummary {
-  title: string;
-  description?: string;
-  headVideoId: string;
-  totalVideos: number;
-  slug: string;
-  order: number;
-}
-
-export interface PlaylistDataResponse {
-  playlists: PlaylistSummary[];
-  totalPlaylists: number;
-  username: string;
-}
-
-export interface PlaylistContentResponse {
-  username: string; // The username of the user
-  slug: string; // The slug of the playlist
-  videoIds: string[]; // Array of video IDs
-  totalVideos: number; // Total number of videos cached
-  currentBucket: number; // The current bucket requested
-  bucketContentSize: number; // Size of each bucket (fixed to 20)
-  totalBuckets: number; // Total number of buckets
-}
+import { PlaylistDataResponse } from './api-responses/playlist-response';
 
 @Injectable({
   providedIn: 'root',
@@ -43,9 +20,9 @@ export class PlaylistAPIService {
 
   getUserPlaylists(
     username: string
-  ): Observable<ApiResponse<PlaylistDataResponse>> {
+  ): Observable<ApiSuccessResponse<PlaylistDataResponse>> {
     return this.http
-      .get<ApiResponse<PlaylistDataResponse>>(
+      .get<ApiSuccessResponse<PlaylistDataResponse>>(
         `${this.baseUrl}/users/${username}/playlists`,
         { withCredentials: true }
       )
@@ -62,9 +39,9 @@ export class PlaylistAPIService {
   createUserPlaylist(
     username: string,
     playlist: { title: string; description?: string; videoIds: string[] }
-  ): Observable<ApiResponse<PlaylistData>> {
+  ): Observable<ApiSuccessResponse<PlaylistData>> {
     return this.http
-      .post<ApiResponse<PlaylistData>>(
+      .post<ApiSuccessResponse<PlaylistData>>(
         `${this.baseUrl}/users/${username}/playlists`,
         playlist,
         { withCredentials: true } // ✅ important
@@ -87,8 +64,8 @@ export class PlaylistAPIService {
   deleteUserPlaylistBySlug(
     username: string,
     slug: string
-  ): Observable<ApiResponse<null>> {
-    return this.http.delete<ApiResponse<null>>(
+  ): Observable<ApiSuccessResponse<null>> {
+    return this.http.delete<ApiSuccessResponse<null>>(
       `${this.baseUrl}/users/${username}/playlists/${slug}`,
       { withCredentials: true } // ✅ important
     );
@@ -97,9 +74,9 @@ export class PlaylistAPIService {
   savePlaylistsOrder(
     username: string,
     order: string[]
-  ): Observable<ApiResponse<null>> {
+  ): Observable<ApiSuccessResponse<null>> {
     return this.http
-      .put<ApiResponse<null>>(
+      .put<ApiSuccessResponse<null>>(
         `${this.baseUrl}/users/${username}/playlists/order`,
         { order },
         { withCredentials: true }
@@ -123,9 +100,9 @@ export class PlaylistAPIService {
     username: string,
     slug: string,
     update: { title?: string; description?: string }
-  ): Observable<ApiResponse<PlaylistData>> {
+  ): Observable<ApiSuccessResponse<PlaylistData>> {
     return this.http
-      .put<ApiResponse<PlaylistData>>(
+      .put<ApiSuccessResponse<PlaylistData>>(
         `${this.baseUrl}/users/${username}/playlists/${slug}`,
         update,
         { withCredentials: true }

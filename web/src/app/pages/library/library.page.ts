@@ -9,8 +9,8 @@ import {
 } from '@angular/core';
 import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { VideoData } from '../../data-types/video-data';
-import { VideoApiService } from '../../services/ova-backend/video-api.service';
+import { VideoData } from '../../services/ova-backend-service/api-types/video-data';
+import { VideoApiService } from '../../services/ova-backend-service/video-api.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 

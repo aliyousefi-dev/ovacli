@@ -2,18 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { ApiResponse } from './response-type';
+import { ApiSuccessResponse } from './api-responses/core-response';
 
 import { environment } from '../../../environments/environment';
 
-export interface SavedResponse {
-  username: string;
-  videoIds: string[]; // array of video IDs (strings)
-  totalVideos: number; // Total number of saved videos
-  currentBucket: number; // The current bucket requested
-  bucketContentSize: number; // Size of each bucket (fixed to 20)
-  totalBuckets: number; // Total number of buckets
-}
+import { VideoBucketResponse } from './api-responses/video-bucket';
 
 @Injectable({
   providedIn: 'root',
@@ -28,9 +21,9 @@ export class SavedApiService {
   getUserSaved(
     username: string,
     bucket: number = 1
-  ): Observable<ApiResponse<SavedResponse>> {
+  ): Observable<ApiSuccessResponse<VideoBucketResponse>> {
     return this.http
-      .get<ApiResponse<SavedResponse>>(
+      .get<ApiSuccessResponse<VideoBucketResponse>>(
         `${this.baseUrl}/users/${username}/saved?bucket=${bucket}`,
         this.httpOptions
       )

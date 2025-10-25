@@ -3,16 +3,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { ApiResponse } from './response-type';
-
-// This interface defines the shape of the marker data as the Angular frontend expects it,
-// matching the 'VideoMarker' struct in the Go API, using hour, minute, and second.
-export interface VideoMarker {
-  hour: number;
-  minute: number;
-  second: number;
-  title: string;
-}
+import { ApiSuccessResponse } from './api-responses/core-response';
+import { VideoMarker } from './api-types/video-marker';
 
 @Injectable({
   providedIn: 'root',
@@ -30,9 +22,9 @@ export class MarkerApiService {
 
   getMarkers(
     videoId: string
-  ): Observable<ApiResponse<{ markers: VideoMarker[] }>> {
+  ): Observable<ApiSuccessResponse<{ markers: VideoMarker[] }>> {
     // The Go API will now send back markers with 'hour', 'minute', 'second' fields.
-    return this.http.get<ApiResponse<{ markers: VideoMarker[] }>>(
+    return this.http.get<ApiSuccessResponse<{ markers: VideoMarker[] }>>(
       `${this.baseUrl}/video/markers/${videoId}`,
       { withCredentials: true }
     );
@@ -41,17 +33,17 @@ export class MarkerApiService {
   updateMarkers(
     videoId: string,
     markers: VideoMarker[]
-  ): Observable<ApiResponse<any>> {
+  ): Observable<ApiSuccessResponse<any>> {
     // The Go API will receive this array of markers with hour, minute, second.
-    return this.http.post<ApiResponse<any>>(
+    return this.http.post<ApiSuccessResponse<any>>(
       `${this.baseUrl}/video/markers/${videoId}`,
       { markers },
       { withCredentials: true }
     );
   }
 
-  deleteAllMarkers(videoId: string): Observable<ApiResponse<any>> {
-    return this.http.delete<ApiResponse<any>>(
+  deleteAllMarkers(videoId: string): Observable<ApiSuccessResponse<any>> {
+    return this.http.delete<ApiSuccessResponse<any>>(
       `${this.baseUrl}/video/markers/${videoId}`,
       { withCredentials: true }
     );
@@ -60,10 +52,10 @@ export class MarkerApiService {
   deleteMarker(
     videoId: string,
     markerToDelete: { hour: number; minute: number; second: number }
-  ): Observable<ApiResponse<any>> {
+  ): Observable<ApiSuccessResponse<any>> {
     // The hour, minute, and second are passed as part of the URL,
     // reflecting the updated Go API route.
-    return this.http.delete<ApiResponse<any>>(
+    return this.http.delete<ApiSuccessResponse<any>>(
       `${this.baseUrl}/video/markers/${videoId}/${markerToDelete.hour}/${markerToDelete.minute}/${markerToDelete.second}`,
       { withCredentials: true }
     );

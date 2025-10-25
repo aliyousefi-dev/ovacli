@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { VideoData } from '../../data-types/video-data';
+import { VideoData } from './api-types/video-data';
 
 import { LatestVideosService } from './latest-api.service';
 import { VideoApiService } from './video-api.service';
@@ -11,13 +11,7 @@ import { SavedApiService } from './saved-api.service';
 import { PlaylistContentAPIService } from './playlist-content-api.service';
 import { UtilsService } from '../utils.service';
 
-export interface GalleryResponse {
-  videos: VideoData[]; // Array of video data
-  totalVideos: number; // Total number of videos cached
-  currentBucket: number; // The current bucket requested
-  bucketContentSize: number; // Size of each bucket (fixed to 20)
-  totalBuckets: number; // Total number of buckets
-}
+import { VideoGallery } from './api-types/video-gallery';
 
 @Injectable({
   providedIn: 'root',
@@ -37,7 +31,7 @@ export class CentralFetchService {
     route: string = 'recent', // Default route is 'recent'
     bucket: number = 1, // Default bucket is 1
     slug?: string // Optional slug for playlists
-  ): Observable<GalleryResponse> {
+  ): Observable<VideoGallery> {
     switch (route) {
       case 'recent': {
         // Use LatestVideosService to fetch the latest videos for the given bucket
@@ -166,7 +160,7 @@ export class CentralFetchService {
 
       // You can add more routes like 'favorites' or others as needed
       default: {
-        return new Observable<GalleryResponse>(); // Return an empty observable for unknown routes
+        return new Observable<VideoGallery>(); // Return an empty observable for unknown routes
       }
     }
   }

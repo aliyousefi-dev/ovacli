@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { VideoData } from '../../../../data-types/video-data';
+import { VideoData } from '../../../../services/ova-backend-service/api-types/video-data';
 
 @Component({
   selector: 'app-space-upload',

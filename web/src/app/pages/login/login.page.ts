@@ -2,10 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router'; // Import Router for navigation
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import {
-  AuthApiService,
-  LoginResponse,
-} from '../../services/ova-backend/auth-api.service';
+import { AuthApiService } from '../../services/ova-backend-service/auth-api.service';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -36,7 +33,7 @@ export class LoginPage {
     }
 
     this.authapi.login(this.username, this.password).subscribe({
-      next: (res: LoginResponse) => {
+      next: (res) => {
         if (res.status === 'success') {
           // Navigate to /home after successful login
           this.router.navigate(['/']);

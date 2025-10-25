@@ -2,8 +2,8 @@ import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { GalleryViewComponent } from '../../containers/gallery-view/gallery-view.component';
-import { VideoData } from '../../../data-types/video-data';
-import { CentralFetchService } from '../../../services/ova-backend/central-fetch';
+import { VideoData } from '../../../services/ova-backend-service/api-types/video-data';
+import { CentralFetchService } from '../../../services/ova-backend-service/central-fetch';
 import { Router } from '@angular/router';
 import { NavigationStart, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/internal/operators/filter';
@@ -35,7 +35,7 @@ export class GalleryInfiniteFetcher implements OnInit {
     private centralFetchService: CentralFetchService,
     private router: Router
   ) {}
-  
+
   ngOnInit(): void {
     this.initialLoad();
     this.FollowScroll();

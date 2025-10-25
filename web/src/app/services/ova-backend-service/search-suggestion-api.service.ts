@@ -2,14 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { ApiResponse } from './response-type';
+import { ApiSuccessResponse } from './api-responses/core-response';
 
 import { environment } from '../../../environments/environment';
-
-export interface SearchSuggestionsResponse {
-  query: string;
-  suggestions: string[];
-}
+import { SearchSuggestionsResponse } from './api-responses/searchsuggestions-response';
 
 @Injectable({
   providedIn: 'root',
@@ -21,10 +17,10 @@ export class SuggestionApiService {
 
   getSearchSuggestions(
     query: string
-  ): Observable<ApiResponse<SearchSuggestionsResponse>> {
+  ): Observable<ApiSuccessResponse<SearchSuggestionsResponse>> {
     const params = { query }; // The query parameter to send in the request body
 
-    return this.http.post<ApiResponse<SearchSuggestionsResponse>>(
+    return this.http.post<ApiSuccessResponse<SearchSuggestionsResponse>>(
       `${this.baseUrl}/search-suggestions`,
       params
     );

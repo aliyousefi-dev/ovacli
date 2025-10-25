@@ -4,7 +4,7 @@ import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Location } from '@angular/common';
 
 import { UtilsService } from '../../../services/utils.service';
-import { AuthApiService } from '../../../services/ova-backend/auth-api.service';
+import { AuthApiService } from '../../../services/ova-backend-service/auth-api.service';
 import { SearchBarComponent } from '../../utility/search-bar/search-bar.component';
 
 @Component({

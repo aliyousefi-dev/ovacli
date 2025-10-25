@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router, UrlTree } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { AuthApiService } from './ova-backend/auth-api.service';
+import { AuthApiService } from './ova-backend-service/auth-api.service';
 
 @Injectable({
   providedIn: 'root',

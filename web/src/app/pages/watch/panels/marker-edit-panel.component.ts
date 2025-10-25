@@ -1,11 +1,9 @@
 import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
-import {
-  VideoMarker,
-  MarkerApiService,
-} from '../../../services/ova-backend/marker-api.service';
+import { MarkerApiService } from '../../../services/ova-backend-service/marker-api.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { VideoMarker } from '../../../services/ova-backend-service/api-types/video-marker';
 
 @Component({
   selector: 'app-marker-edit-panel',

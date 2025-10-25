@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { VideoData } from '../../../data-types/video-data';
+import { VideoData } from '../../../services/ova-backend-service/api-types/video-data';
 
 @Component({
   selector: 'app-video-title-bar',

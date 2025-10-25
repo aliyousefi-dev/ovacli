@@ -4,19 +4,11 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { PlaylistData } from '../../data-types/playlist-data';
+import { PlaylistData } from './api-types/playlist-data';
 
-import { ApiResponse } from './response-type';
+import { ApiSuccessResponse } from './api-responses/core-response';
 
-export interface PlaylistContentResponse {
-  username: string; // The username of the user
-  slug: string; // The slug of the playlist
-  videoIds: string[]; // Array of video IDs
-  totalVideos: number; // Total number of videos cached
-  currentBucket: number; // The current bucket requested
-  bucketContentSize: number; // Size of each bucket (fixed to 20)
-  totalBuckets: number; // Total number of buckets
-}
+import { PlaylistContentResponse } from './api-responses/playlist-response';
 
 @Injectable({
   providedIn: 'root',
@@ -30,8 +22,8 @@ export class PlaylistContentAPIService {
     username: string,
     slug: string,
     bucket: number = 1
-  ): Observable<ApiResponse<PlaylistContentResponse>> {
-    return this.http.get<ApiResponse<PlaylistContentResponse>>(
+  ): Observable<ApiSuccessResponse<PlaylistContentResponse>> {
+    return this.http.get<ApiSuccessResponse<PlaylistContentResponse>>(
       `${this.baseUrl}/users/${username}/playlists/${slug}?bucket=${bucket}`,
       { withCredentials: true } // ✅ important
     );
@@ -41,8 +33,8 @@ export class PlaylistContentAPIService {
     username: string,
     slug: string,
     videoId: string
-  ): Observable<ApiResponse<PlaylistData>> {
-    return this.http.post<ApiResponse<PlaylistData>>(
+  ): Observable<ApiSuccessResponse<PlaylistData>> {
+    return this.http.post<ApiSuccessResponse<PlaylistData>>(
       `${this.baseUrl}/users/${username}/playlists/${slug}/videos`,
       { videoId },
       { withCredentials: true } // ✅ important
@@ -53,8 +45,8 @@ export class PlaylistContentAPIService {
     username: string,
     slug: string,
     videoId: string
-  ): Observable<ApiResponse<PlaylistData>> {
-    return this.http.delete<ApiResponse<PlaylistData>>(
+  ): Observable<ApiSuccessResponse<PlaylistData>> {
+    return this.http.delete<ApiSuccessResponse<PlaylistData>>(
       `${this.baseUrl}/users/${username}/playlists/${slug}/videos/${videoId}`,
       { withCredentials: true } // ✅ important
     );

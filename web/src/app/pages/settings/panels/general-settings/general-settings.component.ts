@@ -3,9 +3,10 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ViewChild } from '@angular/core';
 import { ConfirmModalComponent } from '../../../../components/pop-ups/confirm-modal/confirm-modal.component';
-import { WatchedApiService } from '../../../../services/ova-backend/recent-api.service';
-import { AuthApiService } from '../../../../services/ova-backend/auth-api.service';
-import { UserProfile } from '../../../../services/ova-backend/auth-api.service';
+import { WatchedApiService } from '../../../../services/ova-backend-service/recent-api.service';
+import { AuthApiService } from '../../../../services/ova-backend-service/auth-api.service';
+import { UserProfile } from '../../../../services/ova-backend-service/api-types/user-profile';
+import { ProfileApiService } from '../../../../services/ova-backend-service/profile-api.service';
 
 @Component({
   selector: 'app-general-settings',
@@ -19,13 +20,14 @@ export class GeneralSettingsComponent {
 
   constructor(
     private watchedApi: WatchedApiService,
-    private authApi: AuthApiService
+    private authApi: AuthApiService,
+    private profileApi: ProfileApiService
   ) {}
 
   username = '';
 
   ngOnInit(): void {
-    this.authApi.getProfile().subscribe({
+    this.profileApi.getProfile().subscribe({
       next: (profile: UserProfile) => {
         this.username = profile.username;
       },

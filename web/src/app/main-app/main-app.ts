@@ -7,6 +7,7 @@ import { MobileDockComponent } from '../components/panels/mobile-dock/mobile-doc
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { SearchModalComponent } from '../components/pop-ups/search-modal/search-modal';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatButtonModule,
     MatSidenavModule,
     MatPaginatorModule,
+    SearchModalComponent,
   ],
   templateUrl: './main-app.html',
   styles: [

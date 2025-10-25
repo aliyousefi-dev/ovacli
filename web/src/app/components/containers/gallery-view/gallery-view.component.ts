@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { VideoCardComponent } from '../../blocks/video-card/video-card.component';
 import { MiniVideoCardComponent } from '../../blocks/mini-video-card/mini-video-card.component';
 import { CommonModule } from '@angular/common';
-import { VideoData } from '../../../data-types/video-data';
+import { VideoData } from '../../../services/ova-backend-service/api-types/video-data';
 
 @Component({
   selector: 'app-gallery-view',

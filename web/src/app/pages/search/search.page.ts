@@ -12,8 +12,8 @@ import {
 import { ActivatedRoute, Router, Params } from '@angular/router';
 
 import { GalleryViewComponent } from '../../components/containers/gallery-view/gallery-view.component';
-import { SearchApiService } from '../../services/ova-backend/search-api.service';
-import { VideoData } from '../../data-types/video-data';
+import { SearchApiService } from '../../services/ova-backend-service/search-api.service';
+import { VideoData } from '../../services/ova-backend-service/api-types/video-data';
 
 @Component({
   selector: 'app-explore',

@@ -1,17 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { VideoData } from '../../data-types/video-data';
 
-import { ApiResponse } from './response-type';
+import { ApiSuccessResponse } from './api-responses/core-response';
 
 import { environment } from '../../../environments/environment';
-
-export interface SearchResponse {
-  query: string;
-  results: VideoData[];
-  totalCount: number;
-}
+import { SearchResponse } from './api-responses/search-response';
 
 @Injectable({
   providedIn: 'root',
@@ -25,8 +19,8 @@ export class SearchApiService {
   searchVideos(params: {
     query?: string;
     tags?: string[];
-  }): Observable<ApiResponse<SearchResponse>> {
-    return this.http.post<ApiResponse<SearchResponse>>(
+  }): Observable<ApiSuccessResponse<SearchResponse>> {
+    return this.http.post<ApiSuccessResponse<SearchResponse>>(
       `${this.baseUrl}/search`,
       params
     );

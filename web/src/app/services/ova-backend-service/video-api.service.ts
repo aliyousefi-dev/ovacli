@@ -3,12 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
-import { VideoData } from '../../data-types/video-data';
-import { ApiResponse } from './response-type';
-
-interface SimilarVideosResponse {
-  similarVideos: VideoData[];
-}
+import { VideoData } from './api-types/video-data';
+import { ApiSuccessResponse } from './api-responses/core-response';
+import { SimilarVideosResponse } from './api-responses/similar-videos-response';
 
 @Injectable({
   providedIn: 'root',
@@ -18,26 +15,26 @@ export class VideoApiService {
 
   constructor(private http: HttpClient) {}
 
-  getVideosByFolder(folder: string): Observable<ApiResponse<any>> {
+  getVideosByFolder(folder: string): Observable<ApiSuccessResponse<any>> {
     const params = new URLSearchParams();
     if (folder) {
       params.set('folder', folder);
     }
-    return this.http.get<ApiResponse<any>>(
+    return this.http.get<ApiSuccessResponse<any>>(
       `${this.baseUrl}/videos?${params.toString()}`,
       { withCredentials: true }
     );
   }
 
-  getVideoById(videoId: string): Observable<ApiResponse<VideoData>> {
-    return this.http.get<ApiResponse<VideoData>>(
+  getVideoById(videoId: string): Observable<ApiSuccessResponse<VideoData>> {
+    return this.http.get<ApiSuccessResponse<VideoData>>(
       `${this.baseUrl}/videos/${videoId}`,
       { withCredentials: true }
     );
   }
 
-  getVideosByIds(ids: string[]): Observable<ApiResponse<VideoData[]>> {
-    return this.http.post<ApiResponse<VideoData[]>>(
+  getVideosByIds(ids: string[]): Observable<ApiSuccessResponse<VideoData[]>> {
+    return this.http.post<ApiSuccessResponse<VideoData[]>>(
       `${this.baseUrl}/videos/batch`,
       { IDs: ids },
       { withCredentials: true }
@@ -46,8 +43,8 @@ export class VideoApiService {
 
   getSimilarVideos(
     videoId: string
-  ): Observable<ApiResponse<SimilarVideosResponse>> {
-    return this.http.get<ApiResponse<SimilarVideosResponse>>(
+  ): Observable<ApiSuccessResponse<SimilarVideosResponse>> {
+    return this.http.get<ApiSuccessResponse<SimilarVideosResponse>>(
       `${this.baseUrl}/videos/${videoId}/similar`,
       { withCredentials: true }
     );
@@ -85,8 +82,8 @@ export class VideoApiService {
   addVideoTag(
     videoId: string,
     tag: string
-  ): Observable<ApiResponse<{ tags: string[] }>> {
-    return this.http.post<ApiResponse<{ tags: string[] }>>(
+  ): Observable<ApiSuccessResponse<{ tags: string[] }>> {
+    return this.http.post<ApiSuccessResponse<{ tags: string[] }>>(
       `${this.baseUrl}/videos/tags/${videoId}/add`,
       { tag },
       { withCredentials: true }
@@ -96,8 +93,8 @@ export class VideoApiService {
   removeVideoTag(
     videoId: string,
     tag: string
-  ): Observable<ApiResponse<{ tags: string[] }>> {
-    return this.http.post<ApiResponse<{ tags: string[] }>>(
+  ): Observable<ApiSuccessResponse<{ tags: string[] }>> {
+    return this.http.post<ApiSuccessResponse<{ tags: string[] }>>(
       `${this.baseUrl}/videos/tags/${videoId}/remove`,
       { tag },
       { withCredentials: true }

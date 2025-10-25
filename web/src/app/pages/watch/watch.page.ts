@@ -2,14 +2,14 @@ import { Component, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { VideoData } from '../../data-types/video-data';
-import { VideoApiService } from '../../services/ova-backend/video-api.service';
-import { SavedApiService } from '../../services/ova-backend/saved-api.service';
-import { PlaylistAPIService } from '../../services/ova-backend/playlist-api.service';
-import { WatchedApiService } from '../../services/ova-backend/recent-api.service';
+import { VideoData } from '../../services/ova-backend-service/api-types/video-data';
+import { VideoApiService } from '../../services/ova-backend-service/video-api.service';
+import { SavedApiService } from '../../services/ova-backend-service/saved-api.service';
+import { PlaylistAPIService } from '../../services/ova-backend-service/playlist-api.service';
+import { WatchedApiService } from '../../services/ova-backend-service/recent-api.service';
 import { VidstackPlayerComponent } from '../../components/media-player/vidstack-player/vidstack-player.component';
 import { DefaultVideoPlayerComponent } from '../../components/media-player/default-video-player/default-video-player.component';
-import { MarkerApiService } from '../../services/ova-backend/marker-api.service';
+import { MarkerApiService } from '../../services/ova-backend-service/marker-api.service';
 
 // Updated: Import new child components
 import { VideoTitleBarComponent } from './panels/video-title-bar.component'; // Path assuming it's in the same directory as watch.page.ts
@@ -17,7 +17,7 @@ import { SimilarVideosPanelComponent } from './panels/similar-videos-panel.compo
 import { VideoActionBarComponent } from './panels/video-action-bar.component';
 import { VideoTagsPanelComponent } from './panels/video-tags-panel.component';
 import { VideoAdminTabsComponent } from './panels/video-admin-tabs.component';
-import { PlaylistContentAPIService } from '../../services/ova-backend/playlist-content-api.service';
+import { PlaylistContentAPIService } from '../../services/ova-backend-service/playlist-content-api.service';
 
 import { ViewChild } from '@angular/core';
 

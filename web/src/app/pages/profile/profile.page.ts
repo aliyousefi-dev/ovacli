@@ -4,11 +4,10 @@ import { FormsModule } from '@angular/forms';
 
 import { ConfirmModalComponent } from '../../components/pop-ups/confirm-modal/confirm-modal.component';
 
-import {
-  AuthApiService,
-  UserProfile,
-} from '../../services/ova-backend/auth-api.service';
-import { WatchedApiService } from '../../services/ova-backend/recent-api.service';
+import { AuthApiService } from '../../services/ova-backend-service/auth-api.service';
+import { WatchedApiService } from '../../services/ova-backend-service/recent-api.service';
+import { UserProfile } from '../../services/ova-backend-service/api-types/user-profile';
+import { ProfileApiService } from '../../services/ova-backend-service/profile-api.service';
 
 // Define session type
 interface SessionEntry {
@@ -29,6 +28,7 @@ export class ProfilePage implements OnInit {
 
   private authApi = inject(AuthApiService);
   private watchedApi = inject(WatchedApiService);
+  private profileApi = inject(ProfileApiService);
 
   activeTab: string = 'overview';
   username = '';
@@ -46,7 +46,7 @@ export class ProfilePage implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.authApi.getProfile().subscribe({
+    this.profileApi.getProfile().subscribe({
       next: (profile: UserProfile) => {
         this.username = profile.username;
         this.roles = profile.roles;
