@@ -22,4 +22,11 @@ export class DesktopSidebarComponent {
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
   }
+
+  onSearchButtonClick(): void {
+    const modal: any = document.getElementById('my_modal_2');
+    if (modal && typeof modal.showModal === 'function') {
+      modal.showModal();
+    }
+  }
 }

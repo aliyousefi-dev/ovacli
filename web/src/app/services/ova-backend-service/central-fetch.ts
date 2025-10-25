@@ -37,26 +37,27 @@ export class CentralFetchService {
         // Use LatestVideosService to fetch the latest videos for the given bucket
         return this.latestVideosService.getLatestVideos(bucket).pipe(
           switchMap((response) => {
-            const videoIds = response.data.videoIds;
             const totalVideos = response.data.totalVideos;
             const currentBucket = response.data.currentBucket;
             const bucketContentSize = response.data.bucketContentSize;
             const totalBuckets = response.data.totalBuckets;
 
             // Fetch video details using VideoApiService
-            return this.videoApiService.getVideosByIds(videoIds).pipe(
-              map((videoDetails) => {
-                const videos: VideoData[] = videoDetails.data;
-                // Construct and return the final GalleryResponse
-                return {
-                  videos: videos,
-                  totalVideos: totalVideos,
-                  currentBucket: currentBucket,
-                  bucketContentSize: bucketContentSize,
-                  totalBuckets: totalBuckets,
-                };
-              })
-            );
+            return this.videoApiService
+              .getVideosByIds(response.data.videoIds)
+              .pipe(
+                map((videoDetails) => {
+                  const videos: VideoData[] = videoDetails.data;
+                  // Construct and return the final GalleryResponse
+                  return {
+                    videos: videos,
+                    totalVideos: totalVideos,
+                    currentBucket: currentBucket,
+                    bucketContentSize: bucketContentSize,
+                    totalBuckets: totalBuckets,
+                  };
+                })
+              );
           })
         );
       }
@@ -67,26 +68,27 @@ export class CentralFetchService {
         // Use WatchedApiService to fetch the watched videos for the given bucket
         return this.watchedApiService.getUserWatched(username, bucket).pipe(
           switchMap((response) => {
-            const videoIds = response.data.videoIds;
             const totalVideos = response.data.totalVideos;
             const currentBucket = response.data.currentBucket;
             const bucketContentSize = response.data.bucketContentSize;
             const totalBuckets = response.data.totalBuckets;
 
             // Fetch video details using VideoApiService
-            return this.videoApiService.getVideosByIds(videoIds).pipe(
-              map((videoDetails) => {
-                const videos: VideoData[] = videoDetails.data;
-                // Construct and return the final GalleryResponse
-                return {
-                  videos: videos,
-                  totalVideos: totalVideos,
-                  currentBucket: currentBucket,
-                  bucketContentSize: bucketContentSize,
-                  totalBuckets: totalBuckets,
-                };
-              })
-            );
+            return this.videoApiService
+              .getVideosByIds(response.data.videoIds)
+              .pipe(
+                map((videoDetails) => {
+                  const videos: VideoData[] = videoDetails.data;
+                  // Construct and return the final GalleryResponse
+                  return {
+                    videos: videos,
+                    totalVideos: totalVideos,
+                    currentBucket: currentBucket,
+                    bucketContentSize: bucketContentSize,
+                    totalBuckets: totalBuckets,
+                  };
+                })
+              );
           })
         );
       }
@@ -97,26 +99,27 @@ export class CentralFetchService {
         // Use SavedApiService to fetch the saved videos for the given bucket
         return this.savedApiService.getUserSaved(username, bucket).pipe(
           switchMap((response) => {
-            const savedVideoIds = response.data.videoIds;
             const totalVideos = response.data.totalVideos;
             const currentBucket = response.data.currentBucket;
             const bucketContentSize = response.data.bucketContentSize;
             const totalBuckets = response.data.totalBuckets;
 
             // Fetch video details using VideoApiService
-            return this.videoApiService.getVideosByIds(savedVideoIds).pipe(
-              map((videoDetails) => {
-                const videos: VideoData[] = videoDetails.data;
-                // Construct and return the final GalleryResponse
-                return {
-                  videos: videos,
-                  totalVideos: totalVideos,
-                  currentBucket: currentBucket,
-                  bucketContentSize: bucketContentSize,
-                  totalBuckets: totalBuckets,
-                };
-              })
-            );
+            return this.videoApiService
+              .getVideosByIds(response.data.videoIds)
+              .pipe(
+                map((videoDetails) => {
+                  const videos: VideoData[] = videoDetails.data;
+                  // Construct and return the final GalleryResponse
+                  return {
+                    videos: videos,
+                    totalVideos: totalVideos,
+                    currentBucket: currentBucket,
+                    bucketContentSize: bucketContentSize,
+                    totalBuckets: totalBuckets,
+                  };
+                })
+              );
           })
         );
       }
@@ -134,26 +137,27 @@ export class CentralFetchService {
           .fetchPlaylistContent(username, slug, bucket) // Pass the slug here
           .pipe(
             switchMap((response) => {
-              const savedVideoIds = response.data.videoIds;
               const totalVideos = response.data.totalVideos;
               const currentBucket = response.data.currentBucket;
               const bucketContentSize = response.data.bucketContentSize;
               const totalBuckets = response.data.totalBuckets;
 
               // Fetch video details using VideoApiService
-              return this.videoApiService.getVideosByIds(savedVideoIds).pipe(
-                map((videoDetails) => {
-                  const videos: VideoData[] = videoDetails.data;
-                  // Construct and return the final GalleryResponse
-                  return {
-                    videos: videos,
-                    totalVideos: totalVideos,
-                    currentBucket: currentBucket,
-                    bucketContentSize: bucketContentSize,
-                    totalBuckets: totalBuckets,
-                  };
-                })
-              );
+              return this.videoApiService
+                .getVideosByIds(response.data.videoIds)
+                .pipe(
+                  map((videoDetails) => {
+                    const videos: VideoData[] = videoDetails.data;
+                    // Construct and return the final GalleryResponse
+                    return {
+                      videos: videos,
+                      totalVideos: totalVideos,
+                      currentBucket: currentBucket,
+                      bucketContentSize: bucketContentSize,
+                      totalBuckets: totalBuckets,
+                    };
+                  })
+                );
             })
           );
       }

@@ -27,11 +27,11 @@
       </li>
 
       <li>
-        <a routerLink="/search" routerLinkActive="menu-active" [routerLinkActiveOptions]="{ exact: true }">
+        <button (click)="onSearchButtonClick()">
           <i class='bx bx-search bx-xs'></i>
           <span>Search</span>
           <kbd class="kbd kbd-xs opacity-50 text-base-content"><span>⌘</span>K</kbd>
-        </a>
+        </button>
       </li>
 
       <li>
