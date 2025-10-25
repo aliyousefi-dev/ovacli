@@ -13,6 +13,11 @@ export interface Resolution {
   height: number; // Height of the video
 }
 
+export interface userVideoStatus {
+  isWatched: boolean;
+  isSaved: boolean;
+}
+
 export interface VideoData {
   videoId: string; // Unique video ID (e.g., "087be485e0acad6fb1ba026e75542fed5f52e073496c649bc4a3ce345a63f48f")
   fileName: string; // Name of the video file without extension (e.g., "pexels-sosa-films-5656141")
@@ -24,4 +29,5 @@ export interface VideoData {
   ownerAccountUsername: string; // Username of the owner account (can be an empty string if not set)
   totalViews: number; // Total number of views for the video
   isPublic: boolean; // Whether the video is public or not
+  userVideoStatus: userVideoStatus;
 }

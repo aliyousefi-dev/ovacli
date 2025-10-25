@@ -31,10 +31,11 @@ import { UtilsService } from '../../../services/utils.service';
 })
 export class MiniVideoCardComponent implements OnChanges, AfterViewInit {
   @Input() video!: VideoData;
-  @Input() isSaved: boolean = false;
   @Input() username: string = '';
-  @Input() isWatched: boolean = false;
   @Input() PreviewPlayback: boolean = false;
+
+  isSaved: boolean = false;
+  isWatched: boolean = false;
 
   @ViewChild('preview') videoElement!: ElementRef<HTMLVideoElement>;
 
@@ -42,6 +43,9 @@ export class MiniVideoCardComponent implements OnChanges, AfterViewInit {
 
   // Updated ngAfterViewInit
   ngAfterViewInit() {
+    this.isSaved = this.video.userVideoStatus.isSaved;
+    this.isWatched = this.video.userVideoStatus.isWatched;
+
     if (this.PreviewPlayback && this.videoElement) {
       const video_preview: HTMLVideoElement = this.videoElement.nativeElement;
 

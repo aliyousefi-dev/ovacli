@@ -22,7 +22,13 @@ func RegisterUserSavedRoutes(rg *gin.RouterGroup, repoManager *repo.RepoManager)
 // GET /users/:username/saved
 func getUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		username := c.Param("username")
+
+		// Retrieve accountId set by the AuthMiddleware
+		accountID, exists := c.Get("accountId")
+		if !exists {
+			apitypes.RespondError(c, http.StatusUnauthorized, "Account ID not found")
+			return
+		}
 
 		// Parse bucket from query parameters (default to 1 if not provided)
 		bucketStr := c.DefaultQuery("bucket", "1")
@@ -38,7 +44,7 @@ func getUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 		bucketContentSize := repoManager.GetConfigs().MaxBucketSize
 
 		// Call GetUserSavedVideos to get the total count of saved videos for the user
-		totalVideos, err := repoManager.GetUserSavedVideosCount(username)
+		totalVideos, err := repoManager.GetUserSavedVideosCount(accountID.(string))
 		if err != nil {
 			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to get saved videos count")
 			return
@@ -47,7 +53,7 @@ func getUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 		// If there are no saved videos, return an empty response
 		if totalVideos == 0 {
 			apitypes.RespondSuccess(c, http.StatusOK, gin.H{
-				"username":          username,
+				"username":          accountID.(string),
 				"videoIds":          []string{}, // Empty array for saved videos
 				"totalVideos":       0,
 				"currentBucket":     bucket,
@@ -67,7 +73,7 @@ func getUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 		}
 
 		// Fetch saved video IDs in the calculated range from memory storage
-		savedVideos, err := repoManager.GetUserSavedVideosInRange(username, start, end)
+		savedVideos, err := repoManager.GetUserSavedVideosInRange(accountID.(string), start, end)
 		if err != nil {
 			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to retrieve saved videos in range")
 			return
@@ -75,7 +81,7 @@ func getUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 
 		// Prepare the response with saved video IDs, total video count, and bucket details
 		response := gin.H{
-			"username":          username,
+			"username":          accountID.(string),
 			"videoIds":          savedVideos,
 			"totalVideos":       totalVideos,
 			"currentBucket":     bucket,
@@ -90,8 +96,14 @@ func getUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 // POST /users/:username/saved/:videoId
 func addUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		username := c.Param("username")
 		videoID := c.Param("videoId")
+
+		// Retrieve accountId set by the AuthMiddleware
+		accountID, exists := c.Get("accountId")
+		if !exists {
+			apitypes.RespondError(c, http.StatusUnauthorized, "Account ID not found")
+			return
+		}
 
 		// Check video existence via RepoManager
 		if _, err := repoManager.GetVideoByID(videoID); err != nil {
@@ -99,13 +111,13 @@ func addUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 			return
 		}
 
-		if err := repoManager.AddVideoToSaved(username, videoID); err != nil {
+		if err := repoManager.AddVideoToSaved(accountID.(string), videoID); err != nil {
 			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to add saved video: "+err.Error())
 			return
 		}
 
 		apitypes.RespondSuccess(c, http.StatusOK, gin.H{
-			"username": username,
+			"username": accountID.(string),
 			"videoId":  videoID,
 		}, "Video added to saved")
 	}
@@ -114,16 +126,22 @@ func addUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 // DELETE /users/:username/saved/:videoId
 func removeUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		username := c.Param("username")
 		videoID := c.Param("videoId")
 
-		if err := repoManager.RemoveVideoFromSaved(username, videoID); err != nil {
+		// Retrieve accountId set by the AuthMiddleware
+		accountID, exists := c.Get("accountId")
+		if !exists {
+			apitypes.RespondError(c, http.StatusUnauthorized, "Account ID not found")
+			return
+		}
+
+		if err := repoManager.RemoveVideoFromSaved(accountID.(string), videoID); err != nil {
 			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to remove saved video: "+err.Error())
 			return
 		}
 
 		apitypes.RespondSuccess(c, http.StatusOK, gin.H{
-			"username": username,
+			"username": accountID.(string),
 			"videoId":  videoID,
 		}, "Video removed from saved")
 	}

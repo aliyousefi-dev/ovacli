@@ -6,7 +6,7 @@ import { VideoData } from '../../data-types/video-data';
 import { VideoApiService } from '../../services/ova-backend/video-api.service';
 import { SavedApiService } from '../../services/ova-backend/saved-api.service';
 import { PlaylistAPIService } from '../../services/ova-backend/playlist-api.service';
-import { WatchedApiService } from '../../services/ova-backend/watched-api.service';
+import { WatchedApiService } from '../../services/ova-backend/recent-api.service';
 import { VidstackPlayerComponent } from '../../components/media-player/vidstack-player/vidstack-player.component';
 import { DefaultVideoPlayerComponent } from '../../components/media-player/default-video-player/default-video-player.component';
 import { MarkerApiService } from '../../services/ova-backend/marker-api.service';

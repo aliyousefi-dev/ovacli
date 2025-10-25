@@ -37,19 +37,6 @@ type VideoData struct {
 	UploadedAt     time.Time   `json:"uploadedAt"`     // Timestamp of upload
 }
 
-type VideoDataAPIResponse struct {
-	VideoID              string      `json:"videoId"`
-	FileName             string      `json:"fileName"`
-	Tags                 []string    `json:"tags"`
-	Codecs               VideoCodecs `json:"codecs"`
-	IsCooked             bool        `json:"isCooked"`
-	OwnerAccountUsername string      `json:"ownerAccountUsername"`
-	TotalViews           int         `json:"totalViews"`
-	TotalDownloads       int         `json:"totalDownloads"`
-	IsPublic             bool        `json:"isPublic"`
-	UploadedAt           time.Time   `json:"uploadedAt"`
-}
-
 // NewVideoData returns an initialized VideoData struct.
 // Renamed for clarity and added 'Description' field.
 func NewVideoData(videoID string) VideoData {

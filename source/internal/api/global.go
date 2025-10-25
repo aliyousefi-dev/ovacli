@@ -60,7 +60,7 @@ func getLatestVideos(repoMgr *repo.RepoManager) gin.HandlerFunc {
 		}
 
 		// Prepare the response with video IDs and total video count
-		response := apitypes.VideoBatchResponse{
+		response := apitypes.VideoBucketResponse{
 			VideoIDs:          videoIDsInRange,
 			TotalVideos:       totalVideos,
 			CurrentBucket:     bucketBlockNumber,

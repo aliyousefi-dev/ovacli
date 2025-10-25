@@ -1,7 +1,7 @@
 package apitypes
 
-// VideoBatchResponse represents the structure of the response for the latest videos.
-type VideoBatchResponse struct {
+// VideoBucketResponse represents the structure of the response for the latest videos.
+type VideoBucketResponse struct {
 	VideoIDs          []string `json:"videoIds"`
 	TotalVideos       int      `json:"totalVideos"`
 	CurrentBucket     int      `json:"currentBucket"`

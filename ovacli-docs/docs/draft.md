@@ -23,3 +23,15 @@ each project support the publish and Text editor and .
 some one create project and then allocate the teams to that .
 
 project give more abilility like QC (Quality Control) and Auto Publish and also Version Control.
+
+
+ok now i thinking about the recent and saved api.
+
+we need also thinking about the searching api how we can doing this also ? 
+
+also supporting hte context menu can be good for pc and desktop.
+
+
+i need thinking about the saved and watched . 
+i think its good to bundle them with batch ? 
+

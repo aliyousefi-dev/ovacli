@@ -6,7 +6,7 @@ import { VideoData } from '../../data-types/video-data';
 
 import { LatestVideosService } from './latest-api.service';
 import { VideoApiService } from './video-api.service';
-import { WatchedApiService } from './watched-api.service';
+import { WatchedApiService } from './recent-api.service';
 import { SavedApiService } from './saved-api.service';
 import { PlaylistContentAPIService } from './playlist-content-api.service';
 import { UtilsService } from '../utils.service';

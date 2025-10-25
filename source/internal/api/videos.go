@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	apitypes "ova-cli/source/internal/api-types"
-	"ova-cli/source/internal/datatypes"
 	"ova-cli/source/internal/repo"
 
 	"github.com/gin-gonic/gin"
@@ -43,7 +42,7 @@ func getVideoByID(repoMgr *repo.RepoManager) gin.HandlerFunc {
 		}
 
 		// Create the VideoDataAPIResponse from VideoData
-		videoResponse := datatypes.VideoDataAPIResponse{
+		videoResponse := apitypes.VideoDataAPIResponse{
 			VideoID:              video.VideoID,
 			FileName:             video.GetFileName(),
 			Tags:                 video.Tags,

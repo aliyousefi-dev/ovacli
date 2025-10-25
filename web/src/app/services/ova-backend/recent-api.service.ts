@@ -30,7 +30,7 @@ export class WatchedApiService {
     // Use ApiResponse wrapper
     return this.http
       .get<ApiResponse<WatchedResponse>>(
-        `${this.baseUrl}/users/${username}/watched?bucket=${bucket}`,
+        `${this.baseUrl}/users/${username}/recent?bucket=${bucket}`,
         this.httpOptions
       )
       .pipe(catchError(this.handleError)); // Handle errors as before
@@ -47,7 +47,7 @@ export class WatchedApiService {
   ): Observable<{ message: string }> {
     return this.http
       .post<{ message: string }>(
-        `${this.baseUrl}/users/${username}/watched`,
+        `${this.baseUrl}/users/${username}/recent`,
         { videoId },
         this.httpOptions
       )
@@ -62,7 +62,7 @@ export class WatchedApiService {
   clearUserWatched(username: string): Observable<{ message: string }> {
     return this.http
       .delete<{ message: string }>(
-        `${this.baseUrl}/users/${username}/watched`, // This maps to your DELETE /users/:username/watched endpoint
+        `${this.baseUrl}/users/${username}/recent`, // This maps to your DELETE /users/:username/watched endpoint
         this.httpOptions
       )
       .pipe(catchError(this.handleError));

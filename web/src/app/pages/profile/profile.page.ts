@@ -8,7 +8,7 @@ import {
   AuthApiService,
   UserProfile,
 } from '../../services/ova-backend/auth-api.service';
-import { WatchedApiService } from '../../services/ova-backend/watched-api.service';
+import { WatchedApiService } from '../../services/ova-backend/recent-api.service';
 
 // Define session type
 interface SessionEntry {
