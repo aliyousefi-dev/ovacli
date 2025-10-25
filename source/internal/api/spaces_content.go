@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	apitypes "ova-cli/source/internal/api-types"
 	"ova-cli/source/internal/repo"
 	"path/filepath"
 	"strconv"
@@ -26,7 +27,7 @@ func getVideosOnSpace(repoMgr *repo.RepoManager) gin.HandlerFunc {
 		bucketStr := c.DefaultQuery("bucket", "1")
 		bucket, err := strconv.Atoi(bucketStr)
 		if err != nil || bucket <= 0 {
-			respondError(c, http.StatusBadRequest, "Invalid bucket parameter")
+			apitypes.RespondError(c, http.StatusBadRequest, "Invalid bucket parameter")
 			return
 		}
 
@@ -36,13 +37,13 @@ func getVideosOnSpace(repoMgr *repo.RepoManager) gin.HandlerFunc {
 		// Get total number of videos in space
 		totalVideos, err := repoMgr.GetVideoCountInSpace(requestedPath)
 		if err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to get space video count")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to get space video count")
 			return
 		}
 
 		// If no videos found
 		if totalVideos == 0 {
-			respondSuccess(c, http.StatusOK, gin.H{
+			apitypes.RespondSuccess(c, http.StatusOK, gin.H{
 				"space":             requestedPath,
 				"videoIds":          []string{},
 				"totalVideos":       0,
@@ -63,7 +64,7 @@ func getVideosOnSpace(repoMgr *repo.RepoManager) gin.HandlerFunc {
 		// Fetch video IDs for the given bucket
 		videoIDs, err := repoMgr.GetVideoIDsBySpaceInRange(requestedPath, start, end)
 		if err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to retrieve space videos")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to retrieve space videos")
 			return
 		}
 
@@ -77,6 +78,6 @@ func getVideosOnSpace(repoMgr *repo.RepoManager) gin.HandlerFunc {
 			"totalBuckets":      (totalVideos + bucketContentSize - 1) / bucketContentSize,
 		}
 
-		respondSuccess(c, http.StatusOK, response, "Videos in space retrieved successfully")
+		apitypes.RespondSuccess(c, http.StatusOK, response, "Videos in space retrieved successfully")
 	}
 }

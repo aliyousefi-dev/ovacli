@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strings"
 
+	apitypes "ova-cli/source/internal/api-types"
 	"ova-cli/source/internal/repo"
 
 	"github.com/gin-gonic/gin"
@@ -36,11 +37,11 @@ func getVideoTags(repo *repo.RepoManager) gin.HandlerFunc {
 
 		video, err := repo.GetVideoByID(videoID)
 		if err != nil {
-			respondError(c, http.StatusNotFound, "Video not found")
+			apitypes.RespondError(c, http.StatusNotFound, "Video not found")
 			return
 		}
 
-		respondSuccess(c, http.StatusOK, gin.H{"tags": video.Tags}, "Tags retrieved successfully")
+		apitypes.RespondSuccess(c, http.StatusOK, gin.H{"tags": video.Tags}, "Tags retrieved successfully")
 	}
 }
 
@@ -51,22 +52,22 @@ func addVideoTag(repo *repo.RepoManager) gin.HandlerFunc {
 		var req TagAddRequest
 
 		if err := c.ShouldBindJSON(&req); err != nil || strings.TrimSpace(req.Tag) == "" {
-			respondError(c, http.StatusBadRequest, "Invalid request payload")
+			apitypes.RespondError(c, http.StatusBadRequest, "Invalid request payload")
 			return
 		}
 
 		if err := repo.AddTagToVideo(videoID, req.Tag); err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to add tag")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to add tag")
 			return
 		}
 
 		video, err := repo.GetVideoByID(videoID)
 		if err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to fetch updated video")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to fetch updated video")
 			return
 		}
 
-		respondSuccess(c, http.StatusOK, gin.H{"tags": video.Tags}, "Tag added successfully")
+		apitypes.RespondSuccess(c, http.StatusOK, gin.H{"tags": video.Tags}, "Tag added successfully")
 	}
 }
 
@@ -77,21 +78,21 @@ func removeVideoTag(repo *repo.RepoManager) gin.HandlerFunc {
 		var req TagRemoveRequest
 
 		if err := c.ShouldBindJSON(&req); err != nil || strings.TrimSpace(req.Tag) == "" {
-			respondError(c, http.StatusBadRequest, "Invalid request payload")
+			apitypes.RespondError(c, http.StatusBadRequest, "Invalid request payload")
 			return
 		}
 
 		if err := repo.RemoveTagFromVideo(videoID, req.Tag); err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to remove tag")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to remove tag")
 			return
 		}
 
 		video, err := repo.GetVideoByID(videoID)
 		if err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to fetch updated video")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to fetch updated video")
 			return
 		}
 
-		respondSuccess(c, http.StatusOK, gin.H{"tags": video.Tags}, "Tag removed successfully")
+		apitypes.RespondSuccess(c, http.StatusOK, gin.H{"tags": video.Tags}, "Tag removed successfully")
 	}
 }

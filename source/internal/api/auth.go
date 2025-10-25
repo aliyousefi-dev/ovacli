@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"time"
 
+	apitypes "ova-cli/source/internal/api-types"
 	"ova-cli/source/internal/repo"
 
 	"github.com/gin-gonic/gin"
@@ -43,18 +44,18 @@ func RegisterAuthRoutes(rg *gin.RouterGroup, repoMgr *repo.RepoManager) {
 func loginHandler(c *gin.Context, repoMgr *repo.RepoManager) {
 	var req LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		respondError(c, http.StatusBadRequest, "Invalid JSON")
+		apitypes.RespondError(c, http.StatusBadRequest, "Invalid JSON")
 		return
 	}
 
 	user, err := repoMgr.GetUserByUsername(req.Username)
 	if err != nil {
-		respondError(c, http.StatusUnauthorized, "Invalid username or password")
+		apitypes.RespondError(c, http.StatusUnauthorized, "Invalid username or password")
 		return
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)); err != nil {
-		respondError(c, http.StatusUnauthorized, "Invalid username or password")
+		apitypes.RespondError(c, http.StatusUnauthorized, "Invalid username or password")
 		return
 	}
 
@@ -69,19 +70,19 @@ func loginHandler(c *gin.Context, repoMgr *repo.RepoManager) {
 		Secure:   false, // Keep as false for HTTP
 	})
 
-	respondSuccess(c, http.StatusOK, LoginResponse{SessionID: sessionID}, "Login successful")
+	apitypes.RespondSuccess(c, http.StatusOK, LoginResponse{SessionID: sessionID}, "Login successful")
 }
 
 func logoutHandler(c *gin.Context, repoMgr *repo.RepoManager) {
 	sessionID, err := c.Cookie("session_id")
 	if err != nil {
-		respondError(c, http.StatusUnauthorized, "No session found")
+		apitypes.RespondError(c, http.StatusUnauthorized, "No session found")
 		return
 	}
 
 	accountId, err := repoMgr.GetAccountIDBySession(sessionID)
 	if err != nil || accountId == "" {
-		respondError(c, http.StatusUnauthorized, "Invalid session")
+		apitypes.RespondError(c, http.StatusUnauthorized, "Invalid session")
 		return
 	}
 
@@ -90,12 +91,12 @@ func logoutHandler(c *gin.Context, repoMgr *repo.RepoManager) {
 	clearCookie := "session_id=; Path=/; Max-Age=0; HttpOnly; SameSite=None;"
 	c.Writer.Header().Add("Set-Cookie", clearCookie)
 
-	respondSuccess(c, http.StatusOK, gin.H{}, "Logged out successfully")
+	apitypes.RespondSuccess(c, http.StatusOK, gin.H{}, "Logged out successfully")
 }
 
 func authStatusHandler(c *gin.Context, repoMgr *repo.RepoManager) {
 	if !repoMgr.AuthEnabled {
-		respondSuccess(c, http.StatusOK, gin.H{
+		apitypes.RespondSuccess(c, http.StatusOK, gin.H{
 			"authenticated": true,
 			"username":      "guest",
 		}, "Auth disabled: automatic success")
@@ -104,7 +105,7 @@ func authStatusHandler(c *gin.Context, repoMgr *repo.RepoManager) {
 
 	sessionID, err := c.Cookie("session_id")
 	if err != nil {
-		respondSuccess(c, http.StatusOK, gin.H{"authenticated": false}, "Not authenticated")
+		apitypes.RespondSuccess(c, http.StatusOK, gin.H{"authenticated": false}, "Not authenticated")
 		return
 	}
 
@@ -113,32 +114,32 @@ func authStatusHandler(c *gin.Context, repoMgr *repo.RepoManager) {
 
 		userdata, _ := repoMgr.GetUserByAccountID(accountId)
 
-		respondSuccess(c, http.StatusOK, gin.H{
+		apitypes.RespondSuccess(c, http.StatusOK, gin.H{
 			"authenticated": true,
 			"accountId":     userdata.AccountID,
 			"username":      userdata.Username,
 		}, "Status check successful")
 	} else {
-		respondSuccess(c, http.StatusOK, gin.H{"authenticated": false}, "Not authenticated")
+		apitypes.RespondSuccess(c, http.StatusOK, gin.H{"authenticated": false}, "Not authenticated")
 	}
 }
 
 func profileHandler(c *gin.Context, repoMgr *repo.RepoManager) {
 	sessionID, err := c.Cookie("session_id")
 	if err != nil {
-		respondError(c, http.StatusUnauthorized, "No session found")
+		apitypes.RespondError(c, http.StatusUnauthorized, "No session found")
 		return
 	}
 
 	accountId, err := repoMgr.GetAccountIDBySession(sessionID)
 	if err != nil || accountId == "" {
-		respondError(c, http.StatusUnauthorized, "Invalid session")
+		apitypes.RespondError(c, http.StatusUnauthorized, "Invalid session")
 		return
 	}
 
 	user, err := repoMgr.GetUserByUsername(accountId)
 	if err != nil {
-		respondError(c, http.StatusNotFound, "User not found")
+		apitypes.RespondError(c, http.StatusNotFound, "User not found")
 		return
 	}
 
@@ -150,43 +151,43 @@ func profileHandler(c *gin.Context, repoMgr *repo.RepoManager) {
 func passwordHandler(c *gin.Context, repoMgr *repo.RepoManager) {
 	var req ChangePasswordRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		respondError(c, http.StatusBadRequest, "Invalid JSON payload")
+		apitypes.RespondError(c, http.StatusBadRequest, "Invalid JSON payload")
 		return
 	}
 
 	sessionID, err := c.Cookie("session_id")
 	if err != nil {
-		respondSuccess(c, http.StatusOK, gin.H{"authenticated": false}, "Not authenticated")
+		apitypes.RespondSuccess(c, http.StatusOK, gin.H{"authenticated": false}, "Not authenticated")
 		return
 	}
 
 	accountId, _ := repoMgr.GetAccountIDBySession(sessionID)
 	if accountId == "" {
-		respondError(c, http.StatusUnauthorized, "Not authenticated")
+		apitypes.RespondError(c, http.StatusUnauthorized, "Not authenticated")
 		return
 	}
 
 	user, err := repoMgr.GetUserByUsername(accountId)
 	if err != nil {
-		respondError(c, http.StatusUnauthorized, "Invalid username")
+		apitypes.RespondError(c, http.StatusUnauthorized, "Invalid username")
 		return
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.OldPassword)); err != nil {
-		respondError(c, http.StatusUnauthorized, "Invalid password")
+		apitypes.RespondError(c, http.StatusUnauthorized, "Invalid password")
 		return
 	}
 
 	hashBytes, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), bcrypt.DefaultCost)
 	if err != nil {
-		respondError(c, http.StatusInternalServerError, "Cannot create hash from password")
+		apitypes.RespondError(c, http.StatusInternalServerError, "Cannot create hash from password")
 		return
 	}
 	hashedPassword := string(hashBytes)
 
 	if err := repoMgr.UpdateUserPassword(accountId, hashedPassword); err != nil {
-		respondError(c, http.StatusForbidden, err.Error())
+		apitypes.RespondError(c, http.StatusForbidden, err.Error())
 	} else {
-		respondSuccess(c, http.StatusOK, gin.H{"status": "ok"}, "Password changed!")
+		apitypes.RespondSuccess(c, http.StatusOK, gin.H{"status": "ok"}, "Password changed!")
 	}
 }

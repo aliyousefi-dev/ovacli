@@ -7,9 +7,6 @@
       <i class='bx bx-menu bx-sm'></i>
     </button>
 
-
-
-
     <div class="text-lg flex-shrink-0">
       {{ pageTitle || "Home" }}
     </div>
@@ -17,6 +14,32 @@
     <app-search-bar></app-search-bar>
   </div>
 
+  <div class="px-5">
 
+    <div class="tooltip tooltip-bottom" data-tip="Theme Swap">
+      <button class="btn btn-circle btn-ghost">
+        <label class="swap swap-rotate">
+          <!-- this hidden checkbox controls the state -->
+          <input type="checkbox" class="theme-controller" value="dark" />
+
+
+          <i class='swap-on bx bx-moon bx-xs'></i>
+
+          <i class='swap-off bx bxs-sun bx-xs'></i>
+
+        </label>
+      </button>
+    </div>
+
+
+    <div class="tooltip tooltip-bottom" data-tip="Activity">
+      <button class="btn btn-circle btn-ghost">
+        <i class='bx bx-bell'>
+        </i>
+      </button>
+    </div>
+
+
+  </div>
 
 </header>

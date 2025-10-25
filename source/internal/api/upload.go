@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"path/filepath"
 
+	apitypes "ova-cli/source/internal/api-types"
 	"ova-cli/source/internal/datatypes"
 	"ova-cli/source/internal/repo"
 
@@ -22,14 +23,14 @@ func uploadVideo(repoMgr *repo.RepoManager) gin.HandlerFunc {
 		// Get the accountId from context
 		accountId, exists := c.Get("accountId")
 		if !exists {
-			respondError(c, http.StatusUnauthorized, "Authentication required")
+			apitypes.RespondError(c, http.StatusUnauthorized, "Authentication required")
 			return
 		}
 
 		// Convert accountId to string (in case it's not a string)
 		accountIdStr, ok := accountId.(string)
 		if !ok {
-			respondError(c, http.StatusUnauthorized, "Invalid accountId")
+			apitypes.RespondError(c, http.StatusUnauthorized, "Invalid accountId")
 			return
 		}
 
@@ -45,7 +46,7 @@ func uploadVideo(repoMgr *repo.RepoManager) gin.HandlerFunc {
 		if !repoMgr.FolderExists(fullFolderPath) {
 			// Optionally create the folder if it doesn't exist
 			if err := repoMgr.CreateFolder(fullFolderPath); err != nil {
-				respondError(c, http.StatusInternalServerError, "Failed to create folder")
+				apitypes.RespondError(c, http.StatusInternalServerError, "Failed to create folder")
 				return
 			}
 		}
@@ -53,7 +54,7 @@ func uploadVideo(repoMgr *repo.RepoManager) gin.HandlerFunc {
 		// Get the file from form
 		file, err := c.FormFile("file")
 		if err != nil {
-			respondError(c, http.StatusBadRequest, "Video file is required")
+			apitypes.RespondError(c, http.StatusBadRequest, "Video file is required")
 			return
 		}
 
@@ -62,7 +63,7 @@ func uploadVideo(repoMgr *repo.RepoManager) gin.HandlerFunc {
 		log.Printf("Saving file %s to path: %s", file.Filename, savePath)
 		if err := c.SaveUploadedFile(file, savePath); err != nil {
 			log.Printf("SaveUploadedFile error: %v", err)
-			respondError(c, http.StatusInternalServerError, "Failed to save video file")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to save video file")
 			return
 		}
 		log.Printf("File saved successfully to %s", savePath)
@@ -76,6 +77,6 @@ func uploadVideo(repoMgr *repo.RepoManager) gin.HandlerFunc {
 		repoMgr.IndexVideo(savePath, accountIdStr)
 		repoMgr.CookOneVideo(savePath)
 
-		respondSuccess(c, http.StatusOK, video, "Video uploaded successfully")
+		apitypes.RespondSuccess(c, http.StatusOK, video, "Video uploaded successfully")
 	}
 }

@@ -1,8 +1,8 @@
-package api
+package apitypes
 
 import "github.com/gin-gonic/gin"
 
-func respondSuccess(c *gin.Context, status int, data interface{}, message string) {
+func RespondSuccess(c *gin.Context, status int, data interface{}, message string) {
 	c.JSON(status, gin.H{
 		"status":  "success",
 		"data":    data,
@@ -10,7 +10,7 @@ func respondSuccess(c *gin.Context, status int, data interface{}, message string
 	})
 }
 
-func respondError(c *gin.Context, status int, message string) {
+func RespondError(c *gin.Context, status int, message string) {
 	c.JSON(status, gin.H{
 		"status": "error",
 		"error": gin.H{

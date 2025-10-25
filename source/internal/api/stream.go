@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	apitypes "ova-cli/source/internal/api-types"
 	"ova-cli/source/internal/repo"
 
 	"github.com/gin-gonic/gin"
@@ -23,7 +24,7 @@ func streamVideo(repoManager *repo.RepoManager) gin.HandlerFunc {
 
 		video, err := repoManager.GetVideoByID(videoId)
 		if err != nil {
-			respondError(c, http.StatusNotFound, "Video not found")
+			apitypes.RespondError(c, http.StatusNotFound, "Video not found")
 			return
 		}
 
@@ -31,9 +32,9 @@ func streamVideo(repoManager *repo.RepoManager) gin.HandlerFunc {
 		file, err := os.Open(videoPath)
 		if err != nil {
 			if os.IsNotExist(err) {
-				respondError(c, http.StatusNotFound, "Video file not found on disk")
+				apitypes.RespondError(c, http.StatusNotFound, "Video file not found on disk")
 			} else {
-				respondError(c, http.StatusInternalServerError, "Error accessing video file")
+				apitypes.RespondError(c, http.StatusInternalServerError, "Error accessing video file")
 			}
 			return
 		}
@@ -41,7 +42,7 @@ func streamVideo(repoManager *repo.RepoManager) gin.HandlerFunc {
 
 		fi, err := file.Stat()
 		if err != nil {
-			respondError(c, http.StatusInternalServerError, "Unable to get file info")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Unable to get file info")
 			return
 		}
 

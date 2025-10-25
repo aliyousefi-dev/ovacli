@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 
+	apitypes "ova-cli/source/internal/api-types"
 	"ova-cli/source/internal/repo"
 
 	"github.com/gin-gonic/gin"
@@ -24,10 +25,10 @@ func getPreview(rm *repo.RepoManager) gin.HandlerFunc {
 
 		// Check if the preview file exists
 		if _, err := os.Stat(previewPath); os.IsNotExist(err) {
-			respondError(c, http.StatusNotFound, "Preview not found")
+			apitypes.RespondError(c, http.StatusNotFound, "Preview not found")
 			return
 		} else if err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to access preview file")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to access preview file")
 			return
 		}
 

@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	apitypes "ova-cli/source/internal/api-types"
 	"ova-cli/source/internal/repo"
 
 	"github.com/gin-gonic/gin"
@@ -29,7 +30,7 @@ func getUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 		// Convert bucket to integer
 		bucket, err := strconv.Atoi(bucketStr)
 		if err != nil || bucket <= 0 {
-			respondError(c, http.StatusBadRequest, "Invalid bucket parameter")
+			apitypes.RespondError(c, http.StatusBadRequest, "Invalid bucket parameter")
 			return
 		}
 
@@ -39,13 +40,13 @@ func getUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 		// Call GetUserSavedVideos to get the total count of saved videos for the user
 		totalVideos, err := repoManager.GetUserSavedVideosCount(username)
 		if err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to get saved videos count")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to get saved videos count")
 			return
 		}
 
 		// If there are no saved videos, return an empty response
 		if totalVideos == 0 {
-			respondSuccess(c, http.StatusOK, gin.H{
+			apitypes.RespondSuccess(c, http.StatusOK, gin.H{
 				"username":          username,
 				"videoIds":          []string{}, // Empty array for saved videos
 				"totalVideos":       0,
@@ -68,7 +69,7 @@ func getUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 		// Fetch saved video IDs in the calculated range from memory storage
 		savedVideos, err := repoManager.GetUserSavedVideosInRange(username, start, end)
 		if err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to retrieve saved videos in range")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to retrieve saved videos in range")
 			return
 		}
 
@@ -82,7 +83,7 @@ func getUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 			"totalBuckets":      (totalVideos + bucketContentSize - 1) / bucketContentSize, // Calculate total number of buckets
 		}
 
-		respondSuccess(c, http.StatusOK, response, "Saved videos retrieved successfully")
+		apitypes.RespondSuccess(c, http.StatusOK, response, "Saved videos retrieved successfully")
 	}
 }
 
@@ -94,16 +95,16 @@ func addUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 
 		// Check video existence via RepoManager
 		if _, err := repoManager.GetVideoByID(videoID); err != nil {
-			respondError(c, http.StatusNotFound, "Video not found")
+			apitypes.RespondError(c, http.StatusNotFound, "Video not found")
 			return
 		}
 
 		if err := repoManager.AddVideoToSaved(username, videoID); err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to add saved video: "+err.Error())
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to add saved video: "+err.Error())
 			return
 		}
 
-		respondSuccess(c, http.StatusOK, gin.H{
+		apitypes.RespondSuccess(c, http.StatusOK, gin.H{
 			"username": username,
 			"videoId":  videoID,
 		}, "Video added to saved")
@@ -117,11 +118,11 @@ func removeUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 		videoID := c.Param("videoId")
 
 		if err := repoManager.RemoveVideoFromSaved(username, videoID); err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to remove saved video: "+err.Error())
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to remove saved video: "+err.Error())
 			return
 		}
 
-		respondSuccess(c, http.StatusOK, gin.H{
+		apitypes.RespondSuccess(c, http.StatusOK, gin.H{
 			"username": username,
 			"videoId":  videoID,
 		}, "Video removed from saved")

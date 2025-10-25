@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	apitypes "ova-cli/source/internal/api-types"
 	"ova-cli/source/internal/repo"
 	"strconv"
 
@@ -28,7 +29,7 @@ func getUserPlaylistContents(rm *repo.RepoManager) gin.HandlerFunc {
 		bucketStr := c.DefaultQuery("bucket", "1")
 		bucket, err := strconv.Atoi(bucketStr)
 		if err != nil || bucket <= 0 {
-			respondError(c, http.StatusBadRequest, "Invalid bucket parameter")
+			apitypes.RespondError(c, http.StatusBadRequest, "Invalid bucket parameter")
 			return
 		}
 
@@ -38,13 +39,13 @@ func getUserPlaylistContents(rm *repo.RepoManager) gin.HandlerFunc {
 		// Get total number of videos in playlist
 		totalVideos, err := rm.GetUserPlaylistContentVideosCount(username, slug)
 		if err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to get playlist videos count")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to get playlist videos count")
 			return
 		}
 
 		// If playlist is empty
 		if totalVideos == 0 {
-			respondSuccess(c, http.StatusOK, gin.H{
+			apitypes.RespondSuccess(c, http.StatusOK, gin.H{
 				"username":          username,
 				"slug":              slug,
 				"videoIds":          []string{},
@@ -66,7 +67,7 @@ func getUserPlaylistContents(rm *repo.RepoManager) gin.HandlerFunc {
 		// Fetch playlist videos for the given bucket
 		videos, err := rm.GetUserPlaylistContentVideosInRange(username, slug, start, end)
 		if err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to retrieve playlist videos")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to retrieve playlist videos")
 			return
 		}
 
@@ -81,7 +82,7 @@ func getUserPlaylistContents(rm *repo.RepoManager) gin.HandlerFunc {
 			"totalBuckets":      (totalVideos + bucketContentSize - 1) / bucketContentSize,
 		}
 
-		respondSuccess(c, http.StatusOK, response, "Playlist contents retrieved successfully")
+		apitypes.RespondSuccess(c, http.StatusOK, response, "Playlist contents retrieved successfully")
 	}
 }
 
@@ -94,18 +95,18 @@ func addVideoToPlaylist(rm *repo.RepoManager) gin.HandlerFunc {
 			VideoID string `json:"videoId"`
 		}
 		if err := c.ShouldBindJSON(&body); err != nil || body.VideoID == "" {
-			respondError(c, http.StatusBadRequest, "Invalid or missing videoId")
+			apitypes.RespondError(c, http.StatusBadRequest, "Invalid or missing videoId")
 			return
 		}
 
 		err := rm.AddVideoToPlaylist(username, slug, body.VideoID)
 		if err != nil {
-			respondError(c, http.StatusInternalServerError, err.Error())
+			apitypes.RespondError(c, http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		pl, _ := rm.GetUserPlaylist(username, slug)
-		respondSuccess(c, http.StatusOK, pl, "Video added to playlist")
+		apitypes.RespondSuccess(c, http.StatusOK, pl, "Video added to playlist")
 	}
 }
 
@@ -117,11 +118,11 @@ func deleteVideoFromPlaylist(rm *repo.RepoManager) gin.HandlerFunc {
 
 		err := rm.RemoveVideoFromPlaylist(username, slug, videoId)
 		if err != nil {
-			respondError(c, http.StatusInternalServerError, err.Error())
+			apitypes.RespondError(c, http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		pl, _ := rm.GetUserPlaylist(username, slug)
-		respondSuccess(c, http.StatusOK, pl, "Video removed from playlist")
+		apitypes.RespondSuccess(c, http.StatusOK, pl, "Video removed from playlist")
 	}
 }

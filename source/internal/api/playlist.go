@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	apitypes "ova-cli/source/internal/api-types"
 	"ova-cli/source/internal/datatypes"
 	"ova-cli/source/internal/repo"
 	"ova-cli/source/internal/utils"
@@ -26,7 +27,7 @@ func getUserPlaylists(rm *repo.RepoManager) gin.HandlerFunc {
 		username := c.Param("username")
 		user, err := rm.GetUserByUsername(username)
 		if err != nil {
-			respondError(c, http.StatusNotFound, "User not found")
+			apitypes.RespondError(c, http.StatusNotFound, "User not found")
 			return
 		}
 
@@ -50,7 +51,7 @@ func getUserPlaylists(rm *repo.RepoManager) gin.HandlerFunc {
 			})
 		}
 
-		respondSuccess(c, http.StatusOK, gin.H{
+		apitypes.RespondSuccess(c, http.StatusOK, gin.H{
 			"username":       username,
 			"playlists":      playlists,
 			"totalPlaylists": len(playlists), // total number of playlists
@@ -64,27 +65,27 @@ func createUserPlaylist(rm *repo.RepoManager) gin.HandlerFunc {
 		var newPl datatypes.PlaylistData
 
 		if err := c.ShouldBindJSON(&newPl); err != nil {
-			respondError(c, http.StatusBadRequest, "Invalid JSON: "+err.Error())
+			apitypes.RespondError(c, http.StatusBadRequest, "Invalid JSON: "+err.Error())
 			return
 		}
 		if newPl.Title == "" {
-			respondError(c, http.StatusBadRequest, "Title is required")
+			apitypes.RespondError(c, http.StatusBadRequest, "Title is required")
 			return
 		}
 
 		newPl.Slug = utils.ToSlug(newPl.Title)
 
 		if _, err := rm.GetUserByUsername(username); err != nil {
-			respondError(c, http.StatusNotFound, "User not found")
+			apitypes.RespondError(c, http.StatusNotFound, "User not found")
 			return
 		}
 
 		if err := rm.AddPlaylistToUser(username, &newPl); err != nil {
-			respondError(c, http.StatusConflict, err.Error())
+			apitypes.RespondError(c, http.StatusConflict, err.Error())
 			return
 		}
 
-		respondSuccess(c, http.StatusCreated, newPl, "Playlist added")
+		apitypes.RespondSuccess(c, http.StatusCreated, newPl, "Playlist added")
 	}
 }
 
@@ -94,10 +95,10 @@ func deleteUserPlaylistBySlug(rm *repo.RepoManager) gin.HandlerFunc {
 		slug := c.Param("slug")
 
 		if err := rm.DeleteUserPlaylist(username, slug); err != nil {
-			respondError(c, http.StatusNotFound, "Playlist not found")
+			apitypes.RespondError(c, http.StatusNotFound, "Playlist not found")
 			return
 		}
-		respondSuccess(c, http.StatusOK, gin.H{}, "Playlist deleted")
+		apitypes.RespondSuccess(c, http.StatusOK, gin.H{}, "Playlist deleted")
 	}
 }
 
@@ -109,15 +110,15 @@ func setUserPlaylistsOrder(rm *repo.RepoManager) gin.HandlerFunc {
 			Order []string `json:"order"`
 		}
 		if err := c.ShouldBindJSON(&body); err != nil || len(body.Order) == 0 {
-			respondError(c, http.StatusBadRequest, "Invalid or missing order array")
+			apitypes.RespondError(c, http.StatusBadRequest, "Invalid or missing order array")
 			return
 		}
 
 		if err := rm.SetPlaylistsOrder(username, body.Order); err != nil {
-			respondError(c, http.StatusInternalServerError, err.Error())
+			apitypes.RespondError(c, http.StatusInternalServerError, err.Error())
 			return
 		}
-		respondSuccess(c, http.StatusOK, nil, "Playlist order updated")
+		apitypes.RespondSuccess(c, http.StatusOK, nil, "Playlist order updated")
 	}
 }
 
@@ -131,27 +132,27 @@ func updateUserPlaylistInfo(rm *repo.RepoManager) gin.HandlerFunc {
 			Description string `json:"description"`
 		}
 		if err := c.ShouldBindJSON(&body); err != nil {
-			respondError(c, http.StatusBadRequest, "Invalid JSON: "+err.Error())
+			apitypes.RespondError(c, http.StatusBadRequest, "Invalid JSON: "+err.Error())
 			return
 		}
 
 		if body.Title == "" && body.Description == "" {
-			respondError(c, http.StatusBadRequest, "At least one of title or description must be provided")
+			apitypes.RespondError(c, http.StatusBadRequest, "At least one of title or description must be provided")
 			return
 		}
 
 		err := rm.UpdatePlaylistInfo(username, slug, body.Title, body.Description)
 		if err != nil {
-			respondError(c, http.StatusInternalServerError, err.Error())
+			apitypes.RespondError(c, http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		pl, err := rm.GetUserPlaylist(username, slug)
 		if err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to retrieve updated playlist")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to retrieve updated playlist")
 			return
 		}
 
-		respondSuccess(c, http.StatusOK, pl, "Playlist info updated")
+		apitypes.RespondSuccess(c, http.StatusOK, pl, "Playlist info updated")
 	}
 }

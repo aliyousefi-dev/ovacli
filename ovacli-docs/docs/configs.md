@@ -10,13 +10,12 @@ you can see the default port and ip and configs that ova create automatically th
 
 ```json
 {
-	"version": "1.0.0",
+	"ovacli": "0.1-beta",
 	"serverHost": "0.0.0.0",
 	"serverPort": 443,
-	"rootUser": "user",
-	"enableAuthentication": true,
-	"enableDocs": true,
-	"maxBucketSize": 15,
+	"rootUser": "71df752c-4292-4e82-8d4c-9b4350e50be4",
+	"enableAuth": true,
+	"maxBucketSize": 30,
 	"dataStorageType": "jsondb",
 	"createdAt": "2025-08-12T19:49:16.9240393+03:30"
 }

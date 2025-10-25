@@ -1,17 +1,43 @@
+cooked videos - indexed videos
+
 <div class="p-4">
     <div class="text-2xl">Stats</div>
 
-    <div>Connected Disks</div>
-    <div>Total Space</div>
-    <div>Used Space</div>
-    <div>Total Users</div>
-    <div>Total Videos</div>
-    <div>Total Active Tasks</div>
-</div>
+    <div class="stats stats-vertical lg:stats-horizontal shadow">
+        <div class="stat">
+            <div class="stat-title">Downloads</div>
+            <div class="stat-value">31K</div>
+            <div class="stat-desc">Jan 1st - Feb 1st</div>
+        </div>
 
+        <div class="stat">
+            <div class="stat-title">New Users</div>
+            <div class="stat-value">4,200</div>
+            <div class="stat-desc">↗︎ 400 (22%)</div>
+        </div>
 
-<div id="chart" class="text-base-content">
-    <apx-chart [series]="userChart.series!" [chart]="userChart.chart!" [dataLabels]="userChart.dataLabels!"
-        [stroke]="userChart.stroke!">
-    </apx-chart>
+        <div class="stat">
+            <div class="stat-title">New Registers</div>
+            <div class="stat-value">1,200</div>
+            <div class="stat-desc">↘︎ 90 (14%)</div>
+        </div>
+    </div>
+
+    <div class="flex">
+
+        <div id="chart" class="text-base-content w-full ">
+
+            <apx-chart [series]="userChart.series!" [chart]="userChart.chart!" [dataLabels]="userChart.dataLabels!"
+                [stroke]="userChart.stroke!">
+            </apx-chart>
+        </div>
+
+        <div id="chart2" class="text-base-content w-full ">
+
+            <apx-chart [series]="userChart2.series!" [chart]="userChart2.chart!" [plotOptions]="userChart2.plotOptions!"
+                [labels]="userChart2.labels!" [legend]="userChart2.legend!" [colors]="userChart2.colors!"
+                [responsive]="userChart2.responsive!"></apx-chart>
+
+        </div>
+    </div>
 </div>

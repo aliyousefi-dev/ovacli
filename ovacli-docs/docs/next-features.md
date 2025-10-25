@@ -35,3 +35,7 @@ here we demonstrate what features we want to add to next versions.
 - Searchable (AccountID / Username / VideoID / Video Tags / Collection )
 - show elapsed time after indexing
 - show estimated time after cooking
+- Ai Searching
+- adding Bitrate metadata and Sound Channel Numbers
+- Create Smart Collection with Multiple Tag Fetch
+- QC on the Projects

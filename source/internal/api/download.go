@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"strconv"
 
+	apitypes "ova-cli/source/internal/api-types"
 	"ova-cli/source/internal/repo"
 	"ova-cli/source/internal/thirdparty"
 
@@ -26,17 +27,17 @@ func downloadVideo(rm *repo.RepoManager) gin.HandlerFunc {
 
 		video, err := rm.GetVideoByID(videoId)
 		if err != nil {
-			respondError(c, http.StatusNotFound, "Video not found")
+			apitypes.RespondError(c, http.StatusNotFound, "Video not found")
 			return
 		}
 
 		videoPath := video.FilePath
 		info, err := os.Stat(videoPath)
 		if os.IsNotExist(err) {
-			respondError(c, http.StatusNotFound, "Video file not found on disk")
+			apitypes.RespondError(c, http.StatusNotFound, "Video file not found on disk")
 			return
 		} else if err != nil {
-			respondError(c, http.StatusInternalServerError, "Error accessing video file")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Error accessing video file")
 			return
 		}
 
@@ -64,34 +65,34 @@ func downloadTrimmedVideo(rm *repo.RepoManager) gin.HandlerFunc {
 
 		end, err := strconv.ParseFloat(endStr, 64)
 		if err != nil || end <= start {
-			respondError(c, http.StatusBadRequest, "Invalid end time")
+			apitypes.RespondError(c, http.StatusBadRequest, "Invalid end time")
 			return
 		}
 
 		duration := end - start
 		if duration <= 0 {
-			respondError(c, http.StatusBadRequest, "Trim duration must be positive")
+			apitypes.RespondError(c, http.StatusBadRequest, "Trim duration must be positive")
 			return
 		}
 
 		video, err := rm.GetVideoByID(videoId)
 		if err != nil {
-			respondError(c, http.StatusNotFound, "Video not found")
+			apitypes.RespondError(c, http.StatusNotFound, "Video not found")
 			return
 		}
 
 		videoPath := video.FilePath
 		if _, err := os.Stat(videoPath); os.IsNotExist(err) {
-			respondError(c, http.StatusNotFound, "Video file not found on disk")
+			apitypes.RespondError(c, http.StatusNotFound, "Video file not found on disk")
 			return
 		} else if err != nil {
-			respondError(c, http.StatusInternalServerError, "Error accessing video file")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Error accessing video file")
 			return
 		}
 
 		ffmpegPath, err := thirdparty.GetFFmpegPath()
 		if err != nil {
-			respondError(c, http.StatusInternalServerError, "FFmpeg not found")
+			apitypes.RespondError(c, http.StatusInternalServerError, "FFmpeg not found")
 			return
 		}
 
@@ -113,13 +114,13 @@ func downloadTrimmedVideo(rm *repo.RepoManager) gin.HandlerFunc {
 
 		stdout, err := cmd.StdoutPipe()
 		if err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to create output pipe")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to create output pipe")
 			return
 		}
 
 		stderr, err := cmd.StderrPipe()
 		if err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to create stderr pipe")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to create stderr pipe")
 			return
 		}
 
@@ -127,7 +128,7 @@ func downloadTrimmedVideo(rm *repo.RepoManager) gin.HandlerFunc {
 		c.Header("Content-Type", "video/mp4")
 
 		if err := cmd.Start(); err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to start ffmpeg")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to start ffmpeg")
 			return
 		}
 

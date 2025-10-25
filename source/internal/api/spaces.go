@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 
+	apitypes "ova-cli/source/internal/api-types"
 	"ova-cli/source/internal/repo"
 
 	"github.com/gin-gonic/gin"
@@ -18,12 +19,12 @@ func getSpaceList(rm *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		spaces, err := rm.ScanDiskForFolders()
 		if err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to load folders")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to load folders")
 			return
 		}
 
 		spaces = append(spaces, ".")
 
-		respondSuccess(c, http.StatusOK, spaces, "Folders retrieved successfully")
+		apitypes.RespondSuccess(c, http.StatusOK, spaces, "Folders retrieved successfully")
 	}
 }

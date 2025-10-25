@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	apitypes "ova-cli/source/internal/api-types"
 	"ova-cli/source/internal/repo"
 	"strconv"
 
@@ -27,7 +28,7 @@ func getLatestVideos(repoMgr *repo.RepoManager) gin.HandlerFunc {
 		// Convert bucketBlockNumber to integer
 		bucketBlockNumber, err := strconv.Atoi(bucketStr)
 		if err != nil || bucketBlockNumber <= 0 {
-			respondError(c, http.StatusBadRequest, "Invalid bucket parameter")
+			apitypes.RespondError(c, http.StatusBadRequest, "Invalid bucket parameter")
 			return
 		}
 
@@ -37,15 +38,13 @@ func getLatestVideos(repoMgr *repo.RepoManager) gin.HandlerFunc {
 		// Call GetTotalIndexedVideoCount to get the total count of cached videos
 		totalVideos, err := repoMgr.GetTotalIndexedVideoCount()
 		if err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to get total video count")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to get total video count")
 			return
 		}
 
 		// Calculate the start and end indices based on bucket and hardcoded bucket_size (20)
 		start := (bucketBlockNumber - 1) * maxBucketSize
 		end := start + maxBucketSize
-
-		fmt.Print("Start and end is ", start, " ", end)
 
 		// Ensure the end index does not exceed the total number of videos
 		if end > totalVideos {
@@ -56,19 +55,19 @@ func getLatestVideos(repoMgr *repo.RepoManager) gin.HandlerFunc {
 		videoIDsInRange, err := repoMgr.GetGlobalVideosInRange(start, end)
 		if err != nil {
 			// Respond with a formatted error message
-			respondError(c, http.StatusInternalServerError, fmt.Sprintf("Failed to retrieve videos: %v", err))
+			apitypes.RespondError(c, http.StatusInternalServerError, fmt.Sprintf("Failed to retrieve videos: %v", err))
 			return
 		}
 
 		// Prepare the response with video IDs and total video count
-		response := gin.H{
-			"videoIds":          videoIDsInRange,
-			"totalVideos":       totalVideos, // Add total video count to the response
-			"currentBucket":     bucketBlockNumber,
-			"bucketContentSize": maxBucketSize,
-			"totalBuckets":      (totalVideos + maxBucketSize - 1) / maxBucketSize, // Calculate total number of buckets
+		response := apitypes.VideoBatchResponse{
+			VideoIDs:          videoIDsInRange,
+			TotalVideos:       totalVideos,
+			CurrentBucket:     bucketBlockNumber,
+			BucketContentSize: maxBucketSize,
+			TotalBuckets:      (totalVideos + maxBucketSize - 1) / maxBucketSize,
 		}
 
-		respondSuccess(c, http.StatusOK, response, "Latest videos retrieved successfully")
+		apitypes.RespondSuccess(c, http.StatusOK, response, "Latest videos retrieved successfully")
 	}
 }

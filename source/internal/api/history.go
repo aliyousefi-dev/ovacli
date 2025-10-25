@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	apitypes "ova-cli/source/internal/api-types"
 	"ova-cli/source/internal/repo"
 	"strconv"
 
@@ -27,17 +28,17 @@ func addVideoToWatched(r *repo.RepoManager) gin.HandlerFunc {
 			VideoID string `json:"videoId"`
 		}
 		if err := c.ShouldBindJSON(&req); err != nil || req.VideoID == "" {
-			respondError(c, http.StatusBadRequest, "Invalid videoId in request")
+			apitypes.RespondError(c, http.StatusBadRequest, "Invalid videoId in request")
 			return
 		}
 
 		err := r.AddVideoToWatched(username, req.VideoID)
 		if err != nil {
-			respondError(c, http.StatusBadRequest, err.Error())
+			apitypes.RespondError(c, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		respondSuccess(c, http.StatusOK, nil, "Video marked as watched")
+		apitypes.RespondSuccess(c, http.StatusOK, nil, "Video marked as watched")
 	}
 }
 
@@ -50,7 +51,7 @@ func getUserWatchedVideos(r *repo.RepoManager) gin.HandlerFunc {
 		bucketStr := c.DefaultQuery("bucket", "1")
 		bucket, err := strconv.Atoi(bucketStr)
 		if err != nil || bucket <= 0 {
-			respondError(c, http.StatusBadRequest, "Invalid bucket parameter")
+			apitypes.RespondError(c, http.StatusBadRequest, "Invalid bucket parameter")
 			return
 		}
 
@@ -60,20 +61,20 @@ func getUserWatchedVideos(r *repo.RepoManager) gin.HandlerFunc {
 		// Get the count of watched videos for the user
 		totalVideos, err := r.GetUserWatchedVideosCount(username)
 		if err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to get watched video count")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to get watched video count")
 			return
 		}
 
 		// If no videos are found, return an empty list
 		if totalVideos == 0 {
-			response := gin.H{
-				"videoIds":          []string{}, // Return an empty videoIds array
-				"totalVideos":       0,
-				"currentBucket":     bucket,
-				"bucketContentSize": bucketContentSize,
-				"totalBuckets":      0, // No buckets if there are no videos
+			response := apitypes.VideoBatchResponse{
+				VideoIDs:          []string{}, // Return an empty videoIds array
+				TotalVideos:       0,
+				CurrentBucket:     bucket,
+				BucketContentSize: bucketContentSize,
+				TotalBuckets:      0, // No buckets if there are no videos
 			}
-			respondSuccess(c, http.StatusOK, response, "No watched videos found")
+			apitypes.RespondSuccess(c, http.StatusOK, response, "No watched videos found")
 			return
 		}
 
@@ -89,7 +90,7 @@ func getUserWatchedVideos(r *repo.RepoManager) gin.HandlerFunc {
 		// Fetch the specific range of watched videos
 		videosInRange, err := r.GetUserWatchedVideosInRange(username, start, end)
 		if err != nil {
-			respondError(c, http.StatusBadRequest, err.Error())
+			apitypes.RespondError(c, http.StatusBadRequest, err.Error())
 			return
 		}
 
@@ -99,15 +100,15 @@ func getUserWatchedVideos(r *repo.RepoManager) gin.HandlerFunc {
 		}
 
 		// Prepare the response with the videos in the current bucket, total count, and number of buckets
-		response := gin.H{
-			"videoIds":          videosInRange,
-			"totalVideos":       totalVideos, // Add total video count to the response
-			"currentBucket":     bucket,
-			"bucketContentSize": bucketContentSize,
-			"totalBuckets":      (totalVideos + bucketContentSize - 1) / bucketContentSize, // Calculate total number of buckets
+		response := apitypes.VideoBatchResponse{
+			VideoIDs:          videosInRange,
+			TotalVideos:       totalVideos,
+			CurrentBucket:     bucket,
+			BucketContentSize: bucketContentSize,
+			TotalBuckets:      (totalVideos + bucketContentSize - 1) / bucketContentSize,
 		}
 
-		respondSuccess(c, http.StatusOK, response, "Fetched watched videos")
+		apitypes.RespondSuccess(c, http.StatusOK, response, "Fetched watched videos")
 	}
 }
 
@@ -119,13 +120,13 @@ func clearUserWatchedHistory(r *repo.RepoManager) gin.HandlerFunc {
 		if err != nil {
 			// A 404 Not Found is appropriate if the user doesn't exist
 			if err.Error() == fmt.Sprintf("user %q not found", username) {
-				respondError(c, http.StatusNotFound, err.Error())
+				apitypes.RespondError(c, http.StatusNotFound, err.Error())
 			} else {
-				respondError(c, http.StatusInternalServerError, "Failed to clear watched history: "+err.Error())
+				apitypes.RespondError(c, http.StatusInternalServerError, "Failed to clear watched history: "+err.Error())
 			}
 			return
 		}
 
-		respondSuccess(c, http.StatusOK, nil, "User watched history cleared successfully")
+		apitypes.RespondSuccess(c, http.StatusOK, nil, "User watched history cleared successfully")
 	}
 }

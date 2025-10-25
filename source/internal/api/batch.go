@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	apitypes "ova-cli/source/internal/api-types"
 	"ova-cli/source/internal/datatypes"
 	"ova-cli/source/internal/repo"
 
@@ -25,7 +26,7 @@ func getVideosByIds(repoMgr *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var body requestBody
 		if err := c.ShouldBindJSON(&body); err != nil {
-			respondError(c, http.StatusBadRequest, "Invalid request")
+			apitypes.RespondError(c, http.StatusBadRequest, "Invalid request")
 			return
 		}
 
@@ -58,6 +59,6 @@ func getVideosByIds(repoMgr *repo.RepoManager) gin.HandlerFunc {
 			}
 		}
 
-		respondSuccess(c, http.StatusOK, matched, "Videos retrieved successfully")
+		apitypes.RespondSuccess(c, http.StatusOK, matched, "Videos retrieved successfully")
 	}
 }

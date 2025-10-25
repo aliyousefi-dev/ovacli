@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	apitypes "ova-cli/source/internal/api-types"
 	"ova-cli/source/internal/repo"
 	"strings"
 
@@ -32,14 +33,14 @@ func AuthMiddleware(repoMgr *repo.RepoManager, publicPaths map[string]bool, publ
 
 		sessionID, err := c.Cookie("session_id")
 		if err != nil {
-			respondError(c, http.StatusUnauthorized, "Authentication required")
+			apitypes.RespondError(c, http.StatusUnauthorized, "Authentication required")
 			c.Abort()
 			return
 		}
 
 		accountID, ok := repoMgr.GetAccountIDBySession(sessionID)
 		if ok != nil {
-			respondError(c, http.StatusUnauthorized, "Invalid session")
+			apitypes.RespondError(c, http.StatusUnauthorized, "Invalid session")
 			c.Abort()
 			return
 		}

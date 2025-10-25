@@ -1,21 +1,19 @@
 package cmd
 
 import (
-	"ova-cli/source/internal/logs"
+	"fmt"
 
 	"github.com/spf13/cobra"
 )
 
 // Version represents the version of your application
-const Version = "1.0.0-beta"
-
-var versionLogger = logs.Loggers("Version")
+const Version = "0.1-beta"
 
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print the version number",
 	Run: func(cmd *cobra.Command, args []string) {
-		versionLogger.Info("ova-server %s", Version)
+		fmt.Printf("ovacli version %s\n", Version)
 	},
 }
 

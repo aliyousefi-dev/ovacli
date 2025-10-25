@@ -13,6 +13,7 @@ import { ActivatedRoute, Router, Params } from '@angular/router';
 
 import { GalleryViewComponent } from '../../components/containers/gallery-view/gallery-view.component';
 import { SearchApiService } from '../../services/ova-backend/search-api.service';
+import { VideoData } from '../../data-types/video-data';
 
 @Component({
   selector: 'app-explore',
@@ -26,7 +27,7 @@ export class SearchPage implements OnInit, OnDestroy {
   advancedSearchEnabled: boolean = false;
   tagSearchEnabled: boolean = false;
   loading: boolean = false;
-  videos: any[] = [];
+  videos: VideoData[] = [];
 
   currentPage: number = 1;
   limit: number = 20;
@@ -187,8 +188,8 @@ export class SearchPage implements OnInit, OnDestroy {
     let processedVideos = [...this.videos];
 
     processedVideos = processedVideos.filter((video) => {
-      const height = video.resolution?.height || 0;
-      const duration = video.durationSeconds || 0;
+      const height = video.codecs.resolution?.height || 0;
+      const duration = video.codecs.durationSec || 0;
       const uploadedAt = video.uploadedAt ? new Date(video.uploadedAt) : null;
 
       const matchesResolution =
@@ -240,19 +241,30 @@ export class SearchPage implements OnInit, OnDestroy {
     return sortedFilteredVideos.slice(start, start + this.limit);
   }
 
-  sortVideos(videos: any[]): any[] {
+  /**
+   * FIX: The error "Cannot read properties of undefined (reading 'localeCompare')"
+   * occurs here when a video object is missing the 'fileName' property.
+   *
+   * Solution: Use null-safe access (a.fileName || '') to default to an empty string
+   * if fileName is undefined or null, preventing the TypeError.
+   */
+  sortVideos(videos: VideoData[]): VideoData[] {
     switch (this.sortOption) {
       case 'titleAsc':
-        return [...videos].sort((a, b) => a.fileName.localeCompare(b.title));
+        return [...videos].sort(
+          (a, b) => (a.fileName || '').localeCompare(b.fileName || '') // 👈 FIX APPLIED
+        );
       case 'titleDesc':
-        return [...videos].sort((a, b) => b.fileName.localeCompare(a.title));
+        return [...videos].sort(
+          (a, b) => (b.fileName || '').localeCompare(a.fileName || '') // 👈 FIX APPLIED
+        );
       case 'durationAsc':
         return [...videos].sort(
-          (a, b) => a.durationSeconds - b.durationSeconds
+          (a, b) => (a.codecs?.durationSec || 0) - (b.codecs?.durationSec || 0)
         );
       case 'durationDesc':
         return [...videos].sort(
-          (a, b) => b.durationSeconds - a.durationSeconds
+          (a, b) => (b.codecs?.durationSec || 0) - (a.codecs?.durationSec || 0)
         );
       case 'newest':
         return [...videos].sort(

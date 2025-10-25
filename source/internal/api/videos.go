@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	apitypes "ova-cli/source/internal/api-types"
 	"ova-cli/source/internal/datatypes"
 	"ova-cli/source/internal/repo"
 
@@ -30,14 +31,14 @@ func getVideoByID(repoMgr *repo.RepoManager) gin.HandlerFunc {
 		// Retrieve the video by ID
 		video, err := repoMgr.GetVideoByID(videoId)
 		if err != nil {
-			respondError(c, http.StatusNotFound, "Video not found")
+			apitypes.RespondError(c, http.StatusNotFound, "Video not found")
 			return
 		}
 
 		// Retrieve user data by OwnerAccountId
 		userdata, err := repoMgr.GetUserByAccountID(video.OwnerAccountId)
 		if err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to retrieve user data")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to retrieve user data")
 			return
 		}
 
@@ -56,7 +57,7 @@ func getVideoByID(repoMgr *repo.RepoManager) gin.HandlerFunc {
 		}
 
 		// Respond with the converted video data
-		respondSuccess(c, http.StatusOK, videoResponse, "Video retrieved successfully")
+		apitypes.RespondSuccess(c, http.StatusOK, videoResponse, "Video retrieved successfully")
 	}
 }
 
@@ -68,7 +69,7 @@ func getVideosByFolder(repoMgr *repo.RepoManager) gin.HandlerFunc {
 
 		videosInFolder, err := repoMgr.GetIndxedVideosOnSpace(requestedPath)
 		if err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to load videos")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to load videos")
 			return
 		}
 
@@ -76,7 +77,7 @@ func getVideosByFolder(repoMgr *repo.RepoManager) gin.HandlerFunc {
 			"videos": videosInFolder,
 		}
 
-		respondSuccess(c, http.StatusOK, response, "Videos in folder retrieved")
+		apitypes.RespondSuccess(c, http.StatusOK, response, "Videos in folder retrieved")
 	}
 }
 
@@ -86,7 +87,7 @@ func getSimilarVideos(repoMgr *repo.RepoManager) gin.HandlerFunc {
 
 		similarVideos, err := repoMgr.GetSimilarVideos(videoId)
 		if err != nil {
-			respondError(c, http.StatusNotFound, "Video not found or no similar videos")
+			apitypes.RespondError(c, http.StatusNotFound, "Video not found or no similar videos")
 			return
 		}
 
@@ -99,6 +100,6 @@ func getSimilarVideos(repoMgr *repo.RepoManager) gin.HandlerFunc {
 			"similarVideos": similarVideos,
 		}
 
-		respondSuccess(c, http.StatusOK, response, "Similar videos retrieved successfully")
+		apitypes.RespondSuccess(c, http.StatusOK, response, "Similar videos retrieved successfully")
 	}
 }

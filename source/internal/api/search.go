@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strings"
 
+	apitypes "ova-cli/source/internal/api-types"
 	"ova-cli/source/internal/datatypes"
 	"ova-cli/source/internal/repo"
 
@@ -28,7 +29,7 @@ func searchVideos(repoManager *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req SearchRequest
 		if err := c.ShouldBindJSON(&req); err != nil {
-			respondError(c, http.StatusBadRequest, "Invalid JSON payload")
+			apitypes.RespondError(c, http.StatusBadRequest, "Invalid JSON payload")
 			return
 		}
 
@@ -41,17 +42,17 @@ func searchVideos(repoManager *repo.RepoManager) gin.HandlerFunc {
 
 		// Validate that at least one filter is provided
 		if criteria.Query == "" && len(criteria.Tags) == 0 && criteria.MinRating == 0 && criteria.MaxDuration == 0 {
-			respondError(c, http.StatusBadRequest, "At least one search criteria must be provided (query, tags, minRating, or maxDuration)")
+			apitypes.RespondError(c, http.StatusBadRequest, "At least one search criteria must be provided (query, tags, minRating, or maxDuration)")
 			return
 		}
 
 		results, err := repoManager.SearchVideos(criteria)
 		if err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to search videos")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to search videos")
 			return
 		}
 
-		respondSuccess(c, http.StatusOK, gin.H{
+		apitypes.RespondSuccess(c, http.StatusOK, gin.H{
 			"query":      req.Query,
 			"tags":       req.Tags,
 			"results":    results,

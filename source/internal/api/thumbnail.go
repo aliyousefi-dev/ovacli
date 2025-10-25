@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 
+	apitypes "ova-cli/source/internal/api-types"
 	"ova-cli/source/internal/repo"
 
 	"github.com/gin-gonic/gin"
@@ -24,10 +25,10 @@ func getThumbnail(repo *repo.RepoManager) gin.HandlerFunc {
 
 		// Check if the thumbnail file exists
 		if _, err := os.Stat(thumbnailPath); os.IsNotExist(err) {
-			respondError(c, http.StatusNotFound, "Thumbnail not found")
+			apitypes.RespondError(c, http.StatusNotFound, "Thumbnail not found")
 			return
 		} else if err != nil {
-			respondError(c, http.StatusInternalServerError, "Failed to access thumbnail file")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to access thumbnail file")
 			return
 		}
 
