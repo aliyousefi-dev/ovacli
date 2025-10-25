@@ -5,29 +5,32 @@
   <!-- Video Area: 70% width on xl+ screens, 100% on smaller screens -->
   <div class="w-full xl:w-[70%] flex flex-col">
 
-    <div class="flex items-center justify-between">
-      <app-video-title-bar class="break-all" [videoData]="video"></app-video-title-bar>
 
-      <app-video-action-bar [videoId]="video.videoId" [isSaved]="isSaved" [loadingSavedVideo]="loadingSavedVideo"
-        (toggleSaved)="toggleSaved()" [getCurrentTimeFn]="getCurrentTimeFromPlayer"
-        [videoDurationSeconds]="video.codecs.durationSec" [videoUploadedAt]="video.uploadedAt"
-        [videoResolution]="video.codecs.resolution"></app-video-action-bar>
-    </div>
 
-    <div>
+    <div class="xl:p-10">
       @if (true) {
       <app-vidstack-player #vidstackPlayer [videoData]="video"></app-vidstack-player>
       }@else {
       <app-default-video-player [videoUrl]="videoUrl" [posterUrl]="thumbnailUrl"></app-default-video-player>
       }
-    </div>
 
-    <div class="flex justify-between items-center px-4 py-3 w-full">
-      <div *ngIf="video.fileName" class="text-xl font-semibold" [title]="video.fileName">
-        {{ video.fileName }}
+      <div class="flex justify-between items-center w-full py-2">
+        <div *ngIf="video.fileName" class="text-xl truncate pr-5 font-semibold" [title]="video.fileName">
+          {{ video.fileName }}
+        </div>
+
       </div>
 
-      <div class="flex justify-end gap-4 text-xs">
+      <div class="flex items-center justify-between">
+        <app-video-title-bar class="break-all" [videoData]="video"></app-video-title-bar>
+
+        <app-video-action-bar [videoId]="video.videoId" [isSaved]="isSaved" [loadingSavedVideo]="loadingSavedVideo"
+          (toggleSaved)="toggleSaved()" [getCurrentTimeFn]="getCurrentTimeFromPlayer"
+          [videoDurationSeconds]="video.codecs.durationSec" [videoUploadedAt]="video.uploadedAt"
+          [videoResolution]="video.codecs.resolution"></app-video-action-bar>
+      </div>
+
+      <div class="flex justify-end gap-4 text-xs w-120">
         <span *ngIf="video.uploadedAt" class="inline-flex items-center gap-1 font-medium bg-base-100 rounded-xl"
           [title]="video.uploadedAt">
           <i class="bx bx-time bx-xs"></i>
@@ -49,18 +52,18 @@
           <span>{{video.codecs.frameRate}} fps</span>
         </span>
       </div>
-    </div>
 
-    <!-- Metadata badges -->
-
-    <!-- Video Info Panels -->
-    <div class="flex flex-col gap-6 p-6 pb-10 bg-base-100 rounded-xl shadow-md">
       <app-video-tags-panel [tags]="video.tags"></app-video-tags-panel>
+
+      <div class="flex flex-col gap-6 mt-6 p-6 pb-10 bg-base-100 rounded-xl shadow-md">
+        <app-video-admin-tabs #adminTabs [videoId]="video.videoId" [currentTags]="video.tags"
+          (tagsUpdated)="video.tags = $event" (addMarkerClicked)="onAddMarkerClicked()"></app-video-admin-tabs>
+      </div>
     </div>
-    <div class="flex flex-col gap-6 mt-6 p-6 pb-10 bg-base-100 rounded-xl shadow-md">
-      <app-video-admin-tabs #adminTabs [videoId]="video.videoId" [currentTags]="video.tags"
-        (tagsUpdated)="video.tags = $event" (addMarkerClicked)="onAddMarkerClicked()"></app-video-admin-tabs>
-    </div>
+
+
+
+
   </div>
 
   <!-- Sidebar + Comments (30% width) on lg+ screens, full width on smaller screens -->

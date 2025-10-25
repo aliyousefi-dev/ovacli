@@ -1,10 +1,10 @@
-<div>
+<div class="p-5">
   <div *ngIf="videos.length === 0" class="text-center">
     No videos found.
   </div>
 
   @if (ViewMode === 'full') {
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-4 w-full">
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-6 w-full">
     @for (video of videos; track $index) {
     <app-video-card [video]="video" [PreviewPlayback]="PreviewPlayback"></app-video-card>
     }

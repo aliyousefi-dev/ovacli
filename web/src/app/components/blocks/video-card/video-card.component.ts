@@ -220,11 +220,4 @@ export class VideoCardComponent implements OnChanges, OnInit {
   navigateToWatch(): void {
     this.router.navigate(['/watch', this.video.videoId]);
   }
-
-  truncateTitle(title: string, maxLength: number = 20): string {
-    if (title.length > maxLength) {
-      return title.substring(0, maxLength) + '...';
-    }
-    return title;
-  }
 }

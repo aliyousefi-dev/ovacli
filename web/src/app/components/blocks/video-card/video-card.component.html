@@ -1,12 +1,16 @@
-<div class="h-full flex flex-col cursor-pointer overflow-visible relative rounded-lg">
-  <div class="block w-full h-40 rounded-lg overflow-hidden relative" (click)="navigateToWatch()">
+<div
+  class="h-full flex flex-col overflow-visible relative rounded-lg hover:bg-base-300 hover:scale-102 transition-all duration-200 p-3">
+  <div class="block w-full h-40 rounded-lg overflow-hidden cursor-pointer relative" (click)="navigateToWatch()">
     <figure class="relative w-full h-40 rounded-lg overflow-hidden bg-transparent">
-      <div *ngIf="isSaved" class="absolute bottom-2 left-2 z-30">
+      @if (isSaved) {
+      <div class="absolute bottom-2 left-2 z-30">
         <button class="btn btn-xs btn-circle bg-black/60 hover:bg-black text-yellow-500 border-none"
           title="Add to Saved" (click)="$event.preventDefault(); $event.stopPropagation()">
           <i class="bx bxs-star text-sm"></i>
         </button>
       </div>
+      }
+
 
       @if (isWatched) {
       <div
@@ -43,27 +47,26 @@
     </figure>
   </div>
 
-  <div class="flex flex-col gap-2 p-4 mt-2 rounded-lg shadow-sm hover:shadow-md bg-base-100 z-20"
-    (click)="$event.stopPropagation()">
+  <div class="flex flex-col gap-2 mt-2 rounded-lg z-20" (click)="$event.stopPropagation()">
 
+    <div class="flex items-center gap-2">
 
-    <div class="flex items-center gap-3">
-
-
-      <div class="avatar avatar-placeholder">
-        <div class="bg-base-300 w-12 rounded-full">
+      <div class="avatar avatar-placeholder flex-shrink-0">
+        <div class="bg-neutral text-neutral-content w-10 rounded-full border border-base-200">
           <span class="text-sm">{{ video.ownerAccountUsername.charAt(0).toUpperCase() }}</span>
         </div>
       </div>
 
-      <div class="flex-1">
+      <div class="flex flex-col flex-1 min-w-0">
+
         <div class="flex justify-between items-center">
-          <div class="flex items-center gap-2">
-            <div>{{video.ownerAccountUsername}}</div>
-            <div class="text-[10px] font-light">{{ timeSinceAdded }}</div> <!-- Make time text thinner -->
+          <div class="flex items-center gap-2 flex-1 min-w-0">
+            <div class="text-xs truncate min-w-0">{{video.ownerAccountUsername}}</div>
+            <div class="text-[10px] font-light flex-shrink-0">{{ timeSinceAdded }}</div>
           </div>
-          <div class="dropdown dropdown-end" (click)="$event.stopPropagation()">
-            <div tabindex="0" role="button" class="btn btn-xs btn-ghost z-30">
+
+          <div class="dropdown dropdown-end flex-shrink-0" (click)="$event.stopPropagation()">
+            <div tabindex="0" role="button" class="btn btn-xs btn-ghost">
               <i class='bx bx-dots-horizontal bx-xs'></i>
             </div>
             <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-44 z-40">
@@ -78,28 +81,26 @@
           </div>
         </div>
 
-        <h2 class="font-semibold break-all text-ellipsis">
-          {{ truncateTitle(video.fileName, 30) }}
-        </h2>
-
+        <div class="font-semibold text-sm text-start truncate pr-6 min-w-0 max-w-full">
+          {{ video.fileName }}
+        </div>
       </div>
-
-
 
     </div>
 
-
+    @if (video.tags.length > 0) {
     <div class="flex flex-wrap gap-1">
       @for (tag of video.tags; track $index) {
       <app-tag-link [tag]="tag" class="mr-1"></app-tag-link>
       }
     </div>
+    }
+
 
 
   </div>
 </div>
 
-<!-- Updated app-playlist-modal usage -->
 <app-sendto-modal [showModal]="playlistModalVisible" [selectedVideoId]="this.video.videoId"
   (close)="closePlaylistModal()">
 </app-sendto-modal>
