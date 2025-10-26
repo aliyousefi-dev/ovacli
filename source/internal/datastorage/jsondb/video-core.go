@@ -4,6 +4,7 @@ import (
 	"fmt" // os is not directly used in the provided functions, but good to keep if used elsewhere in the package.
 	"ova-cli/source/internal/datatypes"
 	"path/filepath"
+	"sort"
 	"strings"
 )
 
@@ -152,6 +153,12 @@ func (s *JsonDB) GetAllVideos() ([]datatypes.VideoData, error) {
 	for _, video := range videosMap {
 		videos = append(videos, video)
 	}
+
+	// Sort videos by UploadedAt timestamp
+	sort.Slice(videos, func(i, j int) bool {
+		return videos[i].UploadedAt.Before(videos[j].UploadedAt)
+	})
+
 	return videos, nil
 }
 
