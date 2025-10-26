@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomePage } from './pages/home/home.page';
-import { AuthGuard } from './services/ova-backend-service/middleware/auth.guard';
+import { AuthGuard } from '../services/ova-backend-service/middleware/auth.guard';
 import { GlobalPage } from './pages/global/global.page';
 import { HistoryPage } from './pages/history/history.page';
 import { ProfilePage } from './pages/profile/profile.page';

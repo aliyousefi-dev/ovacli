@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { VideoData } from '../../../services/ova-backend-service/api-types/video-data'; // Assuming path
-import { VideoApiService } from '../../../services/ova-backend-service/video-api.service'; // Assuming path
+import { VideoData } from '../../../../services/ova-backend-service/api-types/video-data'; // Assuming path
+import { VideoApiService } from '../../../../services/ova-backend-service/video-api.service'; // Assuming path
 import { Router } from '@angular/router';
 
 @Component({

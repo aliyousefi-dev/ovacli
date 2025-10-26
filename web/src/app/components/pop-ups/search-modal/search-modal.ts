@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { SuggestionApiService } from '../../../services/ova-backend-service/search-suggestion-api.service';
-import { SearchSuggestionsResponse } from '../../../services/ova-backend-service/api-responses/searchsuggestions-response';
+import { RouterModule, Router } from '@angular/router';
+import { SuggestionApiService } from '../../../../services/ova-backend-service/search-suggestion-api.service';
+import { SearchSuggestionsResponse } from '../../../../services/ova-backend-service/api-responses/searchsuggestions-response';
 
 @Component({
   selector: 'app-search-modal',
@@ -15,6 +15,7 @@ export class SearchModalComponent {
   searchResults: SearchSuggestionsResponse = { query: '', suggestions: [] }; // Initialize searchResults with the proper structure
   query: string = '';
   private loadingTimeout: any;
+  private router = inject(Router);
 
   constructor(private suggestionService: SuggestionApiService) {}
 
@@ -43,6 +44,14 @@ export class SearchModalComponent {
       });
     } else {
       this.searchResults = { query: this.query, suggestions: [] }; // Clear results when query is empty
+    }
+  }
+
+  // This method will be called when the Enter key is pressed
+  onEnter(): void {
+    if (this.query.trim().length > 0) {
+      this.router.navigate(['/search'], { queryParams: { q: this.query } });
+      this.CloseModal(); // Close the modal after navigating
     }
   }
 

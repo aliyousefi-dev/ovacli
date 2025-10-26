@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { VideoApiService } from '../../services/ova-backend-service/video-api.service';
-import { VideoData } from '../../services/ova-backend-service/api-types/video-data';
+import { VideoApiService } from '../../../services/ova-backend-service/video-api.service';
+import { VideoData } from '../../../services/ova-backend-service/api-types/video-data';
 import { VidstackPlayerComponent } from '../../components/media-player/vidstack-player/vidstack-player.component';
 
 @Component({

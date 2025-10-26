@@ -1,7 +1,7 @@
 import { Component, Input, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProfileApiService } from '../../../../services/ova-backend-service/profile-api.service';
-import { UserProfile } from '../../../../services/ova-backend-service/api-types/user-profile';
+import { ProfileApiService } from '../../../../../services/ova-backend-service/profile-api.service';
+import { UserProfile } from '../../../../../services/ova-backend-service/api-types/user-profile';
 
 @Component({
   selector: 'app-space-header',

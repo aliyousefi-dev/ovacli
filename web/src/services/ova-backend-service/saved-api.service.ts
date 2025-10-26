@@ -4,7 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { ApiSuccessResponse } from './api-responses/core-response';
 
-import { environment } from '../../../environments/environment';
+import { environment } from '../../environments/environment';
 
 import { VideoBucketResponse } from './api-responses/video-bucket';
 

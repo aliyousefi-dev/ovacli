@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { VideoApiService } from '../../../services/ova-backend-service/video-api.service';
+import { VideoApiService } from '../../../../services/ova-backend-service/video-api.service';
 import { SendtoModalComponent } from '../../../components/pop-ups/sendto-modal/sendto-modal.component';
 import { RouterModule } from '@angular/router';
 

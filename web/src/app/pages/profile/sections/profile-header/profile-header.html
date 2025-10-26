@@ -1,44 +1,33 @@
-<div class=" flex flex-col justify-center px-20 gap-6 h-60 overflow-hidden">
-
-    <!-- Content -->
-    <div class=" flex flex-col justify-center gap-6">
-        <div class="flex justify-between items-center">
-            <div class="flex items-center gap-6">
+<div class="flex items-center gap-6 w-full justify-center p-10">
 
 
-                <div class="avatar avatar-offline avatar-placeholder">
-                    <div class="bg-neutral text-neutral-content w-24 rounded-full">
-                        <span class="text-3xl">{{ profile.username.charAt(0) }}</span>
-                    </div>
-                </div>
-
-                <div class="flex flex-col">
-                    <div class="flex items-center  gap-2">
-                        <span class="text-2xl font-semibold text-base-content">{{ profile.displayName }}</span>
-                        <span class="badge badge-sm badge-neutral">admin</span>
-                    </div>
-                    <span class="text-sm text-base-content/70">&#64;{{ profile.username }}</span>
-                    <div class="flex items-center gap-3 text-sm text-base-content/70">
-                        <span id="spaceId" class="truncate max-w-[200px]" title="Space ID">
-                            #{{ profile.accountId }}
-                        </span>
-                        <button class="btn btn-xs btn-outline flex items-center gap-1" (click)="copySpaceId()"
-                            [attr.aria-label]="copyButtonLabel">
-                            <i class="bx bx-copy"></i>
-                            @if (copied) {
-                            <span>Copied!</span>
-                            } @else {
-                            <span>Copy</span>
-                            }
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex flex-col w-full h-full justify-center items-end gap-4">
-                <span class="badge">Private <i class="bx bx-lock"></i></span>
-            </div>
+    <div class="avatar avatar-offline avatar-placeholder">
+        <div class="bg-neutral text-neutral-content w-24 rounded-full">
+            <span class="text-3xl">{{ profile.displayName.charAt(0) }}</span>
         </div>
+    </div>
 
+    <div class="flex flex-col">
+        <div class="flex items-center  gap-2">
+            <span class="text-2xl font-semibold text-base-content">{{ profile.displayName }}</span>
+            <span class="btn btn-circle btn-ghost btn-sm">
+                <i class='bx bx-cog bx-xs'></i>
+            </span>
+        </div>
+        <span class="text-xs text-base-content/70">&#64;{{ profile.username }}</span>
+        <div class="flex items-center gap-3  text-base-content/70">
+            <span id="spaceId" class="truncate text-xs max-w-[200px]">
+                #{{ profile.accountId }}
+            </span>
+            <button class="btn btn-xs btn-outline flex items-center gap-1" (click)="copySpaceId()"
+                [attr.aria-label]="copyButtonLabel">
+                <i class="bx bx-copy"></i>
+                @if (copied) {
+                <span>Copied!</span>
+                } @else {
+                <span>Copy</span>
+                }
+            </button>
+        </div>
     </div>
 </div>

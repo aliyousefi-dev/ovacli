@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UploadApiService } from '../../services/ova-backend-service/upload-api.service';
+import { UploadApiService } from '../../../services/ova-backend-service/upload-api.service';
 import { HttpEventType } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
 import { Subscription } from 'rxjs';

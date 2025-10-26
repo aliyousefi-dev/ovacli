@@ -4,7 +4,7 @@
         <label class="input w-full focus:outline-none">
             <i class="bx bx-search bx-xs"></i>
             <input autocomplete="off" #searchInput id="searchModalInput2" type="search" class="grow py-2"
-                placeholder="Search" [(ngModel)]="query" (input)="onInput()" />
+                placeholder="Search" [(ngModel)]="query" (input)="onInput()" (keydown.enter)="onEnter()" />
         </label>
 
         <!-- Loading Spinner -->

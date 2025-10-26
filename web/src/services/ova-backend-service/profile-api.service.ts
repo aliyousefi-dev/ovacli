@@ -7,7 +7,7 @@ import {
   ApiSuccessResponse,
   ApiErrorResponse,
 } from './api-responses/core-response';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../environments/environment';
 import { AuthStatusResponse } from './api-responses/auth-status';
 
 @Injectable({

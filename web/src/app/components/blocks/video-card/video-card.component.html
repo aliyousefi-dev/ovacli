@@ -3,7 +3,7 @@
   <div class="block w-full h-40 rounded-lg overflow-hidden cursor-pointer relative" (click)="navigateToWatch()">
     <figure class="relative w-full h-40 rounded-lg overflow-hidden bg-transparent">
       @if (isSaved) {
-      <div class="absolute bottom-2 left-2 z-30">
+      <div class="absolute bottom-2 left-2 ">
         <button class="btn btn-xs btn-circle bg-black/60 hover:bg-black text-yellow-500 border-none"
           title="Add to Saved" (click)="$event.preventDefault(); $event.stopPropagation()">
           <i class="bx bxs-star text-sm"></i>
@@ -14,7 +14,7 @@
 
       @if (isWatched) {
       <div
-        class="absolute top-2 right-2 bg-black text-white text-xs font-semibold px-2 py-0.5 rounded-full flex items-center gap-1 z-30 shadow">
+        class="absolute top-2 right-2 bg-black text-white text-xs font-semibold px-2 py-0.5 rounded-full flex items-center gap-1 shadow">
         <span>Watched</span>
       </div>
       }
@@ -47,7 +47,7 @@
     </figure>
   </div>
 
-  <div class="flex flex-col gap-2 mt-2 rounded-lg z-20" (click)="$event.stopPropagation()">
+  <div class="flex flex-col gap-2 mt-2 rounded-lg " (click)="$event.stopPropagation()">
 
     <div class="flex items-center gap-2">
 
@@ -71,7 +71,7 @@
             <div tabindex="0" role="button" class="btn btn-xs btn-ghost">
               <i class='bx bx-dots-horizontal bx-xs'></i>
             </div>
-            <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-44 z-40">
+            <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-44 ">
               <li><a (click)="download($event)">Download</a></li>
               <li>
                 <a (click)="toggleSaved($event)">

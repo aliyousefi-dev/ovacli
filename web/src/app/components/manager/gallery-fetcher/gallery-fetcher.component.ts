@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GalleryInfiniteFetcher } from '../gallery-infinite-fetcher/gallery-infinite-fetcher.component';
 import { GalleryPageFetcher } from '../gallery-page-fetcher/gallery-page-fetcher.component';
-import { UserSettingsService } from '../../../services/user-settings.service';
+import { UserSettingsService } from '../../../../services/user-settings.service';
 import { Input } from '@angular/core';
 
 @Component({

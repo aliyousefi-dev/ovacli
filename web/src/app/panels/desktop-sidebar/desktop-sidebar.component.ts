@@ -1,7 +1,7 @@
 import { Component, HostListener } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { OvaAboutModalComponent } from '../../pop-ups/ova-about-modal/ova-about-modal.component';
+import { OvaAboutModalComponent } from '../../components/pop-ups/ova-about-modal/ova-about-modal.component';
 import { ViewChild } from '@angular/core';
 
 @Component({

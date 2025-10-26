@@ -1,4 +1,4 @@
-<header class="h-14 flex backdrop-blur justify-between items-center bg-base-100/80 z-80">
+<header class="h-14 flex backdrop-blur justify-between items-center bg-base-100/30 z-80">
 
   <div class="flex items-center justify-start gap-2">
 
@@ -11,12 +11,11 @@
       {{ pageTitle || "Home" }}
     </div>
 
-    <app-search-bar></app-search-bar>
   </div>
 
   <div class="px-5">
 
-    <div class="tooltip tooltip-bottom" data-tip="Theme Swap">
+    <div class="tooltip tooltip-bottom " data-tip="Theme Swap">
       <label class="btn btn-circle btn-ghost swap swap-rotate">
         <!-- this hidden checkbox controls the state -->
         <input type="checkbox" class="theme-controller" value="black" />

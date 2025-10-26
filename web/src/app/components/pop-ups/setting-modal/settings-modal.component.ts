@@ -3,8 +3,6 @@ import {
   Input,
   Output,
   EventEmitter,
-  ViewChild,
-  ElementRef,
   OnChanges,
   SimpleChanges,
   OnInit,

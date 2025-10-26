@@ -10,7 +10,7 @@ import {
 } from '@angular/router';
 
 import { OnInit, inject } from '@angular/core';
-import { LoadingService } from './services/loading.service';
+import { LoadingService } from '../services/loading.service';
 
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 

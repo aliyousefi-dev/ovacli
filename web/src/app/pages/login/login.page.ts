@@ -2,13 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router'; // Import Router for navigation
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AuthApiService } from '../../services/ova-backend-service/auth-api.service';
-
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { ChangeDetectionStrategy, signal } from '@angular/core';
+import { AuthApiService } from '../../../services/ova-backend-service/auth-api.service';
 
 @Component({
   selector: 'app-login',

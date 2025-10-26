@@ -3,7 +3,7 @@ import { Observable, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map } from 'rxjs/operators';
 
-import { environment } from '../../../environments/environment';
+import { environment } from '../../environments/environment';
 import { PlaylistData } from './api-types/playlist-data';
 
 import { ApiSuccessResponse } from './api-responses/core-response';

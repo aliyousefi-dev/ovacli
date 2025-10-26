@@ -12,9 +12,9 @@ import {
 import { ActivatedRoute, Router, Params } from '@angular/router';
 
 import { GalleryViewComponent } from '../../components/containers/gallery-view/gallery-view.component';
-import { SearchApiService } from '../../services/ova-backend-service/search-api.service';
-import { VideoData } from '../../services/ova-backend-service/api-types/video-data';
-import { VideoApiService } from '../../services/ova-backend-service/video-api.service';
+import { SearchApiService } from '../../../services/ova-backend-service/search-api.service';
+import { VideoData } from '../../../services/ova-backend-service/api-types/video-data';
+import { VideoApiService } from '../../../services/ova-backend-service/video-api.service';
 
 @Component({
   selector: 'app-explore',

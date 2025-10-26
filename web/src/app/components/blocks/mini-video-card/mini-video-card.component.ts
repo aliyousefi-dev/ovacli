@@ -15,10 +15,10 @@ import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SendtoModalComponent } from '../../pop-ups/sendto-modal/sendto-modal.component';
 
-import { VideoApiService } from '../../../services/ova-backend-service/video-api.service';
-import { SavedApiService } from '../../../services/ova-backend-service/saved-api.service';
-import { VideoData } from '../../../services/ova-backend-service/api-types/video-data';
-import { UtilsService } from '../../../services/utils.service';
+import { VideoApiService } from '../../../../services/ova-backend-service/video-api.service';
+import { SavedApiService } from '../../../../services/ova-backend-service/saved-api.service';
+import { VideoData } from '../../../../services/ova-backend-service/api-types/video-data';
+import { UtilsService } from '../../../../services/utils.service';
 
 @Component({
   selector: 'app-mini-video-card',

@@ -1,27 +1,31 @@
 <div class="flex flex-col lg:flex-row w-full">
 
   <div class="flex h-[calc(100vh-56px)] overflow-hidden w-full">
-    <div class="flex flex-col flex-grow w-full h-full overflow-auto">
+    <div class="flex flex-col items-center flex-grow w-full h-full overflow-auto">
       <app-space-header [copySpaceId]="copySpaceId" [copied]="copied"
         [copyButtonLabel]="copyButtonLabel"></app-space-header>
 
-      <div class="tabs tabs-border bg-base-200 h-full">
-        <input type="radio" name="my_tabs_2" class="tab" aria-label="Videos" checked="checked" />
-        <div class="tab-content  bg-base-300 h-full">
+      <div class="w-200 bg-base-300 h-full">
+        <div class="tabs tabs-border justify-center h-full">
+          <input type="radio" name="my_tabs_2" class="tab" aria-label="Videos" checked="checked" />
+          <div class="tab-content h-full">
+            Videos
+          </div>
+
+          <input type="radio" name="my_tabs_2" class="tab" aria-label="Collections" />
+          <div class="tab-content  p-10 h-full">
+            Uploads Waits for Confirmations
+          </div>
+
+          <input type="radio" name="my_tabs_2" class="tab" aria-label="Saved" />
+          <div class="tab-content  p-10 h-full">
+            saved
+          </div>
+
+
         </div>
-
-        <input type="radio" name="my_tabs_2" class="tab" aria-label="Collections" />
-        <div class="tab-content  bg-base-300 p-10 h-full">
-          Uploads Waits for Confirmations
-        </div>
-
-        <input type="radio" name="my_tabs_2" class="tab" aria-label="Saved" />
-        <div class="tab-content bg-base-300 p-10 h-full">
-          saved
-        </div>
-
-
       </div>
+
     </div>
   </div>
 </div>

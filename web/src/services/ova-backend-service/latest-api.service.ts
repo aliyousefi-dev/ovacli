@@ -5,7 +5,7 @@ import { VideoBucketResponse } from './api-responses/video-bucket';
 
 import { ApiSuccessResponse } from './api-responses/core-response';
 
-import { environment } from '../../../environments/environment'; // Assuming your environment setup is correct
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',

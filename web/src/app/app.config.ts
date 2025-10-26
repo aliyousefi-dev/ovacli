@@ -11,7 +11,7 @@ import {
 
 import { routes } from './app.routes';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { ErrorInterceptor } from './services/error.interceptor';
+import { ErrorInterceptor } from '../services/error.interceptor';
 import { withViewTransitions } from '@angular/router';
 import { RouteReuseStrategy } from '@angular/router';
 import { CustomRouteReuseStrategy } from './reuse-strategy';
