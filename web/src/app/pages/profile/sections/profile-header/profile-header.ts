@@ -16,6 +16,14 @@ export class ProfileHeaderSection implements OnInit {
   private profileApiService = inject(ProfileApiService);
   profile!: UserProfile;
 
+  OpenSettingsModal(): void {
+    const modal: any = document.getElementById('settings_modal');
+
+    if (modal && typeof modal.showModal === 'function') {
+      modal.showModal();
+    }
+  }
+
   ngOnInit() {
     this.profileApiService.getProfile().subscribe({
       next: (profile) => {

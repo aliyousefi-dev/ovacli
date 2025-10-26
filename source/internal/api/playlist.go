@@ -61,6 +61,14 @@ func getUserPlaylists(rm *repo.RepoManager) gin.HandlerFunc {
 
 func createUserPlaylist(rm *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
+
+		// Retrieve accountId set by the AuthMiddleware
+		accountID, exists := c.Get("accountId")
+		if !exists {
+			apitypes.RespondError(c, http.StatusUnauthorized, "Account ID not found")
+			return
+		}
+
 		username := c.Param("username")
 		var newPl datatypes.PlaylistData
 
@@ -80,7 +88,7 @@ func createUserPlaylist(rm *repo.RepoManager) gin.HandlerFunc {
 			return
 		}
 
-		if err := rm.AddPlaylistToUser(username, &newPl); err != nil {
+		if err := rm.AddPlaylistToUser(accountID.(string), &newPl); err != nil {
 			apitypes.RespondError(c, http.StatusConflict, err.Error())
 			return
 		}
@@ -91,10 +99,17 @@ func createUserPlaylist(rm *repo.RepoManager) gin.HandlerFunc {
 
 func deleteUserPlaylistBySlug(rm *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		username := c.Param("username")
+
+		// Retrieve accountId set by the AuthMiddleware
+		accountID, exists := c.Get("accountId")
+		if !exists {
+			apitypes.RespondError(c, http.StatusUnauthorized, "Account ID not found")
+			return
+		}
+
 		slug := c.Param("slug")
 
-		if err := rm.DeleteUserPlaylist(username, slug); err != nil {
+		if err := rm.DeleteUserPlaylist(accountID.(string), slug); err != nil {
 			apitypes.RespondError(c, http.StatusNotFound, "Playlist not found")
 			return
 		}
@@ -104,7 +119,13 @@ func deleteUserPlaylistBySlug(rm *repo.RepoManager) gin.HandlerFunc {
 
 func setUserPlaylistsOrder(rm *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		username := c.Param("username")
+
+		// Retrieve accountId set by the AuthMiddleware
+		accountID, exists := c.Get("accountId")
+		if !exists {
+			apitypes.RespondError(c, http.StatusUnauthorized, "Account ID not found")
+			return
+		}
 
 		var body struct {
 			Order []string `json:"order"`
@@ -114,7 +135,7 @@ func setUserPlaylistsOrder(rm *repo.RepoManager) gin.HandlerFunc {
 			return
 		}
 
-		if err := rm.SetPlaylistsOrder(username, body.Order); err != nil {
+		if err := rm.SetPlaylistsOrder(accountID.(string), body.Order); err != nil {
 			apitypes.RespondError(c, http.StatusInternalServerError, err.Error())
 			return
 		}
@@ -124,7 +145,13 @@ func setUserPlaylistsOrder(rm *repo.RepoManager) gin.HandlerFunc {
 
 func updateUserPlaylistInfo(rm *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		username := c.Param("username")
+
+		// Retrieve accountId set by the AuthMiddleware
+		accountID, exists := c.Get("accountId")
+		if !exists {
+			apitypes.RespondError(c, http.StatusUnauthorized, "Account ID not found")
+			return
+		}
 		slug := c.Param("slug")
 
 		var body struct {
@@ -141,13 +168,13 @@ func updateUserPlaylistInfo(rm *repo.RepoManager) gin.HandlerFunc {
 			return
 		}
 
-		err := rm.UpdatePlaylistInfo(username, slug, body.Title, body.Description)
+		err := rm.UpdatePlaylistInfo(accountID.(string), slug, body.Title, body.Description)
 		if err != nil {
 			apitypes.RespondError(c, http.StatusInternalServerError, err.Error())
 			return
 		}
 
-		pl, err := rm.GetUserPlaylist(username, slug)
+		pl, err := rm.GetUserPlaylist(accountID.(string), slug)
 		if err != nil {
 			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to retrieve updated playlist")
 			return

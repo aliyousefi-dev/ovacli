@@ -10,9 +10,9 @@
     <div class="flex flex-col">
         <div class="flex items-center  gap-2">
             <span class="text-2xl font-semibold text-base-content">{{ profile.displayName }}</span>
-            <span class="btn btn-circle btn-ghost btn-sm">
+            <button (click)="OpenSettingsModal()" class="btn btn-circle btn-ghost btn-sm">
                 <i class='bx bx-cog bx-xs'></i>
-            </span>
+            </button>
         </div>
         <span class="text-xs text-base-content/70">&#64;{{ profile.username }}</span>
         <div class="flex items-center gap-3  text-base-content/70">
