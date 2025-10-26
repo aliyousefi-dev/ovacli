@@ -26,7 +26,6 @@ export class ProfilePage implements OnInit {
   @ViewChild('confirmClearHistoryModal')
   confirmClearHistoryModal!: ConfirmModalComponent;
 
-  private authApi = inject(AuthApiService);
   private watchedApi = inject(WatchedApiService);
   private profileApi = inject(ProfileApiService);
 

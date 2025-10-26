@@ -42,3 +42,4 @@ here we demonstrate what features we want to add to next versions.
 - Public Private Search
 - Dynamic Collections (with Filter Options on Resource)
 - Add Tags when Uploading
+- Cooking [thumbnail,AdvanceSearch,AISearch]

@@ -2,27 +2,18 @@
 
 
 <div class="mx-auto px-4 mt-6">
-  <p *ngIf="loading" class="font-medium text-center">Loading videos...</p>
+  @if (loading) {
+  <p class="font-medium text-center">Loading videos...</p>
+  }
 
-  <app-gallery-view ViewMode="full" *ngIf="!loading && filteredVideos.length > 0"
-    [videos]="filteredVideos"></app-gallery-view>
 
-  <div class="w-full mb-30 overflow-x-auto">
-    <div *ngIf="totalPages > 1 && !loading" class="w-max mx-auto">
-      <div class="join whitespace-nowrap">
-        <button *ngFor="let _ of [].constructor(totalPages); let i = index" class="join-item btn btn-sm"
-          [class.btn-active]="currentPage === i + 1" (click)="goToPage(i + 1)">
-          {{ i + 1 }}
-        </button>
-      </div>
-    </div>
-  </div>
+  <app-gallery-view ViewMode="full" *ngIf="!loading && videos.length > 0" [videos]="videos"></app-gallery-view>
 
-  <p *ngIf="!loading && !searchTerm" class="text-center mt-4">
-    Please enter a search term to find videos.
+
+  @if (!loading && videos.length === 0 && query) {
+  <p class="text-center mt-4">
+    No videos found for "{{ query }}"
   </p>
+  }
 
-  <p *ngIf="!loading && filteredVideos.length === 0 && searchTerm" class="text-center mt-4">
-    No videos found for "{{ searchTerm }}"
-  </p>
 </div>
