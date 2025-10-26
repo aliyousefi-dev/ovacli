@@ -19,7 +19,7 @@ export class ProfileApiService {
   constructor(private http: HttpClient) {}
 
   getProfile(): Observable<UserProfile> {
-    return this.http.get<UserProfile>(`${this.baseUrl}/auth/profile`, {
+    return this.http.get<UserProfile>(`${this.baseUrl}/profile/info`, {
       withCredentials: true,
     });
   }

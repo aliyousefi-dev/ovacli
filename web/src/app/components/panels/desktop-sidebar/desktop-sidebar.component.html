@@ -5,7 +5,7 @@
   <div class="flex items-center p-5">
     <div class="flex gap-2 items-center">
       <i class='bx bxs-data bx-xs'></i>
-      <span class="font-semibold">OVA Platform</span>
+      <a routerLink="/global" class="font-semibold">OVA Platform</a>
     </div>
   </div>
 
@@ -27,7 +27,7 @@
       </li>
 
       <li>
-        <button (click)="onSearchButtonClick()">
+        <button (click)="OpenSearchModal()">
           <i class='bx bx-search bx-xs'></i>
           <span>Search</span>
           <kbd class="kbd kbd-xs opacity-50 text-base-content"><span>⌘</span>K</kbd>
@@ -48,7 +48,7 @@
       <li class="menu-title">Private</li>
 
       <li>
-        <a routerLink="/spaces" routerLinkActive="menu-active" [routerLinkActiveOptions]="{ exact: true }">
+        <a routerLink="/profile" routerLinkActive="menu-active" [routerLinkActiveOptions]="{ exact: true }">
           <i class='bx bxs-user-circle bx-xs'></i>
           <span>Profile</span>
         </a>

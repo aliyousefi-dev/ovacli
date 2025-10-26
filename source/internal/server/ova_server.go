@@ -75,6 +75,7 @@ func (s *OvaServer) initRoutes() {
 	api.RegisterStreamRoutes(v1, s.RepoManager)
 	api.RegisterDownloadRoutes(v1, s.RepoManager)
 	api.RegisterUploadRoutes(v1, s.RepoManager)
+	api.RegisterProfileRoutes(v1, s.RepoManager)
 	api.RegisterThumbnailRoutes(v1, s.RepoManager)
 	api.RegisterPreviewRoutes(v1, s.RepoManager)
 	api.RegisterUserWatchedRoutes(v1, s.RepoManager)

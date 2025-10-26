@@ -61,7 +61,9 @@
 
         <div class="flex justify-between items-center">
           <div class="flex items-center gap-2 flex-1 min-w-0">
-            <div class="text-xs truncate min-w-0">{{video.ownerAccountUsername}}</div>
+            <a [routerLink]="['/users', video.ownerAccountUsername]" class="text-xs truncate min-w-0">
+              {{ video.ownerAccountUsername }}
+            </a>
             <div class="text-[10px] font-light flex-shrink-0">{{ timeSinceAdded }}</div>
           </div>
 

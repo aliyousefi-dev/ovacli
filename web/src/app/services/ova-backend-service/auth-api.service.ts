@@ -2,10 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import {
-  ApiSuccessResponse,
-  ApiErrorResponse,
-} from './api-responses/core-response';
+import { ApiSuccessResponse } from './api-responses/core-response';
 import { environment } from '../../../environments/environment';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
@@ -32,9 +29,6 @@ export class AuthApiService {
       )
       .pipe(
         map((response) => {
-          if (response.data?.sessionId) {
-            localStorage.setItem('sessionId', response.data.sessionId);
-          }
           return response;
         }),
         catchError((error: HttpErrorResponse) => {
@@ -55,16 +49,7 @@ export class AuthApiService {
       );
   }
 
-  checkAuth(): Observable<AuthStatusResponse> {
-    return this.getAuthStatusFull().pipe(
-      map((res) => res.data),
-      catchError((error: HttpErrorResponse) => {
-        return throwError(() => handleApiError(error)); // Use the utility function
-      })
-    );
-  }
-
-  getAuthStatusFull(): Observable<ApiSuccessResponse<AuthStatusResponse>> {
+  checkLoginState(): Observable<ApiSuccessResponse<AuthStatusResponse>> {
     return this.http
       .get<ApiSuccessResponse<AuthStatusResponse>>(
         `${this.baseUrl}/auth/status`,

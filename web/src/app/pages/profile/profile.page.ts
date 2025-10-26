@@ -1,118 +1,97 @@
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
+  ElementRef,
+  ViewChild,
+} from '@angular/core';
+import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { VideoData } from '../../services/ova-backend-service/api-types/video-data';
+import { VideoApiService } from '../../services/ova-backend-service/video-api.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { ConfirmModalComponent } from '../../components/pop-ups/confirm-modal/confirm-modal.component';
-
-import { AuthApiService } from '../../services/ova-backend-service/auth-api.service';
-import { WatchedApiService } from '../../services/ova-backend-service/recent-api.service';
-import { UserProfile } from '../../services/ova-backend-service/api-types/user-profile';
-import { ProfileApiService } from '../../services/ova-backend-service/profile-api.service';
-
-// Define session type
-interface SessionEntry {
-  id: string;
-  ip: string;
-  device?: string;
-}
+import { ProfileHeaderSection } from './sections/profile-header/profile-header';
 
 @Component({
-  selector: 'app-profile',
+  selector: 'app-profile-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, ConfirmModalComponent],
+  imports: [ProfileHeaderSection, FormsModule, CommonModule],
   templateUrl: './profile.page.html',
 })
-export class ProfilePage implements OnInit {
-  @ViewChild('confirmClearHistoryModal')
-  confirmClearHistoryModal!: ConfirmModalComponent;
+export class ProfilePage implements OnInit, AfterViewInit, OnDestroy {
+  // All existing properties and methods remain here
+  copied = false;
+  copyButtonLabel = 'Copy space ID to clipboard';
+  SpaceSelected = 'root';
+  allVideos: VideoData[] = [];
+  videos: VideoData[] = [];
+  loading = true;
+  searchTerm = '';
+  currentFolder = '';
+  sortOption = 'titleAsc';
+  currentPage = 1;
+  limit = 20;
+  totalPages = 1;
 
-  private watchedApi = inject(WatchedApiService);
-  private profileApi = inject(ProfileApiService);
+  private routerSubscription: Subscription | undefined;
+  @ViewChild('videoGridContainer') videoGridContainer!: ElementRef;
+  isMobile = false;
 
-  activeTab: string = 'overview';
-  username = '';
-  roles: string[] = [];
+  constructor(
+    private videoapi: VideoApiService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
-  oldPassword = '';
-  newPassword = '';
-  rewritePassword = '';
-  currentSessionId = 'sess_def456';
+  ngOnInit() {
+    this.route.queryParamMap.subscribe((params) => {
+      this.currentPage = +(params.get('page') ?? 1);
+      this.searchTerm = params.get('search') ?? '';
+      this.sortOption = params.get('sort') ?? 'titleAsc';
+      const folderParam = params.get('folder');
+      this.currentFolder = folderParam !== null ? folderParam : '';
+    });
 
-  sessions: SessionEntry[] = [
-    { id: 'sess_abc123', ip: '192.168.1.2', device: 'Chrome on Windows' },
-    { id: 'sess_def456', ip: '192.168.1.5', device: 'Firefox on Ubuntu' },
-    { id: 'sess_xyz789', ip: '10.0.0.23', device: 'Safari on iPhone' },
-  ];
-
-  ngOnInit(): void {
-    this.profileApi.getProfile().subscribe({
-      next: (profile: UserProfile) => {
-        this.username = profile.username;
-        this.roles = profile.roles;
-      },
-      error: (err) => {
-        console.error('Failed to load profile:', err);
-      },
+    this.routerSubscription = this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        sessionStorage.setItem('videoListScroll', window.scrollY.toString());
+      }
     });
   }
 
-  openClearWatchHistoryConfirm(): void {
-    if (!this.username) return;
-
-    this.confirmClearHistoryModal.open(
-      'Are you sure you want to clear your entire watch history? This action cannot be undone.'
-    );
-  }
-
-  clearWatchHistory(): void {
-    if (!this.username) return;
-
-    this.watchedApi.clearUserWatched(this.username).subscribe({
-      next: (response) => {
-        console.log('Watch history cleared:', response.message);
-        alert('Watch history cleared successfully!');
-      },
-      error: (err) => {
-        console.error('Failed to clear watch history:', err);
-        alert('Failed to clear watch history. Please try again.');
-      },
-    });
-  }
-
-  submitPasswordChange(): void {
-    if (this.newPassword !== this.rewritePassword) {
-      alert('New passwords do not match.');
-      return;
+  ngAfterViewInit() {
+    const scrollY = sessionStorage.getItem('videoListScroll');
+    if (scrollY) {
+      setTimeout(() => {
+        window.scrollTo({
+          top: +scrollY!,
+          behavior: 'smooth',
+        });
+        sessionStorage.removeItem('videoListScroll');
+      }, 50);
     }
+  }
 
-    if (this.newPassword.length < 8) {
-      alert('Password must be at least 8 characters.');
-      return;
+  ngOnDestroy(): void {
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
     }
-
-    // TODO: Replace this with real API call
-    console.log('Password change submitted:', {
-      username: this.username,
-      oldPassword: this.oldPassword,
-      newPassword: this.newPassword,
-    });
-
-    alert('Password changed successfully (simulated).');
-
-    this.oldPassword = '';
-    this.newPassword = '';
-    this.rewritePassword = '';
   }
 
-  terminateSession(sessionId: string): void {
-    console.log(`Terminating session: ${sessionId}`);
-    alert(`Session ${sessionId} terminated (simulated).`);
-    this.sessions = this.sessions.filter((s) => s.id !== sessionId);
-  }
-
-  terminateAllSessions(): void {
-    console.log('Terminating all sessions');
-    alert('All sessions terminated (simulated).');
-    this.sessions = [];
+  copySpaceId() {
+    const spaceId = '#sdkfjs23kdsflkjdsf';
+    if (navigator && navigator.clipboard) {
+      navigator.clipboard.writeText(spaceId).then(() => {
+        this.copied = true;
+        this.copyButtonLabel = 'Copied!';
+        setTimeout(() => {
+          this.copied = false;
+          this.copyButtonLabel = 'Copy space ID to clipboard';
+        }, 1200);
+      });
+    }
   }
 }

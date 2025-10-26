@@ -23,15 +23,6 @@ export class SearchBarComponent {
     private router: Router
   ) {}
 
-  @HostListener('window:keydown', ['$event'])
-  handleKeyDown(event: KeyboardEvent) {
-    // Ctrl+K (or Cmd+K on Mac)
-    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
-      event.preventDefault();
-      this.focusSearch();
-    }
-  }
-
   focusSearch() {
     if (this.searchInput) {
       this.searchInput.nativeElement.focus();

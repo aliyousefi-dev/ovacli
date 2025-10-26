@@ -1,15 +1,15 @@
 import { Routes } from '@angular/router';
 import { HomePage } from './pages/home/home.page';
-import { AuthGuard } from './services/auth.guard';
+import { AuthGuard } from './services/ova-backend-service/middleware/auth.guard';
 import { GlobalPage } from './pages/global/global.page';
 import { HistoryPage } from './pages/history/history.page';
-import { LibraryPage } from './pages/library/library.page';
+import { ProfilePage } from './pages/profile/profile.page';
 import { WatchPage } from './pages/watch/watch.page';
 import { CreateSpacePage } from './pages/create-space/create-space.page';
 import { CreateTeamSpacePage } from './pages/create-team-space/create-team-space.page';
 import { JoinTeamSpacePage } from './pages/join-team-space/join-team-space.page';
 import { UploadPage } from './pages/upload/upload.page';
-import { ProfilePage } from './pages/profile/profile.page';
+import { ProfileSettingsPage } from './pages/profile-settings/profile.page';
 import { SettingsPage } from './pages/settings/settings.page';
 import { SavedPage } from './pages/saved/saved.page';
 import { AppearanceSettingsComponent } from './pages/settings/panels/appearance-settings/appearance-settings.component';
@@ -54,8 +54,8 @@ export const MainRoutes: Routes = [
     data: { reuse: true },
   },
   {
-    path: 'spaces',
-    component: LibraryPage,
+    path: 'profile',
+    component: ProfilePage,
     canActivate: [AuthGuard],
   },
   {
@@ -84,8 +84,8 @@ export const MainRoutes: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    path: 'profile',
-    component: ProfilePage,
+    path: 'profile-settings',
+    component: ProfileSettingsPage,
     canActivate: [AuthGuard],
   },
   {

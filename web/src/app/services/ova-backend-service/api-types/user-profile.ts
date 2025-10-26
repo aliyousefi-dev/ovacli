@@ -1,4 +1,6 @@
 export interface UserProfile {
+  displayName: string;
   username: string;
-  roles: string[];
+  accountId: string;
+  createdAt: string;
 }

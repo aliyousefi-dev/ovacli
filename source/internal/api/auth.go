@@ -35,7 +35,6 @@ func RegisterAuthRoutes(rg *gin.RouterGroup, repoMgr *repo.RepoManager) {
 		auth.POST("/login", func(c *gin.Context) { loginHandler(c, repoMgr) })
 		auth.POST("/logout", func(c *gin.Context) { logoutHandler(c, repoMgr) })
 		auth.GET("/status", func(c *gin.Context) { authStatusHandler(c, repoMgr) })
-		auth.GET("/profile", func(c *gin.Context) { profileHandler(c, repoMgr) })
 		auth.POST("/password", func(c *gin.Context) { passwordHandler(c, repoMgr) })
 	}
 }
@@ -59,18 +58,22 @@ func loginHandler(c *gin.Context, repoMgr *repo.RepoManager) {
 		return
 	}
 
+	// Generate a new session ID
 	sessionID := uuid.NewString()
 	repoMgr.AddSession(sessionID, user.AccountID)
+
+	// Set the session ID in the HttpOnly cookie
 	http.SetCookie(c.Writer, &http.Cookie{
 		Name:     "session_id",
 		Value:    sessionID,
 		Path:     "/",
-		MaxAge:   int(24 * time.Hour.Seconds()),
-		HttpOnly: true,  // Set to true for security
-		Secure:   false, // Keep as false for HTTP
+		MaxAge:   int(24 * time.Hour.Seconds()), // Session expires in 24 hours
+		HttpOnly: true,                          // Ensure the cookie is only accessible via HTTP (not JavaScript)
+		Secure:   false,                         // Use true if you're using HTTPS
 	})
 
-	apitypes.RespondSuccess(c, http.StatusOK, LoginResponse{SessionID: sessionID}, "Login successful")
+	// Respond with a success message, without exposing the session ID
+	apitypes.RespondSuccess(c, http.StatusOK, nil, "Login successful")
 }
 
 func logoutHandler(c *gin.Context, repoMgr *repo.RepoManager) {
@@ -122,30 +125,6 @@ func authStatusHandler(c *gin.Context, repoMgr *repo.RepoManager) {
 	} else {
 		apitypes.RespondSuccess(c, http.StatusOK, gin.H{"authenticated": false}, "Not authenticated")
 	}
-}
-
-func profileHandler(c *gin.Context, repoMgr *repo.RepoManager) {
-	sessionID, err := c.Cookie("session_id")
-	if err != nil {
-		apitypes.RespondError(c, http.StatusUnauthorized, "No session found")
-		return
-	}
-
-	accountId, err := repoMgr.GetAccountIDBySession(sessionID)
-	if err != nil || accountId == "" {
-		apitypes.RespondError(c, http.StatusUnauthorized, "Invalid session")
-		return
-	}
-
-	user, err := repoMgr.GetUserByUsername(accountId)
-	if err != nil {
-		apitypes.RespondError(c, http.StatusNotFound, "User not found")
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"username": user.Username,
-	})
 }
 
 func passwordHandler(c *gin.Context, repoMgr *repo.RepoManager) {

@@ -9,6 +9,7 @@ import (
 
 // UserData represents a user's profile and associated data.
 type UserData struct {
+	DisplayName  string         `json:"displayName"`
 	Username     string         `json:"username"`
 	AccountID    string         `json:"accountId"`
 	PasswordHash string         `json:"passwordHash"`
