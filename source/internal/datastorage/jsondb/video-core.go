@@ -156,7 +156,7 @@ func (s *JsonDB) GetAllVideos() ([]datatypes.VideoData, error) {
 
 	// Sort videos by UploadedAt timestamp
 	sort.Slice(videos, func(i, j int) bool {
-		return videos[i].UploadedAt.Before(videos[j].UploadedAt)
+		return videos[i].UploadedAt.After(videos[j].UploadedAt)
 	})
 
 	return videos, nil
