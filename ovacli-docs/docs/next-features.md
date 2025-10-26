@@ -39,3 +39,6 @@ here we demonstrate what features we want to add to next versions.
 - adding Bitrate metadata and Sound Channel Numbers
 - Create Smart Collection with Multiple Tag Fetch
 - QC on the Projects
+- Public Private Search
+- Dynamic Collections (with Filter Options on Resource)
+- Add Tags when Uploading

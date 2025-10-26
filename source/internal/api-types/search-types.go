@@ -15,5 +15,15 @@ type SearchRequest struct {
 
 type SearchResponse struct {
 	Criteria SearchCriteria      `json:"criteria"`
+	Filters  VideoFilters        `json:"filters"`
 	Result   VideoBucketResponse `json:"result"` // Use VideoBucketResponse for paginated results
+}
+
+type VideoFilters struct {
+	SortMode         *string `json:"sort"`        // e.g., 'recent', 'titleAsc', 'durationDesc'
+	ResolutionFilter *string `json:"resolution"`  // e.g., 'hd', '4k' (from URL 'res')
+	MinDuration      *int    `json:"minDuration"` // Minimum duration in seconds
+	MaxDuration      *int    `json:"maxDuration"` // Maximum duration in seconds
+	UploadFrom       *string `json:"uploadFrom"`  // Date/timestamp string (from URL 'from')
+	UploadTo         *string `json:"uploadTo"`    // Date/timestamp string (from URL 'to')
 }

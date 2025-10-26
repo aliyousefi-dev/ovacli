@@ -12,11 +12,11 @@ import { DefaultVideoPlayerComponent } from '../../components/media-player/defau
 import { MarkerApiService } from '../../services/ova-backend-service/marker-api.service';
 
 // Updated: Import new child components
-import { VideoTitleBarComponent } from './panels/video-title-bar.component'; // Path assuming it's in the same directory as watch.page.ts
-import { SimilarVideosPanelComponent } from './panels/similar-videos-panel.component';
-import { VideoActionBarComponent } from './panels/video-action-bar.component';
-import { VideoTagsPanelComponent } from './panels/video-tags-panel.component';
-import { VideoAdminTabsComponent } from './panels/video-admin-tabs.component';
+import { VideoTitleBarComponent } from './sections/video-title-bar.component'; // Path assuming it's in the same directory as watch.page.ts
+import { SimilarVideosPanelComponent } from './sections/similar-videos-panel.component';
+import { VideoActionBarComponent } from './sections/video-action-bar.component';
+import { WatchDetailSection } from './sections/watch-detail-section';
+import { VideoAdminTabsComponent } from './sections/video-admin-tabs.component';
 import { PlaylistContentAPIService } from '../../services/ova-backend-service/playlist-content-api.service';
 
 import { ViewChild } from '@angular/core';
@@ -29,16 +29,14 @@ import { ViewChild } from '@angular/core';
     FormsModule,
     VidstackPlayerComponent,
     DefaultVideoPlayerComponent,
-    // Updated: Add new child components and remove the old VideoDetailsComponent
     VideoTitleBarComponent,
     SimilarVideosPanelComponent,
     VideoAdminTabsComponent,
-    VideoTagsPanelComponent,
+    WatchDetailSection,
     VideoActionBarComponent,
     VideoTitleBarComponent,
   ],
   templateUrl: './watch.page.html',
-  styleUrls: ['./watch.page.css'],
 })
 export class WatchPage implements AfterViewInit {
   @ViewChild('vidstackPlayer') vidstackPlayer!: VidstackPlayerComponent;
@@ -87,17 +85,6 @@ export class WatchPage implements AfterViewInit {
       this.error = true;
       this.loading = false;
     }
-  }
-
-  formatTime(seconds: number | null | undefined): string {
-    if (seconds == null || isNaN(seconds)) return '–';
-
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = Math.floor(seconds % 60);
-
-    const pad = (n: number) => n.toString().padStart(2, '0');
-    return `${pad(h)}:${pad(m)}:${pad(s)}`;
   }
 
   ngAfterViewInit(): void {

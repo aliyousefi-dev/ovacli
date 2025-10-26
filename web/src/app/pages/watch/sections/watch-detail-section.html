@@ -1,0 +1,57 @@
+<div class="w-full space-y-5 my-5">
+  <div class="collapse collapse-plus  border-base-300 border">
+    <input type="radio" name="my-accordion-4" checked="checked" />
+    <div class="collapse-title  items-center flex gap-2">
+      <i class='bx bxs-purchase-tag-alt  bx-xs'></i>
+      <span class="text-sm font-semibold">Tags</span>
+    </div>
+    <div class="collapse-content">
+      @if(videoData.tags.length > 0){
+      <div class="flex flex-wrap gap-2">
+        @for (tag of videoData.tags; track $index) {
+        <app-tag-link [tag]="tag"></app-tag-link>
+        }
+      </div>
+      }
+    </div>
+  </div>
+  <div class="collapse collapse-plus border-base-300 border">
+    <input type="radio" name="my-accordion-4" />
+    <div class="collapse-title items-center flex gap-2">
+      <i class='bx bx-detail bx-xs'></i>
+      <span class="font-semibold  text-sm">Details</span>
+    </div>
+    <div class="collapse-content text-sm">
+      <ul class="text-xs  ">
+
+        @if (videoData.uploadedAt) {
+        <li class="flex items-center gap-2" [title]="videoData.uploadedAt">
+          <span class="font-semibold ">Upload Time:</span>
+          <span>{{ videoData.uploadedAt | date : 'mediumDate' }}</span>
+        </li>
+        }
+
+        @if (videoData.codecs.durationSec !== undefined) {
+        <li class="flex items-center gap-2" [title]="formatTime(videoData.codecs.durationSec)">
+          <span class="font-semibold ">Duration:</span>
+          <span>{{ formatTime(videoData.codecs.durationSec) }}</span>
+        </li>
+        }
+
+        @if (videoData.codecs.resolution) {
+        <li class="flex items-center gap-2" [title]="videoData.codecs.resolution.width">
+          <span class="font-semibold ">Resolution:</span>
+          <span>{{ videoData.codecs.resolution.width }} x {{ videoData.codecs.resolution.height }}</span>
+        </li>
+        }
+
+        @if(videoData.codecs.frameRate !== undefined){
+        <li class="flex items-center gap-2">
+          <span class="font-semibold ">Framerate:</span>
+          <span>{{videoData.codecs.frameRate}} fps</span>
+        </li>
+        }
+      </ul>
+    </div>
+  </div>
+</div>
