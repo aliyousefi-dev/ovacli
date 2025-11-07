@@ -43,3 +43,6 @@ here we demonstrate what features we want to add to next versions.
 - Dynamic Collections (with Filter Options on Resource)
 - Add Tags when Uploading
 - Cooking [thumbnail,AdvanceSearch,AISearch]
+- adding some features to the video player. like inside video annotations, chapter markers, and interactive transcripts.
+- we need create a custom videoplayer that support also the VR videos.
+- Internal Video Player

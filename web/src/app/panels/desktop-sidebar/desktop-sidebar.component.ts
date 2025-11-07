@@ -1,8 +1,10 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, inject, HostListener } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { OvaAboutModalComponent } from '../../components/pop-ups/ova-about-modal/ova-about-modal.component';
 import { ViewChild } from '@angular/core';
+import { AuthApiService } from '../../../services/ova-backend-service/auth-api.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-desktop-sidebar',
@@ -14,6 +16,8 @@ export class DesktopSidebarComponent {
   @ViewChild(OvaAboutModalComponent) aboutModal!: OvaAboutModalComponent;
 
   sidebarOpen = true; // Initial state: sidebar is open
+  private authapi = inject(AuthApiService);
+  private router = inject(Router);
 
   openOvaAbout() {
     this.aboutModal.open();
@@ -37,6 +41,24 @@ export class DesktopSidebarComponent {
         }
       }, 300);
     }
+  }
+
+  OpenSettingsModal(): void {
+    const modal: any = document.getElementById('settings_modal');
+    if (modal && typeof modal.showModal === 'function') {
+      modal.showModal();
+    }
+  }
+
+  onLogout(): void {
+    this.authapi.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      },
+      error: () => {
+        this.router.navigate(['/login']);
+      },
+    });
   }
 
   @HostListener('window:keydown', ['$event'])

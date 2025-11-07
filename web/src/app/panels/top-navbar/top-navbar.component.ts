@@ -76,20 +76,6 @@ export class TopNavbarComponent implements OnInit {
     this.pageTitle = capitalizedSegment;
   }
 
-  onLogout(): void {
-    this.authapi.logout().subscribe({
-      next: () => {
-        localStorage.removeItem('username');
-        this.username = 'Guest';
-        this.router.navigate(['/login']);
-      },
-      error: () => {
-        this.router.navigate(['/login']);
-      },
-    });
-    this.dropdownOpen = false;
-  }
-
   openSearchBar(): void {
     this.searchBarVisible = true;
   }

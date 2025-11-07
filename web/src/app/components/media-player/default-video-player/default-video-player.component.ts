@@ -4,9 +4,12 @@ import {
   ViewChild,
   ElementRef,
   AfterViewInit,
+  inject,
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
+import { VideoData } from '../../../../services/ova-backend-service/api-types/video-data';
+import { VideoApiService } from '../../../../services/ova-backend-service/video-api.service';
 
 @Component({
   selector: 'app-default-video-player',
@@ -15,13 +18,12 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
 })
 export class DefaultVideoPlayerComponent implements AfterViewInit {
-  @Input() videoUrl!: string;
-  @Input() posterUrl!: string;
-  @Input() markers: number[] = []; // e.g. [5, 10, 25]
-
   @ViewChild('videoRef') videoRef!: ElementRef<HTMLVideoElement>;
 
+  @Input() videoData!: VideoData;
+
   markerPercents: number[] = [];
+  private videoapi = inject(VideoApiService);
 
   ngAfterViewInit() {
     const videoElement = this.videoRef?.nativeElement;
@@ -31,17 +33,15 @@ export class DefaultVideoPlayerComponent implements AfterViewInit {
     videoElement.muted = storedMute === 'true';
     videoElement.removeEventListener('volumechange', this.onVolumeChange);
     videoElement.addEventListener('volumechange', this.onVolumeChange);
-
-    videoElement.addEventListener('loadedmetadata', () => {
-      const duration = videoElement.duration;
-      if (duration > 0) {
-        this.markerPercents = this.markers
-          .filter((t) => t < duration)
-          .map((t) => (t / duration) * 100);
-      }
-    });
   }
 
+  get videoUrl(): string {
+    return this.videoapi.getStreamUrl(this.videoData.videoId);
+  }
+
+  get thumbnailUrl(): string {
+    return this.videoapi.getThumbnailUrl(this.videoData.videoId);
+  }
   onVolumeChange = () => {
     const videoElement = this.videoRef?.nativeElement;
     if (!videoElement) return;

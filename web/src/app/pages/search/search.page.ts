@@ -28,6 +28,7 @@ export class SearchPage implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
 
   query: string = '';
+  tagsQuery: string[] = [];
 
   loading: boolean = false;
   videos: VideoData[] = [];
@@ -47,6 +48,7 @@ export class SearchPage implements OnInit, OnDestroy {
         map((params: Params) => {
           // Update component state first from URL params
           this.query = params['q'] || '';
+          this.tagsQuery = params['tags'] ? params['tags'].split(',') : [];
           this.currentBucket = params['bucket'] ? +params['bucket'] : 1;
 
           // Return the full set of parameters relevant to the API search
@@ -63,7 +65,8 @@ export class SearchPage implements OnInit, OnDestroy {
 
           const searchParams: { query?: string; tags?: string[] } = {};
           const tags = this.extractTagsFromQuery(query);
-          const shouldPerformApiSearch = query.trim() !== '' || tags.length > 0;
+          const shouldPerformApiSearch =
+            query.trim() !== '' || this.tagsQuery.length > 0;
 
           if (!shouldPerformApiSearch) {
             this.videos = [];
@@ -71,8 +74,12 @@ export class SearchPage implements OnInit, OnDestroy {
             this.loading = false;
             return of(null);
           } else {
-            searchParams.query = query;
-            searchParams.tags = tags; // Include tags in search params
+            if (this.tagsQuery.length > 0) {
+              searchParams.tags = this.tagsQuery;
+            } else {
+              searchParams.query = query;
+              searchParams.tags = tags;
+            }
           }
 
           this.loading = true;

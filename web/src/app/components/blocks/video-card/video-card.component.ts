@@ -6,7 +6,6 @@ import {
   SimpleChanges,
   ViewChild,
   ElementRef,
-  AfterViewInit,
   OnInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';

@@ -4,15 +4,9 @@
     <i class="bx bx-play-circle bx-sm"></i>
     <span class="dock-label text-xs">Global</span>
   </button>
-  <button routerLink="/search" routerLinkActive="dock-active" class="flex flex-col items-center" mat-ripple
-    matRippleColor="rgba(0, 0, 0, 0.6)">
+  <button (click)="OpenSearchModal()" class="flex flex-col items-center" mat-ripple matRippleColor="rgba(0, 0, 0, 0.6)">
     <i class="bx bx-search bx-sm"></i>
     <span class="dock-label text-xs">Search</span>
-  </button>
-  <button routerLink="/" routerLinkActive="dock-active" [routerLinkActiveOptions]="{ exact: true }"
-    class="flex flex-col items-center" mat-ripple matRippleColor="rgba(0, 0, 0, 0.6)">
-    <i class="bx bx-home bx-sm"></i>
-    <span class="dock-label text-xs">Home</span>
   </button>
   <button routerLink="/upload" routerLinkActive="dock-active" class="flex flex-col items-center" mat-ripple
     matRippleColor="rgba(0, 0, 0, 0.6)">

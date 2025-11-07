@@ -8,10 +8,10 @@
 
 
     <div class="xl:p-10">
-      @if (true) {
+      @if (false) {
       <app-vidstack-player #vidstackPlayer [videoData]="video"></app-vidstack-player>
       }@else {
-      <app-default-video-player [videoUrl]="videoUrl" [posterUrl]="thumbnailUrl"></app-default-video-player>
+      <app-default-video-player [videoData]="video"></app-default-video-player>
       }
 
       <div class="flex justify-between items-center w-full py-2">

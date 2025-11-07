@@ -16,7 +16,7 @@
 
         <!-- Search Results -->
         @if (!loading && searchResults.suggestions.length > 0) {
-        <div class="py-5 overflow-y-auto flex-1 w-full">
+        <div class="py-5 overflow-y-auto flex-1 w-full space-y-1">
             @for ( result of searchResults.suggestions; track $index) {
             <a (click)="CloseModal()" [routerLink]="['/search']" [queryParams]="{ q: result }" class="btn w-full">
                 <div class="flex justify-between items-center w-full gap-2">

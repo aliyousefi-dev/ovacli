@@ -7,7 +7,9 @@
       </div>
     </div>
     <div class="flex flex-col">
-      <span class="text-sm">{{videoData.ownerAccountUsername}}</span>
+      <a [routerLink]="['/users', videoData.ownerAccountUsername]" class="text-xs truncate min-w-0">
+        {{ videoData.ownerAccountUsername }}
+      </a>
       <span class="text-xs">{{ timeSinceAdded }}</span>
     </div>
   </div>

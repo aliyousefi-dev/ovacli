@@ -3,7 +3,7 @@
     (click)="$event.stopPropagation()">
     <!-- Modal Header with Close Button -->
     <div class="w-full dark:border-gray-700 relative">
-      <div class="p-4 flex items-center justify-start">
+      <div class=" flex items-center justify-start">
         <h3 class="font-bold text-lg">Settings</h3>
       </div>
       <!-- Close Button in top-right corner -->
@@ -59,7 +59,6 @@
         </div>
       </div>
 
-      <!-- Proxy Tab Content -->
       <div *ngIf="activeTab === 'proxy'" class="max-w-full">
         <fieldset class="fieldset bg-base-100 rounded-box w-64  p-4">
           <legend class="fieldset-legend">Password</legend>

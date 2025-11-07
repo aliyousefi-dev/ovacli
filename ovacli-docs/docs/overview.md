@@ -6,13 +6,13 @@
 
 # Overview
 
-ova is a media workflow solutions
+OVA (Online Video Archive): A local, collaborative, multi-user online database for managing and streaming MP4 videos designed for professional editor teams and studios.
 
-Ova is an online database for storing and managing MP4 videos. It provides easy access, powerful search features, and collaboration tools to help teams efficiently organize and work with video content.
+## One Online DB for All Your Video Needs
 
-Ova is an open platform built for creative collaboration
+OVA serves as a comprehensive online database for all video-related tasks, providing a centralized platform for storage, management, and streaming of MP4 videos.
 
-## How Ova Speeds Your Content Workflows
+## How OVA Helps Content Creators
 
 Ova made team-based collaboration faster and more focused by organizing assets by project or allowing users to search their entire content library from anywhere to quickly pull content into new projects.
 

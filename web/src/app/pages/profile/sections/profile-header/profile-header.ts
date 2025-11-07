@@ -1,27 +1,30 @@
-import { Component, Input, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ClipboardModule } from '@angular/cdk/clipboard';
 import { ProfileApiService } from '../../../../../services/ova-backend-service/profile-api.service';
 import { UserProfile } from '../../../../../services/ova-backend-service/api-types/user-profile';
 
 @Component({
   selector: 'app-space-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ClipboardModule],
   templateUrl: './profile-header.html',
 })
 export class ProfileHeaderSection implements OnInit {
-  @Input() copied!: boolean;
-  @Input() copyButtonLabel!: string;
-  @Input() copySpaceId!: () => void;
   private profileApiService = inject(ProfileApiService);
   profile!: UserProfile;
+  copied = false; // 🔹 Track copy status
 
   OpenSettingsModal(): void {
     const modal: any = document.getElementById('settings_modal');
-
     if (modal && typeof modal.showModal === 'function') {
       modal.showModal();
     }
+  }
+
+  onCopy(): void {
+    this.copied = true;
+    setTimeout(() => (this.copied = false), 2000); // 🔹 Reset after 2s
   }
 
   ngOnInit() {
@@ -30,7 +33,7 @@ export class ProfileHeaderSection implements OnInit {
         this.profile = profile;
       },
       error: (error) => {
-        // Handle error
+        console.error(error);
       },
     });
   }

@@ -5,7 +5,6 @@
 - [account-id](docs/account-id.md)
 - [next-features](docs/next-features.md)
 - [commands](docs/commands.md)
-- [draft](docs/draft.md)
 - [configs](docs/configs.md)
 - [changelog](docs/changelog.md)
 - [process-queue](docs/process-queue.md)

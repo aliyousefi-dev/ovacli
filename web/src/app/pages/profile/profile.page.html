@@ -2,14 +2,13 @@
 
   <div class="flex h-[calc(100vh-56px)] overflow-hidden w-full">
     <div class="flex flex-col items-center flex-grow w-full h-full overflow-auto">
-      <app-space-header [copySpaceId]="copySpaceId" [copied]="copied"
-        [copyButtonLabel]="copyButtonLabel"></app-space-header>
+      <app-space-header></app-space-header>
 
       <div class="w-200 bg-base-300 h-full">
         <div class="tabs tabs-border justify-center h-full">
           <input type="radio" name="my_tabs_2" class="tab" aria-label="Videos" checked="checked" />
           <div class="tab-content h-full">
-            Videos
+            <i class='bx bx-grid-alt'></i>
           </div>
 
           <input type="radio" name="my_tabs_2" class="tab" aria-label="Collections" />

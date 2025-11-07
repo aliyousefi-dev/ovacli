@@ -27,10 +27,9 @@ import { AccountManagerPage } from './pages/account-manager/account-manager.page
 export const MainRoutes: Routes = [
   {
     path: '',
-    component: HomePage,
-    canActivate: [AuthGuard],
+    redirectTo: '/global',
+    pathMatch: 'full',
   },
-
   {
     path: 'global',
     component: GlobalPage,
