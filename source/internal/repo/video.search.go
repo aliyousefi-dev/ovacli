@@ -3,6 +3,7 @@ package repo
 import (
 	"fmt"
 	"ova-cli/source/internal/datatypes"
+	"sort"
 )
 
 // GetSimilarVideos returns videos similar to the one identified by videoID.
@@ -32,6 +33,9 @@ func (r *RepoManager) SearchVideosWithBuckets(criteria datatypes.VideoSearchCrit
 	if err != nil {
 		return nil, fmt.Errorf("failed to search videos: %v", err)
 	}
+
+	// Sort alphabetically (A → Z)
+	sort.Strings(allResults)
 
 	// Calculate the starting and ending indices for pagination
 	start := currentBucket * bucketSize

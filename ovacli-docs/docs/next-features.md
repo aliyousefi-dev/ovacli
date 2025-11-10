@@ -46,3 +46,4 @@ here we demonstrate what features we want to add to next versions.
 - adding some features to the video player. like inside video annotations, chapter markers, and interactive transcripts.
 - we need create a custom videoplayer that support also the VR videos.
 - Internal Video Player
+- change preview thumbnail name to Scrub preview thumbnails

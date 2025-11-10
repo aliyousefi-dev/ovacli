@@ -68,7 +68,7 @@ export class VidstackPlayerComponent implements AfterViewInit {
     return this.videoapi.getThumbnailUrl(this.videoData.videoId);
   }
 
-  get previewThumbsUrl(): string {
+  get ScrubThumbsUrl(): string {
     return this.videoapi.getPreviewThumbsUrl(this.videoData.videoId);
   }
 

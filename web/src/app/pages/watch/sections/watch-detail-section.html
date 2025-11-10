@@ -30,7 +30,7 @@
         @if (videoData.uploadedAt) {
         <li class="flex items-center gap-2" [title]="videoData.uploadedAt">
           <span class="font-semibold ">Upload Time:</span>
-          <span>{{ videoData.uploadedAt | date : 'mediumDate' }}</span>
+          <span>{{ videoData.uploadedAt | date : 'mediumDate' }} ({{ timeSinceAdded }})</span>
         </li>
         }
 
