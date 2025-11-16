@@ -8,7 +8,7 @@ import { SavedApiService } from '../../../services/ova-backend-service/saved-api
 import { PlaylistAPIService } from '../../../services/ova-backend-service/playlist-api.service';
 import { WatchedApiService } from '../../../services/ova-backend-service/recent-api.service';
 import { VidstackPlayerComponent } from '../../components/media-player/vidstack-player/vidstack-player.component';
-import { DefaultVideoPlayerComponent } from '../../components/media-player/default-video-player/default-video-player.component';
+import { DefaultVideoPlayer } from '../../components/media-player/default-video-player/default-video-player';
 import { MarkerApiService } from '../../../services/ova-backend-service/marker-api.service';
 
 // Updated: Import new child components
@@ -28,7 +28,7 @@ import { ViewChild } from '@angular/core';
     CommonModule,
     FormsModule,
     VidstackPlayerComponent,
-    DefaultVideoPlayerComponent,
+    DefaultVideoPlayer,
     VideoTitleBarComponent,
     SimilarVideosPanelComponent,
     VideoAdminTabsComponent,

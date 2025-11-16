@@ -1,0 +1,35 @@
+@if (isVisible) {
+<!-- 
+    OUTER WRAPPER: 
+    - Uses clampedLeftPosition to set the correct `left` CSS value.
+    - IMPORTANT: `transform: translateX(-50%)` is REMOVED.
+    - `w-40` (160px) ensures the container has a fixed width, centered on its calculated left edge.
+  -->
+<div class="absolute bottom-10 z-1 flex flex-col items-center w-40" [style.left]="clampedLeftPosition">
+
+  <!-- 1. IMAGE/THUMBNAIL PREVIEW (Top) -->
+  <!-- The actual width/height is determined by the cue dimensions in previewImageStyles -->
+  <div [ngStyle]="previewImageStyles" class="shadow-lg border-2 border-white" style="margin-bottom: 5px;"></div>
+
+  <!-- 2. TEXT CONTAINER (Middle/Bottom) -->
+  <!-- Text elements are centered within the w-40 container via items-center on the parent flex -->
+  @if (nearMarker; as marker) {
+  <div class="relative w-full text-center">
+    <!-- Marker title display (Middle) -->
+    <div class="font-semibold text-sm p-1 bg-red-600 text-white rounded-t">
+      {{ marker.title }}
+    </div>
+
+    <!-- Time display (Bottom, near marker) -->
+    <div class="text-sm p-1 bg-gray-900 text-white rounded-b">
+      {{ formatTime(timeInSeconds) }}
+    </div>
+  </div>
+  } @else {
+  <!-- Time display (Bottom, NOT near marker) -->
+  <div class="text-sm p-1 bg-gray-900 text-white rounded">
+    {{ formatTime(timeInSeconds) }}
+  </div>
+  }
+</div>
+}

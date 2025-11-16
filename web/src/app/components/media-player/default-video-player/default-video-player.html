@@ -1,0 +1,33 @@
+<div class="relative w-full" #playerWrap>
+
+  <video #videoRef class="w-full aspect-video block" [src]="videoUrl" [poster]="thumbnailUrl"></video>
+
+  <div id="controls-overlay" class="absolute inset-0 flex flex-col justify-end p-4 transition-all duration-300"
+    [ngClass]="{
+          'opacity-0 pointer-events-none': !controlsVisible,
+          'cursor-none': !controlsVisible
+       }">
+
+    @if(this.videoRef){
+    <app-main-timeline [videoRef]="this.videoRef" [scrubThumbData]="this.thumbnailData"
+      [markersData]="this.markersData"></app-main-timeline>
+    }
+
+    <div class="flex items-center justify-start gap-2 mt-2 text-white">
+
+      @if (this.videoRef) {
+      <app-play-pause-button [videoRef]="this.videoRef">
+      </app-play-pause-button>
+
+      <app-mute-button [videoRef]="this.videoRef"></app-mute-button>
+
+      <div class="text-sm font-mono flex gap-1">
+        <app-display-time [videoRef]="this.videoRef">
+        </app-display-time>
+      </div>
+      }
+
+    </div>
+  </div>
+
+</div>

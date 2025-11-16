@@ -1,0 +1,11 @@
+<div class="relative h-3 w-full bg-neutral overflow-visible cursor-pointer group" #trackContainer
+  (mousedown)="onTrackMouseDown($event)" (mousemove)="onTrackMouseMove($event)" (mouseleave)="onTrackMouseLeave()">
+
+  <div #progress class="h-full bg-secondary w-0 "></div>
+
+  <div #pivot class="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full 
+    border-2 border-secondary shadow-lg cursor-grab z-10 
+    transition-transform duration-100 ease-in-out hover:scale-150 group-hover:scale-125" style="left: 0%;"
+    (mousedown)="startDrag($event)">
+  </div>
+</div>

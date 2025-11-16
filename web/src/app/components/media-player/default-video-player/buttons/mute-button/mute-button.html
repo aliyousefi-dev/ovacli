@@ -1,0 +1,15 @@
+<div class="flex items-center space-x-2">
+
+  <label class="btn btn-ghost btn-sm btn-square swap" [ngClass]="{ 'swap-active': isMuted }" (click)="toggleMute()">
+
+    <i class="bx bxs-volume-mute bx-sm swap-on"></i>
+
+    <i *ngIf="volumeLevel > 0.5" class="bx bxs-volume-full bx-sm swap-off"></i>
+    <i *ngIf="volumeLevel <= 0.5 && volumeLevel > 0" class="bx bxs-volume-low bx-sm swap-off"></i>
+    <i *ngIf="volumeLevel === 0" class="bx bxs-volume-low bx-sm swap-off"></i>
+
+  </label>
+
+  <input type="range" min="0" max="1" step="0.05" class="range range-xs range-primary w-24" [(ngModel)]="volumeLevel"
+    (input)="onVolumeChange()" />
+</div>
