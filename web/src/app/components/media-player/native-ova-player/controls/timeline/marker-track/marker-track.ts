@@ -8,7 +8,7 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MarkerData } from '../../data-types/marker-data';
+import { MarkerData } from '../../../data-types/marker-data';
 
 @Component({
   selector: 'app-marker-track',

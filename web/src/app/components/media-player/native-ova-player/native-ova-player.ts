@@ -6,20 +6,17 @@ import {
   AfterViewInit,
   OnDestroy,
   inject,
-  HostListener, // Used to listen for mouse events on the host element
+  HostListener, // Used to listen for mouse/keyboard events on the host element
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VideoApiService } from '../../../../services/ova-backend-service/video-api.service';
 import { VideoData } from '../../../../services/ova-backend-service/api-types/video-data';
 import { ScrubThumbApiService } from '../../../../services/ova-backend-service/scrub-thumb-api.service';
 import { ScrubThumbData } from './data-types/scrub-thumb-data';
-import { PlayPauseButton } from './buttons/play-pause-button/play-pause-button';
-import { MuteButton } from './buttons/mute-button/mute-button';
-import { DisplayTime } from './components/display-time/display-time';
-import { MainTimeline } from './timeline/main-timeline';
-// import { formatTime } from './utils/time-utils'; // Not used in this file
-
-// interface BufferedRange { /* ... */ } // Removed since it's not used in this file
+import { PlayPauseButton } from './controls/buttons/play-pause-button/play-pause-button';
+import { MuteButton } from './controls/buttons/mute-button/mute-button';
+import { DisplayTime } from './controls/display-time/display-time';
+import { MainTimeline } from './controls/timeline/main-timeline';
 
 interface Marker {
   timeSecond: number;
@@ -29,7 +26,7 @@ interface Marker {
 @Component({
   selector: 'app-default-video-player',
   standalone: true,
-  templateUrl: './default-video-player.html',
+  templateUrl: './native-ova-player.html',
   imports: [
     CommonModule,
     PlayPauseButton,
@@ -38,14 +35,13 @@ interface Marker {
     MainTimeline,
   ],
 })
-export class DefaultVideoPlayer implements AfterViewInit, OnDestroy {
+export class NativeOvaPlayer implements AfterViewInit, OnDestroy {
   @Input() videoData!: VideoData;
 
   @ViewChild('videoRef') videoRef!: ElementRef<HTMLVideoElement>;
-  @ViewChild('playerWrap') playerWrap!: ElementRef<HTMLDivElement>; // Only kept if needed for other logic
+  @ViewChild('playerWrap') playerWrap!: ElementRef<HTMLDivElement>;
 
   currentTime: number = 0;
-  // bufferedWidth: number = 0; // Removed since it's not used in this file
 
   // ✨ Controls Visibility State
   controlsVisible: boolean = false;
@@ -133,11 +129,6 @@ export class DefaultVideoPlayer implements AfterViewInit, OnDestroy {
     this.clearHideControlsTimeout();
     this.hideControlsTimeout = setTimeout(() => {
       this.controlsVisible = false;
-      // Also hide the cursor if the video is playing
-      if (this.isPlaying) {
-        // Since 'cursor-none' is applied via ngClass when controlsVisible is false,
-        // we don't need explicit DOM manipulation here.
-      }
     }, this.HIDE_DELAY_MS);
   }
 
@@ -160,6 +151,31 @@ export class DefaultVideoPlayer implements AfterViewInit, OnDestroy {
   onMouseLeave() {
     this.clearHideControlsTimeout();
     this.controlsVisible = false;
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    // Only proceed if the event target is NOT an input field (e.g., a search box)
+    // to prevent unwanted behavior when typing.
+    const target = event.target as HTMLElement;
+    const isTyping =
+      target.tagName === 'INPUT' ||
+      target.tagName === 'TEXTAREA' ||
+      target.isContentEditable;
+
+    // Check for Spacebar (key === ' ' or keyCode === 32 for older browsers)
+    if (event.key === ' ' && !isTyping) {
+      event.preventDefault(); // Prevent the default spacebar action (like scrolling)
+      this.togglePlayPause();
+    }
+
+    // Optional: Add other keyboard shortcuts here (e.g., 'm' for mute, 'f' for fullscreen)
+
+    // Check for Escape key to hide controls immediately
+    if (event.key === 'Escape') {
+      this.clearHideControlsTimeout();
+      this.controlsVisible = false;
+    }
   }
 
   // --- Existing Logic ---
@@ -188,23 +204,6 @@ export class DefaultVideoPlayer implements AfterViewInit, OnDestroy {
 
   /** Handler for when video metadata is loaded. */
   private onVideoMetadataLoaded() {
-    // You can add logic here that depends on video metadata (like duration, size, etc.)
-    console.log('Video metadata loaded. Duration:', this.videoDuration);
-  }
-
-  get isPlaying() {
-    return this.videoRef?.nativeElement?.paused === false;
-  }
-
-  get videoDuration() {
-    return this.videoRef?.nativeElement?.duration || 0;
-  }
-
-  get isMuted() {
-    return this.videoRef?.nativeElement?.muted === true;
-  }
-
-  get soundLevel(): number {
-    return this.videoRef?.nativeElement?.volume || 0;
+    console.log('Video metadata loaded.');
   }
 }

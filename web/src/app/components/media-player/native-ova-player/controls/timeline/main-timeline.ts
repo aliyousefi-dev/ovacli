@@ -11,10 +11,10 @@ import { CommonModule } from '@angular/common';
 import { ProgressTrack } from './progress-track/progress-track.component';
 import { BufferedTrack } from './buffered-track/buffered-track';
 import { MarkerTrack } from './marker-track/marker-track';
-import { MarkerData } from '../data-types/marker-data';
+import { MarkerData } from '../../data-types/marker-data';
 
 import { ScrubPreview } from './scrub-preview/scrub-preview';
-import { ScrubThumbData } from '../data-types/scrub-thumb-data';
+import { ScrubThumbData } from '../../data-types/scrub-thumb-data';
 
 @Component({
   selector: 'app-main-timeline',

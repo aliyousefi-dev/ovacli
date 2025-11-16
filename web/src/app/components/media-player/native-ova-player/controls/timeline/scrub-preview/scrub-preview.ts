@@ -1,8 +1,8 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { formatTime } from '../../utils/time-utils';
-import { MarkerData } from '../../data-types/marker-data';
-import { ScrubThumbData } from '../../data-types/scrub-thumb-data';
+import { formatTime } from '../../../utils/time-utils';
+import { MarkerData } from '../../../data-types/marker-data';
+import { ScrubThumbData } from '../../../data-types/scrub-thumb-data';
 
 @Component({
   selector: 'app-scrub-preview',

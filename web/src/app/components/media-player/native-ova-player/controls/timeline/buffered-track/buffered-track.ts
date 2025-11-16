@@ -10,8 +10,8 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BufferedRangeData } from '../../data-types/buffered-range-data';
-import { mergeBufferedRanges } from '../../utils/buffer-utils';
+import { BufferedRangeData } from '../../../data-types/buffered-range-data';
+import { mergeBufferedRanges } from '../../../utils/buffer-utils';
 
 @Component({
   selector: 'app-buffered-track',
