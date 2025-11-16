@@ -68,12 +68,11 @@ export class MarkerTrack implements OnInit, OnDestroy {
 
         // Create the marker element as a raw HTML string for efficient rendering
         const markerHTML = `
-          <div 
-            class="timeline-marker absolute h-full w-1 bg-red-600 cursor-pointer transition-transform hover:scale-y-150 tooltip tooltip-bottom"
-            data-tip="${title}"
-            style="left: ${pct}%; transform: translateX(-50%);"
-          ></div>
-        `;
+  <div 
+    class=" absolute h-full w-1 bg-red-600 cursor-pointer transition-transform hover:scale-x-500 "
+    style="left: ${pct}%; "
+  ></div>
+`;
 
         timelineElement.innerHTML += markerHTML;
       });

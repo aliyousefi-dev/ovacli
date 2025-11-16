@@ -6,7 +6,7 @@ import {
   AfterViewInit,
   OnDestroy,
   inject,
-  HostListener, // <-- Import HostListener
+  HostListener, // Used to listen for mouse events on the host element
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VideoApiService } from '../../../../services/ova-backend-service/video-api.service';
@@ -17,12 +17,9 @@ import { PlayPauseButton } from './buttons/play-pause-button/play-pause-button';
 import { MuteButton } from './buttons/mute-button/mute-button';
 import { DisplayTime } from './components/display-time/display-time';
 import { MainTimeline } from './timeline/main-timeline';
-import { formatTime } from './utils/time-utils';
+// import { formatTime } from './utils/time-utils'; // Not used in this file
 
-interface BufferedRange {
-  start: number;
-  end: number;
-}
+// interface BufferedRange { /* ... */ } // Removed since it's not used in this file
 
 interface Marker {
   timeSecond: number;
@@ -45,15 +42,13 @@ export class DefaultVideoPlayer implements AfterViewInit, OnDestroy {
   @Input() videoData!: VideoData;
 
   @ViewChild('videoRef') videoRef!: ElementRef<HTMLVideoElement>;
-  // ... (Removed unused @ViewChild properties for brevity, keep them if needed elsewhere)
-  @ViewChild('playerWrap') playerWrap!: ElementRef<HTMLDivElement>;
+  @ViewChild('playerWrap') playerWrap!: ElementRef<HTMLDivElement>; // Only kept if needed for other logic
 
   currentTime: number = 0;
-  bufferedWidth: number = 0;
+  // bufferedWidth: number = 0; // Removed since it's not used in this file
 
-  // ✨ NEW: Control visibility state
+  // ✨ Controls Visibility State
   controlsVisible: boolean = false;
-  // ✨ NEW: Timer for auto-hiding the controls
   private hideControlsTimeout: any;
   private readonly HIDE_DELAY_MS = 3000; // 3 seconds delay
 
@@ -83,25 +78,43 @@ export class DefaultVideoPlayer implements AfterViewInit, OnDestroy {
     this.currentTime = video.currentTime;
 
     // Wait until the video's metadata is loaded before proceeding with other logic
-    video.addEventListener('loadedmetadata', this.onVideoMetadataLoaded);
+    // Using a separate bound function is generally safer for event listeners
+    video.addEventListener(
+      'loadedmetadata',
+      this.onVideoMetadataLoaded.bind(this)
+    );
 
-    // ✨ NEW: Ensure controls are visible initially for a moment
+    // Ensure controls are visible initially for a moment
     this.showControls();
   }
 
   ngOnDestroy() {
     this.clearHideControlsTimeout(); // Ensure timeout is cleared
     if (this.videoRef?.nativeElement) {
+      // Remove the event listener using the bound function used for adding it
       this.videoRef.nativeElement.removeEventListener(
         'loadedmetadata',
-        this.onVideoMetadataLoaded
+        this.onVideoMetadataLoaded.bind(this)
       );
     }
   }
 
+  // --- NEW: Play/Pause on Video Click Logic ---
+
+  /** Toggles the video between play and pause. Called on video click. */
+  togglePlayPause() {
+    const video = this.videoRef.nativeElement; // This uses the ElementRef's native element
+    if (video.paused) {
+      video.play();
+    } else {
+      video.pause();
+    }
+    this.showControls();
+  }
+
   // --- Controls Visibility Logic ---
 
-  /** Clears the existing timeout. */
+  /** Clears the existing timeout for hiding controls. */
   private clearHideControlsTimeout() {
     if (this.hideControlsTimeout) {
       clearTimeout(this.hideControlsTimeout);
@@ -120,10 +133,15 @@ export class DefaultVideoPlayer implements AfterViewInit, OnDestroy {
     this.clearHideControlsTimeout();
     this.hideControlsTimeout = setTimeout(() => {
       this.controlsVisible = false;
+      // Also hide the cursor if the video is playing
+      if (this.isPlaying) {
+        // Since 'cursor-none' is applied via ngClass when controlsVisible is false,
+        // we don't need explicit DOM manipulation here.
+      }
     }, this.HIDE_DELAY_MS);
   }
 
-  // --- Host Listeners for Mouse Events (Replaces template event bindings) ---
+  // --- Host Listeners for Mouse Events ---
 
   // When the mouse enters the entire player area, show controls and schedule hide
   @HostListener('mouseenter')
@@ -147,7 +165,6 @@ export class DefaultVideoPlayer implements AfterViewInit, OnDestroy {
   // --- Existing Logic ---
 
   private loadScrubThumbnails() {
-    // ... (existing logic remains the same)
     this.scrubThumbApiService
       .loadScrubThumbnails(this.videoData.videoId)
       .subscribe({
@@ -169,7 +186,11 @@ export class DefaultVideoPlayer implements AfterViewInit, OnDestroy {
       });
   }
 
-  private onVideoMetadataLoaded = () => {};
+  /** Handler for when video metadata is loaded. */
+  private onVideoMetadataLoaded() {
+    // You can add logic here that depends on video metadata (like duration, size, etc.)
+    console.log('Video metadata loaded. Duration:', this.videoDuration);
+  }
 
   get isPlaying() {
     return this.videoRef?.nativeElement?.paused === false;

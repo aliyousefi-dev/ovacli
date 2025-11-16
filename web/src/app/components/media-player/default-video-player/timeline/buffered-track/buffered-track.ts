@@ -80,7 +80,7 @@ export class BufferedTrack implements OnInit, OnDestroy {
 
         // Create a segment for the merged buffered range
         bufferedHTML += `
-          <div class="absolute top-0 h-full bg-green-800"
+          <div class="absolute top-0 h-full bg-white"
             style="left: ${pctStart}%; width: ${width}%;"></div>
         `;
       }

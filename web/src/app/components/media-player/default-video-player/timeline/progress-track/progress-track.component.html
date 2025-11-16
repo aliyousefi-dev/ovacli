@@ -1,7 +1,9 @@
-<div class="relative h-3 w-full bg-neutral overflow-visible cursor-pointer group" #trackContainer
+<div class="relative h-2 w-full overflow-visible cursor-pointer group" #trackContainer
   (mousedown)="onTrackMouseDown($event)" (mousemove)="onTrackMouseMove($event)" (mouseleave)="onTrackMouseLeave()">
 
-  <div #progress class="h-full bg-secondary w-0 "></div>
+  <div class="absolute h-1 w-full rounded bg-gray-400/50 top-1/2 -translate-y-1/2"></div>
+
+  <div #progress class="absolute h-2 rounded bg-white w-0 top-1/2 -translate-y-1/2 z-[1]"></div>
 
   <div #pivot class="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full 
     border-2 border-secondary shadow-lg cursor-grab z-10 
