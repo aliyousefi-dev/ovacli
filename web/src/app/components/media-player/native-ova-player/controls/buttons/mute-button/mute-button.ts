@@ -2,12 +2,11 @@
 
 import { Component, Input, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // <-- ⭐️ ADDED: Required for two-way binding on the slider
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-mute-button',
   standalone: true,
-  // ⭐️ UPDATED: Added FormsModule to imports
   imports: [CommonModule, FormsModule],
   templateUrl: './mute-button.html',
 })
@@ -19,8 +18,11 @@ export class MuteButton implements OnInit, OnDestroy {
 
   // Local state to track if the video is currently muted
   public isMuted: boolean = false;
-  // ⭐️ ADDED: Local state to track the volume level (0.0 to 1.0) for the slider
+  // Local state to track the volume level (0.0 to 1.0) for the slider
   public volumeLevel: number = 1;
+
+  // ⭐️ ADDED: Constant for the volume step size
+  private readonly VOLUME_STEP: number = 0.1; // 10% change per step
 
   private video!: HTMLVideoElement;
 
@@ -30,7 +32,7 @@ export class MuteButton implements OnInit, OnDestroy {
       this.video = this.videoRef.nativeElement;
 
       // Set initial states
-      this.volumeLevel = this.video.volume; // ⭐️ ADDED: Initialize volume level
+      this.volumeLevel = this.video.volume;
       this.isMuted = this.video.muted;
 
       // Listen to the native 'volumechange' event (triggered by code or user controls)
@@ -39,7 +41,7 @@ export class MuteButton implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // ⭐ SAFETY CHECK: Only remove the listener if the video element was initialized
+    // SAFETY CHECK: Only remove the listener if the video element was initialized
     if (this.video) {
       this.video.removeEventListener('volumechange', this.updateState);
     }
@@ -56,15 +58,51 @@ export class MuteButton implements OnInit, OnDestroy {
     }
   }
 
+  // ---------------------------------------------
+  // ⭐️ NEW: Volume Control Methods
+  // ---------------------------------------------
+
   /**
-   * ⭐️ ADDED: Handles changes from the volume slider (via ngModel).
+   * Increases the volume level by the defined step, up to a maximum of 1.0.
+   */
+  volumeLevelUp() {
+    if (!this.video) return;
+
+    // Calculate the new volume level, ensuring it doesn't exceed 1.0
+    const newVolume = this.volumeLevel + this.VOLUME_STEP;
+    this.volumeLevel = Math.min(newVolume, 1.0);
+
+    // Apply the change to the video element
+    this.onVolumeChange();
+  }
+
+  /**
+   * Decreases the volume level by the defined step, down to a minimum of 0.0.
+   */
+  volumeLevelDown() {
+    if (!this.video) return;
+
+    // Calculate the new volume level, ensuring it doesn't drop below 0.0
+    const newVolume = this.volumeLevel - this.VOLUME_STEP;
+    this.volumeLevel = Math.max(newVolume, 0.0);
+
+    // Apply the change to the video element
+    this.onVolumeChange();
+  }
+
+  // ---------------------------------------------
+  // Existing Methods
+  // ---------------------------------------------
+
+  /**
+   * Handles changes from the volume slider (via ngModel) or internal volume methods.
    */
   onVolumeChange() {
     if (this.video) {
-      // 1. Update the native video volume based on the slider
+      // 1. Update the native video volume based on the component's state
       this.video.volume = this.volumeLevel;
 
-      // 2. Automatically handle mute based on slider position
+      // 2. Automatically handle mute based on volume level
       if (this.volumeLevel > 0 && this.video.muted) {
         // If volume is raised, unmute
         this.video.muted = false;
@@ -82,7 +120,7 @@ export class MuteButton implements OnInit, OnDestroy {
     // Synchronize mute state
     this.isMuted = this.video.muted;
 
-    // ⭐️ UPDATED: Synchronize volume level for the slider
+    // Synchronize volume level for the slider
     // Update volumeLevel if volume > 0, or if it's 0 but not muted
     if (this.video.volume > 0) {
       this.volumeLevel = this.video.volume;

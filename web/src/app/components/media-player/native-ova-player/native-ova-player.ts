@@ -6,7 +6,8 @@ import {
   AfterViewInit,
   OnDestroy,
   inject,
-  HostListener, // Used to listen for mouse/keyboard events on the host element
+  HostListener,
+  viewChild, // Used to listen for mouse/keyboard events on the host element
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VideoApiService } from '../../../../services/ova-backend-service/video-api.service';
@@ -17,11 +18,11 @@ import { PlayPauseButton } from './controls/buttons/play-pause-button/play-pause
 import { MuteButton } from './controls/buttons/mute-button/mute-button';
 import { DisplayTime } from './controls/display-time/display-time';
 import { MainTimeline } from './controls/timeline/main-timeline';
-
-interface Marker {
-  timeSecond: number;
-  title: string;
-}
+import { MarkerData } from './data-types/marker-data';
+import {
+  PlayerInputHostDirective,
+  PlayerHostEvents,
+} from './controls/player-input-host';
 
 @Component({
   selector: 'app-default-video-player',
@@ -33,6 +34,7 @@ interface Marker {
     MuteButton,
     DisplayTime,
     MainTimeline,
+    PlayerInputHostDirective,
   ],
 })
 export class NativeOvaPlayer implements AfterViewInit, OnDestroy {
@@ -40,6 +42,8 @@ export class NativeOvaPlayer implements AfterViewInit, OnDestroy {
 
   @ViewChild('videoRef') videoRef!: ElementRef<HTMLVideoElement>;
   @ViewChild('playerWrap') playerWrap!: ElementRef<HTMLDivElement>;
+  @ViewChild('mainTimelineRef') mainTimelineRef!: MainTimeline;
+  @ViewChild('muteButtonRef') muteButtonRef!: MuteButton;
 
   currentTime: number = 0;
 
@@ -47,17 +51,50 @@ export class NativeOvaPlayer implements AfterViewInit, OnDestroy {
   controlsVisible: boolean = false;
   private hideControlsTimeout: any;
   private readonly HIDE_DELAY_MS = 3000; // 3 seconds delay
+  // --- Constant for seek step size (5 seconds) ---
 
   private videoapi = inject(VideoApiService);
   private scrubThumbApiService = inject(ScrubThumbApiService);
   thumbnailData: ScrubThumbData[] = [];
 
   // Array of Marker objects
-  markersData: Marker[] = [
+  markersData: MarkerData[] = [
     { timeSecond: 22, title: 'Introduction' },
     { timeSecond: 60, title: 'Chapter 1: Start' },
     { timeSecond: 2000, title: 'Conclusion' },
   ];
+
+  handleHostEvent(event: keyof PlayerHostEvents) {
+    switch (event) {
+      case 'playPauseToggle':
+        this.showControls();
+        this.togglePlayPause();
+        break;
+      case 'showControls':
+        this.showControls();
+        break;
+      case 'hideControls':
+        this.clearHideControlsTimeout();
+        this.controlsVisible = false;
+        break;
+      case 'stepForward':
+        this.showControls();
+        this.mainTimelineRef.stepForward();
+        break;
+      case 'stepBackward':
+        this.showControls();
+        this.mainTimelineRef.stepBackward();
+        break;
+      case 'volumeUp':
+        this.showControls();
+        this.muteButtonRef.volumeLevelUp();
+        break;
+      case 'volumeDown':
+        this.showControls();
+        this.muteButtonRef.volumeLevelDown();
+        break;
+    }
+  }
 
   get videoUrl() {
     return this.videoapi.getStreamUrl(this.videoData.videoId);
@@ -132,69 +169,12 @@ export class NativeOvaPlayer implements AfterViewInit, OnDestroy {
     }, this.HIDE_DELAY_MS);
   }
 
-  // --- Host Listeners for Mouse Events ---
-
-  // When the mouse enters the entire player area, show controls and schedule hide
-  @HostListener('mouseenter')
-  onMouseEnter() {
-    this.showControls();
-  }
-
-  // When the mouse moves inside the player area, reset the hide timer
-  @HostListener('mousemove')
-  onMouseMove() {
-    this.showControls();
-  }
-
-  // When the mouse leaves the entire player area, hide controls immediately
-  @HostListener('mouseleave')
-  onMouseLeave() {
-    this.clearHideControlsTimeout();
-    this.controlsVisible = false;
-  }
-
-  @HostListener('document:keydown', ['$event'])
-  handleKeyboardEvent(event: KeyboardEvent) {
-    // Only proceed if the event target is NOT an input field (e.g., a search box)
-    // to prevent unwanted behavior when typing.
-    const target = event.target as HTMLElement;
-    const isTyping =
-      target.tagName === 'INPUT' ||
-      target.tagName === 'TEXTAREA' ||
-      target.isContentEditable;
-
-    // Check for Spacebar (key === ' ' or keyCode === 32 for older browsers)
-    if (event.key === ' ' && !isTyping) {
-      event.preventDefault(); // Prevent the default spacebar action (like scrolling)
-      this.togglePlayPause();
-    }
-
-    // Optional: Add other keyboard shortcuts here (e.g., 'm' for mute, 'f' for fullscreen)
-
-    // Check for Escape key to hide controls immediately
-    if (event.key === 'Escape') {
-      this.clearHideControlsTimeout();
-      this.controlsVisible = false;
-    }
-  }
-
-  // --- Existing Logic ---
-
   private loadScrubThumbnails() {
     this.scrubThumbApiService
       .loadScrubThumbnails(this.videoData.videoId)
       .subscribe({
         next: (thumbnails) => {
-          const playerThumbData: ScrubThumbData[] = thumbnails.map((thumb) => ({
-            start: thumb.start,
-            end: thumb.end,
-            url: thumb.url,
-            x: thumb.x,
-            y: thumb.y,
-            w: thumb.w,
-            h: thumb.h,
-          }));
-          this.thumbnailData = playerThumbData;
+          this.thumbnailData = thumbnails;
         },
         error: (err) => {
           console.error('Error loading scrub thumbnails:', err);

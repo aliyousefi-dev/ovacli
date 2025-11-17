@@ -40,12 +40,15 @@ export class MainTimeline implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('timelineRef', { read: ElementRef })
   timelineRef!: ElementRef<HTMLDivElement>;
 
+  @ViewChild('progressTrack') progressTrackRef!: ProgressTrack;
+
   isScrubPreviewVisible: boolean = false;
   scrubTime: number = 0;
   scrubXPositionPercent: number = 0;
 
   // NEW: Stores the pixel width of the timeline for clamping calculations
   timelineWidthPx: number = 0;
+  private readonly SEEK_STEP = 5;
 
   ngOnInit() {}
 
@@ -69,5 +72,22 @@ export class MainTimeline implements OnInit, OnDestroy, AfterViewInit {
   // Handler for scrubEnd event emitted by ProgressTrack
   onScrubEnd() {
     this.isScrubPreviewVisible = false;
+  }
+
+  stepForward() {
+    const video = this.videoRef.nativeElement;
+    const newTime = video.currentTime + this.SEEK_STEP;
+
+    // Use the exposed method on ProgressTrack to perform the seek
+    this.progressTrackRef.seekToTime(newTime);
+  }
+
+  /** Moves the video's playback position backward by SEEK_STEP seconds. */
+  stepBackward() {
+    const video = this.videoRef.nativeElement;
+    const newTime = video.currentTime - this.SEEK_STEP;
+
+    // Use the exposed method on ProgressTrack to perform the seek
+    this.progressTrackRef.seekToTime(newTime);
   }
 }

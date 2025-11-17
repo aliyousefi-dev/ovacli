@@ -1,13 +1,14 @@
 <div class="relative h-2 w-full overflow-visible cursor-pointer group" #trackContainer
-  (mousedown)="onTrackMouseDown($event)" (mousemove)="onTrackMouseMove($event)" (mouseleave)="onTrackMouseLeave()">
+  (mousedown)="onTrackStart($event)" (touchstart)="onTrackStart($event)" (mousemove)="onTrackMouseMove($event)"
+  (touchmove)="onTrackMouseMove($event)" (mouseleave)="onTrackMouseLeave()" (touchend)="onTrackMouseLeave()">
 
   <div class="absolute h-1 w-full rounded bg-gray-400/50 top-1/2 -translate-y-1/2"></div>
 
   <div #progress class="absolute h-2 rounded bg-white w-0 top-1/2 -translate-y-1/2 z-[1]"></div>
 
   <div #pivot class="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full 
-    border-2 border-secondary shadow-lg cursor-grab z-10 
-    transition-transform duration-100 ease-in-out hover:scale-150 group-hover:scale-125" style="left: 0%;"
-    (mousedown)="startDrag($event)">
+  border-2 border-secondary shadow-lg cursor-grab z-10 
+  transition-transform duration-100 ease-in-out hover:scale-150 group-hover:scale-125" style="left: 0%;"
+    (mousedown)="startDrag($event)" (touchstart)="startDrag($event)">
   </div>
 </div>

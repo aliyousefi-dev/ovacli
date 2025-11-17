@@ -9,8 +9,8 @@
     <app-marker-track [videoRef]="this.videoRef" [markersData]="markersData"></app-marker-track>
     <app-buffered-track [videoRef]="this.videoRef"></app-buffered-track>
 
-    <app-progress-track [videoRef]="this.videoRef" (scrubMove)="onScrubMove($event)" (scrubEnd)="onScrubEnd()"
-        (mouseLeave)="onScrubEnd()" (mouseHover)="onScrubMove($event)">
+    <app-progress-track #progressTrack [videoRef]="this.videoRef" (scrubMove)="onScrubMove($event)"
+        (scrubEnd)="onScrubEnd()" (mouseLeave)="onScrubEnd()" (mouseHover)="onScrubMove($event)">
     </app-progress-track>
     }
 </div>

@@ -1,4 +1,4 @@
-<div class="relative w-full" #playerWrap>
+<div class="relative w-full" #playerWrap appPlayerControlsHost (hostEvents)="handleHostEvent($event)">
 
   <video #videoRef class="w-full aspect-video block" [src]="videoUrl" [poster]="thumbnailUrl"
     (click)="togglePlayPause()">
@@ -13,7 +13,7 @@
 
     @if(this.videoRef){
     <div (click)="$event.stopPropagation()">
-      <app-main-timeline [videoRef]="this.videoRef" [scrubThumbData]="this.thumbnailData"
+      <app-main-timeline #mainTimelineRef [videoRef]="this.videoRef" [scrubThumbData]="this.thumbnailData"
         [markersData]="this.markersData"></app-main-timeline>
 
       <div class="flex items-center justify-start gap-2 mt-2 ">
@@ -22,7 +22,7 @@
         <app-play-pause-button [videoRef]="this.videoRef">
         </app-play-pause-button>
 
-        <app-mute-button [videoRef]="this.videoRef"></app-mute-button>
+        <app-mute-button #muteButtonRef [videoRef]="this.videoRef"></app-mute-button>
 
         <div class="text-sm font-mono flex gap-1">
           <app-display-time [videoRef]="this.videoRef">
