@@ -16,18 +16,24 @@
       <app-main-timeline #mainTimelineRef [videoRef]="this.videoRef" [scrubThumbData]="this.thumbnailData"
         [markersData]="this.markersData"></app-main-timeline>
 
-      <div class="flex items-center justify-start gap-2 mt-2 ">
+      <div class="flex items-center justify-between gap-2 mt-2 ">
 
         @if (this.videoRef) {
-        <app-play-pause-button [videoRef]="this.videoRef">
-        </app-play-pause-button>
 
-        <app-mute-button #muteButtonRef [videoRef]="this.videoRef"></app-mute-button>
+        <div class="flex items-center gap-2">
+          <app-play-pause-button [videoRef]="this.videoRef">
+          </app-play-pause-button>
 
-        <div class="text-sm font-mono flex gap-1">
-          <app-display-time [videoRef]="this.videoRef">
-          </app-display-time>
+          <app-mute-button #muteButtonRef [videoRef]="this.videoRef"></app-mute-button>
+
+          <div class="text-sm font-mono flex gap-1">
+            <app-display-time [videoRef]="this.videoRef">
+            </app-display-time>
+          </div>
+
         </div>
+
+        <app-full-screen-button [playerContainerRef]="this.playerWrap"></app-full-screen-button>
         }
 
       </div>

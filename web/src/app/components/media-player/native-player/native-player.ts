@@ -6,8 +6,6 @@ import {
   AfterViewInit,
   OnDestroy,
   inject,
-  HostListener,
-  viewChild, // Used to listen for mouse/keyboard events on the host element
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VideoApiService } from '../../../../services/ova-backend-service/video-api.service';
@@ -19,15 +17,19 @@ import { MuteButton } from './controls/buttons/mute-button/mute-button';
 import { DisplayTime } from './controls/display-time/display-time';
 import { MainTimeline } from './controls/timeline/main-timeline';
 import { MarkerData } from './data-types/marker-data';
+import { FullScreenButton } from './controls/buttons/full-screen/full-screen-button';
+
 import {
   PlayerInputHostDirective,
   PlayerHostEvents,
 } from './controls/player-input-host';
+import { LocalStorageService } from './services/localstorage.service';
+import { PlayerPreferences } from './data-types/player-preferences-data';
 
 @Component({
-  selector: 'app-default-video-player',
+  selector: 'app-native-player',
   standalone: true,
-  templateUrl: './native-ova-player.html',
+  templateUrl: './native-player.html',
   imports: [
     CommonModule,
     PlayPauseButton,
@@ -35,9 +37,10 @@ import {
     DisplayTime,
     MainTimeline,
     PlayerInputHostDirective,
+    FullScreenButton,
   ],
 })
-export class NativeOvaPlayer implements AfterViewInit, OnDestroy {
+export class NativePlayer implements AfterViewInit, OnDestroy {
   @Input() videoData!: VideoData;
 
   @ViewChild('videoRef') videoRef!: ElementRef<HTMLVideoElement>;
@@ -56,6 +59,7 @@ export class NativeOvaPlayer implements AfterViewInit, OnDestroy {
   private videoapi = inject(VideoApiService);
   private scrubThumbApiService = inject(ScrubThumbApiService);
   thumbnailData: ScrubThumbData[] = [];
+  private localStorageService = inject(LocalStorageService);
 
   // Array of Marker objects
   markersData: MarkerData[] = [
@@ -63,6 +67,12 @@ export class NativeOvaPlayer implements AfterViewInit, OnDestroy {
     { timeSecond: 60, title: 'Chapter 1: Start' },
     { timeSecond: 2000, title: 'Conclusion' },
   ];
+
+  private applySavedPreferences() {
+    const prefs: PlayerPreferences = this.localStorageService.loadPreferences(); // Apply sound level
+
+    this.videoRef.nativeElement.volume = prefs.soundLevel;
+  }
 
   handleHostEvent(event: keyof PlayerHostEvents) {
     switch (event) {
@@ -74,8 +84,6 @@ export class NativeOvaPlayer implements AfterViewInit, OnDestroy {
         this.showControls();
         break;
       case 'hideControls':
-        this.clearHideControlsTimeout();
-        this.controlsVisible = false;
         break;
       case 'stepForward':
         this.showControls();
@@ -117,6 +125,7 @@ export class NativeOvaPlayer implements AfterViewInit, OnDestroy {
       this.onVideoMetadataLoaded.bind(this)
     );
 
+    this.applySavedPreferences();
     // Ensure controls are visible initially for a moment
     this.showControls();
   }
