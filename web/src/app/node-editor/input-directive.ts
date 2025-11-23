@@ -5,7 +5,8 @@ export interface NodeEditorHostEvents {
   ZoomInOut: { delta: number };
   OpenContextMenu: void;
   FocusNode: void;
-  OnPointerDown: { x: number; y: number }; // <-- This is the event you want to emit
+  OnPointerDown: { x: number; y: number };
+  DuplicateNode: void; // <-- NEW: Event for Ctrl + D
 }
 
 @Directive({
@@ -13,17 +14,17 @@ export interface NodeEditorHostEvents {
   standalone: true,
 })
 export class NodeEditorInputDirective {
-  // Updated @Output to include the new 'OnPointerDown' event type if you intend to emit it as a standalone string
   @Output() hostEvents = new EventEmitter<
     | keyof NodeEditorHostEvents
     | { Pan: NodeEditorHostEvents['Pan'] }
     | { ZoomInOut: NodeEditorHostEvents['ZoomInOut'] }
-    | { OnPointerDown: NodeEditorHostEvents['OnPointerDown'] } // <-- Added for consistency if you use object type
+    | { OnPointerDown: NodeEditorHostEvents['OnPointerDown'] }
+    | { DuplicateNode: NodeEditorHostEvents['DuplicateNode'] } // <-- NEW: Added to output type
   >();
 
   private lastMouseX: number | undefined;
   private lastMouseY: number | undefined;
-  private isPanning: boolean = false; // State property for middle mouse panning
+  private isPanning: boolean = false;
 
   @HostListener('mousedown', ['$event'])
   onMouseDown(event: MouseEvent) {
@@ -32,18 +33,15 @@ export class NodeEditorInputDirective {
       this.hostEvents.emit({
         OnPointerDown: { x: event.clientX, y: event.clientY },
       });
-      // Capture coordinates for potential future use or to satisfy the existing logic if needed
       this.lastMouseX = event.clientX;
       this.lastMouseY = event.clientY;
-    }
-    // 2. Middle Mouse Button (button 1): Start panning
+    } // 2. Middle Mouse Button (button 1): Start panning
     else if (event.button === 1) {
       event.preventDefault();
       this.isPanning = true;
       this.lastMouseX = event.clientX;
       this.lastMouseY = event.clientY;
-    }
-    // 3. Right Mouse Button (button 2): Capture coordinates for context menu
+    } // 3. Right Mouse Button (button 2): Capture coordinates for context menu
     else if (event.button === 2) {
       this.lastMouseX = event.clientX;
       this.lastMouseY = event.clientY;
@@ -52,14 +50,12 @@ export class NodeEditorInputDirective {
 
   @HostListener('contextmenu', ['$event'])
   onContextMenu(event: MouseEvent) {
-    // Prevent the default browser context menu when right-clicking on the host element
     event.preventDefault();
     this.hostEvents.emit('OpenContextMenu');
   }
 
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent) {
-    // Only proceed if Panning is currently active (middle mouse button is down)
     if (
       this.isPanning &&
       this.lastMouseX !== undefined &&
@@ -77,7 +73,6 @@ export class NodeEditorInputDirective {
 
   @HostListener('document:mouseup')
   onMouseUp() {
-    // Stop panning
     if (this.isPanning) {
       this.isPanning = false;
     }
@@ -102,14 +97,24 @@ export class NodeEditorInputDirective {
 
     if (isTyping) {
       return;
-    } // Shift + A to open context menu
+    }
 
+    // Ctrl/Cmd + D for Duplicate Node
+    const isControlOrCommand = event.ctrlKey || event.metaKey; // metaKey is Cmd on Mac
+    if (isControlOrCommand && (event.key === 'd' || event.key === 'D')) {
+      event.preventDefault();
+      this.hostEvents.emit('DuplicateNode');
+      return;
+    }
+
+    // Shift + A to open context menu
     if (event.shiftKey && (event.key === 'a' || event.key === 'A')) {
       event.preventDefault();
       this.hostEvents.emit('OpenContextMenu');
       return;
-    } // F to focus node
+    }
 
+    // F to focus node
     if (event.key === 'f' || event.key === 'F') {
       event.preventDefault();
       this.hostEvents.emit('FocusNode');

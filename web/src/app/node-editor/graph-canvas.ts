@@ -59,7 +59,7 @@ export class GraphCanvas implements AfterViewInit {
   selectWidth: number = 0;
   selectHeight: number = 0;
   selectBoxX: number = 0;
-  selectBoxY: number = 0; // NEW: Multi-node Dragging State
+  selectBoxY: number = 0;
 
   isNodeDragging: boolean = false;
   dragScreenStartX: number = 0;
@@ -75,7 +75,6 @@ export class GraphCanvas implements AfterViewInit {
   constructor(private renderer: Renderer2, private cdr: ChangeDetectorRef) {}
 
   ngAfterViewInit(): void {
-    // Initialize container dimensions and center the view
     setTimeout(() => {
       if (this.graphContainer) {
         const container = this.graphContainer.nativeElement;
@@ -98,8 +97,8 @@ export class GraphCanvas implements AfterViewInit {
       | { Pan: NodeEditorHostEvents['Pan'] }
       | { ZoomInOut: NodeEditorHostEvents['ZoomInOut'] }
       | { OnPointerDown: NodeEditorHostEvents['OnPointerDown'] }
+      | { DuplicateNode: NodeEditorHostEvents['DuplicateNode'] } // <-- FIX: Added the missing event type
   ) {
-    // ... (unchanged Pan/Zoom/PointerDown logic)
     if (typeof event === 'string') {
       switch (event) {
         case 'OpenContextMenu':
@@ -110,6 +109,9 @@ export class GraphCanvas implements AfterViewInit {
           break;
         case 'FocusNode':
           console.log('FocusNode event received: Implement focus logic.');
+          break;
+        case 'DuplicateNode':
+          this.handleDuplicateNode();
           break;
       }
     } else if ('Pan' in event) {
@@ -162,7 +164,6 @@ export class GraphCanvas implements AfterViewInit {
   }
 
   selectNodesInZone(): void {
-    // ... (unchanged selectNodesInZone logic)
     if (this.selectWidth === 0 || this.selectHeight === 0) {
       return;
     }
@@ -205,7 +206,7 @@ export class GraphCanvas implements AfterViewInit {
     });
 
     this.cdr.detectChanges();
-  } // --- Context Menu Handlers (unchanged) ---
+  }
   private openContextMenu(x: number, y: number): void {
     this.canvasStatus.contextMenuStatus.x = x;
     this.canvasStatus.contextMenuStatus.y = y;
@@ -219,25 +220,18 @@ export class GraphCanvas implements AfterViewInit {
       this.cdr.detectChanges();
     }
   }
-  /**
-   * Handles the start of a drag operation from a node.
-   * Initializes the state for dragging the selected group or the single node.
-   */
-
   onNodeDragStart(event: NodeDragStartEvent): void {
     this.isNodeDragging = true;
     this.dragScreenStartX = event.screenX;
-    this.dragScreenStartY = event.screenY; // The nodeClicked event already fired and updated the selection state. // We now collect ALL currently selected nodes.
+    this.dragScreenStartY = event.screenY;
 
     let nodesToDrag = this.nodeComponents
       .filter((c) => c.isSelected)
       .map((c) => c.nodeData);
 
-    // Safety check: If for some reason the clicked node wasn't selected (shouldn't happen),
-    // ensure it's in the list to be dragged.
     if (!nodesToDrag.find((n) => n.id === event.node.id)) {
       nodesToDrag = [event.node];
-    } // Store the current world position of ALL nodes we intend to drag
+    }
 
     this.draggedNodesInitialState = nodesToDrag.map((node) => ({
       node: node,
@@ -254,16 +248,16 @@ export class GraphCanvas implements AfterViewInit {
     const containerRect =
       this.graphContainer.nativeElement.getBoundingClientRect();
     this.canvasStatus.mouseX = event.clientX - containerRect.left;
-    this.canvasStatus.mouseY = event.clientY - containerRect.top; // Handle Node Dragging
+    this.canvasStatus.mouseY = event.clientY - containerRect.top;
 
     if (this.isNodeDragging) {
       event.preventDefault();
 
       const dx = event.clientX - this.dragScreenStartX;
-      const dy = event.clientY - this.dragScreenStartY; // Apply scale correction to screen delta
+      const dy = event.clientY - this.dragScreenStartY;
 
       const graphDx = dx / this.canvasStatus.scale;
-      const graphDy = dy / this.canvasStatus.scale; // Update position of ALL dragged nodes
+      const graphDy = dy / this.canvasStatus.scale;
 
       this.draggedNodesInitialState.forEach((state) => {
         state.node.xPos = state.startX + graphDx;
@@ -272,7 +266,7 @@ export class GraphCanvas implements AfterViewInit {
 
       this.cdr.detectChanges();
       return; // Prevent selection box logic from running during node drag
-    } // Selection Drag Logic (only runs if not node dragging)
+    }
 
     if (this.canvasStatus.selectionBox.isDrawing) {
       event.preventDefault();
@@ -297,7 +291,7 @@ export class GraphCanvas implements AfterViewInit {
       this.draggedNodesInitialState = [];
       this.cdr.detectChanges();
       return; // Exit after handling node drag end
-    } // End Selection (Original Logic)
+    }
 
     if (this.canvasStatus.selectionBox.isDrawing) {
       if (this.selectWidth > 5 || this.selectHeight > 5) {
@@ -311,7 +305,7 @@ export class GraphCanvas implements AfterViewInit {
       this.selectWidth = 0;
       this.selectHeight = 0;
       this.cdr.detectChanges();
-    } // If the directive's pan sequence ends (mouseup), reset the local CSS state
+    }
 
     if (this.canvasStatus.isPanning) {
       this.canvasStatus.isPanning = false;
@@ -354,19 +348,11 @@ export class GraphCanvas implements AfterViewInit {
     this.closeContextMenu();
     this.cdr.detectChanges();
   }
-  /**
-   * Handles selection logic when a node is clicked.
-   * If the node is not selected, it deselects all others before selecting this one.
-   * If the node is already selected, it preserves the selection (for multi-drag).
-   */
-
   onNodeClick(clickedNodeData: ICanvasNode): void {
     const componentToSelect = this.nodeComponents.find(
       (c) => c.nodeData.id === clickedNodeData.id
     );
 
-    // IMPORTANT: If the clicked node is NOT currently selected, we deselect the group.
-    // This allows clicking a new node to start a new single-select.
     if (!componentToSelect?.isSelected) {
       this.deselectAllNodes();
     }
@@ -374,5 +360,66 @@ export class GraphCanvas implements AfterViewInit {
     if (componentToSelect) {
       componentToSelect.select();
     }
+  } // --- DUPLICATION LOGIC ---
+  /**
+   * Creates a deep copy of a node with a new, unique string ID.
+   */
+
+  private cloneNode(node: ICanvasNode): ICanvasNode {
+    // 1. Create a shallow copy of the node
+    const newNode = { ...node };
+
+    // 2. Generate a new, unique ID and ensure it is a string
+    newNode.id = (Date.now() + Math.random()).toString();
+
+    // 3. Offset the position for visibility
+    const offset = 20;
+    newNode.xPos = node.xPos + offset;
+    newNode.yPos = node.yPos + offset;
+
+    return newNode;
+  }
+  /**
+   * Handles the 'DuplicateNode' event (Ctrl+D).
+   */
+
+  private handleDuplicateNode(): void {
+    const selectedNodes = this.nodeComponents
+      .filter((c) => c.isSelected)
+      .map((c) => c.nodeData);
+
+    if (selectedNodes.length === 0) {
+      console.log('Duplication ignored: No nodes are selected.');
+      return;
+    }
+
+    // 1. Deselect the original nodes (the ones currently selected)
+    this.deselectAllNodes();
+
+    const newNodes: ICanvasNode[] = []; // 2. Duplicate nodes
+
+    selectedNodes.forEach((node) => {
+      const clonedNode = this.cloneNode(node);
+      this.nodes.push(clonedNode);
+      newNodes.push(clonedNode);
+    });
+
+    // 3. Wait for Angular to process the new nodes, then select the new ones
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      // Find and select the newly created components
+      newNodes.forEach((newNode) => {
+        const newComponent = this.nodeComponents.find(
+          (c) => c.nodeData.id === newNode.id
+        );
+        if (newComponent) {
+          newComponent.select();
+        }
+      });
+      this.cdr.detectChanges();
+    }, 0);
+
+    console.log(`Duplicated ${newNodes.length} nodes.`);
   }
 }
