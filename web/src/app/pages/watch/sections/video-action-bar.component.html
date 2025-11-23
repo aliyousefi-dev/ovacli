@@ -1,50 +1,62 @@
-<div *ngIf="videoId" class="flex flex-col items-end gap-4 w-full">
+@if(videoId){
+<div class="flex flex-col items-end gap-4 w-full">
   <!-- Actions + Trim Controls -->
   <div class="flex flex-wrap items-center justify-end gap-2 w-full">
 
-    <!-- Materials -->
-    <a class="btn btn-ghost" routerLink="/materials">
-      <i class='bx bxs-folder bx-xs'></i>
 
-    </a>
+    <div class="tooltip tooltip-bottom" data-tip="Extra Assets">
+      <!-- Materials -->
+      <a class="btn btn-ghost" routerLink="/materials">
+        <i class='bx bxs-folder bx-xs'></i>
 
-    <!-- Version History -->
-    <a class="btn btn-ghost" [routerLink]="['/version-history', videoId]">
-      <i class='bx bx-git-branch bx-xs'></i>
+      </a>
+    </div>
 
-    </a>
+    <div class="tooltip tooltip-bottom" data-tip="Version History">
+      <!-- Version History -->
+      <a class="btn btn-ghost" [routerLink]="['/version-history', videoId]">
+        <i class='bx bx-git-branch bx-xs'></i>
 
-    <!-- Add to Playlist -->
-    <button class="btn btn-ghost" (click)="openPlaylistModal()" aria-label="Add to Playlist">
-      <i class='bx  bxs-share bx-xs'></i>
+      </a>
+    </div>
 
-    </button>
+    <div class="tooltip tooltip-bottom" data-tip="Send to">
+      <!-- Add to Playlist -->
+      <button class="btn btn-ghost" (click)="openPlaylistModal()">
+        <i class='bx  bxs-share bx-xs'></i>
 
-    <!-- Download -->
-    <button class="btn btn-ghost" (click)="downloadVideo()" aria-label="Download">
-      <i class="bx bxs-download bx-xs"></i>
+      </button>
 
-    </button>
+    </div>
+
+    <div class="tooltip tooltip-bottom" data-tip="Download">
+      <!-- Download -->
+      <button class="btn btn-ghost" (click)="downloadVideo()">
+        <i class="bx bxs-download bx-xs"></i>
+
+      </button>
+    </div>
 
 
+    <div class="tooltip tooltip-bottom" data-tip="Save/Unsave">
+      <!-- Save/Unsave -->
+      <button class="btn btn-ghost flex items-center" [ngClass]="isSaved ? 'btn-error' : ''"
+        [disabled]="loadingSavedVideo">
 
-    <!-- Save/Unsave -->
-    <button class="btn btn-ghost flex items-center" [ngClass]="
-                isSaved ? 'btn-error' : ''
-              " (click)="toggleSaved.emit()" [disabled]="loadingSavedVideo" [attr.aria-label]="
-                isSaved ? 'Unsave from favorites' : 'Save to favorites'
-              ">
-      <ng-container *ngIf="isSaved; else notFavoriteIcon">
+        @if(isSaved){
         <i class="bx bxs-bookmark bx-xs"></i>
-      </ng-container>
-      <ng-template #notFavoriteIcon>
+        }
+        @else {
         <i class="bx bx-bookmark bx-xs"></i>
-      </ng-template>
-    </button>
+        }
 
+      </button>
+    </div>
 
   </div>
 </div>
+
+}
 
 <!-- Playlist Modal -->
 <app-sendto-modal [showModal]="playlistModalVisible" [selectedVideoId]="videoId!"

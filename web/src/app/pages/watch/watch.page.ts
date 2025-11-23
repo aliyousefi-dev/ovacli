@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { VideoData } from '../../../services/ova-backend-service/api-types/video-data';
 import { VideoApiService } from '../../../services/ova-backend-service/video-api.service';
 import { SavedApiService } from '../../../services/ova-backend-service/saved-api.service';
@@ -68,7 +68,6 @@ export class WatchPage implements AfterViewInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private savedapi: SavedApiService,
     public videoapi: VideoApiService,
     private playlistapi: PlaylistAPIService,
@@ -106,7 +105,6 @@ export class WatchPage implements AfterViewInit {
         (window as any).video = this.video; // Consider removing this if not debugging
         this.loading = false;
         this.username = localStorage.getItem('username') ?? '';
-        this.checkIfVideoSaved();
 
         if (this.username && this.videoId) {
           this.watchedapi
@@ -146,19 +144,6 @@ export class WatchPage implements AfterViewInit {
 
   get markerFileUrl(): string {
     return this.markerapi.getMarkerFileUrl(this.video.videoId);
-  }
-
-  checkIfVideoSaved() {
-    if (!this.username || !this.videoId) return;
-
-    this.savedapi.getUserSaved(this.username).subscribe({
-      next: (res) => {
-        this.isSaved = res.data.videoIds.includes(this.videoId!);
-      },
-      error: () => {
-        this.isSaved = false;
-      },
-    });
   }
 
   toggleSaved() {

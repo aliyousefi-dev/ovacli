@@ -16,15 +16,8 @@ export class VideoActionBarComponent {
   @Input() videoId?: string | null;
   @Input() getCurrentTimeFn?: () => number;
 
-  @Input() videoDurationSeconds?: number;
-  @Input() videoUploadedAt?: string;
-  @Input() videoResolution?: { width: number; height: number };
-
   @Input() isSaved = false;
   @Input() loadingSavedVideo = false;
-
-  @Output() toggleSaved = new EventEmitter<void>();
-  // @Output() addToPlaylist = new EventEmitter<MouseEvent>(); // Removed: now handled internally
 
   trimMode = false;
   trimStart: number | null = null;

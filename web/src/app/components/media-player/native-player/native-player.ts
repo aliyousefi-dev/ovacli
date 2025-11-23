@@ -13,11 +13,12 @@ import { VideoData } from '../../../../services/ova-backend-service/api-types/vi
 import { ScrubThumbApiService } from '../../../../services/ova-backend-service/scrub-thumb-api.service';
 import { ScrubThumbData } from './data-types/scrub-thumb-data';
 import { PlayPauseButton } from './controls/buttons/play-pause-button/play-pause-button';
-import { MuteButton } from './controls/buttons/mute-button/mute-button';
+import { VolumeButton } from './controls/buttons/volume-button/volume-button';
 import { DisplayTime } from './controls/display-time/display-time';
 import { MainTimeline } from './controls/timeline/main-timeline';
 import { MarkerData } from './data-types/marker-data';
 import { FullScreenButton } from './controls/buttons/full-screen/full-screen-button';
+import { SettingsButton } from './controls/buttons/settings-button/settings-button';
 
 import {
   PlayerInputHostDirective,
@@ -33,11 +34,12 @@ import { PlayerPreferences } from './data-types/player-preferences-data';
   imports: [
     CommonModule,
     PlayPauseButton,
-    MuteButton,
+    VolumeButton,
     DisplayTime,
     MainTimeline,
     PlayerInputHostDirective,
     FullScreenButton,
+    SettingsButton,
   ],
 })
 export class NativePlayer implements AfterViewInit, OnDestroy {
@@ -46,7 +48,7 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   @ViewChild('videoRef') videoRef!: ElementRef<HTMLVideoElement>;
   @ViewChild('playerWrap') playerWrap!: ElementRef<HTMLDivElement>;
   @ViewChild('mainTimelineRef') mainTimelineRef!: MainTimeline;
-  @ViewChild('muteButtonRef') muteButtonRef!: MuteButton;
+  @ViewChild('muteButtonRef') muteButtonRef!: VolumeButton;
 
   currentTime: number = 0;
 

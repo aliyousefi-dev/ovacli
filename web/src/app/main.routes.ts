@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { HomePage } from './pages/home/home.page';
+import { GraphPage } from './pages/graph/graph.page';
 import { AuthGuard } from '../services/ova-backend-service/middleware/auth.guard';
 import { GlobalPage } from './pages/global/global.page';
 import { HistoryPage } from './pages/history/history.page';
@@ -35,6 +35,11 @@ export const MainRoutes: Routes = [
     component: GlobalPage,
     canActivate: [AuthGuard],
     data: { reuse: true },
+  },
+  {
+    path: 'graph',
+    component: GraphPage,
+    canActivate: [AuthGuard],
   },
   {
     path: 'stats',

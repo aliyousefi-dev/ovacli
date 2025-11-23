@@ -8,7 +8,7 @@
 
 
     <div class="xl:p-10">
-      @if (false) {
+      @if (true) {
       <app-vidstack-player #vidstackPlayer [videoData]="video"></app-vidstack-player>
       }@else {
       <app-native-player [videoData]="video"></app-native-player>
@@ -25,9 +25,7 @@
         <app-video-title-bar class="break-all" [videoData]="video"></app-video-title-bar>
 
         <app-video-action-bar [videoId]="video.videoId" [isSaved]="isSaved" [loadingSavedVideo]="loadingSavedVideo"
-          (toggleSaved)="toggleSaved()" [getCurrentTimeFn]="getCurrentTimeFromPlayer"
-          [videoDurationSeconds]="video.codecs.durationSec" [videoUploadedAt]="video.uploadedAt"
-          [videoResolution]="video.codecs.resolution"></app-video-action-bar>
+          (toggleSaved)="toggleSaved()" [getCurrentTimeFn]="getCurrentTimeFromPlayer"></app-video-action-bar>
       </div>
 
 

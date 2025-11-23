@@ -1,0 +1,46 @@
+<div #graphContainer class="w-200 h-200 relative bg-black m-5" [class.isPanning]="isPanning"
+    (mousemove)="onMouseMove($event)" (mousedown)="onMouseDown($event)">
+
+    <div class="absolute top-5 left-5 w-full h-full">
+        Mouse position: X: {{ mouseX }} Y: {{ mouseY }}
+        | Scale: {{ scale | number:'1.1-2' }}
+        | Pan: ({{ translateX | number:'1.0-0' }}, {{ translateY | number:'1.0-0' }})
+    </div>
+
+    <svg class="graph-svg" [attr.width]="containerWidth" [attr.height]="containerHeight">
+
+        <g [attr.transform]="transform">
+
+            <defs>
+                <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
+
+                    <path d="M 10 0 L 0 0 L 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5" />
+
+                </pattern>
+                <pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse">
+
+                    <rect width="100" height="100" fill="url(#smallGrid)" />
+
+                    <path d="M 100 0 L 0 0 L 0 100" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1" />
+
+                </pattern>
+            </defs>
+
+
+            <rect x="-10000" y="-10000" width="20000" height="20000" fill="url(#grid)" />
+
+
+            <circle cx="0" cy="0" r="20" fill="#42a5f5" stroke="#1e88e5" stroke-width="3" />
+            <text x="0" y="0" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="12">
+                Origin
+            </text>
+
+
+            <rect x="50" y="50" width="40" height="30" fill="red" />
+
+            <line x1="0" y1="0" x2="50" y2="50" stroke="yellow" stroke-width="2" />
+
+
+        </g>
+    </svg>
+</div>

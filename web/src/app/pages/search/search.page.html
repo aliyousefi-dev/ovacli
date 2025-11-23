@@ -1,19 +1,24 @@
 <div class="mx-auto px-4 mt-6">
 
-  <div class="font-semibold p-3">Result: {{ totalCount }} videos</div>
+  <div class="p-3 text-xs">
+    <div>Query: "{{ query }}"</div>
+    <div>Tags Query: "{{ tagsQuery }}"</div>
+    <div>Total Result: {{ totalCount }} videos</div>
+  </div>
 
-  @if (loading) {
-  <p class="font-medium text-center">Loading videos...</p>
-  }
+  <!-- Loading State -->
+  <div *ngIf="loading">
+    <p class="font-medium text-center">Loading videos...</p>
+  </div>
 
-
+  <!-- Gallery View -->
   <app-gallery-view ViewMode="full" *ngIf="!loading && videos.length > 0" [videos]="videos"></app-gallery-view>
 
-
-  @if (!loading && videos.length === 0 && query) {
-  <p class="text-center mt-4">
-    No videos found for "{{ query }}"
-  </p>
-  }
+  <!-- No results state -->
+  <div *ngIf="!loading && videos.length === 0 && query">
+    <p class="text-center mt-4">
+      No videos found for "{{ query }}"
+    </p>
+  </div>
 
 </div>

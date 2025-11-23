@@ -1,0 +1,52 @@
+<div class="dropdown dropdown-top dropdown-end">
+    <div tabindex="0" role="button" class="btn btn-ghost btn-sm btn-square m-1">
+        <i class='bx bxs-cog bx-sm swap-on'></i>
+    </div>
+
+    <ul tabindex="-1" class="dropdown-content text-base-content menu bg-base-100 rounded-box z-10 w-40 p-2 shadow-xl">
+
+        @if(currentView === 'main'){
+        <li>
+            <label class="label flex justify-between items-center p-2 cursor-pointer">
+                VR Mode
+                <input type="checkbox" class="toggle toggle-xs" />
+            </label>
+        </li>
+        <li>
+            <label class="label flex justify-between items-center p-2 cursor-pointer">
+                Debugger
+                <input type="checkbox" class="toggle toggle-xs" />
+            </label>
+        </li>
+        <li>
+            <div role="button" (click)="setCurrentView('playback')" class="flex justify-between items-center p-2">
+                <span>Playback Speed</span>
+                <i class='bx bx-chevron-right bx-xs'></i>
+            </div>
+        </li>
+        }
+
+
+        @if(currentView === 'playback' ){
+        <li>
+            <div role="button" (click)="setCurrentView('main')" class="flex items-center p-2 font-bold text-sm">
+                <i class='bx bx-arrow-back bx-xs'></i>
+                Settings
+            </div>
+        </li>
+        <div class="divider my-0 h-px bg-gray-200"></div>
+
+        <li>
+            <a (click)="setSpeed(2.0)">2x</a>
+        </li>
+        <li>
+            <a (click)="setSpeed(1.0)">Normal</a>
+        </li>
+        <li>
+            <a (click)="setSpeed(0.5)">0.5x</a>
+        </li>
+        }
+
+
+    </ul>
+</div>

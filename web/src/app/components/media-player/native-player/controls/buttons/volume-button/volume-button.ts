@@ -8,9 +8,9 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-mute-button',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './mute-button.html',
+  templateUrl: './volume-button.html',
 })
-export class MuteButton implements OnInit, OnDestroy {
+export class VolumeButton implements OnInit, OnDestroy {
   /**
    * The reference to the actual <video> element from the parent component.
    */
