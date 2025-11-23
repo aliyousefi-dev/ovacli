@@ -1,0 +1,5 @@
+<div class="context-menu" [style.left.px]="xPos" [style.top.px]="yPos">
+    <div *ngFor="let item of menuItems" class="menu-item" (click)="onItemClick(item)">
+        {{ item.label }}
+    </div>
+</div>

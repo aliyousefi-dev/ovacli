@@ -1,37 +1,35 @@
-// graph-canvas.ts
 import {
   Component,
   HostListener,
   ElementRef,
   AfterViewInit,
   ViewChild,
+  ViewChildren,
+  QueryList,
   Renderer2,
   ChangeDetectorRef,
   NgZone,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SquareNode } from './nodes/square-node/square-node';
-
-interface Node {
-  id: number;
-  type: string;
-  x: number;
-  y: number;
-}
+import { GraphNodeData } from './data-types/node.model';
+import { ShortcutInfo } from './help/shortcut-info/shortcut-info.component';
+import { ExtendedGraphNodeData } from './nodes/square-node/square-node';
 
 @Component({
   selector: 'app-graph',
   templateUrl: './graph-canvas.html',
   styleUrls: ['./graph-canvas.css'],
   standalone: true,
-  // IMPORTANT: Add the SquareNode component to the imports array
-  imports: [CommonModule, SquareNode],
+  imports: [CommonModule, SquareNode, ShortcutInfo],
 })
 export class GraphCanvas implements AfterViewInit {
   @ViewChild('graphContainer', { static: true })
   graphContainer!: ElementRef<HTMLDivElement>;
 
-  // ... (existing state variables: mouseX, mouseY, scale, translateX, translateY, isPanning, panStartX, panStartY, containerWidth, containerHeight) ...
+  @ViewChildren(SquareNode)
+  nodeComponents!: QueryList<SquareNode>;
+
   mouseX: number = 0;
   mouseY: number = 0;
   scale: number = 1.0;
@@ -43,11 +41,10 @@ export class GraphCanvas implements AfterViewInit {
   containerWidth: number = 500;
   containerHeight: number = 400;
 
-  // New: Define the list of nodes
-  nodes: Node[] = [
-    { id: 1, type: 'square', x: 0, y: 0 },
-    { id: 2, type: 'square', x: 200, y: 50 },
-    { id: 3, type: 'square', x: -100, y: 150 },
+  nodes: ExtendedGraphNodeData[] = [
+    new GraphNodeData('n1', 'Query', 0, 0, false),
+    new GraphNodeData('n2', 'Process A', 200, 50, false),
+    new GraphNodeData('n3', 'End', -100, 150, false),
   ];
 
   constructor(
@@ -56,10 +53,27 @@ export class GraphCanvas implements AfterViewInit {
     private zone: NgZone
   ) {}
 
-  // ... (existing ngAfterViewInit, transform getter, mouse listeners) ...
+  deselectAllNodes(): void {
+    this.nodeComponents.forEach((nodeComponent) => {
+      nodeComponent.deselect();
+    });
+    this.cdr.detectChanges();
+  }
+
+  onNodeClick(clickedNodeData: ExtendedGraphNodeData): void {
+    this.deselectAllNodes();
+
+    const componentToSelect = this.nodeComponents.find(
+      (c) => c.nodeData.id === clickedNodeData.id
+    );
+
+    if (componentToSelect) {
+      componentToSelect.select();
+    }
+  }
+
   ngAfterViewInit(): void {
     setTimeout(() => {
-      // ... (existing logic to calculate container dimensions and initial pan offset) ...
       if (this.graphContainer) {
         const container = this.graphContainer.nativeElement;
         this.containerWidth = container.clientWidth;
@@ -75,38 +89,66 @@ export class GraphCanvas implements AfterViewInit {
     return `translate(${this.translateX}, ${this.translateY}) scale(${this.scale})`;
   }
 
+  @HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent): void {
-    this.mouseX = event.offsetX;
-    this.mouseY = event.offsetY;
+    const containerRect =
+      this.graphContainer.nativeElement.getBoundingClientRect();
+    this.mouseX = event.clientX - containerRect.left;
+    this.mouseY = event.clientY - containerRect.top;
+
     if (this.isPanning) {
-      const dx = event.clientX - this.panStartX;
-      const dy = event.clientY - this.panStartY;
-      this.translateX += dx;
-      this.translateY += dy;
-      this.panStartX = event.clientX;
-      this.panStartY = event.clientY;
-      this.cdr.detectChanges();
+      event.preventDefault();
+
+      this.zone.run(() => {
+        const dx = event.clientX - this.panStartX;
+        const dy = event.clientY - this.panStartY;
+
+        this.translateX += dx;
+        this.translateY += dy;
+        this.panStartX = event.clientX;
+        this.panStartY = event.clientY;
+
+        this.cdr.detectChanges();
+      });
     }
   }
 
   onMouseDown(event: MouseEvent): void {
+    const target = event.target as HTMLElement; // 🔥 FIX: Simplified selector to only look for the attribute [app-square-node]
+    const isNodeOrPin =
+      target.closest('[app-square-node]') !== null || // Checks for the node component attribute
+      target.closest('foreignObject') !== null;
+    const isGridRect = target.tagName === 'rect';
+
     if (event.button === 1) {
-      // Middle mouse button
-      this.isPanning = true;
-      this.panStartX = event.clientX;
-      this.panStartY = event.clientY;
+      // Left Mouse Button logic
+      // Panning: Left click + Shift
       event.preventDefault();
-      this.renderer.addClass(this.graphContainer.nativeElement, 'isPanning');
-      this.cdr.detectChanges();
+
+      this.zone.run(() => {
+        this.isPanning = true;
+        this.panStartX = event.clientX;
+        this.panStartY = event.clientY;
+
+        this.renderer.addClass(this.graphContainer.nativeElement, 'isPanning');
+        this.cdr.detectChanges();
+      });
+    } else if (event.button === 1) {
+      // Middle mouse button is now ignored for panning
     }
   }
 
   @HostListener('document:mouseup')
   onMouseUp(): void {
     if (this.isPanning) {
-      this.isPanning = false;
-      this.renderer.removeClass(this.graphContainer.nativeElement, 'isPanning');
-      this.cdr.detectChanges();
+      this.zone.run(() => {
+        this.isPanning = false;
+        this.renderer.removeClass(
+          this.graphContainer.nativeElement,
+          'isPanning'
+        );
+        this.cdr.detectChanges();
+      });
     }
   }
 

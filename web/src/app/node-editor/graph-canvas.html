@@ -1,31 +1,48 @@
 <div #graphContainer class="w-full h-full relative bg-base-100" [class.isPanning]="isPanning"
-    (mousemove)="onMouseMove($event)" (mousedown)="onMouseDown($event)">
+    (mousedown)="onMouseDown($event)">
 
     <div class="absolute bottom-5 left-5 text-xs text-base-content">
-        Mouse position: X: {{ mouseX }} Y: {{ mouseY }}
+        Mouse position: X: {{ mouseX | number:'1.0-0' }} Y: {{ mouseY | number:'1.0-0' }}
         | Scale: {{ scale | number:'1.1-2' }}
         | Pan: ({{ translateX | number:'1.0-0' }}, {{ translateY | number:'1.0-0' }})
         | Container Size: ({{ containerWidth }}, {{ containerHeight }})
     </div>
 
+    <div class="absolute top-5 left-5 text-sm text-base-content">
+        <app-shortcut-info />
+    </div>
+
+
     <svg class="graph-svg" [attr.width]="containerWidth" [attr.height]="containerHeight">
         <g [attr.transform]="transform">
             <defs>
                 <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
+
                     <path d="M 10 0 L 0 0 L 0 10" fill="none" stroke="currentColor" stroke-opacity="0.1"
                         stroke-width="0.5" />
+
                 </pattern>
 
                 <pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse">
+
                     <rect width="100" height="100" fill="url(#smallGrid)" />
+
                     <path d="M 100 0 L 0 0 L 0 100" fill="none" stroke="currentColor" stroke-opacity="0.4"
                         stroke-width="1" />
+
                 </pattern>
             </defs>
 
+
+
             <rect x="-10000" y="-10000" width="20000" height="20000" fill="url(#grid)" />
 
-            <svg:g app-square-node [x]="node.x" [y]="node.y" *ngFor="let node of nodes"></svg:g>
+            @for (node of nodes; track $index) {
+            <svg:g app-square-node [nodeData]="node" [scale]="scale" (nodeClicked)="onNodeClick($event)">
+            </svg:g>
+            }
+
+
 
         </g>
     </svg>

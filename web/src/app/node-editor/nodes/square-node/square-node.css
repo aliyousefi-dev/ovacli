@@ -1,19 +1,8 @@
-/*
-  The host element selector (:host) is used to target the SVG <g> element
-  that the Angular component is attached to.
-  The :hover pseudo-class activates when the mouse is over the <g> element.
-*/
-:host:hover rect {
-  /* When the host <g> is hovered, apply these styles to the inner <rect> element */
-  stroke: #ff9800; /* Example: Orange border */
-  stroke-width: 1px; /* Make the border thicker */
-  stroke-opacity: 1; /* Ensure it is fully visible */
+.pin-label {
+  font-size: 10px;
+  color: var(--text-base);
 }
 
-:host rect {
-  /* Base/default style for the rectangle. Ensure it has an initial stroke */
-  stroke: transparent;
-  stroke-width: 0px;
-  transition: stroke-width 0.1s, stroke 0.1s;
-  /* Add a smooth transition for a better visual effect */
+.is-selected {
+  border: 1px solid #fff; /* Example of a blue border */
 }
