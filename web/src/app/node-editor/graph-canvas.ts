@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-graph',
-  templateUrl: './graph-canvas.html', // Assuming this is where your HTML template is defined
+  templateUrl: './graph-canvas.html',
   styleUrls: ['./graph-canvas.css'],
   standalone: true,
   imports: [CommonModule],
@@ -47,25 +47,29 @@ export class GraphCanvas implements AfterViewInit {
   ) {}
 
   ngAfterViewInit(): void {
-    if (this.graphContainer) {
-      // Get actual dimensions from the rendered element
-      const container = this.graphContainer.nativeElement;
-      this.containerWidth = container.clientWidth;
-      this.containerHeight = container.clientHeight;
+    // FIX: Use setTimeout(0) to defer reading dimensions until the browser
+    // has guaranteed the element's geometry is finalized based on CSS/Layout.
+    setTimeout(() => {
+      if (this.graphContainer) {
+        const container = this.graphContainer.nativeElement;
 
-      // Set initial pan offset to center the graph origin (0,0)
-      this.translateX = this.containerWidth / 2;
-      this.translateY = this.containerHeight / 2;
+        // Read the actual rendered dimensions
+        this.containerWidth = container.clientWidth;
+        this.containerHeight = container.clientHeight;
 
-      // CRITICAL: Ensure initial centered state is rendered
-      this.cdr.detectChanges();
-    }
+        // Set initial pan offset to center the graph origin (0,0) based on actual size
+        this.translateX = this.containerWidth / 2;
+        this.translateY = this.containerHeight / 2;
+
+        // Trigger change detection to update the view (dimensions and initial pan)
+        this.cdr.detectChanges();
+      }
+    }, 0);
   }
 
   /**
    * Getter for the SVG transform attribute
-   * FIX: SVG transform does not accept 'px' units for translate().
-   * We must use unitless numbers.
+   * FIX APPLIED: SVG transform requires unitless numbers for translate().
    */
   get transform(): string {
     return `translate(${this.translateX}, ${this.translateY}) scale(${this.scale})`;
@@ -79,10 +83,6 @@ export class GraphCanvas implements AfterViewInit {
     this.mouseY = event.offsetY;
 
     if (this.isPanning) {
-      // Run panning logic inside NgZone if needed, but since we use cdr.detectChanges(),
-      // this is often fine outside the zone for high-frequency events.
-      // However, we'll keep the logic simple here.
-
       // Calculate the difference since the last mouse event using event.clientX/Y (screen position)
       const dx = event.clientX - this.panStartX;
       const dy = event.clientY - this.panStartY;
