@@ -1,59 +1,52 @@
 <svg:g [attr.transform]="'translate(' + nodeData.xPos + ', ' + nodeData.yPos + ')'" [class.is-dragging]="isDragging">
 
     <foreignObject x="-60" y="-40" width="120" height="80">
-        <div class="bg-base-300 rounded overflow-hidden w-full h-full flex flex-col "
-            [ngClass]="{'is-selected' : this.isSelected}" (mousedown)="onMouseDown($event)"
-            xmlns="http://www.w3.org/1999/xhtml">
+        <div class="w-full h-full p-2">
+            <div class="bg-base-300 rounded overflow-hidden w-full h-full flex flex-col "
+                [ngClass]="{'is-selected' : this.isSelected}" (mousedown)="onMouseDown($event)"
+                xmlns="http://www.w3.org/1999/xhtml">
 
-            <div class="bg-neutral flex items-center justify-center cursor-grab">
-                <div class="text-xs text-neutral-content text-center w-full select-none font-bold">
+                <div class="bg-neutral text-[10px] text-neutral-content text-center  font-bold">
                     {{ nodeData.label }}
                 </div>
-            </div>
 
-            <div class=" w-full h-full flex justify-between items-center">
+                <div class=" w-full h-full flex justify-between items-start pt-2">
 
-                <div class="flex flex-col gap-1">
-                    <div class="flex items-center gap-2">
-                        <svg class="w-2 h-2 flex-shrink-0" width="8" height="8" viewBox="0 0 8 8">
+                    <div class="flex flex-col gap-1">
+                        <div class=" flex items-center gap-2">
+                            <svg class="pin-wrapper w-2 h-2 flex-shrink-0" width="8" height="8" viewBox="0 0 8 8">
+                                <circle class="fill-white" cx="4" cy="4" r="4" />
+                            </svg>
+                            <div class="pin-label">In 1</div>
+                        </div>
 
-                            <circle class="fill-white" cx="4" cy="4" r="4" />
-
-                        </svg>
-                        <div class="pin-label">In 1</div>
+                        <div class=" flex items-center gap-2">
+                            <svg class="pin-wrapper w-2 h-2 flex-shrink-0" width="8" height="8" viewBox="0 0 8 8">
+                                <circle class="fill-white" cx="4" cy="4" r="4" />
+                            </svg>
+                            <div class="pin-label">In 2</div>
+                        </div>
                     </div>
 
-                    <div class="flex items-center gap-2">
-                        <svg class="w-2 h-2 flex-shrink-0" width="8" height="8" viewBox="0 0 8 8">
+                    <div class="flex flex-col gap-1">
+                        <div class=" flex items-center gap-2">
+                            <div class="pin-label">Out 1</div>
+                            <svg class="pin-wrapper w-2 h-2 flex-shrink-0" width="8" height="8" viewBox="0 0 8 8">
+                                <circle class="fill-white" cx="4" cy="4" r="4" />
+                            </svg>
+                        </div>
 
-                            <circle class="fill-white" cx="4" cy="4" r="4" />
-
-                        </svg>
-                        <div class="pin-label">In 2</div>
+                        <div class=" flex items-center gap-2">
+                            <div class="pin-label">Out 2</div>
+                            <svg class="pin-wrapper w-2 h-2 flex-shrink-0" width="8" height="8" viewBox="0 0 8 8">
+                                <circle class="fill-white" cx="4" cy="4" r="4" />
+                            </svg>
+                        </div>
                     </div>
+
                 </div>
-
-                <div class="flex flex-col gap-1">
-                    <div class="flex items-center gap-2">
-                        <div class="pin-label">Out 1</div>
-                        <svg class="w-2 h-2 flex-shrink-0" width="8" height="8" viewBox="0 0 8 8">
-
-                            <circle class="fill-white" cx="4" cy="4" r="4" />
-
-                        </svg>
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                        <div class="pin-label">Out 2</div>
-                        <svg class="w-2 h-2 flex-shrink-0" width="8" height="8" viewBox="0 0 8 8">
-
-                            <circle class="fill-white" cx="4" cy="4" r="4" />
-
-                        </svg>
-                    </div>
-                </div>
-
             </div>
         </div>
+
     </foreignObject>
 </svg:g>
