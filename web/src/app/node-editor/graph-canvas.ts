@@ -10,7 +10,10 @@ import {
   HostListener,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SquareNode } from './nodes/square-node/square-node';
+import {
+  SquareNode,
+  NodeDragStartEvent,
+} from './nodes/square-node/square-node';
 import { ICanvasNode, createCanvasNode } from './data-types/canvas-node';
 import { ShortcutInfo } from './help/shortcut-info/shortcut-info';
 import { CanvasStatusBar } from './help/canvas-status/canvas-status-bar';
@@ -20,6 +23,13 @@ import {
   NodeEditorInputDirective,
   NodeEditorHostEvents,
 } from './input-directive';
+
+// Define a type to store the initial state of the node for dragging
+interface DragNodeState {
+  node: ICanvasNode;
+  startX: number;
+  startY: number;
+}
 
 @Component({
   selector: 'app-graph',
@@ -49,7 +59,12 @@ export class GraphCanvas implements AfterViewInit {
   selectWidth: number = 0;
   selectHeight: number = 0;
   selectBoxX: number = 0;
-  selectBoxY: number = 0;
+  selectBoxY: number = 0; // NEW: Multi-node Dragging State
+
+  isNodeDragging: boolean = false;
+  dragScreenStartX: number = 0;
+  dragScreenStartY: number = 0;
+  draggedNodesInitialState: DragNodeState[] = [];
 
   nodes: ICanvasNode[] = [
     createCanvasNode(0, 0, 'Query'),
@@ -71,7 +86,7 @@ export class GraphCanvas implements AfterViewInit {
         this.cdr.detectChanges();
       }
     }, 0);
-  } // Helper property for SVG transform
+  }
 
   get transform(): string {
     return `translate(${this.canvasStatus.translateX}, ${this.canvasStatus.translateY}) scale(${this.canvasStatus.scale})`;
@@ -82,31 +97,29 @@ export class GraphCanvas implements AfterViewInit {
       | keyof NodeEditorHostEvents
       | { Pan: NodeEditorHostEvents['Pan'] }
       | { ZoomInOut: NodeEditorHostEvents['ZoomInOut'] }
-      | { OnPointerDown: NodeEditorHostEvents['OnPointerDown'] } // Added OnPointerDown case
+      | { OnPointerDown: NodeEditorHostEvents['OnPointerDown'] }
   ) {
+    // ... (unchanged Pan/Zoom/PointerDown logic)
     if (typeof event === 'string') {
-      // Handle string events (OpenContextMenu, FocusNode)
       switch (event) {
-        case 'OpenContextMenu': // Open the context menu at the last known mouse position
+        case 'OpenContextMenu':
           this.openContextMenu(
             this.canvasStatus.mouseX,
             this.canvasStatus.mouseY
           );
           break;
-        case 'FocusNode': // Implement Focus Node logic here
+        case 'FocusNode':
           console.log('FocusNode event received: Implement focus logic.');
           break;
       }
     } else if ('Pan' in event) {
-      // Handle Pan event
       this.canvasStatus.translateX += event.Pan.deltaX;
-      this.canvasStatus.translateY += event.Pan.deltaY; // Use 'isPanning' property only for CSS class management if needed
+      this.canvasStatus.translateY += event.Pan.deltaY;
       if (!this.canvasStatus.isPanning) {
         this.canvasStatus.isPanning = true;
         this.renderer.addClass(this.graphContainer.nativeElement, 'isPanning');
       }
     } else if ('ZoomInOut' in event) {
-      // Handle ZoomInOut event
       const zoomDelta = event.ZoomInOut.delta;
       const zoomSpeed = 0.1;
       const delta = zoomDelta > 0 ? -zoomSpeed : zoomSpeed;
@@ -116,7 +129,6 @@ export class GraphCanvas implements AfterViewInit {
       );
 
       if (newScale !== this.canvasStatus.scale) {
-        // Use the current mouse position on the container for zoom center
         const mouseX = this.canvasStatus.mouseX;
         const mouseY = this.canvasStatus.mouseY;
 
@@ -129,7 +141,6 @@ export class GraphCanvas implements AfterViewInit {
         this.canvasStatus.scale = newScale;
       }
     } else if ('OnPointerDown' in event) {
-      // Handle OnPointerDown event
       const { x, y } = event.OnPointerDown;
       this.canvasStatus.mouseX = x;
       this.canvasStatus.mouseY = y;
@@ -151,6 +162,7 @@ export class GraphCanvas implements AfterViewInit {
   }
 
   selectNodesInZone(): void {
+    // ... (unchanged selectNodesInZone logic)
     if (this.selectWidth === 0 || this.selectHeight === 0) {
       return;
     }
@@ -193,8 +205,7 @@ export class GraphCanvas implements AfterViewInit {
     });
 
     this.cdr.detectChanges();
-  } // --- Context Menu Handlers ---
-
+  } // --- Context Menu Handlers (unchanged) ---
   private openContextMenu(x: number, y: number): void {
     this.canvasStatus.contextMenuStatus.x = x;
     this.canvasStatus.contextMenuStatus.y = y;
@@ -208,6 +219,34 @@ export class GraphCanvas implements AfterViewInit {
       this.cdr.detectChanges();
     }
   }
+  /**
+   * Handles the start of a drag operation from a node.
+   * Initializes the state for dragging the selected group or the single node.
+   */
+
+  onNodeDragStart(event: NodeDragStartEvent): void {
+    this.isNodeDragging = true;
+    this.dragScreenStartX = event.screenX;
+    this.dragScreenStartY = event.screenY; // The nodeClicked event already fired and updated the selection state. // We now collect ALL currently selected nodes.
+
+    let nodesToDrag = this.nodeComponents
+      .filter((c) => c.isSelected)
+      .map((c) => c.nodeData);
+
+    // Safety check: If for some reason the clicked node wasn't selected (shouldn't happen),
+    // ensure it's in the list to be dragged.
+    if (!nodesToDrag.find((n) => n.id === event.node.id)) {
+      nodesToDrag = [event.node];
+    } // Store the current world position of ALL nodes we intend to drag
+
+    this.draggedNodesInitialState = nodesToDrag.map((node) => ({
+      node: node,
+      startX: node.xPos,
+      startY: node.yPos,
+    }));
+
+    this.cdr.detectChanges();
+  }
 
   @HostListener('document:mousemove', ['$event'])
   onDocumentMouseMove(event: MouseEvent): void {
@@ -215,7 +254,25 @@ export class GraphCanvas implements AfterViewInit {
     const containerRect =
       this.graphContainer.nativeElement.getBoundingClientRect();
     this.canvasStatus.mouseX = event.clientX - containerRect.left;
-    this.canvasStatus.mouseY = event.clientY - containerRect.top; // Selection Drag Logic
+    this.canvasStatus.mouseY = event.clientY - containerRect.top; // Handle Node Dragging
+
+    if (this.isNodeDragging) {
+      event.preventDefault();
+
+      const dx = event.clientX - this.dragScreenStartX;
+      const dy = event.clientY - this.dragScreenStartY; // Apply scale correction to screen delta
+
+      const graphDx = dx / this.canvasStatus.scale;
+      const graphDy = dy / this.canvasStatus.scale; // Update position of ALL dragged nodes
+
+      this.draggedNodesInitialState.forEach((state) => {
+        state.node.xPos = state.startX + graphDx;
+        state.node.yPos = state.startY + graphDy;
+      });
+
+      this.cdr.detectChanges();
+      return; // Prevent selection box logic from running during node drag
+    } // Selection Drag Logic (only runs if not node dragging)
 
     if (this.canvasStatus.selectionBox.isDrawing) {
       event.preventDefault();
@@ -229,11 +286,19 @@ export class GraphCanvas implements AfterViewInit {
       this.selectBoxY = Math.min(this.selectStartY, currentY);
 
       this.cdr.detectChanges();
-    } // NOTE: Panning logic is now entirely handled by the directive and `handleHostEvent`.
-  } // @HostListener('document:mouseup')
+    }
+  }
 
+  @HostListener('document:mouseup')
   onMouseUp(): void {
-    // End Selection
+    // End Node Dragging
+    if (this.isNodeDragging) {
+      this.isNodeDragging = false;
+      this.draggedNodesInitialState = [];
+      this.cdr.detectChanges();
+      return; // Exit after handling node drag end
+    } // End Selection (Original Logic)
+
     if (this.canvasStatus.selectionBox.isDrawing) {
       if (this.selectWidth > 5 || this.selectHeight > 5) {
         this.selectNodesInZone();
@@ -242,11 +307,12 @@ export class GraphCanvas implements AfterViewInit {
         this.deselectAllNodes();
       }
 
-      this.canvasStatus.selectionBox.isDrawing = false; // Reset properties to remove the visual box
+      this.canvasStatus.selectionBox.isDrawing = false;
       this.selectWidth = 0;
       this.selectHeight = 0;
       this.cdr.detectChanges();
     } // If the directive's pan sequence ends (mouseup), reset the local CSS state
+
     if (this.canvasStatus.isPanning) {
       this.canvasStatus.isPanning = false;
       this.renderer.removeClass(this.graphContainer.nativeElement, 'isPanning');
@@ -288,13 +354,22 @@ export class GraphCanvas implements AfterViewInit {
     this.closeContextMenu();
     this.cdr.detectChanges();
   }
+  /**
+   * Handles selection logic when a node is clicked.
+   * If the node is not selected, it deselects all others before selecting this one.
+   * If the node is already selected, it preserves the selection (for multi-drag).
+   */
 
   onNodeClick(clickedNodeData: ICanvasNode): void {
-    this.deselectAllNodes();
-
     const componentToSelect = this.nodeComponents.find(
       (c) => c.nodeData.id === clickedNodeData.id
     );
+
+    // IMPORTANT: If the clicked node is NOT currently selected, we deselect the group.
+    // This allows clicking a new node to start a new single-select.
+    if (!componentToSelect?.isSelected) {
+      this.deselectAllNodes();
+    }
 
     if (componentToSelect) {
       componentToSelect.select();

@@ -10,6 +10,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ICanvasNode } from '../../data-types/canvas-node';
 
+// Define the new event type for drag start
+export interface NodeDragStartEvent {
+  node: ICanvasNode;
+  screenX: number;
+  screenY: number;
+}
+
 @Component({
   selector: 'svg:g[app-square-node]',
   templateUrl: './square-node.html',
@@ -24,12 +31,7 @@ export class SquareNode {
   public isSelected: boolean = false;
   @Output() nodeClicked = new EventEmitter<ICanvasNode>();
   @Output() nodeValueChange = new EventEmitter<ICanvasNode>();
-
-  isDragging: boolean = false;
-  private dragStartX: number = 0;
-  private dragStartY: number = 0;
-  private nodeStartX: number = 0;
-  private nodeStartY: number = 0;
+  @Output() nodeDragStart = new EventEmitter<NodeDragStartEvent>();
 
   constructor(private cdr: ChangeDetectorRef) {}
 
@@ -43,16 +45,15 @@ export class SquareNode {
     if (event.button !== 0) return;
 
     event.stopPropagation();
-    event.preventDefault();
+    event.preventDefault(); // 1. Signal click/selection change to parent FIRST.
 
-    this.nodeClicked.emit(this.nodeData);
-
-    this.isDragging = true;
-
-    this.dragStartX = event.clientX;
-    this.dragStartY = event.clientY;
-    this.nodeStartX = this.nodeData.xPos;
-    this.nodeStartY = this.nodeData.yPos;
+    // This allows GraphCanvas.onNodeClick to update 'isSelected' logic.
+    this.nodeClicked.emit(this.nodeData); // 2. Signal the parent to start drag operation SECOND.
+    this.nodeDragStart.emit({
+      node: this.nodeData,
+      screenX: event.clientX,
+      screenY: event.clientY,
+    });
   }
 
   public select() {
@@ -65,30 +66,5 @@ export class SquareNode {
     console.log('deselected node: ' + this.nodeData.id);
     this.isSelected = false;
     this.cdr.detectChanges();
-  }
-
-  @HostListener('document:mousemove', ['$event'])
-  onMouseMove(event: MouseEvent): void {
-    if (!this.isDragging) return;
-
-    event.preventDefault();
-
-    const dx = event.clientX - this.dragStartX;
-    const dy = event.clientY - this.dragStartY;
-
-    const graphDx = dx / this.scale;
-    const graphDy = dy / this.scale;
-
-    this.nodeData.xPos = this.nodeStartX + graphDx;
-    this.nodeData.yPos = this.nodeStartY + graphDy;
-    this.cdr.detectChanges();
-  }
-
-  @HostListener('document:mouseup')
-  onMouseUp(): void {
-    if (this.isDragging) {
-      this.isDragging = false;
-      this.cdr.detectChanges();
-    }
   }
 }
