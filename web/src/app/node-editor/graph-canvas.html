@@ -1,19 +1,17 @@
 <div #graphContainer class="w-full h-full relative bg-base-100" [class.isPanning]="isPanning"
     (mousedown)="onMouseDown($event)">
 
-    <div class="absolute bottom-5 left-5 text-xs text-base-content">
-        Mouse position: X: {{ mouseX | number:'1.0-0' }} Y: {{ mouseY | number:'1.0-0' }}
-        | Scale: {{ scale | number:'1.1-2' }}
-        | Pan: ({{ translateX | number:'1.0-0' }}, {{ translateY | number:'1.0-0' }})
-        | Container Size: ({{ containerWidth }}, {{ containerHeight }})
+    <div class="absolute bottom-5 left-5">
+        <app-canvas-status [canvasStatusData]="this.canvasStatus"></app-canvas-status>
     </div>
 
-    <div class="absolute top-5 left-5 text-sm text-base-content">
+    <div class="absolute top-5 left-5">
         <app-shortcut-info />
     </div>
 
 
-    <svg class="graph-svg" [attr.width]="containerWidth" [attr.height]="containerHeight">
+    <svg class="graph-svg" [attr.width]="this.canvasStatus.containerWidth"
+        [attr.height]="this.canvasStatus.containerHeight">
         <g [attr.transform]="transform">
             <defs>
                 <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
@@ -39,12 +37,16 @@
                 (click)="this.deselectAllNodes()" />
 
             @for (node of nodes; track $index) {
-            <svg:g app-square-node [nodeData]="node" [scale]="scale" (nodeClicked)="onNodeClick($event)">
+            <svg:g app-square-node [nodeData]="node" [scale]="canvasStatus.scale" (nodeClicked)="onNodeClick($event)">
             </svg:g>
             }
 
 
-
         </g>
     </svg>
+
+    <div *ngIf="isSelecting" class="absolute border border-blue-500 bg-blue-500/30 pointer-events-none"
+        [style.left.px]="selectBoxX" [style.top.px]="selectBoxY" [style.width.px]="selectWidth"
+        [style.height.px]="selectHeight">
+    </div>
 </div>

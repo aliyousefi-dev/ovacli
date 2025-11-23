@@ -6,6 +6,8 @@ import {
   Output,
   EventEmitter,
   ChangeDetectorRef,
+  signal,
+  WritableSignal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -25,7 +27,7 @@ export class SquareNode {
   @Input() nodeData!: ExtendedGraphNodeData;
   @Input() scale: number = 0.2;
 
-  public isSelected: boolean = false;
+  public isSelected: WritableSignal<boolean> = signal(false);
   @Output() nodeClicked = new EventEmitter<ExtendedGraphNodeData>();
   @Output() nodeValueChange = new EventEmitter<ExtendedGraphNodeData>();
 
@@ -51,8 +53,8 @@ export class SquareNode {
 
     if (event.button !== 0) return;
 
-    event.stopPropagation(); // Stop event from propagating up to the graph canvas (to prevent pan)
-    event.preventDefault(); // Stop default browser action
+    event.stopPropagation();
+    event.preventDefault();
 
     this.nodeClicked.emit(this.nodeData);
 
@@ -63,40 +65,37 @@ export class SquareNode {
     this.nodeStartX = this.nodeData.xPos;
     this.nodeStartY = this.nodeData.yPos;
   }
-
   public select() {
-    this.isSelected = true;
-    this.cdr.detectChanges();
+    console.log('selected node: ' + this.nodeData.id);
+    this.isSelected.set(true); // Update using .set()
   }
 
   public deselect() {
-    this.isSelected = false;
-    this.cdr.detectChanges();
+    this.isSelected.set(false); // Update using .set()
   }
 
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent): void {
     if (!this.isDragging) return;
 
-    // 🔥 ADDED: Prevent selection/scrolling while dragging node
     event.preventDefault();
 
     const dx = event.clientX - this.dragStartX;
-    const dy = event.clientY - this.dragStartY; // Calculate graph-space movement based on the current zoom scale
+    const dy = event.clientY - this.dragStartY;
 
     const graphDx = dx / this.scale;
     const graphDy = dy / this.scale;
 
     this.nodeData.xPos = this.nodeStartX + graphDx;
-    this.nodeData.yPos = this.nodeStartY + graphDy;
-    this.cdr.detectChanges(); // Force change detection as drag is outside Angular zone
+    this.nodeData.yPos = this.nodeStartY + graphDy; // This MUST remain detectChanges() since it's a drag event outside the zone
+    this.cdr.detectChanges();
   }
 
   @HostListener('document:mouseup')
   onMouseUp(): void {
     if (this.isDragging) {
       this.isDragging = false;
-      this.cdr.detectChanges(); // Added to update cursor/class status immediately
+      this.cdr.detectChanges();
     }
   }
 }

@@ -8,6 +8,6 @@ import { CommonModule } from '@angular/common';
 
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './shortcut-info.component.html',
+  templateUrl: './shortcut-info.html',
 })
 export class ShortcutInfo {}
