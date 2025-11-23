@@ -7,8 +7,7 @@ import {
   QueryList,
   Renderer2,
   ChangeDetectorRef,
-  NgZone,
-  HostListener, // Keep HostListener for document:mousemove/mouseup for selection box logic
+  HostListener,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SquareNode } from './nodes/square-node/square-node';
@@ -20,7 +19,7 @@ import { CanvasStatus } from './core/canvas-status';
 import {
   NodeEditorInputDirective,
   NodeEditorHostEvents,
-} from './input-directive'; // Import the directive and the events interface
+} from './input-directive';
 
 @Component({
   selector: 'app-graph',
@@ -49,8 +48,8 @@ export class GraphCanvas implements AfterViewInit {
   selectStartY: number = 0;
   selectWidth: number = 0;
   selectHeight: number = 0;
-  selectBoxX: number = 0; // Top-left X for the selection box (relative to container)
-  selectBoxY: number = 0; // Top-left Y for the selection box (relative to container) // Context Menu State Properties
+  selectBoxX: number = 0;
+  selectBoxY: number = 0;
 
   nodes: ICanvasNode[] = [
     createCanvasNode(0, 0, 'Query'),
@@ -58,11 +57,7 @@ export class GraphCanvas implements AfterViewInit {
     createCanvasNode(-100, 150, 'Request'),
   ];
 
-  constructor(
-    private renderer: Renderer2,
-    private cdr: ChangeDetectorRef,
-    private zone: NgZone
-  ) {}
+  constructor(private renderer: Renderer2, private cdr: ChangeDetectorRef) {}
 
   ngAfterViewInit(): void {
     // Initialize container dimensions and center the view
@@ -89,63 +84,58 @@ export class GraphCanvas implements AfterViewInit {
       | { ZoomInOut: NodeEditorHostEvents['ZoomInOut'] }
       | { OnPointerDown: NodeEditorHostEvents['OnPointerDown'] } // Added OnPointerDown case
   ) {
-    this.zone.run(() => {
-      if (typeof event === 'string') {
-        // Handle string events (OpenContextMenu, FocusNode)
-        switch (event) {
-          case 'OpenContextMenu': // Open the context menu at the last known mouse position
-            this.openContextMenu(
-              this.canvasStatus.mouseX,
-              this.canvasStatus.mouseY
-            );
-            break;
-          case 'FocusNode': // Implement Focus Node logic here
-            console.log('FocusNode event received: Implement focus logic.');
-            break;
-        }
-      } else if ('Pan' in event) {
-        // Handle Pan event
-        this.canvasStatus.translateX += event.Pan.deltaX;
-        this.canvasStatus.translateY += event.Pan.deltaY; // Use 'isPanning' property only for CSS class management if needed
-        if (!this.canvasStatus.isPanning) {
-          this.canvasStatus.isPanning = true;
-          this.renderer.addClass(
-            this.graphContainer.nativeElement,
-            'isPanning'
+    if (typeof event === 'string') {
+      // Handle string events (OpenContextMenu, FocusNode)
+      switch (event) {
+        case 'OpenContextMenu': // Open the context menu at the last known mouse position
+          this.openContextMenu(
+            this.canvasStatus.mouseX,
+            this.canvasStatus.mouseY
           );
-        }
-      } else if ('ZoomInOut' in event) {
-        // Handle ZoomInOut event
-        const zoomDelta = event.ZoomInOut.delta;
-        const zoomSpeed = 0.1;
-        const delta = zoomDelta > 0 ? -zoomSpeed : zoomSpeed;
-        const newScale = Math.max(
-          0.1,
-          Math.min(5, this.canvasStatus.scale + delta)
-        );
-
-        if (newScale !== this.canvasStatus.scale) {
-          // Use the current mouse position on the container for zoom center
-          const mouseX = this.canvasStatus.mouseX;
-          const mouseY = this.canvasStatus.mouseY;
-
-          const ratio = newScale / this.canvasStatus.scale;
-          this.canvasStatus.translateX =
-            mouseX - ratio * (mouseX - this.canvasStatus.translateX);
-          this.canvasStatus.translateY =
-            mouseY - ratio * (mouseY - this.canvasStatus.translateY);
-
-          this.canvasStatus.scale = newScale;
-        }
-      } else if ('OnPointerDown' in event) {
-        // Handle OnPointerDown event
-        const { x, y } = event.OnPointerDown;
-        this.canvasStatus.mouseX = x;
-        this.canvasStatus.mouseY = y;
-        console.log(`Pointer down at: (${x}, ${y})`);
+          break;
+        case 'FocusNode': // Implement Focus Node logic here
+          console.log('FocusNode event received: Implement focus logic.');
+          break;
       }
-      this.cdr.detectChanges();
-    });
+    } else if ('Pan' in event) {
+      // Handle Pan event
+      this.canvasStatus.translateX += event.Pan.deltaX;
+      this.canvasStatus.translateY += event.Pan.deltaY; // Use 'isPanning' property only for CSS class management if needed
+      if (!this.canvasStatus.isPanning) {
+        this.canvasStatus.isPanning = true;
+        this.renderer.addClass(this.graphContainer.nativeElement, 'isPanning');
+      }
+    } else if ('ZoomInOut' in event) {
+      // Handle ZoomInOut event
+      const zoomDelta = event.ZoomInOut.delta;
+      const zoomSpeed = 0.1;
+      const delta = zoomDelta > 0 ? -zoomSpeed : zoomSpeed;
+      const newScale = Math.max(
+        0.1,
+        Math.min(5, this.canvasStatus.scale + delta)
+      );
+
+      if (newScale !== this.canvasStatus.scale) {
+        // Use the current mouse position on the container for zoom center
+        const mouseX = this.canvasStatus.mouseX;
+        const mouseY = this.canvasStatus.mouseY;
+
+        const ratio = newScale / this.canvasStatus.scale;
+        this.canvasStatus.translateX =
+          mouseX - ratio * (mouseX - this.canvasStatus.translateX);
+        this.canvasStatus.translateY =
+          mouseY - ratio * (mouseY - this.canvasStatus.translateY);
+
+        this.canvasStatus.scale = newScale;
+      }
+    } else if ('OnPointerDown' in event) {
+      // Handle OnPointerDown event
+      const { x, y } = event.OnPointerDown;
+      this.canvasStatus.mouseX = x;
+      this.canvasStatus.mouseY = y;
+      console.log(`Pointer down at: (${x}, ${y})`);
+    }
+    this.cdr.detectChanges();
   }
 
   private screenToWorld(
@@ -206,22 +196,18 @@ export class GraphCanvas implements AfterViewInit {
   } // --- Context Menu Handlers ---
 
   private openContextMenu(x: number, y: number): void {
-    this.zone.run(() => {
-      this.canvasStatus.contextMenuStatus.x = x;
-      this.canvasStatus.contextMenuStatus.y = y;
-      this.canvasStatus.contextMenuStatus.isOpen = true;
-      this.cdr.detectChanges();
-    });
+    this.canvasStatus.contextMenuStatus.x = x;
+    this.canvasStatus.contextMenuStatus.y = y;
+    this.canvasStatus.contextMenuStatus.isOpen = true;
+    this.cdr.detectChanges();
   }
 
   closeContextMenu(): void {
-    this.zone.run(() => {
-      if (this.canvasStatus.contextMenuStatus.isOpen) {
-        this.canvasStatus.contextMenuStatus.isOpen = false;
-        this.cdr.detectChanges();
-      }
-    });
-  } // --- Mouse & Interaction Handlers (Only Selection and Mouse Position Logic Remains) ---
+    if (this.canvasStatus.contextMenuStatus.isOpen) {
+      this.canvasStatus.contextMenuStatus.isOpen = false;
+      this.cdr.detectChanges();
+    }
+  }
 
   @HostListener('document:mousemove', ['$event'])
   onDocumentMouseMove(event: MouseEvent): void {
@@ -233,38 +219,33 @@ export class GraphCanvas implements AfterViewInit {
 
     if (this.canvasStatus.selectionBox.isDrawing) {
       event.preventDefault();
-      this.zone.run(() => {
-        const currentX = this.canvasStatus.mouseX;
-        const currentY = this.canvasStatus.mouseY;
+      const currentX = this.canvasStatus.mouseX;
+      const currentY = this.canvasStatus.mouseY;
 
-        this.selectWidth = Math.abs(currentX - this.selectStartX);
-        this.selectHeight = Math.abs(currentY - this.selectStartY);
+      this.selectWidth = Math.abs(currentX - this.selectStartX);
+      this.selectHeight = Math.abs(currentY - this.selectStartY);
 
-        this.selectBoxX = Math.min(this.selectStartX, currentX);
-        this.selectBoxY = Math.min(this.selectStartY, currentY);
+      this.selectBoxX = Math.min(this.selectStartX, currentX);
+      this.selectBoxY = Math.min(this.selectStartY, currentY);
 
-        this.cdr.detectChanges();
-      });
+      this.cdr.detectChanges();
     } // NOTE: Panning logic is now entirely handled by the directive and `handleHostEvent`.
   } // @HostListener('document:mouseup')
 
   onMouseUp(): void {
     // End Selection
     if (this.canvasStatus.selectionBox.isDrawing) {
-      this.zone.run(() => {
-        // Execute selection logic if the drag distance was meaningful
-        if (this.selectWidth > 5 || this.selectHeight > 5) {
-          this.selectNodesInZone();
-        } else {
-          // If it was just a quick click on the background, deselect all.
-          this.deselectAllNodes();
-        }
+      if (this.selectWidth > 5 || this.selectHeight > 5) {
+        this.selectNodesInZone();
+      } else {
+        // If it was just a quick click on the background, deselect all.
+        this.deselectAllNodes();
+      }
 
-        this.canvasStatus.selectionBox.isDrawing = false; // Reset properties to remove the visual box
-        this.selectWidth = 0;
-        this.selectHeight = 0;
-        this.cdr.detectChanges();
-      });
+      this.canvasStatus.selectionBox.isDrawing = false; // Reset properties to remove the visual box
+      this.selectWidth = 0;
+      this.selectHeight = 0;
+      this.cdr.detectChanges();
     } // If the directive's pan sequence ends (mouseup), reset the local CSS state
     if (this.canvasStatus.isPanning) {
       this.canvasStatus.isPanning = false;
@@ -285,28 +266,26 @@ export class GraphCanvas implements AfterViewInit {
     if (event.button === 0 && targetIsGraphBackground) {
       event.preventDefault();
 
-      this.zone.run(() => {
-        const containerRect =
-          this.graphContainer.nativeElement.getBoundingClientRect(); // Start the selection process
+      const containerRect =
+        this.graphContainer.nativeElement.getBoundingClientRect(); // Start the selection process
 
-        this.canvasStatus.selectionBox.isDrawing = true;
-        this.selectStartX = event.clientX - containerRect.left;
-        this.selectStartY = event.clientY - containerRect.top;
-        this.selectWidth = 0;
-        this.selectHeight = 0;
-        this.selectBoxX = this.selectStartX;
-        this.selectBoxY = this.selectStartY;
+      this.canvasStatus.selectionBox.isDrawing = true;
+      this.selectStartX = event.clientX - containerRect.left;
+      this.selectStartY = event.clientY - containerRect.top;
+      this.selectWidth = 0;
+      this.selectHeight = 0;
+      this.selectBoxX = this.selectStartX;
+      this.selectBoxY = this.selectStartY;
 
-        this.cdr.detectChanges();
-      });
-    } // Panning start (Middle Mouse Button) is handled by the directive's mousedown listener.
-  } // @HostListener('wheel', ['$event']) // REMOVED: Handled by directive // --- Node Specific Methods ---
+      this.cdr.detectChanges();
+    }
+  }
 
   deselectAllNodes(): void {
     this.nodeComponents.forEach((nodeComponent) => {
       nodeComponent.deselect();
     });
-    this.closeContextMenu(); // Close menu when all nodes are deselected
+    this.closeContextMenu();
     this.cdr.detectChanges();
   }
 

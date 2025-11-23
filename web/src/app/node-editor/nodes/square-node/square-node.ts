@@ -2,12 +2,9 @@ import {
   Component,
   Input,
   HostListener,
-  ChangeDetectionStrategy,
   Output,
   EventEmitter,
   ChangeDetectorRef,
-  signal,
-  WritableSignal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -19,13 +16,12 @@ import { ICanvasNode } from '../../data-types/canvas-node';
   styleUrls: ['./square-node.css'],
   standalone: true,
   imports: [CommonModule, FormsModule],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SquareNode {
   @Input() nodeData!: ICanvasNode;
   @Input() scale: number = 0.2;
 
-  public isSelected: WritableSignal<boolean> = signal(false);
+  public isSelected: boolean = false;
   @Output() nodeClicked = new EventEmitter<ICanvasNode>();
   @Output() nodeValueChange = new EventEmitter<ICanvasNode>();
 
@@ -58,13 +54,17 @@ export class SquareNode {
     this.nodeStartX = this.nodeData.xPos;
     this.nodeStartY = this.nodeData.yPos;
   }
+
   public select() {
     console.log('selected node: ' + this.nodeData.id);
-    this.isSelected.set(true); // Update using .set()
+    this.isSelected = true;
+    this.cdr.detectChanges();
   }
 
   public deselect() {
-    this.isSelected.set(false); // Update using .set()
+    console.log('deselected node: ' + this.nodeData.id);
+    this.isSelected = false;
+    this.cdr.detectChanges();
   }
 
   @HostListener('document:mousemove', ['$event'])
@@ -80,7 +80,7 @@ export class SquareNode {
     const graphDy = dy / this.scale;
 
     this.nodeData.xPos = this.nodeStartX + graphDx;
-    this.nodeData.yPos = this.nodeStartY + graphDy; // This MUST remain detectChanges() since it's a drag event outside the zone
+    this.nodeData.yPos = this.nodeStartY + graphDy;
     this.cdr.detectChanges();
   }
 

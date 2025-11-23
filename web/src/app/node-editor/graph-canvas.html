@@ -7,6 +7,7 @@
 
     <div class="absolute top-5 left-5 z-10">
         <app-shortcut-info />
+
     </div>
 
     <div class="absolute top-5 right-5 z-10">
@@ -24,30 +25,36 @@
             <defs>
                 <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
 
+
                     <path d="M 10 0 L 0 0 L 0 10" fill="none" stroke="currentColor" stroke-opacity="0.3"
                         stroke-width="0.5" />
+
 
                 </pattern>
 
                 <pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse">
 
+
                     <rect width="100" height="100" fill="url(#smallGrid)" />
+
 
                     <path d="M 100 0 L 0 0 L 0 100" fill="none" stroke="currentColor" stroke-opacity="0.4"
                         stroke-width="1" />
+
 
                 </pattern>
             </defs>
 
 
 
-            <rect x="-10000" y="-10000" width="20000" height="20000" fill="url(#grid)"
-                (click)="this.deselectAllNodes()" />
+
+            <rect x="-10000" y="-10000" width="20000" height="20000" fill="url(#grid)" />
 
             @for (node of nodes; track $index) {
             <svg:g app-square-node [nodeData]="node" [scale]="canvasStatus.scale" (nodeClicked)="onNodeClick($event)">
             </svg:g>
             }
+
 
         </g>
     </svg>
