@@ -2,16 +2,16 @@
 
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CanvasStatusData } from '../../data-types/canvas-status';
+import { ICanvasStatus } from '../../data-types/canvas-status';
 
 @Component({
-  selector: 'app-canvas-status', // Changed to be more descriptive
+  selector: 'app-canvas-status-bar', // Changed to be more descriptive
   standalone: true,
   imports: [CommonModule], // Add DecimalPipe for the 'number' pipe
-  templateUrl: './canvas-status.html',
+  templateUrl: './canvas-status-bar.html',
 })
-export class CanvasStatus {
+export class CanvasStatusBar {
   // Use the interface to define the required input property
   @Input({ required: true })
-  canvasStatusData!: CanvasStatusData; // '!' is for definite assignment, assuming the parent provides it
+  canvasStatusData!: ICanvasStatus; // '!' is for definite assignment, assuming the parent provides it
 }

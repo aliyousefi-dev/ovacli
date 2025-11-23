@@ -1,13 +1,21 @@
-<div #graphContainer class="w-full h-full relative bg-base-100" [class.isPanning]="isPanning"
-    (mousedown)="onMouseDown($event)">
-
-    <div class="absolute bottom-5 left-5">
-        <app-canvas-status [canvasStatusData]="this.canvasStatus"></app-canvas-status>
+<div #graphContainer class="w-full h-full relative bg-base-100" [class.isPanning]="this.canvasStatus.isPanning"
+    (mousedown)="onMouseDown($event)" (mouseup)="onMouseUp()" (mousemove)="onDocumentMouseMove($event)"
+    appNodeEditorHost (hostEvents)="handleHostEvent($event)">
+    <div class="absolute bottom-5 left-5 z-10">
+        <app-canvas-status-bar [canvasStatusData]="this.canvasStatus"></app-canvas-status-bar>
     </div>
 
-    <div class="absolute top-5 left-5">
+    <div class="absolute top-5 left-5 z-10">
         <app-shortcut-info />
     </div>
+
+    <div class="absolute top-5 right-5 z-10">
+        <button class="btn" (click)="canvasStatus.resetView()">Reset View</button>
+    </div>
+
+
+    <app-context-menu [canvasStatus]="canvasStatus"></app-context-menu>
+
 
 
     <svg class="graph-svg" [attr.width]="this.canvasStatus.containerWidth"
@@ -41,12 +49,12 @@
             </svg:g>
             }
 
-
         </g>
     </svg>
 
-    <div *ngIf="isSelecting" class="absolute border border-blue-500 bg-blue-500/30 pointer-events-none"
-        [style.left.px]="selectBoxX" [style.top.px]="selectBoxY" [style.width.px]="selectWidth"
-        [style.height.px]="selectHeight">
+    @if(this.canvasStatus.selectionBox.isDrawing){
+    <div class="absolute border border-blue-500 bg-blue-500/30 pointer-events-none" [style.left.px]="selectBoxX"
+        [style.top.px]="selectBoxY" [style.width.px]="selectWidth" [style.height.px]="selectHeight">
     </div>
+    }
 </div>

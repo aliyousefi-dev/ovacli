@@ -1,0 +1,6 @@
+@if(this.canvasStatus.selectionBox.isSelecting){
+<div class="absolute border border-blue-500 bg-blue-500/30 pointer-events-none"
+  [style.left.px]="this.canvasStatus.selectionBox.originX" [style.top.px]="this.canvasStatus.selectionBox.originY"
+  [style.width.px]="this.canvasStatus.selectionBox.width" [style.height.px]="this.canvasStatus.selectionBox.height">
+</div>
+}

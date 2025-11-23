@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { GraphNodeData } from './data-types/node.model';
+import { ICanvasNode } from './data-types/canvas-node';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GraphService {
-  private nodesSubject = new BehaviorSubject<GraphNodeData[]>([]);
-  private selectedNodesSubject = new BehaviorSubject<GraphNodeData[]>([]);
+  private nodesSubject = new BehaviorSubject<ICanvasNode[]>([]);
+  private selectedNodesSubject = new BehaviorSubject<ICanvasNode[]>([]);
 
   // Observable for nodes
   get nodes$() {
@@ -19,19 +19,19 @@ export class GraphService {
     return this.selectedNodesSubject.asObservable();
   }
 
-  addNode(node: GraphNodeData) {
+  addNode(node: ICanvasNode) {
     const nodes = [...this.nodesSubject.getValue(), node];
     this.nodesSubject.next(nodes); // Emit the updated list of nodes
   }
 
-  selectNode(node: GraphNodeData) {
-    node.selected = !node.selected;
+  selectNode(node: ICanvasNode) {
+    node.isSelected = !node.isSelected;
     this.selectedNodesSubject.next(
-      this.nodesSubject.getValue().filter((n) => n.selected)
+      this.nodesSubject.getValue().filter((n) => n.isSelected)
     ); // Update selected nodes
   }
 
-  zoomToNode(node: GraphNodeData) {
+  zoomToNode(node: ICanvasNode) {
     // Implement the logic to zoom into the node
     console.log('Zooming to node:', node);
   }

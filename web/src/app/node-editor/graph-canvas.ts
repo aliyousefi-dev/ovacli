@@ -1,6 +1,5 @@
 import {
   Component,
-  HostListener,
   ElementRef,
   AfterViewInit,
   ViewChild,
@@ -9,21 +8,33 @@ import {
   Renderer2,
   ChangeDetectorRef,
   NgZone,
+  HostListener, // Keep HostListener for document:mousemove/mouseup for selection box logic
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SquareNode } from './nodes/square-node/square-node';
-import { GraphNodeData } from './data-types/node.model';
+import { ICanvasNode, createCanvasNode } from './data-types/canvas-node';
 import { ShortcutInfo } from './help/shortcut-info/shortcut-info';
-import { ExtendedGraphNodeData } from './nodes/square-node/square-node';
-import { CanvasStatus } from './help/canvas-status/canvas-status';
-import { CanvasStatusData } from './data-types/canvas-status';
+import { CanvasStatusBar } from './help/canvas-status/canvas-status-bar';
+import { ContextMenu } from './context-menu/context-menu';
+import { CanvasStatus } from './core/canvas-status';
+import {
+  NodeEditorInputDirective,
+  NodeEditorHostEvents,
+} from './input-directive'; // Import the directive and the events interface
 
 @Component({
   selector: 'app-graph',
   templateUrl: './graph-canvas.html',
   styleUrls: ['./graph-canvas.css'],
   standalone: true,
-  imports: [CommonModule, SquareNode, ShortcutInfo, CanvasStatus],
+  imports: [
+    CommonModule,
+    SquareNode,
+    NodeEditorInputDirective,
+    ShortcutInfo,
+    CanvasStatusBar,
+    ContextMenu,
+  ],
 })
 export class GraphCanvas implements AfterViewInit {
   @ViewChild('graphContainer', { static: true })
@@ -32,35 +43,19 @@ export class GraphCanvas implements AfterViewInit {
   @ViewChildren(SquareNode)
   nodeComponents!: QueryList<SquareNode>;
 
-  public canvasStatus: CanvasStatusData = {
-    mouseX: 0,
-    mouseY: 0,
-    scale: 1.0,
-    translateX: 0,
-    translateY: 0,
-    containerWidth: 500,
-    containerHeight: 400,
-  };
+  public canvasStatus: CanvasStatus = new CanvasStatus();
 
-  // Panning State Properties
-  isPanning: boolean = false;
-  panStartX: number = 0;
-  panStartY: number = 0;
-
-  // Selection Box State Properties
-  isSelecting: boolean = false;
   selectStartX: number = 0;
   selectStartY: number = 0;
   selectWidth: number = 0;
   selectHeight: number = 0;
   selectBoxX: number = 0; // Top-left X for the selection box (relative to container)
-  selectBoxY: number = 0; // Top-left Y for the selection box (relative to container)
+  selectBoxY: number = 0; // Top-left Y for the selection box (relative to container) // Context Menu State Properties
 
-  // Example Node Data
-  nodes: ExtendedGraphNodeData[] = [
-    new GraphNodeData('n1', 'Query', 0, 0, false),
-    new GraphNodeData('n2', 'Process A', 200, 50, false),
-    new GraphNodeData('n3', 'End', -100, 150, false),
+  nodes: ICanvasNode[] = [
+    createCanvasNode(0, 0, 'Query'),
+    createCanvasNode(200, 50, 'Tag'),
+    createCanvasNode(-100, 150, 'Request'),
   ];
 
   constructor(
@@ -81,21 +76,78 @@ export class GraphCanvas implements AfterViewInit {
         this.cdr.detectChanges();
       }
     }, 0);
-  }
+  } // Helper property for SVG transform
 
-  // Helper property for SVG transform
   get transform(): string {
     return `translate(${this.canvasStatus.translateX}, ${this.canvasStatus.translateY}) scale(${this.canvasStatus.scale})`;
   }
 
-  // --- Node Selection Logic ---
+  handleHostEvent(
+    event:
+      | keyof NodeEditorHostEvents
+      | { Pan: NodeEditorHostEvents['Pan'] }
+      | { ZoomInOut: NodeEditorHostEvents['ZoomInOut'] }
+      | { OnPointerDown: NodeEditorHostEvents['OnPointerDown'] } // Added OnPointerDown case
+  ) {
+    this.zone.run(() => {
+      if (typeof event === 'string') {
+        // Handle string events (OpenContextMenu, FocusNode)
+        switch (event) {
+          case 'OpenContextMenu': // Open the context menu at the last known mouse position
+            this.openContextMenu(
+              this.canvasStatus.mouseX,
+              this.canvasStatus.mouseY
+            );
+            break;
+          case 'FocusNode': // Implement Focus Node logic here
+            console.log('FocusNode event received: Implement focus logic.');
+            break;
+        }
+      } else if ('Pan' in event) {
+        // Handle Pan event
+        this.canvasStatus.translateX += event.Pan.deltaX;
+        this.canvasStatus.translateY += event.Pan.deltaY; // Use 'isPanning' property only for CSS class management if needed
+        if (!this.canvasStatus.isPanning) {
+          this.canvasStatus.isPanning = true;
+          this.renderer.addClass(
+            this.graphContainer.nativeElement,
+            'isPanning'
+          );
+        }
+      } else if ('ZoomInOut' in event) {
+        // Handle ZoomInOut event
+        const zoomDelta = event.ZoomInOut.delta;
+        const zoomSpeed = 0.1;
+        const delta = zoomDelta > 0 ? -zoomSpeed : zoomSpeed;
+        const newScale = Math.max(
+          0.1,
+          Math.min(5, this.canvasStatus.scale + delta)
+        );
 
-  /**
-   * Transforms screen coordinates (from the selection box) into graph world coordinates.
-   * @param screenX The screen coordinate X (relative to container).
-   * @param screenY The screen coordinate Y (relative to container).
-   * @returns An object with worldX and worldY coordinates.
-   */
+        if (newScale !== this.canvasStatus.scale) {
+          // Use the current mouse position on the container for zoom center
+          const mouseX = this.canvasStatus.mouseX;
+          const mouseY = this.canvasStatus.mouseY;
+
+          const ratio = newScale / this.canvasStatus.scale;
+          this.canvasStatus.translateX =
+            mouseX - ratio * (mouseX - this.canvasStatus.translateX);
+          this.canvasStatus.translateY =
+            mouseY - ratio * (mouseY - this.canvasStatus.translateY);
+
+          this.canvasStatus.scale = newScale;
+        }
+      } else if ('OnPointerDown' in event) {
+        // Handle OnPointerDown event
+        const { x, y } = event.OnPointerDown;
+        this.canvasStatus.mouseX = x;
+        this.canvasStatus.mouseY = y;
+        console.log(`Pointer down at: (${x}, ${y})`);
+      }
+      this.cdr.detectChanges();
+    });
+  }
+
   private screenToWorld(
     screenX: number,
     screenY: number
@@ -109,12 +161,10 @@ export class GraphCanvas implements AfterViewInit {
   }
 
   selectNodesInZone(): void {
-    // Ensure we have a valid selection area
     if (this.selectWidth === 0 || this.selectHeight === 0) {
       return;
     }
 
-    // 1. Determine the world coordinates of the selection box
     const selectionRect = {
       x1: this.selectBoxX,
       y1: this.selectBoxY,
@@ -125,30 +175,22 @@ export class GraphCanvas implements AfterViewInit {
     const worldP1 = this.screenToWorld(selectionRect.x1, selectionRect.y1);
     const worldP2 = this.screenToWorld(selectionRect.x2, selectionRect.y2);
 
-    // Get the normalized world bounding box for the selection
     const worldSelectMinX = Math.min(worldP1.worldX, worldP2.worldX);
     const worldSelectMaxX = Math.max(worldP1.worldX, worldP2.worldX);
     const worldSelectMinY = Math.min(worldP1.worldY, worldP2.worldY);
     const worldSelectMaxY = Math.max(worldP1.worldY, worldP2.worldY);
 
-    // Deselect all nodes first (standard behavior for box selection)
     this.deselectAllNodes();
 
-    // 2. Check for intersection with each node
     this.nodeComponents.forEach((nodeComponent) => {
       const nodeData = nodeComponent.nodeData;
-
-      // NOTE: Using assumed node size (100x50). Adjust if necessary.
       const nodeWidth = 100;
       const nodeHeight = 50;
-
-      // *** FIX APPLIED HERE: Use nodeData.xPos and nodeData.yPos ***
       const nodeMinX = nodeData.xPos;
       const nodeMaxX = nodeData.xPos + nodeWidth;
       const nodeMinY = nodeData.yPos;
       const nodeMaxY = nodeData.yPos + nodeHeight;
 
-      // Check for AABB (Axis-Aligned Bounding Box) intersection
       const intersects =
         worldSelectMinX < nodeMaxX &&
         worldSelectMaxX > nodeMinX &&
@@ -161,26 +203,93 @@ export class GraphCanvas implements AfterViewInit {
     });
 
     this.cdr.detectChanges();
+  } // --- Context Menu Handlers ---
+
+  private openContextMenu(x: number, y: number): void {
+    this.zone.run(() => {
+      this.canvasStatus.contextMenuStatus.x = x;
+      this.canvasStatus.contextMenuStatus.y = y;
+      this.canvasStatus.contextMenuStatus.isOpen = true;
+      this.cdr.detectChanges();
+    });
   }
 
-  // --- Mouse & Interaction Handlers ---
+  closeContextMenu(): void {
+    this.zone.run(() => {
+      if (this.canvasStatus.contextMenuStatus.isOpen) {
+        this.canvasStatus.contextMenuStatus.isOpen = false;
+        this.cdr.detectChanges();
+      }
+    });
+  } // --- Mouse & Interaction Handlers (Only Selection and Mouse Position Logic Remains) ---
+
+  @HostListener('document:mousemove', ['$event'])
+  onDocumentMouseMove(event: MouseEvent): void {
+    // Update mouse position for context menu placement and zoom centering
+    const containerRect =
+      this.graphContainer.nativeElement.getBoundingClientRect();
+    this.canvasStatus.mouseX = event.clientX - containerRect.left;
+    this.canvasStatus.mouseY = event.clientY - containerRect.top; // Selection Drag Logic
+
+    if (this.canvasStatus.selectionBox.isDrawing) {
+      event.preventDefault();
+      this.zone.run(() => {
+        const currentX = this.canvasStatus.mouseX;
+        const currentY = this.canvasStatus.mouseY;
+
+        this.selectWidth = Math.abs(currentX - this.selectStartX);
+        this.selectHeight = Math.abs(currentY - this.selectStartY);
+
+        this.selectBoxX = Math.min(this.selectStartX, currentX);
+        this.selectBoxY = Math.min(this.selectStartY, currentY);
+
+        this.cdr.detectChanges();
+      });
+    } // NOTE: Panning logic is now entirely handled by the directive and `handleHostEvent`.
+  } // @HostListener('document:mouseup')
+
+  onMouseUp(): void {
+    // End Selection
+    if (this.canvasStatus.selectionBox.isDrawing) {
+      this.zone.run(() => {
+        // Execute selection logic if the drag distance was meaningful
+        if (this.selectWidth > 5 || this.selectHeight > 5) {
+          this.selectNodesInZone();
+        } else {
+          // If it was just a quick click on the background, deselect all.
+          this.deselectAllNodes();
+        }
+
+        this.canvasStatus.selectionBox.isDrawing = false; // Reset properties to remove the visual box
+        this.selectWidth = 0;
+        this.selectHeight = 0;
+        this.cdr.detectChanges();
+      });
+    } // If the directive's pan sequence ends (mouseup), reset the local CSS state
+    if (this.canvasStatus.isPanning) {
+      this.canvasStatus.isPanning = false;
+      this.renderer.removeClass(this.graphContainer.nativeElement, 'isPanning');
+      this.cdr.detectChanges();
+    }
+  }
 
   onMouseDown(event: MouseEvent): void {
-    // Check if target is the large background rect or the container itself, but not a node.
     const targetIsGraphBackground =
       (event.target as HTMLElement).tagName === 'rect' ||
-      (event.target as HTMLElement).classList.contains('graph-svg');
+      (event.target as HTMLElement).classList.contains('graph-svg'); // Close context menu on any background click, regardless of button
 
-    // 1. Selection Box (Left Mouse Button - button 0)
+    if (targetIsGraphBackground) {
+      this.closeContextMenu();
+    } // Only keep Selection Box initiation logic here (Left Mouse Button - button 0)
+
     if (event.button === 0 && targetIsGraphBackground) {
       event.preventDefault();
 
       this.zone.run(() => {
         const containerRect =
-          this.graphContainer.nativeElement.getBoundingClientRect();
+          this.graphContainer.nativeElement.getBoundingClientRect(); // Start the selection process
 
-        // Start the selection process
-        this.isSelecting = true;
+        this.canvasStatus.selectionBox.isDrawing = true;
         this.selectStartX = event.clientX - containerRect.left;
         this.selectStartY = event.clientY - containerRect.top;
         this.selectWidth = 0;
@@ -190,137 +299,18 @@ export class GraphCanvas implements AfterViewInit {
 
         this.cdr.detectChanges();
       });
-    }
-    // 2. Panning (Middle Mouse Button - button 1)
-    else if (event.button === 1) {
-      event.preventDefault();
-
-      this.zone.run(() => {
-        this.isPanning = true;
-        this.panStartX = event.clientX;
-        this.panStartY = event.clientY;
-
-        this.renderer.addClass(this.graphContainer.nativeElement, 'isPanning');
-        this.cdr.detectChanges();
-      });
-    }
-  }
-
-  @HostListener('document:mousemove', ['$event'])
-  onMouseMove(event: MouseEvent): void {
-    const containerRect =
-      this.graphContainer.nativeElement.getBoundingClientRect();
-    this.canvasStatus.mouseX = event.clientX - containerRect.left;
-    this.canvasStatus.mouseY = event.clientY - containerRect.top;
-
-    // 1. Selection Drag Logic
-    if (this.isSelecting) {
-      event.preventDefault();
-      this.zone.run(() => {
-        const currentX = event.clientX - containerRect.left;
-        const currentY = event.clientY - containerRect.top;
-
-        // Calculate size, handling drag in any direction
-        this.selectWidth = Math.abs(currentX - this.selectStartX);
-        this.selectHeight = Math.abs(currentY - this.selectStartY);
-
-        // Calculate the actual top-left corner (min of start/current)
-        this.selectBoxX = Math.min(this.selectStartX, currentX);
-        this.selectBoxY = Math.min(this.selectStartY, currentY);
-
-        this.cdr.detectChanges();
-      });
-    }
-
-    // 2. Panning Drag Logic
-    if (this.isPanning) {
-      event.preventDefault();
-
-      this.zone.run(() => {
-        const dx = event.clientX - this.panStartX;
-        const dy = event.clientY - this.panStartY;
-
-        this.canvasStatus.translateX += dx;
-        this.canvasStatus.translateY += dy;
-        this.panStartX = event.clientX;
-        this.panStartY = event.clientY;
-
-        this.cdr.detectChanges();
-      });
-    }
-  }
-
-  @HostListener('document:mouseup')
-  onMouseUp(): void {
-    // End Selection
-    if (this.isSelecting) {
-      this.zone.run(() => {
-        // Execute selection logic if the drag distance was meaningful (more than a few pixels)
-        if (this.selectWidth > 5 || this.selectHeight > 5) {
-          this.selectNodesInZone();
-        } else {
-          // If it was just a quick click on the background, deselect all.
-          this.deselectAllNodes();
-        }
-
-        this.isSelecting = false;
-        // Reset properties to remove the visual box
-        this.selectWidth = 0;
-        this.selectHeight = 0;
-        this.cdr.detectChanges();
-      });
-    }
-
-    // End Panning
-    if (this.isPanning) {
-      this.zone.run(() => {
-        this.isPanning = false;
-        this.renderer.removeClass(
-          this.graphContainer.nativeElement,
-          'isPanning'
-        );
-        this.cdr.detectChanges();
-      });
-    }
-  }
-
-  @HostListener('wheel', ['$event'])
-  onWheel(event: WheelEvent): void {
-    event.preventDefault();
-
-    const zoomSpeed = 0.1;
-    const delta = event.deltaY > 0 ? -zoomSpeed : zoomSpeed;
-    const newScale = Math.max(
-      0.1,
-      Math.min(5, this.canvasStatus.scale + delta)
-    );
-
-    if (newScale !== this.canvasStatus.scale) {
-      const mouseX = event.offsetX;
-      const mouseY = event.offsetY;
-
-      const ratio = newScale / this.canvasStatus.scale;
-      this.canvasStatus.translateX =
-        mouseX - ratio * (mouseX - this.canvasStatus.translateX);
-      this.canvasStatus.translateY =
-        mouseY - ratio * (mouseY - this.canvasStatus.translateY);
-
-      this.canvasStatus.scale = newScale;
-
-      this.cdr.detectChanges();
-    }
-  }
-
-  // --- Node Specific Methods ---
+    } // Panning start (Middle Mouse Button) is handled by the directive's mousedown listener.
+  } // @HostListener('wheel', ['$event']) // REMOVED: Handled by directive // --- Node Specific Methods ---
 
   deselectAllNodes(): void {
     this.nodeComponents.forEach((nodeComponent) => {
       nodeComponent.deselect();
     });
+    this.closeContextMenu(); // Close menu when all nodes are deselected
     this.cdr.detectChanges();
   }
 
-  onNodeClick(clickedNodeData: ExtendedGraphNodeData): void {
+  onNodeClick(clickedNodeData: ICanvasNode): void {
     this.deselectAllNodes();
 
     const componentToSelect = this.nodeComponents.find(

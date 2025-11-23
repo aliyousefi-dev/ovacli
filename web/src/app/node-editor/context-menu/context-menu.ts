@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ICanvasStatus } from '../data-types/canvas-status';
 
 // Define the structure for a menu item
 export interface MenuItem {
@@ -13,9 +14,8 @@ export interface MenuItem {
   imports: [CommonModule],
   templateUrl: 'context-menu.html',
 })
-export class ContextMenuComponent {
-  @Input() xPos: number = 0;
-  @Input() yPos: number = 0;
+export class ContextMenu {
+  @Input() canvasStatus!: ICanvasStatus;
 
   // 💡 MODIFIED: Menu items are now defined internally
   public menuItems: MenuItem[] = [

@@ -11,9 +11,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { GraphNodeData } from '../../data-types/node.model';
-
-export type ExtendedGraphNodeData = GraphNodeData & { value?: string | number };
+import { ICanvasNode } from '../../data-types/canvas-node';
 
 @Component({
   selector: 'svg:g[app-square-node]',
@@ -24,12 +22,12 @@ export type ExtendedGraphNodeData = GraphNodeData & { value?: string | number };
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SquareNode {
-  @Input() nodeData!: ExtendedGraphNodeData;
+  @Input() nodeData!: ICanvasNode;
   @Input() scale: number = 0.2;
 
   public isSelected: WritableSignal<boolean> = signal(false);
-  @Output() nodeClicked = new EventEmitter<ExtendedGraphNodeData>();
-  @Output() nodeValueChange = new EventEmitter<ExtendedGraphNodeData>();
+  @Output() nodeClicked = new EventEmitter<ICanvasNode>();
+  @Output() nodeValueChange = new EventEmitter<ICanvasNode>();
 
   isDragging: boolean = false;
   private dragStartX: number = 0;
@@ -38,11 +36,6 @@ export class SquareNode {
   private nodeStartY: number = 0;
 
   constructor(private cdr: ChangeDetectorRef) {}
-
-  onValueChange(newValue: string): void {
-    this.nodeData.value = newValue;
-    this.nodeValueChange.emit(this.nodeData);
-  }
 
   onMouseDown(event: MouseEvent): void {
     const target = event.target as HTMLElement;
