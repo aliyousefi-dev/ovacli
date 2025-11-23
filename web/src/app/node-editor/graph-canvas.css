@@ -2,19 +2,6 @@
 /* We use :root variables to inherit colors from the active DaisyUI theme.
    If DaisyUI is set up correctly, these will resolve to the theme's colors.
 */
-.graph-container {
-  /* Set the container background to DaisyUI's base-100 color */
-  background-color: var(--fallback-b1, oklch(var(--b1) / 1));
-
-  /* The rest of the container properties */
-  position: relative;
-  overflow: hidden;
-  width: 500px;
-  height: 400px;
-  border: 1px solid var(--fallback-bc, oklch(var(--bc) / 0.5)); /* Border uses base-content */
-  cursor: grab;
-  user-select: none;
-}
 
 /* Cursor feedback when panning starts */
 .graph-container.isPanning {
@@ -29,18 +16,6 @@
   height: 100%;
 
   color: var(--accent-primary);
-}
-
-/* Ensure the info text is readable against the background */
-.mouse-info {
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  z-index: 10;
-  /* Use the content color for text */
-  color: var(--fallback-bc, oklch(var(--bc) / 1));
-  font-family: monospace;
-  font-size: 10px;
 }
 
 /* SVG Text styling */

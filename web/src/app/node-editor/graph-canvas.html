@@ -9,7 +9,6 @@
     </div>
 
     <svg class="graph-svg" [attr.width]="containerWidth" [attr.height]="containerHeight">
-
         <g [attr.transform]="transform">
             <defs>
                 <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
@@ -26,17 +25,7 @@
 
             <rect x="-10000" y="-10000" width="20000" height="20000" fill="url(#grid)" />
 
-
-            <circle cx="0" cy="0" r="20" fill="#42a5f5" stroke="#1e88e5" stroke-width="3" />
-            <text x="0" y="0" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="12">
-                Origin
-            </text>
-
-
-            <rect x="50" y="50" width="40" height="30" fill="red" />
-
-            <line x1="0" y1="0" x2="50" y2="50" stroke="yellow" stroke-width="2" />
-
+            <svg:g app-square-node [x]="node.x" [y]="node.y" *ngFor="let node of nodes"></svg:g>
 
         </g>
     </svg>

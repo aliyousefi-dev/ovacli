@@ -1,3 +1,4 @@
+// graph-canvas.ts
 import {
   Component,
   HostListener,
@@ -9,36 +10,45 @@ import {
   NgZone,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SquareNode } from './nodes/square-node/square-node';
+
+interface Node {
+  id: number;
+  type: string;
+  x: number;
+  y: number;
+}
 
 @Component({
   selector: 'app-graph',
   templateUrl: './graph-canvas.html',
   styleUrls: ['./graph-canvas.css'],
   standalone: true,
-  imports: [CommonModule],
+  // IMPORTANT: Add the SquareNode component to the imports array
+  imports: [CommonModule, SquareNode],
 })
 export class GraphCanvas implements AfterViewInit {
-  // Use the template reference variable #graphContainer
   @ViewChild('graphContainer', { static: true })
   graphContainer!: ElementRef<HTMLDivElement>;
 
-  // --- Mouse position (for display in the HTML) ---
+  // ... (existing state variables: mouseX, mouseY, scale, translateX, translateY, isPanning, panStartX, panStartY, containerWidth, containerHeight) ...
   mouseX: number = 0;
   mouseY: number = 0;
-
-  // --- Transformation state (for SVG <g> element) ---
   scale: number = 1.0;
   translateX: number = 0;
   translateY: number = 0;
-
-  // --- Panning state ---
   isPanning: boolean = false;
-  panStartX: number = 0; // Mouse X position when pan starts (on screen)
-  panStartY: number = 0; // Mouse Y position when pan starts (on screen)
-
-  // --- Container dimensions ---
+  panStartX: number = 0;
+  panStartY: number = 0;
   containerWidth: number = 500;
   containerHeight: number = 400;
+
+  // New: Define the list of nodes
+  nodes: Node[] = [
+    { id: 1, type: 'square', x: 0, y: 0 },
+    { id: 2, type: 'square', x: 200, y: 50 },
+    { id: 3, type: 'square', x: -100, y: 150 },
+  ];
 
   constructor(
     private renderer: Renderer2,
@@ -46,118 +56,79 @@ export class GraphCanvas implements AfterViewInit {
     private zone: NgZone
   ) {}
 
+  // ... (existing ngAfterViewInit, transform getter, mouse listeners) ...
   ngAfterViewInit(): void {
-    // FIX: Use setTimeout(0) to defer reading dimensions until the browser
-    // has guaranteed the element's geometry is finalized based on CSS/Layout.
     setTimeout(() => {
+      // ... (existing logic to calculate container dimensions and initial pan offset) ...
       if (this.graphContainer) {
         const container = this.graphContainer.nativeElement;
-
-        // Read the actual rendered dimensions
         this.containerWidth = container.clientWidth;
         this.containerHeight = container.clientHeight;
-
-        // Set initial pan offset to center the graph origin (0,0) based on actual size
         this.translateX = this.containerWidth / 2;
         this.translateY = this.containerHeight / 2;
-
-        // Trigger change detection to update the view (dimensions and initial pan)
         this.cdr.detectChanges();
       }
     }, 0);
   }
 
-  /**
-   * Getter for the SVG transform attribute
-   * FIX APPLIED: SVG transform requires unitless numbers for translate().
-   */
   get transform(): string {
     return `translate(${this.translateX}, ${this.translateY}) scale(${this.scale})`;
   }
 
-  // --- MOUSE LISTENERS ---
-
   onMouseMove(event: MouseEvent): void {
-    // Update mouse position display relative to the container
     this.mouseX = event.offsetX;
     this.mouseY = event.offsetY;
-
     if (this.isPanning) {
-      // Calculate the difference since the last mouse event using event.clientX/Y (screen position)
       const dx = event.clientX - this.panStartX;
       const dy = event.clientY - this.panStartY;
-
-      // Apply the difference to the pan offset
       this.translateX += dx;
       this.translateY += dy;
-
-      // Set the current position as the starting point for the *next* move
       this.panStartX = event.clientX;
       this.panStartY = event.clientY;
-
-      // Manually trigger change detection for immediate visual update
       this.cdr.detectChanges();
     }
   }
 
   onMouseDown(event: MouseEvent): void {
-    // Only start panning with the left mouse button (event.button === 0)
-    if (event.button === 0) {
+    if (event.button === 1) {
+      // Middle mouse button
       this.isPanning = true;
       this.panStartX = event.clientX;
       this.panStartY = event.clientY;
-
-      // Prevent native browser drag behavior
       event.preventDefault();
-
-      // Add the class for cursor feedback
       this.renderer.addClass(this.graphContainer.nativeElement, 'isPanning');
-
-      // Trigger change detection once to apply the isPanning class immediately
       this.cdr.detectChanges();
     }
   }
 
-  // Listen globally for mouse up to stop panning
   @HostListener('document:mouseup')
   onMouseUp(): void {
     if (this.isPanning) {
       this.isPanning = false;
-
-      // Remove 'isPanning' class
       this.renderer.removeClass(this.graphContainer.nativeElement, 'isPanning');
-
-      // Trigger change detection to update the class binding
       this.cdr.detectChanges();
     }
   }
 
-  // Listen globally for the wheel event
   @HostListener('wheel', ['$event'])
   onWheel(event: WheelEvent): void {
-    event.preventDefault(); // Stop page scroll
+    event.preventDefault();
 
     const zoomSpeed = 0.1;
-    // Determine zoom direction and calculate change
     const delta = event.deltaY > 0 ? -zoomSpeed : zoomSpeed;
-    // Clamp scale between 0.1 and 5 (or desired range)
     const newScale = Math.max(0.1, Math.min(5, this.scale + delta));
 
     if (newScale !== this.scale) {
-      // The mouse position (offsetX/Y) is relative to the SVG container.
       const mouseX = event.offsetX;
       const mouseY = event.offsetY;
 
-      // Calculate the ratio for the pinch-to-zoom effect
       const ratio = newScale / this.scale;
 
-      // Update pan to keep the point under the mouse stationary (Pinch-to-Zoom logic)
       this.translateX = mouseX - ratio * (mouseX - this.translateX);
       this.translateY = mouseY - ratio * (mouseY - this.translateY);
 
       this.scale = newScale;
 
-      // Manually trigger change detection after zoom calculation
       this.cdr.detectChanges();
     }
   }
