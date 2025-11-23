@@ -114,15 +114,7 @@ export class GraphCanvas implements AfterViewInit {
   }
 
   onMouseDown(event: MouseEvent): void {
-    const target = event.target as HTMLElement; // 🔥 FIX: Simplified selector to only look for the attribute [app-square-node]
-    const isNodeOrPin =
-      target.closest('[app-square-node]') !== null || // Checks for the node component attribute
-      target.closest('foreignObject') !== null;
-    const isGridRect = target.tagName === 'rect';
-
     if (event.button === 1) {
-      // Left Mouse Button logic
-      // Panning: Left click + Shift
       event.preventDefault();
 
       this.zone.run(() => {
@@ -133,8 +125,6 @@ export class GraphCanvas implements AfterViewInit {
         this.renderer.addClass(this.graphContainer.nativeElement, 'isPanning');
         this.cdr.detectChanges();
       });
-    } else if (event.button === 1) {
-      // Middle mouse button is now ignored for panning
     }
   }
 

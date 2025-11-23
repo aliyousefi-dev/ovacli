@@ -1,12 +1,12 @@
 <svg:g [attr.transform]="'translate(' + nodeData.xPos + ', ' + nodeData.yPos + ')'" [class.is-dragging]="isDragging">
 
     <foreignObject x="-60" y="-40" width="120" height="80">
-        <div class="bg-base-300 rounded overflow-hidden w-full h-full flex flex-col"
+        <div class="bg-base-300 rounded overflow-hidden w-full h-full flex flex-col "
             [ngClass]="{'is-selected' : this.isSelected}" (mousedown)="onMouseDown($event)"
             xmlns="http://www.w3.org/1999/xhtml">
 
             <div class="bg-neutral flex items-center justify-center cursor-grab">
-                <div class="text-xs text-base-content text-center w-full select-none font-bold">
+                <div class="text-xs text-neutral-content text-center w-full select-none font-bold">
                     {{ nodeData.label }}
                 </div>
             </div>
