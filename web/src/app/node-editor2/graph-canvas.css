@@ -1,0 +1,24 @@
+/* graph-canvas.css */
+/* We use :root variables to inherit colors from the active DaisyUI theme.
+   If DaisyUI is set up correctly, these will resolve to the theme's colors.
+*/
+
+/* Cursor feedback when panning starts */
+.graph-container.isPanning {
+  cursor: grabbing;
+}
+
+.graph-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  color: var(--accent-primary);
+}
+
+/* SVG Text styling */
+.graph-svg text {
+  pointer-events: none;
+}

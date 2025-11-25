@@ -1,24 +1,17 @@
-/* graph-canvas.css */
-/* We use :root variables to inherit colors from the active DaisyUI theme.
-   If DaisyUI is set up correctly, these will resolve to the theme's colors.
-*/
-
-/* Cursor feedback when panning starts */
-.graph-container.isPanning {
-  cursor: grabbing;
-}
-
-.graph-svg {
-  position: absolute;
-  top: 0;
-  left: 0;
+/* 1. HOST: The Angular Component Boundary */
+:host {
+  display: block;
   width: 100%;
   height: 100%;
-
-  color: var(--accent-primary);
+  touch-action: none;
 }
 
-/* SVG Text styling */
-.graph-svg text {
-  pointer-events: none;
+/* CRITICAL FIX: Apply transform-origin to BOTH transformed elements 
+(the SVG grid and the DIV holding the nodes) 
+*/
+.graph-content {
+  /* Ensure both layers scale and move from the top-left corner */
+  transform-origin: 0 0;
+  will-change: transform;
+  transition: transform 0.05s ease-out;
 }

@@ -59,10 +59,10 @@ export class SelectionBox {
     const nodesToSelect: string[] = [];
 
     for (const node of status.allNodes) {
-      const nodeMinX = node.xPos;
-      const nodeMaxX = node.xPos + node.width;
-      const nodeMinY = node.yPos;
-      const nodeMaxY = node.yPos + node.height;
+      const nodeMinX = node.position.x;
+      const nodeMaxX = node.position.x + node.width;
+      const nodeMinY = node.position.y;
+      const nodeMaxY = node.position.y + node.height;
 
       const isColliding =
         maxWorldX > nodeMinX &&

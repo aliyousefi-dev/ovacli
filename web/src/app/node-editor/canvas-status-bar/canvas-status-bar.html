@@ -1,0 +1,45 @@
+@if (this.canvasStatusData) {
+
+@if (this.canvasStatusData.visibility.showStatusBar) {
+
+<div class="flex flex-col">
+    <div class="flex text-xs gap-3">
+        <div>
+            hovered Node: {{ canvasStatusData.hoveredNode?.label || 'None' }}
+        </div>
+    </div>
+    <div class="flex text-xs gap-3">
+        <!-- Mouse Position -->
+        <div>
+            Mouse: X: {{ canvasStatusData.pointer.x | number:'1.0-0' }} Y: {{ canvasStatusData.pointer.y |
+            number:'1.0-0' }}
+            DeltaX: {{ canvasStatusData.pointer.deltaX | number:'1.0-0' }} DeltaY: {{ canvasStatusData.pointer.deltaY |
+            number:'1.0-0' }}
+        </div>
+
+        <!-- Scale (Zoom Level) -->
+        <div>
+            Scale: {{ canvasStatusData.transforms.scale | number:'1.1-2' }}
+        </div>
+
+        <!-- Pan (Translation) Offset -->
+        <div>
+            CanvasTranslation: ({{ canvasStatusData.transforms.translateX | number:'1.0-0' }}, {{
+            canvasStatusData.transforms.translateY |
+            number:'1.0-0' }})
+        </div>
+
+        <div>
+            is Panning: {{ canvasStatusData.pointer.isPanning }}
+        </div>
+
+        <div>
+            is Selecting: {{ canvasStatusData.pointer.isSelecting }}
+        </div>
+
+    </div>
+</div>
+
+}
+
+}

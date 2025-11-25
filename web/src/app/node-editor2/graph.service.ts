@@ -46,10 +46,10 @@ export class GraphService {
       .getValue()
       .filter(
         (node) =>
-          node.xPos >= x1 &&
-          node.xPos <= x2 &&
-          node.yPos >= y1 &&
-          node.yPos <= y2
+          node.position.x >= x1 &&
+          node.position.x <= x2 &&
+          node.position.y >= y1 &&
+          node.position.y <= y2
       );
   }
 }

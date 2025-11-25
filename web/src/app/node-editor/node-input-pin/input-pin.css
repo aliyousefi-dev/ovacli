@@ -1,0 +1,4 @@
+.pin:hover {
+  box-shadow: 0 0 0 1px var(--color-amber-500);
+  cursor: pointer;
+}

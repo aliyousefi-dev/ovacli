@@ -1,0 +1,9 @@
+.is-selected {
+  /* Remove the outer border */
+  border: none;
+
+  transform-origin: 50% 50%;
+
+  /* Use box-shadow with the 'inset' keyword */
+  box-shadow: 0 0 0 1px var(--color-amber-500);
+}

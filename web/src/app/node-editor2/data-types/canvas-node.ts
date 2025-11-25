@@ -1,10 +1,10 @@
 import { v4 as uuidv4 } from 'uuid'; // Import uuidv4 for generating unique IDs
+import { IPosition } from './position';
 
 export interface ICanvasNode {
   id: string; // UUID is typically a string
   label: string;
-  xPos: number; // World X position
-  yPos: number; // World Y position
+  position: IPosition;
   width: number;
   height: number;
   isSelected: boolean; // Flag to track selection state
@@ -18,8 +18,7 @@ export function createCanvasNode(
 ): ICanvasNode {
   return {
     id: uuidv4(), // Generate a unique id
-    xPos,
-    yPos,
+    position: { x: xPos, y: yPos },
     label,
     width: 100,
     height: 100,

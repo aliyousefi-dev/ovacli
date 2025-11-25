@@ -3,6 +3,10 @@ import { Directive, EventEmitter, HostListener, Output } from '@angular/core';
 export interface NodeEditorHostEvents {
   Pan: { deltaX: number; deltaY: number };
   ZoomInOut: { delta: number };
+  OpenContextMenu: void;
+  FocusNode: void;
+  OnPointerDown: { x: number; y: number };
+  DuplicateNode: void; // <-- NEW: Event for Ctrl + D
 }
 
 @Directive({
@@ -14,6 +18,8 @@ export class NodeEditorInputDirective {
     | keyof NodeEditorHostEvents
     | { Pan: NodeEditorHostEvents['Pan'] }
     | { ZoomInOut: NodeEditorHostEvents['ZoomInOut'] }
+    | { OnPointerDown: NodeEditorHostEvents['OnPointerDown'] }
+    | { DuplicateNode: NodeEditorHostEvents['DuplicateNode'] } // <-- NEW: Added to output type
   >();
 
   private lastMouseX: number | undefined;
@@ -22,7 +28,11 @@ export class NodeEditorInputDirective {
 
   @HostListener('mousedown', ['$event'])
   onMouseDown(event: MouseEvent) {
+    // 1. Left Mouse Button (button 0): Emit OnPointerDown
     if (event.button === 0) {
+      this.hostEvents.emit({
+        OnPointerDown: { x: event.clientX, y: event.clientY },
+      });
       this.lastMouseX = event.clientX;
       this.lastMouseY = event.clientY;
     } // 2. Middle Mouse Button (button 1): Start panning
@@ -38,6 +48,11 @@ export class NodeEditorInputDirective {
     }
   }
 
+  @HostListener('contextmenu', ['$event'])
+  onContextMenu(event: MouseEvent) {
+    event.preventDefault();
+    this.hostEvents.emit('OpenContextMenu');
+  }
 
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent) {
@@ -84,5 +99,26 @@ export class NodeEditorInputDirective {
       return;
     }
 
+    // Ctrl/Cmd + D for Duplicate Node
+    const isControlOrCommand = event.ctrlKey || event.metaKey; // metaKey is Cmd on Mac
+    if (isControlOrCommand && (event.key === 'd' || event.key === 'D')) {
+      event.preventDefault();
+      this.hostEvents.emit('DuplicateNode');
+      return;
+    }
+
+    // Shift + A to open context menu
+    if (event.shiftKey && (event.key === 'a' || event.key === 'A')) {
+      event.preventDefault();
+      this.hostEvents.emit('OpenContextMenu');
+      return;
+    }
+
+    // F to focus node
+    if (event.key === 'f' || event.key === 'F') {
+      event.preventDefault();
+      this.hostEvents.emit('FocusNode');
+      return;
+    }
   }
 }
