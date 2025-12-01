@@ -7,3 +7,9 @@
   /* Use box-shadow with the 'inset' keyword */
   box-shadow: 0 0 0 1px var(--color-amber-500);
 }
+
+#nodebox:hover {
+  border: none;
+
+  box-shadow: 0 0 0 1px var(--color-neutral);
+}

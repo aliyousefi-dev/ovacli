@@ -1,53 +1,18 @@
-<div class="canvas-viewport w-full h-full overflow-hidden relative" #graphContent (mousedown)="onMouseDown($event)"
-  (mousemove)="onMouseMove($event)" (mouseup)="onMouseUp()">
+<div class="canvas-viewport w-full h-full overflow-hidden relative" #graphContent>
 
-  <!--
-  Layer 1 (Z-0/Z-[-1]): SVG Background Grid
-  - Receives the full transform for panning/zooming.
- -->
-  <svg class="graph-content absolute top-0 left-0" [style.width.px]="canvasStatus.canvasWidth"
-    [style.height.px]="canvasStatus.canvasHeight" [style.transform]="transformStyle">
-    <g>
-      <defs>
-        <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
 
-          <path d="M 10 0 L 0 0 L 0 10" fill="none" stroke="#ccc" stroke-opacity="0.9" stroke-width="0.9" />
-
-        </pattern>
-
-        <pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse">
-
-          <rect width="100" height="100" fill="url(#smallGrid)" />
-
-          <path d="M 100 0 L 0 0 L 0 100" fill="none" stroke="#ccc" stroke-opacity="1" stroke-width="1" />
-
-        </pattern>
-      </defs>
-
-      <!-- Draw a massive rect to cover the world with the grid pattern -->
-
-      <rect x="-10000" y="-10000" width="20000" height="20000" fill="url(#grid)" />
-
-    </g>
-  </svg>
-
-  <!--
-  Layer 2 (Z-1): HTML Nodes Container
-  - Receives the exact same transform as the SVG layer.
-  - Nodes inside this container must use absolute positioning relative to this container's origin (0,0).
- -->
+  <!-- Graph Content Section -->
   <div class="graph-content absolute z-10 top-0 left-0" [style.width.px]="canvasStatus.canvasWidth"
-    [style.height.px]="canvasStatus.canvasHeight" appNodeEditorHost [style.transform]="transformStyle">
+    [style.height.px]="canvasStatus.canvasHeight" [canvasController]="canvasStatus">
 
-    <!-- Placeholder Node (Example: positioned at world coordinate 100, 100) -->
-    <!-- Note: NodeBox must handle its own absolute positioning based on world coords -->
     <node-box [nodedata]="node01" [canvasStatus]="canvasStatus"></node-box>
 
     <node-box [nodedata]="node02" [canvasStatus]="canvasStatus"></node-box>
-    <!-- SVG for connections (lines, curves) goes here if needed,
-    positioned absolutely inside the graph-content div -->
+
+    <node-connection [connection]="this.connection"></node-connection>
   </div>
 
+  <!-- Canvas UI Section -->
   <div class="absolute bottom-5 left-5 z-20">
     <canvas-status-bar [canvasStatusData]="canvasStatus"></canvas-status-bar>
   </div>
@@ -59,11 +24,11 @@
   <div class="absolute top-5 right-5 z-20 flex flex-col gap-1">
     <toggle-ui [canvasStatusData]="canvasStatus"></toggle-ui>
     <reset-view [canvasStatusData]="canvasStatus"></reset-view>
+    <reset-scale [canvasStatusData]="canvasStatus"></reset-scale>
   </div>
 
-  @if(this.canvasStatus.selectionBox.isDrawing){
-  <div class="absolute border border-blue-500 bg-blue-500/30 pointer-events-none z-20" [style.left.px]="selectBoxX"
-    [style.top.px]="selectBoxY" [style.width.px]="selectWidth" [style.height.px]="selectHeight">
+  <div class="absolute top-50 right-1">
+    <inspector [canvasStatusData]="canvasStatus"></inspector>
   </div>
-  }
+
 </div>

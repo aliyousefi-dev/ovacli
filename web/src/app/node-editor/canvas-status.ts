@@ -1,9 +1,9 @@
-import { IPointer } from './interfaces/IPointer';
-import { ICanvasTransforms } from './interfaces/ICanvasTransforms';
-import { ICanvasStatus } from './interfaces/ICanvasStatus';
-import { ICanvasVisibility } from './interfaces/ICanvasVisibility';
-import { ICanvasNode } from './interfaces/ICanvasNode';
-import { ISelectionBox } from './interfaces/ICanvasStatus';
+import { IPointer } from './interfaces/pointer.interface';
+import { ICanvasTransforms } from './interfaces/canvas-transforms.interface';
+import { ICanvasStatus } from './interfaces/canvas-status.interface';
+import { ICanvasVisibility } from './interfaces/canvas-visibility.interface';
+import { ICanvasNode } from './interfaces/canvas-node.interface';
+import { ISelectionBox } from './interfaces/canvas-status.interface';
 
 export class CanvasStatus implements ICanvasStatus {
   pointer: IPointer;
@@ -12,18 +12,20 @@ export class CanvasStatus implements ICanvasStatus {
   hoveredNode: ICanvasNode | null;
   canvasHeight: number;
   canvasWidth: number;
-  selectedNodes: ICanvasNode[];
+  selectedNodesIds: string[];
   selectionBox: ISelectionBox;
+  allNodes: ICanvasNode[];
 
   constructor(width: number, height: number) {
     this.canvasHeight = height;
     this.canvasWidth = width;
-    this.selectedNodes = [];
+    this.selectedNodesIds = [];
+    this.allNodes = [];
     this.selectionBox = {
       startX: 0,
       startY: 0,
-      endX: 0,
-      endY: 0,
+      width: 0,
+      height: 0,
       isDrawing: false,
     };
     this.pointer = {
@@ -32,7 +34,6 @@ export class CanvasStatus implements ICanvasStatus {
       deltaX: 0,
       deltaY: 0,
       isPanning: false,
-      isSelecting: false,
       isDraggingNode: false,
       nodeBeingDragged: null,
     };
@@ -43,8 +44,8 @@ export class CanvasStatus implements ICanvasStatus {
     };
     this.transforms = {
       scale: 1,
-      translateX: 0,
-      translateY: 0,
+      panX: 0,
+      panY: 0,
       MinScale: 0.2,
       MaxScale: 5,
     };

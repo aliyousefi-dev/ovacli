@@ -3,15 +3,15 @@ import { CommonModule } from '@angular/common';
 import { ICanvasStatus } from '../interfaces/canvas-status.interface';
 
 @Component({
-  selector: 'shortcut-info',
+  selector: 'inspector',
   // Note: The positioning classes (absolute top-5 left-5) are included
   // in the host element here to keep the component self-contained and easy to place.
 
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './shortcut-info.html',
+  templateUrl: './inspector.html',
 })
-export class ShortcutInfo {
+export class Inspector {
   @Input({ required: true })
   canvasStatusData!: ICanvasStatus;
 }

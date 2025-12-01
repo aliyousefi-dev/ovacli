@@ -2,7 +2,7 @@
 
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ICanvasStatus } from '../interfaces/ICanvasStatus';
+import { ICanvasStatus } from '../interfaces/canvas-status.interface';
 
 @Component({
   selector: 'canvas-status-bar', // Changed to be more descriptive

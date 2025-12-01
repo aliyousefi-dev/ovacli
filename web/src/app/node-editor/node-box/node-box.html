@@ -1,22 +1,23 @@
-<div class="w-20 z-10 flex flex-col rounded bg-base-300 overflow-hidden absolute" [class.is-selected]="isSelected"
-    [style]="positionStyle">
-
+<div #nodeDiv id="nodebox" class="w-20 flex flex-col rounded bg-base-300 overflow-hidden absolute"
+    [class.is-selected]="isSelected" [style.zIndex]="nodedata.zIndex" nodeController [canvasStatus]="canvasStatus"
+    [canvasNode]="nodedata">
     <div class="text-[10px] text-center bg-neutral text-neutral-content select-none">
         {{ nodedata.label }}
     </div>
 
     <div class="flex justify-between flex-1 items-center px-1 py-2">
 
-        <div class="flex flex-col">
+        <div class="flex flex-col relative">
             @for (pins of nodedata.inputPins; track $index) {
-            <node-input-pin [pinData]="pins"></node-input-pin>
+            <node-socket [isInput]="true" [pinData]="pins" [nodeX]="nodedata.position.x" [nodeY]="nodedata.position.y">
+            </node-socket>
             }
-
         </div>
 
-        <div class="flex flex-col">
+        <div class="flex flex-col relative">
             @for (pins of nodedata.outputPins; track $index) {
-            <node-output-pin [pinData]="pins"></node-output-pin>
+            <node-socket [isInput]="false" [pinData]="pins" [nodeX]="nodedata.position.x"
+                [nodeY]="nodedata.position.y"></node-socket>
             }
         </div>
     </div>

@@ -2,40 +2,84 @@
 
 @if (this.canvasStatusData.visibility.showStatusBar) {
 
-<div class="flex flex-col">
+<div class="flex flex-col select-none">
+
     <div class="flex text-xs gap-3">
+        <div class="font-bold">
+            Select Box:
+        </div>
+        <div>
+            is drawing:: {{this.canvasStatusData.selectionBox.isDrawing }}
+        </div>
+
+        <div>
+            start ({{this.canvasStatusData.selectionBox.startX }}, {{this.canvasStatusData.selectionBox.startY }})
+        </div>
+
+        <div>
+            width: {{this.canvasStatusData.selectionBox.width }}, height: {{this.canvasStatusData.selectionBox.height }}
+        </div>
+
+    </div>
+
+    <div class="flex text-xs gap-3">
+        <div class="font-bold">
+            Nodes:
+        </div>
         <div>
             hovered Node: {{ canvasStatusData.hoveredNode?.label || 'None' }}
         </div>
-    </div>
-    <div class="flex text-xs gap-3">
-        <!-- Mouse Position -->
+
         <div>
-            Mouse: X: {{ canvasStatusData.pointer.x | number:'1.0-0' }} Y: {{ canvasStatusData.pointer.y |
-            number:'1.0-0' }}
-            DeltaX: {{ canvasStatusData.pointer.deltaX | number:'1.0-0' }} DeltaY: {{ canvasStatusData.pointer.deltaY |
-            number:'1.0-0' }}
+            selected Nodes: {{ canvasStatusData.selectedNodesIds.length }}
         </div>
 
-        <!-- Scale (Zoom Level) -->
+        <div>
+            all nodes: {{ canvasStatusData.allNodes.length }}
+        </div>
+    </div>
+
+    <div class="flex text-xs gap-3">
+        <div class="font-bold">Canvas:</div>
+
+        <div>
+            Width: {{this.canvasStatusData.canvasWidth }}
+        </div>
+        <div>
+            Height: {{ this.canvasStatusData.canvasHeight }}
+        </div>
         <div>
             Scale: {{ canvasStatusData.transforms.scale | number:'1.1-2' }}
         </div>
 
         <!-- Pan (Translation) Offset -->
         <div>
-            CanvasTranslation: ({{ canvasStatusData.transforms.translateX | number:'1.0-0' }}, {{
-            canvasStatusData.transforms.translateY |
+            CanvasTranslation: ({{ canvasStatusData.transforms.panX | number:'1.0-0' }}, {{
+            canvasStatusData.transforms.panY |
             number:'1.0-0' }})
         </div>
+    </div>
+    <div class="flex text-xs gap-2">
+        <div class="font-bold">Pointer:</div>
+        <div>
+            X: {{ canvasStatusData.pointer.x | number:'1.0-0' }}
 
+        </div>
+        <div>
+            Y: {{ canvasStatusData.pointer.y |
+            number:'1.0-0' }}
+        </div>
+        <div>
+            DeltaX: {{ canvasStatusData.pointer.deltaX | number:'1.0-0' }}
+        </div>
+        <div>
+            DeltaY: {{ canvasStatusData.pointer.deltaY |
+            number:'1.0-0' }}
+        </div>
         <div>
             is Panning: {{ canvasStatusData.pointer.isPanning }}
         </div>
 
-        <div>
-            is Selecting: {{ canvasStatusData.pointer.isSelecting }}
-        </div>
 
     </div>
 </div>

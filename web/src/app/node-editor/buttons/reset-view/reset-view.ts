@@ -2,7 +2,7 @@
 
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ICanvasStatus } from '../../interfaces/ICanvasStatus';
+import { ICanvasStatus } from '../../interfaces/canvas-status.interface';
 
 @Component({
   selector: 'reset-view', // Changed to be more descriptive
@@ -17,7 +17,7 @@ export class ResetView {
 
   resetView() {
     this.canvasStatusData.transforms.scale = 1;
-    this.canvasStatusData.transforms.translateX = 0;
-    this.canvasStatusData.transforms.translateY = 0;
+    this.canvasStatusData.transforms.panX = 0;
+    this.canvasStatusData.transforms.panY = 0;
   }
 }

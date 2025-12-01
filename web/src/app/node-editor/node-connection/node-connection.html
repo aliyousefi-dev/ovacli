@@ -1,0 +1,16 @@
+<div class="absolute" [style.left.px]="svgViewBoxOffset.x" [style.top.px]="svgViewBoxOffset.y"
+    [style.width.px]="svgWidth" [style.height.px]="svgHeight">
+
+    @if (connection) {
+    <svg [attr.width]="svgWidth" [attr.height]="svgHeight"
+        [attr.viewBox]="svgViewBoxOffset.x + ' ' + svgViewBoxOffset.y + ' ' + svgWidth + ' ' + svgHeight">
+
+        <line class="line" [attr.x1]="connection.sourcePin.position.x" [attr.y1]="connection.sourcePin.position.y"
+            [attr.x2]="connection.targetPin.position.x" [attr.y2]="connection.targetPin.position.y"
+            stroke-dasharray="5 5" stroke-dashoffset="0">
+            <animate attributeName="stroke-dashoffset" from="10" to="0" dur="0.5s" repeatCount="indefinite" />
+        </line>
+
+    </svg>
+    }
+</div>

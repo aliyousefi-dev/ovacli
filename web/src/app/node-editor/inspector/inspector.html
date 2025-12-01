@@ -1,0 +1,45 @@
+<div class="card w-50 text-base-content z-20">
+
+    <div class="card-title ">
+        <div class=" text-sm bg-base-300 border-none px-4 py-2 w-full">
+            <span class=" font-bold">Inspector</span>
+        </div>
+    </div>
+
+    <div class="card-body p-4 pt-2  bg-base-200 text-xs">
+        @if (this.canvasStatusData.hoveredNode) {
+        <h3 class=" font-semibold border-b border-base-300">Node Details</h3>
+
+        <ul class="space-y-1 ">
+            <li class="flex justify-between items-center">
+                <span>Label:</span>
+                <span>{{ this.canvasStatusData.hoveredNode.label }}</span>
+            </li>
+
+            <li class="flex justify-between items-center">
+                <span>Position:</span>
+                <span>
+                    ({{ this.canvasStatusData.hoveredNode.position.x | number:'1.0-2' }},
+                    {{ this.canvasStatusData.hoveredNode.position.y | number:'1.0-2' }})
+                </span>
+            </li>
+
+            <li class="flex justify-between items-center">
+                <span>Input Pins:</span>
+                <div>{{ this.canvasStatusData.hoveredNode.inputPins.length }}
+                </div>
+            </li>
+
+            <li class="flex justify-between items-center">
+                <span>Output Pins:</span>
+                <div>{{ this.canvasStatusData.hoveredNode.outputPins.length }}
+                </div>
+            </li>
+        </ul>
+        } @else {
+        <div class="flex flex-col items-center justify-center p-4">
+            <p class=" mt-2">Hover over a node to inspect its details.</p>
+        </div>
+        }
+    </div>
+</div>

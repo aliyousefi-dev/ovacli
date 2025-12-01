@@ -23,6 +23,7 @@ import { VersionHistoryPage } from './pages/version-history/version-history.page
 import { PlaylistContentPage } from './pages/playlists-content/playlist-content.page';
 import { StatsPage } from './pages/stats/stats.page';
 import { AccountManagerPage } from './pages/account-manager/account-manager.page';
+import { TestPage } from './pages/test/test.page';
 
 export const MainRoutes: Routes = [
   {
@@ -35,6 +36,11 @@ export const MainRoutes: Routes = [
     component: GlobalPage,
     canActivate: [AuthGuard],
     data: { reuse: true },
+  },
+  {
+    path: 'test',
+    component: TestPage,
+    canActivate: [AuthGuard],
   },
   {
     path: 'graph',

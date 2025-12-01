@@ -1,0 +1,5 @@
+.line {
+  stroke: var(--color-neutral);
+  stroke-width: 3px;
+  stroke-linecap: round;
+}

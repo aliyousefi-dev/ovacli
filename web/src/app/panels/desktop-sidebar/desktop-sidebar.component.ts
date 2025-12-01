@@ -5,6 +5,7 @@ import { OvaAboutModalComponent } from '../../components/pop-ups/ova-about-modal
 import { ViewChild } from '@angular/core';
 import { AuthApiService } from '../../../services/ova-backend-service/auth-api.service';
 import { Router } from '@angular/router';
+import { GlobalOVAConfig } from '../../../global-config';
 
 @Component({
   selector: 'app-desktop-sidebar',
@@ -18,6 +19,7 @@ export class DesktopSidebarComponent {
   sidebarOpen = true; // Initial state: sidebar is open
   private authapi = inject(AuthApiService);
   private router = inject(Router);
+  public config = inject(GlobalOVAConfig);
 
   openOvaAbout() {
     this.aboutModal.open();
