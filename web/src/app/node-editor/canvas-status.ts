@@ -4,6 +4,7 @@ import { ICanvasStatus } from './interfaces/canvas-status.interface';
 import { ICanvasVisibility } from './interfaces/canvas-visibility.interface';
 import { ICanvasNode } from './interfaces/canvas-node.interface';
 import { ISelectionBox } from './interfaces/canvas-status.interface';
+import { ICanvasNodePin } from './interfaces/canvas-node-pin.interface';
 
 export class CanvasStatus implements ICanvasStatus {
   pointer: IPointer;
@@ -15,10 +16,12 @@ export class CanvasStatus implements ICanvasStatus {
   selectedNodesIds: string[];
   selectionBox: ISelectionBox;
   allNodes: ICanvasNode[];
+  hoveredPin: ICanvasNodePin | null;
 
   constructor(width: number, height: number) {
     this.canvasHeight = height;
     this.canvasWidth = width;
+    this.hoveredPin = null;
     this.selectedNodesIds = [];
     this.allNodes = [];
     this.selectionBox = {

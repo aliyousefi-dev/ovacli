@@ -1,7 +1,8 @@
+// node-box.ts
+
 import {
   Component,
   Input,
-  HostListener,
   ElementRef,
   AfterViewInit,
   ViewChild,

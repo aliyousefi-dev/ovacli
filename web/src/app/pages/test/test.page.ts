@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -8,4 +8,17 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./test.page.css'],
   imports: [CommonModule],
 })
-export class TestPage {}
+export class TestPage implements AfterViewInit {
+  constructor() {}
+
+  @ViewChild('someElement') someElement!: ElementRef;
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      console.log(
+        'Delayed check:',
+        this.someElement.nativeElement.getBoundingClientRect()
+      );
+    }, 1000);
+  }
+}

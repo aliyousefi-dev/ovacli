@@ -2,6 +2,7 @@ import { IPointer } from './pointer.interface';
 import { ICanvasTransforms } from './canvas-transforms.interface';
 import { ICanvasVisibility } from './canvas-visibility.interface';
 import { ICanvasNode } from './canvas-node.interface';
+import { ICanvasNodePin } from './canvas-node-pin.interface';
 
 export interface ISelectionBox {
   startX: number;
@@ -19,6 +20,7 @@ export interface ICanvasStatus {
   transforms: ICanvasTransforms;
   visibility: ICanvasVisibility;
   hoveredNode: ICanvasNode | null;
+  hoveredPin: ICanvasNodePin | null;
   selectedNodesIds: string[];
   allNodes: ICanvasNode[];
 }

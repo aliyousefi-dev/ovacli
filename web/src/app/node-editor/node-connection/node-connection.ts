@@ -10,20 +10,14 @@ import { ICanvasConnection } from '../interfaces/connection.interface';
   standalone: true,
   imports: [CommonModule, FormsModule],
 })
-// 1. Implement OnInit
 export class NodeConnection implements OnInit {
-  // Define a small padding to prevent the line from touching the edge of the SVG boundary
-  private readonly PADDING: number = 0;
+  // Padding gives the line's stroke room to render without being clipped.
+  // A value of 2-4px is usually safe.
+  private readonly PADDING: number = 4;
 
   @Input() connection!: ICanvasConnection;
 
-  constructor() {
-    // Inputs are not available here
-  }
-
-  // 2. Add ngOnInit to ensure 'connection' is set before initial rendering/logic runs
   ngOnInit(): void {
-    // Optional: Add a check if the input is critical
     if (!this.connection) {
       console.warn(
         'NodeConnection initialized without a valid connection input.'
@@ -31,6 +25,9 @@ export class NodeConnection implements OnInit {
     }
   }
 
+  /**
+   * Calculates the required width of the SVG container, including padding.
+   */
   get svgWidth(): number {
     const minX = Math.min(
       this.connection.sourcePin.position.x,
@@ -40,13 +37,12 @@ export class NodeConnection implements OnInit {
       this.connection.sourcePin.position.x,
       this.connection.targetPin.position.x
     );
-
-    // The width is the distance between the min and max X, plus padding
+    // The width is the distance between the points, plus padding on both sides.
     return maxX - minX + 2 * this.PADDING;
   }
 
   /**
-   * Calculates the required height of the SVG container.
+   * Calculates the required height of the SVG container, including padding.
    */
   get svgHeight(): number {
     const minY = Math.min(
@@ -57,15 +53,14 @@ export class NodeConnection implements OnInit {
       this.connection.sourcePin.position.y,
       this.connection.targetPin.position.y
     );
-
-    // The height is the distance between the min and max Y, plus padding
+    // The height is the distance between the points, plus padding on both sides.
     return maxY - minY + 2 * this.PADDING;
   }
 
   /**
-   * Calculates the required offset for the SVG's viewBox/transformation
+   * Calculates the top-left coordinate for positioning the absolute container div.
    */
-  get svgViewBoxOffset(): { x: number; y: number } {
+  get svgTopLeft(): { x: number; y: number } {
     const minX = Math.min(
       this.connection.sourcePin.position.x,
       this.connection.targetPin.position.x
@@ -74,8 +69,7 @@ export class NodeConnection implements OnInit {
       this.connection.sourcePin.position.y,
       this.connection.targetPin.position.y
     );
-
-    // This value is the coordinate of the bottom-left corner of the content box
-    return { x: minX, y: minY };
+    // The container's position is the top-left-most point of the line, adjusted by the padding.
+    return { x: minX - this.PADDING, y: minY - this.PADDING };
   }
 }

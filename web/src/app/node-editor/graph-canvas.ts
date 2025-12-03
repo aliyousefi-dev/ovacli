@@ -70,6 +70,15 @@ export class GraphCanvas {
       [createNodePin('Out1'), createNodePin('Out2')]
     );
 
+    this.node01 = createCanvasNode(
+      this.canvasStatus,
+      100,
+      400,
+      'new',
+      [createNodePin('In1'), createNodePin('In2'), createNodePin('In3')],
+      [createNodePin('Out1'), createNodePin('Out2')]
+    );
+
     this.node02 = createCanvasNode(
       this.canvasStatus,
       300,

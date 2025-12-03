@@ -5,9 +5,9 @@
   <div class="graph-content absolute z-10 top-0 left-0" [style.width.px]="canvasStatus.canvasWidth"
     [style.height.px]="canvasStatus.canvasHeight" [canvasController]="canvasStatus">
 
-    <node-box [nodedata]="node01" [canvasStatus]="canvasStatus"></node-box>
-
-    <node-box [nodedata]="node02" [canvasStatus]="canvasStatus"></node-box>
+    @for (node of this.canvasStatus.allNodes; track $index) {
+    <node-box [nodedata]="node" [canvasStatus]="canvasStatus"></node-box>
+    }
 
     <node-connection [connection]="this.connection"></node-connection>
   </div>

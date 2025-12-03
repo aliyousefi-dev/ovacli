@@ -1,16 +1,16 @@
-<div class="absolute" [style.left.px]="svgViewBoxOffset.x" [style.top.px]="svgViewBoxOffset.y"
-    [style.width.px]="svgWidth" [style.height.px]="svgHeight">
-
+<!-- The container is positioned using the new svgTopLeft getter -->
+<div class="absolute z-30" [style.left.px]="svgTopLeft.x" [style.top.px]="svgTopLeft.y" [style.width.px]="svgWidth"
+    [style.height.px]="svgHeight">
     @if (connection) {
+    <!-- The SVG's viewBox is now also adjusted by the padding, creating a coordinate system
+         where the absolute line coordinates will render correctly. -->
     <svg [attr.width]="svgWidth" [attr.height]="svgHeight"
-        [attr.viewBox]="svgViewBoxOffset.x + ' ' + svgViewBoxOffset.y + ' ' + svgWidth + ' ' + svgHeight">
-
+        [attr.viewBox]="svgTopLeft.x + ' ' + svgTopLeft.y + ' ' + svgWidth + ' ' + svgHeight">
         <line class="line" [attr.x1]="connection.sourcePin.position.x" [attr.y1]="connection.sourcePin.position.y"
             [attr.x2]="connection.targetPin.position.x" [attr.y2]="connection.targetPin.position.y"
             stroke-dasharray="5 5" stroke-dashoffset="0">
             <animate attributeName="stroke-dashoffset" from="10" to="0" dur="0.5s" repeatCount="indefinite" />
         </line>
-
     </svg>
     }
 </div>
