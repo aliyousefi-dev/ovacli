@@ -34,9 +34,6 @@ export class FullScreenButton implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  /**
-   * Toggles the fullscreen state using the Fullscreen API.
-   */
   toggleFullscreen() {
     const containerElement = this.playerContainerRef.nativeElement;
 
@@ -45,13 +42,11 @@ export class FullScreenButton implements OnInit, OnDestroy {
       if (document.exitFullscreen) {
         document.exitFullscreen();
       }
-      // Note: vendor prefixes might be needed for older browsers (mozCancelFullScreen, webkitExitFullscreen, msExitFullscreen)
     } else {
       // Enter fullscreen
       if (containerElement.requestFullscreen) {
         containerElement.requestFullscreen();
       }
-      // Note: vendor prefixes might be needed for older browsers (mozRequestFullScreen, webkitRequestFullscreen, msRequestFullscreen)
     }
   }
 }

@@ -25,7 +25,7 @@ import {
   PlayerHostEvents,
 } from './controls/player-input-host';
 import { LocalStorageService } from './services/localstorage.service';
-import { PlayerPreferences } from './data-types/player-preferences-data';
+import { OvaPlayerPreferences } from './data-types/player-preferences-data';
 
 @Component({
   selector: 'app-native-player',
@@ -56,6 +56,11 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   controlsVisible: boolean = false;
   private hideControlsTimeout: any;
   private readonly HIDE_DELAY_MS = 3000; // 3 seconds delay
+  private clickTimeout: any;
+  private readonly CLICK_DELAY_MS = 250; // ms used to discriminate singe/double click
+  isFullscreen: boolean = false;
+  private onVideoMetadataLoadedBound = this.onVideoMetadataLoaded.bind(this);
+  private fullscreenChangeHandler = this.onFullscreenChange.bind(this);
   // --- Constant for seek step size (5 seconds) ---
 
   private videoapi = inject(VideoApiService);
@@ -71,7 +76,8 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   ];
 
   private applySavedPreferences() {
-    const prefs: PlayerPreferences = this.localStorageService.loadPreferences(); // Apply sound level
+    const prefs: OvaPlayerPreferences =
+      this.localStorageService.loadPreferences(); // Apply sound level
 
     this.videoRef.nativeElement.volume = prefs.soundLevel;
   }
@@ -121,15 +127,15 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
     this.currentTime = video.currentTime;
 
     // Wait until the video's metadata is loaded before proceeding with other logic
-    // Using a separate bound function is generally safer for event listeners
-    video.addEventListener(
-      'loadedmetadata',
-      this.onVideoMetadataLoaded.bind(this)
-    );
+    // Use the stored bound function to ensure removal will work later
+    video.addEventListener('loadedmetadata', this.onVideoMetadataLoadedBound);
 
     this.applySavedPreferences();
     // Ensure controls are visible initially for a moment
     this.showControls();
+
+    // Listen to fullscreen change to adjust local state for styling
+    document.addEventListener('fullscreenchange', this.fullscreenChangeHandler);
   }
 
   ngOnDestroy() {
@@ -138,9 +144,14 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
       // Remove the event listener using the bound function used for adding it
       this.videoRef.nativeElement.removeEventListener(
         'loadedmetadata',
-        this.onVideoMetadataLoaded.bind(this)
+        this.onVideoMetadataLoadedBound
       );
     }
+    // remove fullscreen listener
+    document.removeEventListener(
+      'fullscreenchange',
+      this.fullscreenChangeHandler
+    );
   }
 
   // --- NEW: Play/Pause on Video Click Logic ---
@@ -154,6 +165,46 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
       video.pause();
     }
     this.showControls();
+  }
+
+  /** Handle single click with a small delay so double click can be detected. */
+  onSingleClick() {
+    // schedule a click action and store timer id
+    this.clearClickTimeout();
+    this.clickTimeout = setTimeout(() => {
+      this.togglePlayPause();
+      this.clickTimeout = null;
+    }, this.CLICK_DELAY_MS);
+  }
+
+  /** Handle double click - cancel any pending single click timer and toggle fullscreen. */
+  onDoubleClick(evt?: Event) {
+    if (evt) evt.preventDefault();
+    this.clearClickTimeout();
+    this.toggleFullScreen();
+  }
+
+  private clearClickTimeout() {
+    if (this.clickTimeout) {
+      clearTimeout(this.clickTimeout);
+      this.clickTimeout = null;
+    }
+  }
+
+  toggleFullScreen() {
+    const containerElement = this.playerWrap.nativeElement;
+    if (this.isFullscreen && document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (containerElement.requestFullscreen) {
+      containerElement.requestFullscreen();
+    }
+  }
+
+  private onFullscreenChange() {
+    // set local state; ensures the video and container classes update
+    this.isFullscreen =
+      !!document.fullscreenElement &&
+      document.fullscreenElement === this.playerWrap?.nativeElement;
   }
 
   // --- Controls Visibility Logic ---

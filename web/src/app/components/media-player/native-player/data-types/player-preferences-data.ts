@@ -1,6 +1,4 @@
-export interface PlayerPreferences {
+export interface OvaPlayerPreferences {
   soundLevel: number;
-  // Add other preferences here as you develop, e.g.,
-  // theme: 'dark' | 'light';
-  // playbackRate: number;
+  isMuted?: boolean;
 }

@@ -21,7 +21,7 @@
         <li>
             <div role="button" (click)="setCurrentView('playback')" class="flex justify-between items-center p-2">
                 <span>Playback Speed</span>
-                <i class='bx bx-chevron-right bx-xs'></i>
+                1x
             </div>
         </li>
         }
@@ -30,11 +30,11 @@
         @if(currentView === 'playback' ){
         <li>
             <div role="button" (click)="setCurrentView('main')" class="flex items-center p-2 font-bold text-sm">
-                <i class='bx bx-arrow-back bx-xs'></i>
+                <i class='bx bx-chevron-left bx-xs'></i>
                 Settings
             </div>
         </li>
-        <div class="divider my-0 h-px bg-gray-200"></div>
+
 
         <li>
             <a (click)="setSpeed(2.0)">2x</a>

@@ -1,7 +1,9 @@
-<div class="relative w-full" #playerWrap appPlayerControlsHost (hostEvents)="handleHostEvent($event)">
+<div class="relative w-full" [class.flex]="isFullscreen" [class.items-center]="isFullscreen"
+  [class.justify-center]="isFullscreen" #playerWrap appPlayerControlsHost (hostEvents)="handleHostEvent($event)">
 
-  <video #videoRef class="w-full aspect-video block" [src]="videoUrl" [poster]="thumbnailUrl"
-    (click)="togglePlayPause()">
+  <video #videoRef
+    [ngClass]="{ 'w-full': !isFullscreen, 'w-auto': isFullscreen, 'max-h-screen': isFullscreen, 'aspect-video': true, 'block': true }"
+    [src]="videoUrl" [poster]="thumbnailUrl" (click)="onSingleClick()" (dblclick)="onDoubleClick($event)">
   </video>
 
   <div id="controls-overlay"
@@ -9,7 +11,7 @@
     [ngClass]="{
       'opacity-0 pointer-events-none': !controlsVisible,
       'cursor-none': !controlsVisible
-    }" (click)="togglePlayPause()">
+    }" (click)="onSingleClick()" (dblclick)="onDoubleClick($event)">
 
     @if(this.videoRef){
     <div (click)="$event.stopPropagation()">
