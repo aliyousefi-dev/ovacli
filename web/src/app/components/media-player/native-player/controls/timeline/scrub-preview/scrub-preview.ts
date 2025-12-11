@@ -21,6 +21,8 @@ export class ScrubPreview implements OnChanges {
 
   // NEW INPUT: Timeline width in pixels for accurate clamping
   @Input() timelineWidthPx: number = 0;
+  // Optional scale factor for the thumbnail preview (1 for native size, >1 for larger preview)
+  @Input() previewScale: number = 1.5;
 
   formatTime = formatTime;
   previewImageStyles: any = { opacity: '0' };
@@ -71,36 +73,76 @@ export class ScrubPreview implements OnChanges {
         this.timeInSeconds >= thumb.start && this.timeInSeconds < thumb.end
     );
 
-    if (cue) {
-      // CRITICAL: Update the internal width used for clamping
-      this.currentPreviewWidthPx = cue.w;
+    // If no cue exists for this exact time, try to fallback to the most recent
+    // cue that starts at or before the current time, and if that doesn't exist
+    // use the first available cue as a last-resort fallback. This ensures the
+    // preview shows an image instead of being hidden when there is no exact
+    // cue for the current time.
+    let displayCue = cue;
+    let displayFrameIndex = 0;
 
-      // 1. Calculate the percentage of time passed within the current cue's duration
-      const cueTimeElapsed = this.timeInSeconds - cue.start;
-      const cueDuration = cue.end - cue.start;
-      const percentInCue = cueTimeElapsed / cueDuration;
+    if (!displayCue && this.scrubThumbData && this.scrubThumbData.length > 0) {
+      // Find the latest cue that starts at or before the current time
+      const prevCue = this.scrubThumbData
+        .filter((thumb) => thumb.start <= this.timeInSeconds)
+        .sort((a, b) => b.start - a.start)[0];
+
+      if (prevCue) {
+        displayCue = prevCue;
+        // If we're past the end of the cue, show the last frame, otherwise
+        // compute a frame index within the cue duration.
+        if (this.timeInSeconds >= prevCue.end) {
+          displayFrameIndex = TILE_FRAME_COUNT - 1;
+        } else {
+          const cueTimeElapsed = this.timeInSeconds - prevCue.start;
+          const cueDuration = prevCue.end - prevCue.start;
+          const percentInCue = cueTimeElapsed / cueDuration;
+          displayFrameIndex = Math.floor(percentInCue * TILE_FRAME_COUNT);
+        }
+      } else {
+        // No previous cue (we're before the first thumbnail), use the first
+        // cue's first frame so the user still sees a preview instead of none.
+        displayCue = this.scrubThumbData[0];
+        displayFrameIndex = 0;
+      }
+    }
+
+    if (displayCue) {
+      // CRITICAL: Update the internal width used for clamping
+      this.currentPreviewWidthPx = Math.round(displayCue.w * this.previewScale);
 
       // 2. Determine which of the 5 frames to show
-      const frameIndex = Math.floor(percentInCue * TILE_FRAME_COUNT);
+      const frameIndex =
+        displayCue === cue
+          ? Math.floor(
+              ((this.timeInSeconds - displayCue.start) /
+                (displayCue.end - displayCue.start)) *
+                TILE_FRAME_COUNT
+            )
+          : displayFrameIndex;
 
       // 3. Calculate the horizontal offset (in pixels) required to move the background
-      const frameXOffset = frameIndex * cue.w;
+      const frameXOffset = frameIndex * displayCue.w;
 
       // 4. Calculate the total background position
-      const totalBackgroundXOffset = cue.x + frameXOffset;
+      const totalBackgroundXOffset = displayCue.x + frameXOffset;
 
       // Set the visual styles (applied only to the inner image div)
       this.previewImageStyles = {
         opacity: '1',
-        backgroundImage: `url(${cue.url})`,
-        width: `${cue.w}px`,
-        height: `${cue.h}px`,
-        backgroundPosition: `-${totalBackgroundXOffset}px -${cue.y}px`,
-        backgroundSize: `${cue.w * TILE_FRAME_COUNT}px auto`,
+        backgroundImage: `url(${displayCue.url})`,
+        width: `${Math.round(displayCue.w * this.previewScale)}px`,
+        height: `${Math.round(displayCue.h * this.previewScale)}px`,
+        backgroundPosition: `-${Math.round(
+          totalBackgroundXOffset * this.previewScale
+        )}px -${Math.round(displayCue.y * this.previewScale)}px`,
+        backgroundSize: `${Math.round(
+          displayCue.w * TILE_FRAME_COUNT * this.previewScale
+        )}px auto`,
       };
     } else {
       // Reset to default width when no cue is present
-      this.currentPreviewWidthPx = 160;
+      this.currentPreviewWidthPx = Math.round(160 * this.previewScale);
       this.previewImageStyles.opacity = '0';
     }
   }
