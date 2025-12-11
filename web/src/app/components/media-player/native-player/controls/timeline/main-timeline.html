@@ -3,7 +3,7 @@
 
     <app-scrub-preview [isVisible]="isScrubPreviewVisible" [timeInSeconds]="scrubTime" [markers]="markersData"
         [scrubThumbData]="scrubThumbData" [scrubXPositionPercent]="scrubXPositionPercent"
-        [timelineWidthPx]="timelineWidthPx"> <!-- NEW INPUT ADDED -->
+        [scrubXPositionPx]="scrubXPositionPx" [timelineWidthPx]="timelineWidthPx"> <!-- NEW INPUT ADDED -->
     </app-scrub-preview>
 
     <app-marker-track [videoRef]="this.videoRef" [markersData]="markersData"></app-marker-track>

@@ -93,7 +93,7 @@ export class ProgressTrack implements OnInit, OnDestroy {
 
   private calculateTimeAndPosition(
     clientX: number
-  ): { time: number; xPercent: number } | null {
+  ): { time: number; xPercent: number; clientX: number } | null {
     if (
       !this.video ||
       !this.trackContainerRef ||
@@ -111,7 +111,7 @@ export class ProgressTrack implements OnInit, OnDestroy {
 
     const newTime = percent * this.video.duration; // Return time in seconds and position as a percentage (0 to 100)
 
-    return { time: newTime, xPercent: percent * 100 };
+    return { time: newTime, xPercent: percent * 100, clientX: clientX };
   }
 
   public seekToTime(timeInSeconds: number): void {
@@ -230,6 +230,7 @@ export class ProgressTrack implements OnInit, OnDestroy {
     const data = this.calculateTimeAndPosition(clientX); // EMIT SCRUB MOVE with the time and xPercent
 
     if (data !== null) {
+      // Include a clientX value (absolute window X) to the emitted event for accurate pixel-based behavior
       this.scrubMove.emit(data);
     }
   }

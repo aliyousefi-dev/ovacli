@@ -16,6 +16,8 @@ export class ScrubPreview implements OnChanges {
   @Input({ required: true }) timeInSeconds: number = 0;
   @Input({ required: true }) scrubThumbData: ScrubThumbData[] = [];
   @Input({ required: true }) scrubXPositionPercent: number = 0;
+  // Pixel position (px) of the scrub/cursor within the timelineRef's coordinate space
+  @Input() scrubXPositionPx: number = 0;
 
   // NEW INPUT: Timeline width in pixels for accurate clamping
   @Input() timelineWidthPx: number = 0;
@@ -25,38 +27,39 @@ export class ScrubPreview implements OnChanges {
   markerTitle: string = '';
 
   // Internal state for the current width of the thumbnail (defaulted to 160px for consistent clamping)
-  private currentPreviewWidthPx: number = 160;
+  public currentPreviewWidthPx: number = 160;
   private readonly PROXIMITY_THRESHOLD = 60;
 
   ngOnChanges() {
     this.updatePreview();
   }
 
-  // Calculates the final `left` CSS position, ensuring the popup stays within the timeline bounds.
-  get clampedLeftPosition(): string {
+  get previewWidthPx(): number {
+    return this.currentPreviewWidthPx;
+  }
+
+  // Calculates the final `left` CSS position (as pixel value), ensuring the popup stays within the timeline bounds.
+  get clampedLeftPositionPx(): number {
+    // If we don't have a known timeline width or timeline px, return a default offset
     if (this.timelineWidthPx === 0) {
-      // Fallback: If we don't know the width, use the raw percentage (but the centering will be off)
-      return `${this.scrubXPositionPercent}%`;
+      return Math.max(
+        0,
+        Math.round(this.scrubXPositionPx - this.currentPreviewWidthPx / 2)
+      );
     }
 
-    // 1. Convert the ideal scrub center position (%) to pixels
-    const idealCenterPx =
-      (this.scrubXPositionPercent / 100) * this.timelineWidthPx;
+    // Ideal center position (px) within the timeline (already computed by main-timeline)
+    const idealCenterPx = this.scrubXPositionPx;
 
-    // 2. Calculate the required left edge position based on the element's width
+    // Calculate the required left edge position based on the element's width
     const halfWidth = this.currentPreviewWidthPx / 2;
     const unclampedLeftPx = idealCenterPx - halfWidth;
 
-    // 3. Clamp the position
+    // Clamp the position inside the timeline width
     const maxLeftPx = this.timelineWidthPx - this.currentPreviewWidthPx;
-
-    // Clamp the pixel value between 0 and the max allowable left position
     const clampedLeftPx = Math.max(0, Math.min(unclampedLeftPx, maxLeftPx));
 
-    // 4. Convert the final clamped pixel value back to a percentage
-    const clampedLeftPercent = (clampedLeftPx / this.timelineWidthPx) * 100;
-
-    return `${clampedLeftPercent}%`;
+    return Math.round(clampedLeftPx);
   }
 
   // Update the thumbnail preview based on current time
