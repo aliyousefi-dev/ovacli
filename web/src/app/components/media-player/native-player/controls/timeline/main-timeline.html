@@ -1,16 +1,19 @@
 <div #timelineRef class="w-full flex flex-col justify-between relative cursor-pointer">
-    @if(this.videoRef){
+    <!-- Gradient behind timeline progress track only (sized by progressTrackLeftPx / progressTrackWidthPx) -->
+    <div class="absolute bottom-0 h-28 z-0 pointer-events-none " [style.left.px]="progressTrackLeftPx"
+        [style.width.px]="progressTrackWidthPx"></div>
+    <ng-container *ngIf="videoRef">
 
-    <app-scrub-preview [isVisible]="isScrubPreviewVisible" [timeInSeconds]="scrubTime" [markers]="markersData"
-        [scrubThumbData]="scrubThumbData" [scrubXPositionPercent]="scrubXPositionPercent"
-        [scrubXPositionPx]="scrubXPositionPx" [timelineWidthPx]="timelineWidthPx"> <!-- NEW INPUT ADDED -->
-    </app-scrub-preview>
+        <app-scrub-preview [isVisible]="isScrubPreviewVisible" [timeInSeconds]="scrubTime" [markers]="markersData"
+            [scrubThumbData]="scrubThumbData" [scrubXPositionPercent]="scrubXPositionPercent"
+            [scrubXPositionPx]="scrubXPositionPx" [timelineWidthPx]="timelineWidthPx"> <!-- NEW INPUT ADDED -->
+        </app-scrub-preview>
 
-    <app-marker-track [videoRef]="this.videoRef" [markersData]="markersData"></app-marker-track>
-    <app-buffered-track [videoRef]="this.videoRef"></app-buffered-track>
+        <app-marker-track [videoRef]="this.videoRef" [markersData]="markersData"></app-marker-track>
+        <app-buffered-track [videoRef]="this.videoRef"></app-buffered-track>
 
-    <app-progress-track #progressTrack [videoRef]="this.videoRef" (scrubMove)="onScrubMove($event)"
-        (scrubEnd)="onScrubEnd()" (mouseLeave)="onScrubEnd()" (mouseHover)="onScrubMove($event)">
-    </app-progress-track>
-    }
+        <app-progress-track #progressTrack [videoRef]="this.videoRef" (scrubMove)="onScrubMove($event)"
+            (scrubEnd)="onScrubEnd()" (mouseLeave)="onScrubEnd()" (mouseHover)="onScrubMove($event)">
+        </app-progress-track>
+    </ng-container>
 </div>

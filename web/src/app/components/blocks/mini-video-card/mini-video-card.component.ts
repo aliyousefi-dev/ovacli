@@ -18,7 +18,6 @@ import { SendtoModalComponent } from '../../pop-ups/sendto-modal/sendto-modal.co
 import { VideoApiService } from '../../../../services/ova-backend-service/video-api.service';
 import { SavedApiService } from '../../../../services/ova-backend-service/saved-api.service';
 import { VideoData } from '../../../../services/ova-backend-service/api-types/video-data';
-import { UtilsService } from '../../../../services/utils.service';
 
 @Component({
   selector: 'app-mini-video-card',
@@ -92,8 +91,7 @@ export class MiniVideoCardComponent implements OnChanges, OnInit {
     private savedapi: SavedApiService,
     private videoapi: VideoApiService,
     private router: Router,
-    private cd: ChangeDetectorRef,
-    private utilsService: UtilsService
+    private cd: ChangeDetectorRef
   ) {}
 
   getThumbnailUrl(): string {
@@ -142,14 +140,9 @@ export class MiniVideoCardComponent implements OnChanges, OnInit {
 
   toggleSaved(event: MouseEvent): void {
     event.stopPropagation();
-    const username = this.utilsService.getUsername();
-    if (!username) {
-      console.warn('Cannot save/unsave: Username is not available.');
-      return;
-    }
 
     if (this.isSaved) {
-      this.savedapi.removeUserSaved(username, this.video.videoId).subscribe({
+      this.savedapi.removeUserSaved(this.video.videoId).subscribe({
         next: () => {
           this.isSaved = false;
           this.cd.detectChanges();
@@ -159,7 +152,7 @@ export class MiniVideoCardComponent implements OnChanges, OnInit {
         },
       });
     } else {
-      this.savedapi.addUserSaved(username, this.video.videoId).subscribe({
+      this.savedapi.addUserSaved(this.video.videoId).subscribe({
         next: () => {
           this.isSaved = true;
           this.cd.detectChanges();

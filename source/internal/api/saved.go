@@ -11,18 +11,17 @@ import (
 )
 
 func RegisterUserSavedRoutes(rg *gin.RouterGroup, repoManager *repo.RepoManager) {
-	users := rg.Group("/users")
+	me := rg.Group("/me") // Change route to /me
 	{
-		users.GET("/:username/saved", getUserSaved(repoManager))
-		users.POST("/:username/saved/:videoId", addUserSaved(repoManager))
-		users.DELETE("/:username/saved/:videoId", removeUserSaved(repoManager))
+		me.GET("/saved", getUserSaved(repoManager))                // GET /api/v1/me/saved
+		me.POST("/saved/:videoId", addUserSaved(repoManager))      // POST /api/v1/me/saved/:videoId
+		me.DELETE("/saved/:videoId", removeUserSaved(repoManager)) // DELETE /api/v1/me/saved/:videoId
 	}
 }
 
-// GET /users/:username/saved
+// GET /me/saved
 func getUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
-
 		// Retrieve accountId set by the AuthMiddleware
 		accountID, exists := c.Get("accountId")
 		if !exists {
@@ -53,7 +52,6 @@ func getUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 		// If there are no saved videos, return an empty response
 		if totalVideos == 0 {
 			apitypes.RespondSuccess(c, http.StatusOK, gin.H{
-				"username":          accountID.(string),
 				"videoIds":          []string{}, // Empty array for saved videos
 				"totalVideos":       0,
 				"currentBucket":     bucket,
@@ -81,7 +79,6 @@ func getUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 
 		// Prepare the response with saved video IDs, total video count, and bucket details
 		response := gin.H{
-			"username":          accountID.(string),
 			"videoIds":          savedVideos,
 			"totalVideos":       totalVideos,
 			"currentBucket":     bucket,
@@ -93,7 +90,7 @@ func getUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 	}
 }
 
-// POST /users/:username/saved/:videoId
+// POST /me/saved/:videoId
 func addUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		videoID := c.Param("videoId")
@@ -117,13 +114,12 @@ func addUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 		}
 
 		apitypes.RespondSuccess(c, http.StatusOK, gin.H{
-			"username": accountID.(string),
-			"videoId":  videoID,
+			"videoId": videoID,
 		}, "Video added to saved")
 	}
 }
 
-// DELETE /users/:username/saved/:videoId
+// DELETE /me/saved/:videoId
 func removeUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		videoID := c.Param("videoId")
@@ -141,8 +137,7 @@ func removeUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 		}
 
 		apitypes.RespondSuccess(c, http.StatusOK, gin.H{
-			"username": accountID.(string),
-			"videoId":  videoID,
+			"videoId": videoID,
 		}, "Video removed from saved")
 	}
 }

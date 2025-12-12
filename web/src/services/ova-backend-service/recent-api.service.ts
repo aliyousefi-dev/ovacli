@@ -17,13 +17,12 @@ export class WatchedApiService {
   constructor(private http: HttpClient) {}
 
   getUserWatched(
-    username: string,
     bucket: number = 1
   ): Observable<ApiSuccessResponse<VideoBucketResponse>> {
     // Use ApiResponse wrapper
     return this.http
       .get<ApiSuccessResponse<VideoBucketResponse>>(
-        `${this.baseUrl}/users/${username}/recent?bucket=${bucket}`,
+        `${this.baseUrl}/me/recent?bucket=${bucket}`,
         this.httpOptions
       )
       .pipe(catchError(this.handleError)); // Handle errors as before

@@ -2,27 +2,34 @@ package api
 
 import (
 	"net/http"
+	"strconv"
+
 	apitypes "ova-cli/source/internal/api-types"
 	"ova-cli/source/internal/repo"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-// RegisterUserPlaylistRoutes registers playlist routes under the user scope.
+// RegisterUserPlaylistContentRoutes registers playlist routes under the user scope.
 func RegisterUserPlaylistContentRoutes(rg *gin.RouterGroup, rm *repo.RepoManager) {
-	users := rg.Group("/users")
+	me := rg.Group("/me") // Change route to /me
 	{
-		users.GET("/:username/playlists/:slug", getUserPlaylistContents(rm))
-		users.POST("/:username/playlists/:slug/videos", addVideoToPlaylist(rm))
-		users.DELETE("/:username/playlists/:slug/videos/:videoId", deleteVideoFromPlaylist(rm))
+		me.GET("/playlists/:slug", getUserPlaylistContents(rm))                    // GET /api/v1/me/playlists/:slug
+		me.POST("/playlists/:slug/videos", addVideoToPlaylist(rm))                 // POST /api/v1/me/playlists/:slug/videos
+		me.DELETE("/playlists/:slug/videos/:videoId", deleteVideoFromPlaylist(rm)) // DELETE /api/v1/me/playlists/:slug/videos/:videoId
 	}
 }
 
-// GET /users/:username/playlists/:slug/contents
+// GET /me/playlists/:slug/contents
 func getUserPlaylistContents(rm *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		username := c.Param("username")
+		// Retrieve accountId set by the AuthMiddleware
+		accountID, exists := c.Get("accountId")
+		if !exists {
+			apitypes.RespondError(c, http.StatusUnauthorized, "Account ID not found")
+			return
+		}
+
 		slug := c.Param("slug")
 
 		// Parse bucket from query parameters (default: 1)
@@ -37,7 +44,7 @@ func getUserPlaylistContents(rm *repo.RepoManager) gin.HandlerFunc {
 		bucketContentSize := 20
 
 		// Get total number of videos in playlist
-		totalVideos, err := rm.GetUserPlaylistContentVideosCount(username, slug)
+		totalVideos, err := rm.GetUserPlaylistContentVideosCount(accountID.(string), slug)
 		if err != nil {
 			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to get playlist videos count")
 			return
@@ -46,7 +53,6 @@ func getUserPlaylistContents(rm *repo.RepoManager) gin.HandlerFunc {
 		// If playlist is empty
 		if totalVideos == 0 {
 			apitypes.RespondSuccess(c, http.StatusOK, gin.H{
-				"username":          username,
 				"slug":              slug,
 				"videoIds":          []string{},
 				"totalVideos":       0,
@@ -65,7 +71,7 @@ func getUserPlaylistContents(rm *repo.RepoManager) gin.HandlerFunc {
 		}
 
 		// Fetch playlist videos for the given bucket
-		videos, err := rm.GetUserPlaylistContentVideosInRange(username, slug, start, end)
+		videos, err := rm.GetUserPlaylistContentVideosInRange(accountID.(string), slug, start, end)
 		if err != nil {
 			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to retrieve playlist videos")
 			return
@@ -73,7 +79,6 @@ func getUserPlaylistContents(rm *repo.RepoManager) gin.HandlerFunc {
 
 		// Response payload
 		response := gin.H{
-			"username":          username,
 			"slug":              slug,
 			"videoIds":          videos,
 			"totalVideos":       totalVideos,
@@ -86,9 +91,9 @@ func getUserPlaylistContents(rm *repo.RepoManager) gin.HandlerFunc {
 	}
 }
 
+// POST /me/playlists/:slug/videos
 func addVideoToPlaylist(rm *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		username := c.Param("username")
 		slug := c.Param("slug")
 
 		var body struct {
@@ -99,30 +104,44 @@ func addVideoToPlaylist(rm *repo.RepoManager) gin.HandlerFunc {
 			return
 		}
 
-		err := rm.AddVideoToPlaylist(username, slug, body.VideoID)
+		// Retrieve accountId set by the AuthMiddleware
+		accountID, exists := c.Get("accountId")
+		if !exists {
+			apitypes.RespondError(c, http.StatusUnauthorized, "Account ID not found")
+			return
+		}
+
+		err := rm.AddVideoToPlaylist(accountID.(string), slug, body.VideoID)
 		if err != nil {
 			apitypes.RespondError(c, http.StatusInternalServerError, err.Error())
 			return
 		}
 
-		pl, _ := rm.GetUserPlaylist(username, slug)
+		pl, _ := rm.GetUserPlaylist(accountID.(string), slug)
 		apitypes.RespondSuccess(c, http.StatusOK, pl, "Video added to playlist")
 	}
 }
 
+// DELETE /me/playlists/:slug/videos/:videoId
 func deleteVideoFromPlaylist(rm *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		username := c.Param("username")
 		slug := c.Param("slug")
 		videoId := c.Param("videoId")
 
-		err := rm.RemoveVideoFromPlaylist(username, slug, videoId)
+		// Retrieve accountId set by the AuthMiddleware
+		accountID, exists := c.Get("accountId")
+		if !exists {
+			apitypes.RespondError(c, http.StatusUnauthorized, "Account ID not found")
+			return
+		}
+
+		err := rm.RemoveVideoFromPlaylist(accountID.(string), slug, videoId)
 		if err != nil {
 			apitypes.RespondError(c, http.StatusInternalServerError, err.Error())
 			return
 		}
 
-		pl, _ := rm.GetUserPlaylist(username, slug)
+		pl, _ := rm.GetUserPlaylist(accountID.(string), slug)
 		apitypes.RespondSuccess(c, http.StatusOK, pl, "Video removed from playlist")
 	}
 }

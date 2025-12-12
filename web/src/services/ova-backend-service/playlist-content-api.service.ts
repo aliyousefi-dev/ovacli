@@ -19,35 +19,32 @@ export class PlaylistContentAPIService {
   constructor(private http: HttpClient) {}
 
   fetchPlaylistContent(
-    username: string,
     slug: string,
     bucket: number = 1
   ): Observable<ApiSuccessResponse<PlaylistContentResponse>> {
     return this.http.get<ApiSuccessResponse<PlaylistContentResponse>>(
-      `${this.baseUrl}/users/${username}/playlists/${slug}?bucket=${bucket}`,
+      `${this.baseUrl}/me/playlists/${slug}?bucket=${bucket}`,
       { withCredentials: true } // ✅ important
     );
   }
 
   addVideoToPlaylist(
-    username: string,
     slug: string,
     videoId: string
   ): Observable<ApiSuccessResponse<PlaylistData>> {
     return this.http.post<ApiSuccessResponse<PlaylistData>>(
-      `${this.baseUrl}/users/${username}/playlists/${slug}/videos`,
+      `${this.baseUrl}/me/playlists/${slug}/videos`,
       { videoId },
       { withCredentials: true } // ✅ important
     );
   }
 
   deleteVideoFromPlaylist(
-    username: string,
     slug: string,
     videoId: string
   ): Observable<ApiSuccessResponse<PlaylistData>> {
     return this.http.delete<ApiSuccessResponse<PlaylistData>>(
-      `${this.baseUrl}/users/${username}/playlists/${slug}/videos/${videoId}`,
+      `${this.baseUrl}/me/playlists/${slug}/videos/${videoId}`,
       { withCredentials: true } // ✅ important
     );
   }

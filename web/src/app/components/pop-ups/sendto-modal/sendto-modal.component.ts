@@ -11,7 +11,6 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PlaylistContentAPIService } from '../../../../services/ova-backend-service/playlist-content-api.service';
 import { PlaylistAPIService } from '../../../../services/ova-backend-service/playlist-api.service';
-import { UtilsService } from '../../../../services/utils.service'; // Import UtilsService
 import { PlaylistSummary } from '../../../../services/ova-backend-service/api-responses/playlist-response';
 
 // Define PlaylistWrapper interface outside the component class
@@ -42,11 +41,8 @@ export class SendtoModalComponent implements OnChanges {
   constructor(
     private router: Router,
     private playlistapi: PlaylistAPIService,
-    private utilsService: UtilsService, // Inject UtilsService
     private playlistContentAPI: PlaylistContentAPIService
-  ) {
-    this.username = this.utilsService.getUsername(); // Fetch username on component initialization
-  }
+  ) {}
 
   // ngOnChanges will detect changes to input properties
   ngOnChanges(changes: SimpleChanges): void {
@@ -74,7 +70,7 @@ export class SendtoModalComponent implements OnChanges {
     if (!this.username || !this.selectedVideoId) return;
 
     this.loading = true; // start loading
-    this.playlistapi.getUserPlaylists(this.username).subscribe({
+    this.playlistapi.getUserPlaylists().subscribe({
       next: (response) => {
         const pls = response.data.playlists;
 
@@ -88,7 +84,7 @@ export class SendtoModalComponent implements OnChanges {
             (playlist) =>
               new Promise<void>((resolve) => {
                 this.playlistContentAPI
-                  .fetchPlaylistContent(this.username as string, playlist.slug)
+                  .fetchPlaylistContent(playlist.slug)
                   .subscribe({
                     next: (plData) => {
                       playlist.checked = plData.data.videoIds.includes(
@@ -148,11 +144,7 @@ export class SendtoModalComponent implements OnChanges {
       // If playlist is now checked but was not originally, add the video
       if (playlist.checked && !original.checked) {
         this.playlistContentAPI
-          .addVideoToPlaylist(
-            this.username as string,
-            playlist.slug,
-            this.selectedVideoId
-          ) // Cast to string
+          .addVideoToPlaylist(playlist.slug, this.selectedVideoId) // Cast to string
           .subscribe({
             next: () =>
               console.log(
@@ -168,11 +160,7 @@ export class SendtoModalComponent implements OnChanges {
       // If playlist is now unchecked but was originally checked, remove the video
       else if (!playlist.checked && original.checked) {
         this.playlistContentAPI
-          .deleteVideoFromPlaylist(
-            this.username as string, // Cast to string
-            playlist.slug,
-            this.selectedVideoId
-          )
+          .deleteVideoFromPlaylist(playlist.slug, this.selectedVideoId)
           .subscribe({
             next: () =>
               console.log(

@@ -34,74 +34,60 @@ export const MainRoutes: Routes = [
   {
     path: 'global',
     component: GlobalPage,
-    canActivate: [AuthGuard],
     data: { reuse: true },
   },
   {
     path: 'test',
     component: TestPage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'graph',
     component: GraphPage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'stats',
     component: StatsPage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'admin/account-manager',
     component: AccountManagerPage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'history',
     component: HistoryPage,
-    canActivate: [AuthGuard],
     data: { reuse: true },
   },
   {
     path: 'profile',
     component: ProfilePage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'watch/:videoId',
     component: WatchPage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'create-space',
     component: CreateSpacePage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'create-team-space',
     component: CreateTeamSpacePage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'join-team-space',
     component: JoinTeamSpacePage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'upload',
     component: UploadPage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'profile-settings',
     component: ProfileSettingsPage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'saved',
     component: SavedPage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'settings',
@@ -117,26 +103,21 @@ export const MainRoutes: Routes = [
   {
     path: 'search',
     component: SearchPage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'playlists',
     component: PlaylistsPage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'materials',
     component: MaterialsPage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'version-history/:videoId',
     component: VersionHistoryPage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'playlists/:title',
     component: PlaylistContentPage,
-    canActivate: [AuthGuard],
   },
 ];

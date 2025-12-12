@@ -66,7 +66,7 @@ export class PlaylistGridComponent implements OnInit {
 
     // Send one API request with the new slug order array
     this.playlistApi
-      .savePlaylistsOrder(this.username, newOrderSlugs)
+      .savePlaylistsOrder(newOrderSlugs)
       .pipe(
         catchError((err) => {
           console.error('Failed to update playlist order:', err);

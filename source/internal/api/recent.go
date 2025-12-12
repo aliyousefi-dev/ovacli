@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	apitypes "ova-cli/source/internal/api-types"
 	"ova-cli/source/internal/repo"
@@ -12,11 +11,11 @@ import (
 
 // RegisterUserWatchedRoutes adds watched video endpoints for users.
 func RegisterUserWatchedRoutes(rg *gin.RouterGroup, repoMgr *repo.RepoManager) {
-	users := rg.Group("/users/:username")
+	me := rg.Group("/me")
 	{
-		users.POST("/recent", addVideoToWatched(repoMgr))         // POST /api/v1/users/:username/watched
-		users.GET("/recent", getUserWatchedVideos(repoMgr))       // GET  /api/v1/users/:username/watched
-		users.DELETE("/recent", clearUserWatchedHistory(repoMgr)) // DELETE /api/v1/users/:username/watched
+		me.POST("/recent", addVideoToWatched(repoMgr))         // POST /api/v1/me/recent
+		me.GET("/recent", getUserWatchedVideos(repoMgr))       // GET /api/v1/me/recent
+		me.DELETE("/recent", clearUserWatchedHistory(repoMgr)) // DELETE /api/v1/me/recent
 	}
 }
 
@@ -123,16 +122,16 @@ func getUserWatchedVideos(r *repo.RepoManager) gin.HandlerFunc {
 
 func clearUserWatchedHistory(r *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		username := c.Param("username")
+		// Retrieve accountId set by the AuthMiddleware
+		accountID, exists := c.Get("accountId")
+		if !exists {
+			apitypes.RespondError(c, http.StatusUnauthorized, "Account ID not found")
+			return
+		}
 
-		err := r.ClearUserWatchedHistory(username)
+		err := r.ClearUserWatchedHistory(accountID.(string))
 		if err != nil {
-			// A 404 Not Found is appropriate if the user doesn't exist
-			if err.Error() == fmt.Sprintf("user %q not found", username) {
-				apitypes.RespondError(c, http.StatusNotFound, err.Error())
-			} else {
-				apitypes.RespondError(c, http.StatusInternalServerError, "Failed to clear watched history: "+err.Error())
-			}
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to clear watched history: "+err.Error())
 			return
 		}
 

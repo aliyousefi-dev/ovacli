@@ -154,7 +154,7 @@ export class WatchPage implements AfterViewInit {
     const done = () => (this.loadingSavedVideo = false);
 
     if (this.isSaved) {
-      this.savedapi.removeUserSaved(this.username, this.videoId).subscribe({
+      this.savedapi.removeUserSaved(this.videoId).subscribe({
         next: () => {
           this.isSaved = false;
           done();
@@ -162,7 +162,7 @@ export class WatchPage implements AfterViewInit {
         error: () => done(),
       });
     } else {
-      this.savedapi.addUserSaved(this.username, this.videoId).subscribe({
+      this.savedapi.addUserSaved(this.videoId).subscribe({
         next: () => {
           this.isSaved = true;
           done();
@@ -176,7 +176,7 @@ export class WatchPage implements AfterViewInit {
     event.stopPropagation();
     if (!this.username || !this.video) return;
 
-    this.playlistapi.getUserPlaylists(this.username).subscribe((response) => {
+    this.playlistapi.getUserPlaylists().subscribe((response) => {
       const pls = response.data.playlists;
       const checkList = pls.map((p) => ({ ...p, checked: false }));
 
@@ -185,7 +185,7 @@ export class WatchPage implements AfterViewInit {
           (playlist) =>
             new Promise<void>((resolve) => {
               this.playlistContentAPI
-                .fetchPlaylistContent(this.username, playlist.slug)
+                .fetchPlaylistContent(playlist.slug)
                 .subscribe((plData) => {
                   playlist.checked = plData.data.videoIds.includes(
                     this.video.videoId
@@ -217,15 +217,11 @@ export class WatchPage implements AfterViewInit {
 
       if (playlist.checked && !original.checked) {
         this.playlistContentAPI
-          .addVideoToPlaylist(this.username, playlist.slug, this.video.videoId)
+          .addVideoToPlaylist(playlist.slug, this.video.videoId)
           .subscribe();
       } else if (!playlist.checked && original.checked) {
         this.playlistContentAPI
-          .deleteVideoFromPlaylist(
-            this.username,
-            playlist.slug,
-            this.video.videoId
-          )
+          .deleteVideoFromPlaylist(playlist.slug, this.video.videoId)
           .subscribe();
       }
     });

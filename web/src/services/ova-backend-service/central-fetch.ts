@@ -9,7 +9,6 @@ import { VideoApiService } from './video-api.service';
 import { WatchedApiService } from './recent-api.service';
 import { SavedApiService } from './saved-api.service';
 import { PlaylistContentAPIService } from './playlist-content-api.service';
-import { UtilsService } from '../utils.service';
 
 import { VideoGallery } from './api-types/video-gallery';
 
@@ -22,8 +21,7 @@ export class CentralFetchService {
     private videoApiService: VideoApiService,
     private watchedApiService: WatchedApiService,
     private savedApiService: SavedApiService,
-    private playlistContentAPIService: PlaylistContentAPIService,
-    private utilsService: UtilsService
+    private playlistContentAPIService: PlaylistContentAPIService
   ) {}
 
   // Fetch the gallery data using LatestVideosService and switch based on route
@@ -63,10 +61,8 @@ export class CentralFetchService {
       }
 
       case 'watched': {
-        const username: string = this.utilsService.getUsername() || '';
-
         // Use WatchedApiService to fetch the watched videos for the given bucket
-        return this.watchedApiService.getUserWatched(username, bucket).pipe(
+        return this.watchedApiService.getUserWatched(bucket).pipe(
           switchMap((response) => {
             const totalVideos = response.data.totalVideos;
             const currentBucket = response.data.currentBucket;
@@ -94,10 +90,8 @@ export class CentralFetchService {
       }
 
       case 'saved': {
-        const username: string = this.utilsService.getUsername() || '';
-
         // Use SavedApiService to fetch the saved videos for the given bucket
-        return this.savedApiService.getUserSaved(username, bucket).pipe(
+        return this.savedApiService.getUserSaved(bucket).pipe(
           switchMap((response) => {
             const totalVideos = response.data.totalVideos;
             const currentBucket = response.data.currentBucket;
@@ -125,8 +119,6 @@ export class CentralFetchService {
       }
 
       case 'playlist-content': {
-        const username: string = this.utilsService.getUsername() || '';
-
         // Ensure we have the slug for the playlist route
         if (!slug) {
           throw new Error('Slug is required for playlist fetching');
@@ -134,7 +126,7 @@ export class CentralFetchService {
 
         // Use PlaylistContentAPIService to fetch the playlist contents for the given user and slug
         return this.playlistContentAPIService
-          .fetchPlaylistContent(username, slug, bucket) // Pass the slug here
+          .fetchPlaylistContent(slug, bucket) // Pass the slug here
           .pipe(
             switchMap((response) => {
               const totalVideos = response.data.totalVideos;

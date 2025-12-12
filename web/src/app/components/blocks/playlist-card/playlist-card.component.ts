@@ -71,16 +71,14 @@ export class PlaylistCardComponent implements OnInit {
   }
 
   confirmDelete() {
-    this.playlistapi
-      .deleteUserPlaylistBySlug(this.username!, this.playlist.slug)
-      .subscribe({
-        next: () => {
-          this.playlistDeleted.emit(this.playlist.slug);
-        },
-        error: (err) => {
-          alert('Failed to delete playlist: ' + err.message);
-        },
-      });
+    this.playlistapi.deleteUserPlaylistBySlug(this.playlist.slug).subscribe({
+      next: () => {
+        this.playlistDeleted.emit(this.playlist.slug);
+      },
+      error: (err) => {
+        alert('Failed to delete playlist: ' + err.message);
+      },
+    });
   }
 
   onEdit() {
@@ -99,7 +97,7 @@ export class PlaylistCardComponent implements OnInit {
       return;
     }
     this.playlistapi
-      .updateUserPlaylistInfo(this.username, this.playlist.slug, update)
+      .updateUserPlaylistInfo(this.playlist.slug, update)
       .subscribe({
         next: (res) => {
           if (res.status === 'success' && res.data) {

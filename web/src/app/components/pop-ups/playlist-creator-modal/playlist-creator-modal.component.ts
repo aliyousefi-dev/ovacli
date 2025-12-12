@@ -2,7 +2,6 @@ import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PlaylistAPIService } from '../../../../services/ova-backend-service/playlist-api.service';
-import { UtilsService } from '../../../../services/utils.service';
 import { ViewChild } from '@angular/core';
 import { AfterViewInit } from '@angular/core';
 
@@ -21,10 +20,7 @@ export class PlaylistCreatorModal implements AfterViewInit {
   @Output() created = new EventEmitter<string>();
   @Output() cancelled = new EventEmitter<void>();
 
-  constructor(
-    private playlistApi: PlaylistAPIService,
-    private utils: UtilsService
-  ) {}
+  constructor(private playlistApi: PlaylistAPIService) {}
 
   ngAfterViewInit(): void {
     if (this.isVisible) {
@@ -36,7 +32,7 @@ export class PlaylistCreatorModal implements AfterViewInit {
     const trimmed = this.playlistName.trim();
     if (trimmed) {
       this.playlistApi
-        .createUserPlaylist(this.utils.getUsername()!, {
+        .createUserPlaylist({
           title: trimmed,
           videoIds: [],
         })

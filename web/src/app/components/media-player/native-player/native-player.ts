@@ -5,6 +5,7 @@ import {
   ElementRef,
   AfterViewInit,
   OnDestroy,
+  ChangeDetectorRef,
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -52,6 +53,9 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
 
   currentTime: number = 0;
 
+  // Signals template children are ready to render, set after the video's ViewChild is initialized
+  videoReady: boolean = false;
+
   // ✨ Controls Visibility State
   controlsVisible: boolean = false;
   private hideControlsTimeout: any;
@@ -75,6 +79,8 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
     { timeSecond: 2000, title: 'Conclusion' },
   ];
 
+  constructor(private cd: ChangeDetectorRef) {}
+
   private applySavedPreferences() {
     const prefs: OvaPlayerPreferences =
       this.localStorageService.loadPreferences(); // Apply sound level
@@ -82,7 +88,7 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
     this.videoRef.nativeElement.volume = prefs.soundLevel;
   }
 
-  handleHostEvent(event: keyof PlayerHostEvents) {
+  handleInputs(event: keyof PlayerHostEvents) {
     switch (event) {
       case 'playPauseToggle':
         this.showControls();
@@ -131,11 +137,17 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
     video.addEventListener('loadedmetadata', this.onVideoMetadataLoadedBound);
 
     this.applySavedPreferences();
-    // Ensure controls are visible initially for a moment
-    this.showControls();
+    // Ensure controls are visible initially for a moment.
+    // Wrap in a macrotask to avoid ExpressionChangedAfterItHasBeenCheckedError
+    setTimeout(() => this.showControls());
 
     // Listen to fullscreen change to adjust local state for styling
     document.addEventListener('fullscreenchange', this.fullscreenChangeHandler);
+
+    // Child controls rely on the presence of the video ElementRef; expose a flag
+    // so the template can defer rendering children until the ViewChild is set.
+    this.videoReady = true;
+    this.cd.detectChanges();
   }
 
   ngOnDestroy() {

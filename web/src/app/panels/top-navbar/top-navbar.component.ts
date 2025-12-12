@@ -3,9 +3,6 @@ import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Location } from '@angular/common';
 
-import { UtilsService } from '../../../services/utils.service';
-import { AuthApiService } from '../../../services/ova-backend-service/auth-api.service';
-
 @Component({
   selector: 'app-top-navbar',
   standalone: true,
@@ -20,13 +17,9 @@ export class TopNavbarComponent implements OnInit {
   showSettingsModal = false;
   searchBarVisible = false;
 
-  private utilsService: UtilsService = inject(UtilsService);
-  private authapi: AuthApiService = inject(AuthApiService);
-
   constructor(private router: Router, private location: Location) {}
 
   ngOnInit(): void {
-    this.username = this.utilsService.getUsername() || 'Guest';
     // Subscribe to router events to detect route changes
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
@@ -54,7 +47,6 @@ export class TopNavbarComponent implements OnInit {
 
   closeSettingsModal(): void {
     this.showSettingsModal = false;
-    this.username = this.utilsService.getUsername() || 'Guest';
   }
 
   // Dynamically set page title based on the route

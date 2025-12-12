@@ -6,6 +6,7 @@ import {
   OnDestroy,
   ViewChild,
   AfterViewInit,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProgressTrack } from './progress-track/progress-track.component';
@@ -56,16 +57,17 @@ export class MainTimeline implements OnInit, OnDestroy, AfterViewInit {
   private fullscreenChangeHandler = this.updateTimelineWidth.bind(this);
   private readonly SEEK_STEP = 5;
 
+  // Inject ChangeDetectorRef so we can safely notify Angular of property changes
+  constructor(private cd: ChangeDetectorRef) {}
+
   ngOnInit() {}
 
   // Capture the initial width of the timeline element after the view is initialized
   ngAfterViewInit() {
     // Check for timelineRef existence, necessary since it's used in template with @if
     if (this.timelineRef) {
-      // Use getBoundingClientRect width which better accounts for transforms (useful in fullscreen)
-      this.timelineWidthPx = Math.round(
-        this.timelineRef.nativeElement.getBoundingClientRect().width
-      );
+      // Initialize timeline width + related offsets (uses progressTrack if available)
+      this.updateTimelineWidth();
       // Listen for window resize to update timeline width if the element resizes (including fullscreen changes)
       window.addEventListener('resize', this.resizeHandler);
       document.addEventListener(
@@ -94,6 +96,9 @@ export class MainTimeline implements OnInit, OnDestroy, AfterViewInit {
       this.scrubXPositionPx = Math.round(data.clientX - timelineRect.left);
       this.progressTrackLeftPx = Math.round(trackRect.left - timelineRect.left);
       this.progressTrackWidthPx = Math.round(trackRect.width);
+      // Trigger change detection after we mutate pixel-bound properties so Angular's
+      // subsequent change-check cycle doesn't detect unexpected mid-cycle updates.
+      this.cd.detectChanges();
     }
   }
 
@@ -103,12 +108,22 @@ export class MainTimeline implements OnInit, OnDestroy, AfterViewInit {
       const rect =
         this.progressTrackRef.trackContainerRef.nativeElement.getBoundingClientRect();
       this.timelineWidthPx = Math.round(rect.width);
+      // Also compute left offset and width relative to timeline
+      if (this.timelineRef && this.timelineRef.nativeElement) {
+        const timelineRect =
+          this.timelineRef.nativeElement.getBoundingClientRect();
+        this.progressTrackLeftPx = Math.round(rect.left - timelineRect.left);
+      }
+      this.progressTrackWidthPx = Math.round(rect.width);
+      // Ensure the UI updates synchronously to avoid ExpressionChangedAfterItHasBeenCheckedError
+      this.cd.detectChanges();
       return;
     }
     if (this.timelineRef && this.timelineRef.nativeElement) {
       this.timelineWidthPx = Math.round(
         this.timelineRef.nativeElement.getBoundingClientRect().width
       );
+      this.cd.detectChanges();
     }
   }
 

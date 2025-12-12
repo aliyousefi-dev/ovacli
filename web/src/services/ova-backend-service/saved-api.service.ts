@@ -19,24 +19,22 @@ export class SavedApiService {
   constructor(private http: HttpClient) {}
 
   getUserSaved(
-    username: string,
     bucket: number = 1
   ): Observable<ApiSuccessResponse<VideoBucketResponse>> {
     return this.http
       .get<ApiSuccessResponse<VideoBucketResponse>>(
-        `${this.baseUrl}/users/${username}/saved?bucket=${bucket}`,
+        `${this.baseUrl}/me/saved?bucket=${bucket}`,
         this.httpOptions
       )
       .pipe(catchError(this.handleError)); // Error handling remains unchanged
   }
 
   addUserSaved(
-    username: string,
     videoId: string
   ): Observable<{ username: string; videoId: string }> {
     return this.http
       .post<{ data: { username: string; videoId: string } }>(
-        `${this.baseUrl}/users/${username}/saved/${videoId}`,
+        `${this.baseUrl}/me/saved/${videoId}`,
         {}, // empty body
         this.httpOptions
       )
@@ -47,12 +45,11 @@ export class SavedApiService {
   }
 
   removeUserSaved(
-    username: string,
     videoId: string
   ): Observable<{ username: string; videoId: string }> {
     return this.http
       .delete<{ data: { username: string; videoId: string } }>(
-        `${this.baseUrl}/users/${username}/saved/${videoId}`,
+        `${this.baseUrl}/me/saved/${videoId}`,
         this.httpOptions
       )
       .pipe(

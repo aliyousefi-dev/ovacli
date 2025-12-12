@@ -35,12 +35,6 @@ export class GalleryFetcherComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.username = localStorage.getItem('username');
-    if (!this.username) {
-      this.router.navigate(['/login']);
-      return;
-    }
-
     // Get the initial infinite mode status from the service
     this.infiniteMode = this.userSettingsService.isGalleryInInfiniteMode();
 

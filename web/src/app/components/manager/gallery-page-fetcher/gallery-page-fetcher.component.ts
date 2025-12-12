@@ -59,8 +59,6 @@ export class GalleryPageFetcher implements OnInit {
               this.TotalVideos = response.totalVideos;
               this.BucketContentSize = response.bucketContentSize;
 
-              console.log(this.TotalBuckets);
-
               this.videos = response.videos;
               this.loading = false;
 
@@ -85,8 +83,6 @@ export class GalleryPageFetcher implements OnInit {
             this.TotalBuckets = response.totalBuckets;
             this.TotalVideos = response.totalVideos;
             this.BucketContentSize = response.bucketContentSize;
-
-            console.log(this.TotalBuckets);
 
             this.videos = response.videos;
             this.loading = false;

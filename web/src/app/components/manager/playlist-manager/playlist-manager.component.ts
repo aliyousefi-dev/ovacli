@@ -6,7 +6,6 @@ import { PlaylistAPIService } from '../../../../services/ova-backend-service/pla
 import { PlaylistGridComponent } from '../../containers/playlists-view/playlists-view.component';
 import { PlaylistCreatorModal } from '../../pop-ups/playlist-creator-modal/playlist-creator-modal.component';
 import { ConfirmModalComponent } from '../../pop-ups/confirm-modal/confirm-modal.component';
-import { UtilsService } from '../../../../services/utils.service';
 import { PlaylistSummary } from '../../../../services/ova-backend-service/api-responses/playlist-response';
 
 @Component({
@@ -32,18 +31,14 @@ export class PlaylistManagerComponent implements OnInit {
   selectedPlaylists = new Set<string>();
   selectedPlaylistTitle: string | null = null;
 
-  constructor(
-    private playlistApi: PlaylistAPIService,
-    private utils: UtilsService
-  ) {}
+  constructor(private playlistApi: PlaylistAPIService) {}
 
   ngOnInit(): void {
-    this.username = this.utils.getUsername();
     this.FetchPlaylists();
   }
 
   private FetchPlaylists(): void {
-    this.playlistApi.getUserPlaylists(this.username!).subscribe({
+    this.playlistApi.getUserPlaylists().subscribe({
       next: (response) => {
         this.playlists = response.data.playlists ?? [];
         this.sortPlaylists();
@@ -81,16 +76,14 @@ export class PlaylistManagerComponent implements OnInit {
 
   confirmDelete() {
     this.selectedPlaylists.forEach((playlist_slug) => {
-      this.playlistApi
-        .deleteUserPlaylistBySlug(this.username!, playlist_slug)
-        .subscribe({
-          next: () => {
-            this.handlePlaylistDeleted(playlist_slug);
-          },
-          error: (err) => {
-            alert('Failed to delete playlist: ' + err.message);
-          },
-        });
+      this.playlistApi.deleteUserPlaylistBySlug(playlist_slug).subscribe({
+        next: () => {
+          this.handlePlaylistDeleted(playlist_slug);
+        },
+        error: (err) => {
+          alert('Failed to delete playlist: ' + err.message);
+        },
+      });
     });
   }
 

@@ -25,7 +25,6 @@ export class App implements OnInit {
   private loadingService = inject(LoadingService);
 
   loading$ = this.loadingService.loading$;
-  isLoginRoute: boolean = false;
   isNotFoundRoute: boolean = false;
 
   ngOnInit() {
@@ -44,9 +43,6 @@ export class App implements OnInit {
       ) {
         this.loadingService.hide();
       }
-
-      // Check if the current route is /login
-      this.isLoginRoute = this.router.url === '/login';
 
       // Check if the current route is NotFoundPage (wildcard route)
       if (

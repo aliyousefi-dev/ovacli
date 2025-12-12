@@ -1,26 +1,28 @@
 <div class="relative w-full" [class.flex]="isFullscreen" [class.items-center]="isFullscreen"
-  [class.justify-center]="isFullscreen" #playerWrap appPlayerControlsHost (hostEvents)="handleHostEvent($event)">
+  [class.justify-center]="isFullscreen" #playerWrap appPlayerControlsHost (inputEvents)="handleInputs($event)">
 
   <video #videoRef
     [ngClass]="{ 'w-full': !isFullscreen, 'w-auto': isFullscreen, 'max-h-screen': isFullscreen, 'aspect-video': true, 'block': true }"
     [src]="videoUrl" [poster]="thumbnailUrl" (click)="onSingleClick()" (dblclick)="onDoubleClick($event)">
   </video>
 
-  <div id="controls-overlay"
-    class="absolute inset-0 flex flex-col justify-end p-4 transition-all duration-300 bg-gradient-to-t from-black/80 to-transparent"
-    [ngClass]="{
+  <div class="absolute bottom-0 left-0 right-0 h-1/2 pointer-events-none 
+    bg-gradient-to-t from-black/90 to-transparent transition-opacity duration-300"
+    [ngClass]="{ 'opacity-0': !controlsVisible }">
+  </div>
+
+  <div class="absolute inset-0 flex flex-col justify-end p-4 transition-all duration-300" [ngClass]="{
       'opacity-0 pointer-events-none': !controlsVisible,
       'cursor-none': !controlsVisible
     }" (click)="onSingleClick()" (dblclick)="onDoubleClick($event)">
 
-    @if(this.videoRef){
+    @if(videoReady){
     <div (click)="$event.stopPropagation()">
       <app-main-timeline #mainTimelineRef [videoRef]="this.videoRef" [scrubThumbData]="this.thumbnailData"
-        [markersData]="this.markersData"></app-main-timeline>
+        [markersData]="this.markersData">
+      </app-main-timeline>
 
       <div class="flex items-center justify-between gap-2 mt-2 text-white">
-
-        @if (this.videoRef) {
 
         <div class="flex items-center gap-2 ">
           <app-play-pause-button [videoRef]="this.videoRef">
@@ -39,7 +41,6 @@
           <app-settings-button [videoRef]="this.videoRef"></app-settings-button>
           <app-full-screen-button [playerContainerRef]="this.playerWrap"></app-full-screen-button>
         </div>
-        }
 
       </div>
     </div>

@@ -18,12 +18,10 @@ export class PlaylistAPIService {
 
   constructor(private http: HttpClient) {}
 
-  getUserPlaylists(
-    username: string
-  ): Observable<ApiSuccessResponse<PlaylistDataResponse>> {
+  getUserPlaylists(): Observable<ApiSuccessResponse<PlaylistDataResponse>> {
     return this.http
       .get<ApiSuccessResponse<PlaylistDataResponse>>(
-        `${this.baseUrl}/users/${username}/playlists`,
+        `${this.baseUrl}/me/playlists`,
         { withCredentials: true }
       )
       .pipe(
@@ -36,13 +34,14 @@ export class PlaylistAPIService {
       );
   }
 
-  createUserPlaylist(
-    username: string,
-    playlist: { title: string; description?: string; videoIds: string[] }
-  ): Observable<ApiSuccessResponse<PlaylistData>> {
+  createUserPlaylist(playlist: {
+    title: string;
+    description?: string;
+    videoIds: string[];
+  }): Observable<ApiSuccessResponse<PlaylistData>> {
     return this.http
       .post<ApiSuccessResponse<PlaylistData>>(
-        `${this.baseUrl}/users/${username}/playlists`,
+        `${this.baseUrl}/me/playlists`,
         playlist,
         { withCredentials: true } // ✅ important
       )
@@ -61,23 +60,17 @@ export class PlaylistAPIService {
       );
   }
 
-  deleteUserPlaylistBySlug(
-    username: string,
-    slug: string
-  ): Observable<ApiSuccessResponse<null>> {
+  deleteUserPlaylistBySlug(slug: string): Observable<ApiSuccessResponse<null>> {
     return this.http.delete<ApiSuccessResponse<null>>(
-      `${this.baseUrl}/users/${username}/playlists/${slug}`,
+      `${this.baseUrl}/me/playlists/${slug}`,
       { withCredentials: true } // ✅ important
     );
   }
 
-  savePlaylistsOrder(
-    username: string,
-    order: string[]
-  ): Observable<ApiSuccessResponse<null>> {
+  savePlaylistsOrder(order: string[]): Observable<ApiSuccessResponse<null>> {
     return this.http
       .put<ApiSuccessResponse<null>>(
-        `${this.baseUrl}/users/${username}/playlists/order`,
+        `${this.baseUrl}/me/playlists/order`,
         { order },
         { withCredentials: true }
       )
@@ -97,13 +90,12 @@ export class PlaylistAPIService {
   }
 
   updateUserPlaylistInfo(
-    username: string,
     slug: string,
     update: { title?: string; description?: string }
   ): Observable<ApiSuccessResponse<PlaylistData>> {
     return this.http
       .put<ApiSuccessResponse<PlaylistData>>(
-        `${this.baseUrl}/users/${username}/playlists/${slug}`,
+        `${this.baseUrl}/me/playlists/${slug}`,
         update,
         { withCredentials: true }
       )
