@@ -19,8 +19,8 @@ import {
   catchError,
 } from 'rxjs';
 
-import { SearchApiService } from '../../../../ova-angular-sdk/search-api.service';
-import { SuggestionApiService } from '../../../../ova-angular-sdk/search-suggestion-api.service';
+import { SearchApiService } from '../../../../ova-angular-sdk/rest-api/search-api.service';
+import { SuggestionApiService } from '../../../../ova-angular-sdk/rest-api/search-suggestion-api.service';
 
 @Component({
   selector: 'app-autocomplete-search-bar',

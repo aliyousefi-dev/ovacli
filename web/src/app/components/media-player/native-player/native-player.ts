@@ -9,9 +9,9 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { VideoApiService } from '../../../../ova-angular-sdk/video-api.service';
+import { VideoApiService } from '../../../../ova-angular-sdk/rest-api/video-api.service';
 import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
-import { ScrubThumbApiService } from '../../../../ova-angular-sdk/scrub-thumb-api.service';
+import { ScrubThumbApiService } from '../../../../ova-angular-sdk/rest-api/scrub-thumb-api.service';
 import { ScrubThumbData } from './data-types/scrub-thumb-data';
 import { PlayPauseButton } from './controls/buttons/play-pause-button/play-pause-button';
 import { VolumeButton } from './controls/buttons/volume-button/volume-button';

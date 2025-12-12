@@ -2,8 +2,8 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
-import { SuggestionApiService } from '../../../../ova-angular-sdk/search-suggestion-api.service';
-import { SearchSuggestionsResponse } from '../../../../ova-angular-sdk/api-responses/searchsuggestions-response';
+import { SuggestionApiService } from '../../../../ova-angular-sdk/rest-api/search-suggestion-api.service';
+import { SearchSuggestionsResponse } from '../../../../ova-angular-sdk/rest-api/api-responses/searchsuggestions-response';
 
 @Component({
   selector: 'app-search-modal',

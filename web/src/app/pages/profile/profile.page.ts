@@ -9,7 +9,7 @@ import {
 import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { VideoData } from '../../../ova-angular-sdk/core-types/video-data';
-import { VideoApiService } from '../../../ova-angular-sdk/video-api.service';
+import { VideoApiService } from '../../../ova-angular-sdk/rest-api/video-api.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 

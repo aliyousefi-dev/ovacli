@@ -1,17 +1,17 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ScrubThumbData } from './core-types/scrub-thumb-data';
-import { environment } from '../environments/environment';
+import { ScrubThumbData } from '../core-types/scrub-thumb-data';
+import { environment } from '../../environments/environment';
+import { OVASDKConfig } from '../global-config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ScrubThumbApiService {
-  private baseUrl = environment.apiBaseUrl; // Update this if necessary or use environment
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+  private config = inject(OVASDKConfig);
 
   // Convert time in HH:MM:SS format to seconds
   private timeToSeconds(time: string): number {
@@ -20,7 +20,7 @@ export class ScrubThumbApiService {
   }
 
   getScrubThumbsUrl(videoId: string): string {
-    return `${this.baseUrl}/preview-thumbnails/${videoId}/thumbnails.vtt`;
+    return `${this.config.apiBaseUrl}/preview-thumbnails/${videoId}/thumbnails.vtt`;
   }
 
   // Method to load scrub thumbnails from a VTT file URL

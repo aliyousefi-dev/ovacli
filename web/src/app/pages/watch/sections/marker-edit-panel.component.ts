@@ -1,5 +1,5 @@
 import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
-import { MarkerApiService } from '../../../../ova-angular-sdk/marker-api.service';
+import { MarkerApiService } from '../../../../ova-angular-sdk/rest-api/marker-api.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';

@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 
 import { ConfirmModalComponent } from '../../components/pop-ups/confirm-modal/confirm-modal.component';
 
-import { WatchedApiService } from '../../../ova-angular-sdk/recent-api.service';
+import { WatchedApiService } from '../../../ova-angular-sdk/rest-api/recent-api.service';
 import { UserProfile } from '../../../ova-angular-sdk/core-types/user-profile';
-import { ProfileApiService } from '../../../ova-angular-sdk/profile-api.service';
+import { ProfileApiService } from '../../../ova-angular-sdk/rest-api/profile-api.service';
 
 // Define session type
 interface SessionEntry {

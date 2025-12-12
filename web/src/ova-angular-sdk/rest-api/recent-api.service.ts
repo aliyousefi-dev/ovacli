@@ -1,20 +1,20 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { ApiSuccessResponse } from './api-responses/core-response';
 
-import { environment } from '../environments/environment';
+import { environment } from '../../environments/environment';
 import { VideoBucketResponse } from './api-responses/video-bucket';
+
+import { OVASDKConfig } from '../global-config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WatchedApiService {
-  private baseUrl = environment.apiBaseUrl;
-  private httpOptions = { withCredentials: true };
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+  private config = inject(OVASDKConfig);
 
   getUserWatched(
     bucket: number = 1
@@ -22,8 +22,8 @@ export class WatchedApiService {
     // Use ApiResponse wrapper
     return this.http
       .get<ApiSuccessResponse<VideoBucketResponse>>(
-        `${this.baseUrl}/me/recent?bucket=${bucket}`,
-        this.httpOptions
+        `${this.config.apiBaseUrl}/me/recent?bucket=${bucket}`,
+        { withCredentials: true }
       )
       .pipe(catchError(this.handleError)); // Handle errors as before
   }
@@ -39,9 +39,9 @@ export class WatchedApiService {
   ): Observable<{ message: string }> {
     return this.http
       .post<{ message: string }>(
-        `${this.baseUrl}/users/${username}/recent`,
+        `${this.config.apiBaseUrl}/users/${username}/recent`,
         { videoId },
-        this.httpOptions
+        { withCredentials: true }
       )
       .pipe(catchError(this.handleError));
   }
@@ -54,8 +54,8 @@ export class WatchedApiService {
   clearUserWatched(username: string): Observable<{ message: string }> {
     return this.http
       .delete<{ message: string }>(
-        `${this.baseUrl}/users/${username}/recent`, // This maps to your DELETE /users/:username/watched endpoint
-        this.httpOptions
+        `${this.config.apiBaseUrl}/users/${username}/recent`, // This maps to your DELETE /users/:username/watched endpoint
+        { withCredentials: true }
       )
       .pipe(catchError(this.handleError));
   }

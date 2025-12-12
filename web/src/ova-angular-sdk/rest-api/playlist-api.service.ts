@@ -1,27 +1,24 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map } from 'rxjs/operators';
 
-import { environment } from '../environments/environment';
-import { PlaylistData } from './core-types/playlist-data';
-
+import { PlaylistData } from '../core-types/playlist-data';
 import { ApiSuccessResponse } from './api-responses/core-response';
-
 import { PlaylistDataResponse } from './api-responses/playlist-response';
+import { OVASDKConfig } from '../global-config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PlaylistAPIService {
-  private baseUrl = environment.apiBaseUrl;
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+  private config = inject(OVASDKConfig);
 
   getUserPlaylists(): Observable<ApiSuccessResponse<PlaylistDataResponse>> {
     return this.http
       .get<ApiSuccessResponse<PlaylistDataResponse>>(
-        `${this.baseUrl}/me/playlists`,
+        `${this.config.apiBaseUrl}/me/playlists`,
         { withCredentials: true }
       )
       .pipe(
@@ -41,7 +38,7 @@ export class PlaylistAPIService {
   }): Observable<ApiSuccessResponse<PlaylistData>> {
     return this.http
       .post<ApiSuccessResponse<PlaylistData>>(
-        `${this.baseUrl}/me/playlists`,
+        `${this.config.apiBaseUrl}/me/playlists`,
         playlist,
         { withCredentials: true } // ✅ important
       )
@@ -62,7 +59,7 @@ export class PlaylistAPIService {
 
   deleteUserPlaylistBySlug(slug: string): Observable<ApiSuccessResponse<null>> {
     return this.http.delete<ApiSuccessResponse<null>>(
-      `${this.baseUrl}/me/playlists/${slug}`,
+      `${this.config.apiBaseUrl}/me/playlists/${slug}`,
       { withCredentials: true } // ✅ important
     );
   }
@@ -70,7 +67,7 @@ export class PlaylistAPIService {
   savePlaylistsOrder(order: string[]): Observable<ApiSuccessResponse<null>> {
     return this.http
       .put<ApiSuccessResponse<null>>(
-        `${this.baseUrl}/me/playlists/order`,
+        `${this.config.apiBaseUrl}/me/playlists/order`,
         { order },
         { withCredentials: true }
       )
@@ -95,7 +92,7 @@ export class PlaylistAPIService {
   ): Observable<ApiSuccessResponse<PlaylistData>> {
     return this.http
       .put<ApiSuccessResponse<PlaylistData>>(
-        `${this.baseUrl}/me/playlists/${slug}`,
+        `${this.config.apiBaseUrl}/me/playlists/${slug}`,
         update,
         { withCredentials: true }
       )

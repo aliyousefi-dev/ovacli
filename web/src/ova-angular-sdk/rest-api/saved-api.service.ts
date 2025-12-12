@@ -1,18 +1,18 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { ApiSuccessResponse } from './api-responses/core-response';
 
-import { environment } from '../environments/environment';
-
 import { VideoBucketResponse } from './api-responses/video-bucket';
+
+import { OVASDKConfig } from '../global-config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SavedApiService {
-  private baseUrl = environment.apiBaseUrl;
+  private config = inject(OVASDKConfig);
 
   private httpOptions = { withCredentials: true };
 
@@ -23,7 +23,7 @@ export class SavedApiService {
   ): Observable<ApiSuccessResponse<VideoBucketResponse>> {
     return this.http
       .get<ApiSuccessResponse<VideoBucketResponse>>(
-        `${this.baseUrl}/me/saved?bucket=${bucket}`,
+        `${this.config.apiBaseUrl}/me/saved?bucket=${bucket}`,
         this.httpOptions
       )
       .pipe(catchError(this.handleError)); // Error handling remains unchanged
@@ -34,9 +34,9 @@ export class SavedApiService {
   ): Observable<{ username: string; videoId: string }> {
     return this.http
       .post<{ data: { username: string; videoId: string } }>(
-        `${this.baseUrl}/me/saved/${videoId}`,
+        `${this.config.apiBaseUrl}/me/saved/${videoId}`,
         {}, // empty body
-        this.httpOptions
+        { withCredentials: true }
       )
       .pipe(
         map((response) => response.data),
@@ -49,8 +49,8 @@ export class SavedApiService {
   ): Observable<{ username: string; videoId: string }> {
     return this.http
       .delete<{ data: { username: string; videoId: string } }>(
-        `${this.baseUrl}/me/saved/${videoId}`,
-        this.httpOptions
+        `${this.config.apiBaseUrl}/me/saved/${videoId}`,
+        { withCredentials: true }
       )
       .pipe(
         map((response) => response.data),

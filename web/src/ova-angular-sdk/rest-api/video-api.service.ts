@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../environments/environment';
+import { OVASDKConfig } from '../global-config';
 
-import { VideoData } from './core-types/video-data';
+import { VideoData } from '../core-types/video-data';
 import { ApiSuccessResponse } from './api-responses/core-response';
 import { SimilarVideosResponse } from './api-responses/similar-videos-response';
 
@@ -11,9 +11,8 @@ import { SimilarVideosResponse } from './api-responses/similar-videos-response';
   providedIn: 'root',
 })
 export class VideoApiService {
-  private baseUrl = environment.apiBaseUrl;
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+  private config = inject(OVASDKConfig);
 
   getVideosByFolder(folder: string): Observable<ApiSuccessResponse<any>> {
     const params = new URLSearchParams();
@@ -21,21 +20,21 @@ export class VideoApiService {
       params.set('folder', folder);
     }
     return this.http.get<ApiSuccessResponse<any>>(
-      `${this.baseUrl}/videos?${params.toString()}`,
+      `${this.config.apiBaseUrl}/videos?${params.toString()}`,
       { withCredentials: true }
     );
   }
 
   getVideoById(videoId: string): Observable<ApiSuccessResponse<VideoData>> {
     return this.http.get<ApiSuccessResponse<VideoData>>(
-      `${this.baseUrl}/videos/${videoId}`,
+      `${this.config.apiBaseUrl}/videos/${videoId}`,
       { withCredentials: true }
     );
   }
 
   getVideosByIds(ids: string[]): Observable<ApiSuccessResponse<VideoData[]>> {
     return this.http.post<ApiSuccessResponse<VideoData[]>>(
-      `${this.baseUrl}/videos/batch`,
+      `${this.config.apiBaseUrl}/videos/batch`,
       { IDs: ids },
       { withCredentials: true }
     );
@@ -45,29 +44,29 @@ export class VideoApiService {
     videoId: string
   ): Observable<ApiSuccessResponse<SimilarVideosResponse>> {
     return this.http.get<ApiSuccessResponse<SimilarVideosResponse>>(
-      `${this.baseUrl}/videos/${videoId}/similar`,
+      `${this.config.apiBaseUrl}/videos/${videoId}/similar`,
       { withCredentials: true }
     );
   }
 
   getStreamUrl(videoId: string): string {
-    return `${this.baseUrl}/stream/${videoId}`;
+    return `${this.config.apiBaseUrl}/stream/${videoId}`;
   }
 
   getDownloadUrl(videoId: string): string {
-    return `${this.baseUrl}/download/${videoId}`;
+    return `${this.config.apiBaseUrl}/download/${videoId}`;
   }
 
   getThumbnailUrl(videoId: string): string {
-    return `${this.baseUrl}/thumbnail/${videoId}`;
+    return `${this.config.apiBaseUrl}/thumbnail/${videoId}`;
   }
 
   getPreviewUrl(videoId: string): string {
-    return `${this.baseUrl}/preview/${videoId}`;
+    return `${this.config.apiBaseUrl}/preview/${videoId}`;
   }
 
   getPreviewThumbsUrl(videoId: string): string {
-    return `${this.baseUrl}/preview-thumbnails/${videoId}/thumbnails.vtt`;
+    return `${this.config.apiBaseUrl}/preview-thumbnails/${videoId}/thumbnails.vtt`;
   }
 
   getTrimmedDownloadUrl(videoId: string, start: number, end?: number): string {
@@ -76,7 +75,9 @@ export class VideoApiService {
     if (end !== undefined) {
       params.set('end', end.toString());
     }
-    return `${this.baseUrl}/download/${videoId}/trim?${params.toString()}`;
+    return `${
+      this.config.apiBaseUrl
+    }/download/${videoId}/trim?${params.toString()}`;
   }
 
   addVideoTag(
@@ -84,7 +85,7 @@ export class VideoApiService {
     tag: string
   ): Observable<ApiSuccessResponse<{ tags: string[] }>> {
     return this.http.post<ApiSuccessResponse<{ tags: string[] }>>(
-      `${this.baseUrl}/videos/tags/${videoId}/add`,
+      `${this.config.apiBaseUrl}/videos/tags/${videoId}/add`,
       { tag },
       { withCredentials: true }
     );
@@ -95,7 +96,7 @@ export class VideoApiService {
     tag: string
   ): Observable<ApiSuccessResponse<{ tags: string[] }>> {
     return this.http.post<ApiSuccessResponse<{ tags: string[] }>>(
-      `${this.baseUrl}/videos/tags/${videoId}/remove`,
+      `${this.config.apiBaseUrl}/videos/tags/${videoId}/remove`,
       { tag },
       { withCredentials: true }
     );

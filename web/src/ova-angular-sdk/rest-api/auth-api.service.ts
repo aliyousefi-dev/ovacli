@@ -1,21 +1,21 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ApiSuccessResponse } from './api-responses/core-response';
-import { environment } from '../environments/environment';
+import { environment } from '../../environments/environment';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { AuthStatusResponse } from './api-responses/auth-status';
 import { handleApiError } from './api-responses/error-handler';
+import { OVASDKConfig } from '../global-config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthApiService {
-  private baseUrl = environment.apiBaseUrl;
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+  private config = inject(OVASDKConfig);
 
   login(
     username: string,
@@ -23,7 +23,7 @@ export class AuthApiService {
   ): Observable<ApiSuccessResponse<{ sessionId: string }>> {
     return this.http
       .post<ApiSuccessResponse<{ sessionId: string }>>(
-        `${this.baseUrl}/auth/login`,
+        `${this.config.apiBaseUrl}/auth/login`,
         { username, password },
         { withCredentials: true }
       )
@@ -39,9 +39,13 @@ export class AuthApiService {
 
   logout(): Observable<ApiSuccessResponse<null>> {
     return this.http
-      .post<ApiSuccessResponse<null>>(`${this.baseUrl}/auth/logout`, null, {
-        withCredentials: true,
-      })
+      .post<ApiSuccessResponse<null>>(
+        `${this.config.apiBaseUrl}/auth/logout`,
+        null,
+        {
+          withCredentials: true,
+        }
+      )
       .pipe(
         catchError((error: HttpErrorResponse) => {
           return throwError(() => handleApiError(error));
@@ -52,7 +56,7 @@ export class AuthApiService {
   checkLoginState(): Observable<ApiSuccessResponse<AuthStatusResponse>> {
     return this.http
       .get<ApiSuccessResponse<AuthStatusResponse>>(
-        `${this.baseUrl}/auth/status`,
+        `${this.config.apiBaseUrl}/auth/status`,
         { withCredentials: true }
       )
       .pipe(

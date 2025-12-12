@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { VideoApiService } from '../../../../ova-angular-sdk/video-api.service';
+import { VideoApiService } from '../../../../ova-angular-sdk/rest-api/video-api.service';
 
 @Component({
   selector: 'app-video-metadata-panel',

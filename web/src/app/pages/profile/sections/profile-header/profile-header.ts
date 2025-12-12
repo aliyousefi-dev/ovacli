@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ClipboardModule } from '@angular/cdk/clipboard';
-import { ProfileApiService } from '../../../../../ova-angular-sdk/profile-api.service';
+import { ProfileApiService } from '../../../../../ova-angular-sdk/rest-api/profile-api.service';
 import { UserProfile } from '../../../../../ova-angular-sdk/core-types/user-profile';
 
 @Component({

@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { PlaylistCardComponent } from '../../blocks/playlist-card/playlist-card.component';
 import { CommonModule } from '@angular/common';
-import { PlaylistSummary } from '../../../../ova-angular-sdk/api-responses/playlist-response';
+import { PlaylistSummary } from '../../../../ova-angular-sdk/rest-api/api-responses/playlist-response';
 
 import {
   DragDropModule,
@@ -16,7 +16,7 @@ import {
   moveItemInArray,
 } from '@angular/cdk/drag-drop';
 
-import { PlaylistAPIService } from '../../../../ova-angular-sdk/playlist-api.service';
+import { PlaylistAPIService } from '../../../../ova-angular-sdk/rest-api/playlist-api.service';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 

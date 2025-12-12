@@ -13,8 +13,8 @@ import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SendtoModalComponent } from '../../pop-ups/sendto-modal/sendto-modal.component';
 
-import { VideoApiService } from '../../../../ova-angular-sdk/video-api.service';
-import { SavedApiService } from '../../../../ova-angular-sdk/saved-api.service';
+import { VideoApiService } from '../../../../ova-angular-sdk/rest-api/video-api.service';
+import { SavedApiService } from '../../../../ova-angular-sdk/rest-api/saved-api.service';
 import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
 import { TagLinkComponent } from '../../utility/tag-link/tag-link.component';
 
