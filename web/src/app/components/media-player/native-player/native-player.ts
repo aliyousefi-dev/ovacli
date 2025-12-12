@@ -15,7 +15,8 @@ import { ScrubThumbApiService } from '../../../../services/ova-backend-service/s
 import { ScrubThumbData } from './data-types/scrub-thumb-data';
 import { PlayPauseButton } from './controls/buttons/play-pause-button/play-pause-button';
 import { VolumeButton } from './controls/buttons/volume-button/volume-button';
-import { DisplayTime } from './controls/display-time/display-time';
+import { DisplayCurrentTime } from './controls/display-current-time/display-current-time';
+import { DisplayTotalTime } from './controls/display-total-time/display-total-time';
 import { MainTimeline } from './controls/timeline/main-timeline';
 import { MarkerData } from './data-types/marker-data';
 import { FullScreenButton } from './controls/buttons/full-screen/full-screen-button';
@@ -36,7 +37,8 @@ import { OvaPlayerPreferences } from './data-types/player-preferences-data';
     CommonModule,
     PlayPauseButton,
     VolumeButton,
-    DisplayTime,
+    DisplayCurrentTime,
+    DisplayTotalTime,
     MainTimeline,
     PlayerInputHostDirective,
     FullScreenButton,

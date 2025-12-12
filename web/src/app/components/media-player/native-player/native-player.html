@@ -11,30 +11,24 @@
     [ngClass]="{ 'opacity-0': !controlsVisible }">
   </div>
 
-  <div class="absolute inset-0 flex flex-col justify-end p-4 transition-all duration-300" [ngClass]="{
+  <div class="absolute inset-0 flex flex-col justify-end p-8 transition-all duration-300" [ngClass]="{
       'opacity-0 pointer-events-none': !controlsVisible,
       'cursor-none': !controlsVisible
     }" (click)="onSingleClick()" (dblclick)="onDoubleClick($event)">
 
     @if(videoReady){
     <div (click)="$event.stopPropagation()">
-      <app-main-timeline #mainTimelineRef [videoRef]="this.videoRef" [scrubThumbData]="this.thumbnailData"
-        [markersData]="this.markersData">
-      </app-main-timeline>
+
 
       <div class="flex items-center justify-between gap-2 mt-2 text-white">
 
         <div class="flex items-center gap-2 ">
+          <app-mute-button #muteButtonRef [videoRef]="this.videoRef"></app-mute-button>
+        </div>
+
+        <div>
           <app-play-pause-button [videoRef]="this.videoRef">
           </app-play-pause-button>
-
-          <app-mute-button #muteButtonRef [videoRef]="this.videoRef"></app-mute-button>
-
-          <div class="text-sm font-mono flex gap-1">
-            <app-display-time [videoRef]="this.videoRef">
-            </app-display-time>
-          </div>
-
         </div>
 
         <div class="flex items-center gap-2">
@@ -43,6 +37,15 @@
         </div>
 
       </div>
+
+      <div class="flex justify-center items-end gap-5 text-sm text-white">
+        <app-display-current-time [videoRef]="this.videoRef"></app-display-current-time>
+        <app-main-timeline class="w-full" #mainTimelineRef [videoRef]="this.videoRef"
+          [scrubThumbData]="this.thumbnailData" [markersData]="this.markersData">
+        </app-main-timeline>
+        <app-display-total-time [videoRef]="this.videoRef"></app-display-total-time>
+      </div>
+
     </div>
     }
 
