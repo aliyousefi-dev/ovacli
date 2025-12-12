@@ -7,7 +7,7 @@
         (click)="$event.stopPropagation()">
 
         @if (this.videoData.markers.length > 0) {
-        <li class="menu-title">Total Markers: {{this.videoData.markers.length}}</li>
+        <li class="menu-title">Markers</li>
 
         @for (marker of this.videoData.markers; track $index) {
         <li (click)="selectMarker(marker)">
