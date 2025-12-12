@@ -3,10 +3,10 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ViewChild } from '@angular/core';
 import { ConfirmModalComponent } from '../../../../components/pop-ups/confirm-modal/confirm-modal.component';
-import { WatchedApiService } from '../../../../../services/ova-backend-service/recent-api.service';
-import { AuthApiService } from '../../../../../services/ova-backend-service/auth-api.service';
-import { UserProfile } from '../../../../../services/ova-backend-service/api-types/user-profile';
-import { ProfileApiService } from '../../../../../services/ova-backend-service/profile-api.service';
+import { WatchedApiService } from '../../../../../ova-angular-sdk/recent-api.service';
+import { AuthApiService } from '../../../../../ova-angular-sdk/auth-api.service';
+import { UserProfile } from '../../../../../ova-angular-sdk/core-types/user-profile';
+import { ProfileApiService } from '../../../../../ova-angular-sdk/profile-api.service';
 
 @Component({
   selector: 'app-general-settings',

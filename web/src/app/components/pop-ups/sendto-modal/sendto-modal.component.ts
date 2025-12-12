@@ -9,9 +9,9 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { PlaylistContentAPIService } from '../../../../services/ova-backend-service/playlist-content-api.service';
-import { PlaylistAPIService } from '../../../../services/ova-backend-service/playlist-api.service';
-import { PlaylistSummary } from '../../../../services/ova-backend-service/api-responses/playlist-response';
+import { PlaylistContentAPIService } from '../../../../ova-angular-sdk/playlist-content-api.service';
+import { PlaylistAPIService } from '../../../../ova-angular-sdk/playlist-api.service';
+import { PlaylistSummary } from '../../../../ova-angular-sdk/api-responses/playlist-response';
 
 // Define PlaylistWrapper interface outside the component class
 export interface PlaylistWrapper extends PlaylistSummary {

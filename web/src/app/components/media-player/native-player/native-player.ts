@@ -9,16 +9,16 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { VideoApiService } from '../../../../services/ova-backend-service/video-api.service';
-import { VideoData } from '../../../../services/ova-backend-service/api-types/video-data';
-import { ScrubThumbApiService } from '../../../../services/ova-backend-service/scrub-thumb-api.service';
+import { VideoApiService } from '../../../../ova-angular-sdk/video-api.service';
+import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
+import { ScrubThumbApiService } from '../../../../ova-angular-sdk/scrub-thumb-api.service';
 import { ScrubThumbData } from './data-types/scrub-thumb-data';
 import { PlayPauseButton } from './controls/buttons/play-pause-button/play-pause-button';
 import { VolumeButton } from './controls/buttons/volume-button/volume-button';
 import { DisplayCurrentTime } from './controls/display-current-time/display-current-time';
 import { DisplayTotalTime } from './controls/display-total-time/display-total-time';
 import { MainTimeline } from './controls/timeline/main-timeline';
-import { MarkerData } from './data-types/marker-data';
+import { MarkerDisplay } from './marker-display/marker-display';
 import { FullScreenButton } from './controls/buttons/full-screen/full-screen-button';
 import { SettingsButton } from './controls/buttons/settings-button/settings-button';
 
@@ -42,6 +42,7 @@ import { OvaPlayerPreferences } from './data-types/player-preferences-data';
     MainTimeline,
     PlayerInputHostDirective,
     FullScreenButton,
+    MarkerDisplay,
     SettingsButton,
   ],
 })
@@ -65,7 +66,15 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   private clickTimeout: any;
   private readonly CLICK_DELAY_MS = 250; // ms used to discriminate singe/double click
   isFullscreen: boolean = false;
+  // Overlay visibility state used for center play/pause animation
+  overlayVisible: boolean = false;
+  private overlayTimeout: any;
+  private readonly OVERLAY_DURATION_MS = 1000; // 1 second duration
+  // local property to reflect the video's paused state for ngClass swap-active
+  isPaused: boolean = true;
   private onVideoMetadataLoadedBound = this.onVideoMetadataLoaded.bind(this);
+  private onVideoPlayBound = this.onVideoPlay.bind(this);
+  private onVideoPauseBound = this.onVideoPause.bind(this);
   private fullscreenChangeHandler = this.onFullscreenChange.bind(this);
   // --- Constant for seek step size (5 seconds) ---
 
@@ -73,13 +82,6 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   private scrubThumbApiService = inject(ScrubThumbApiService);
   thumbnailData: ScrubThumbData[] = [];
   private localStorageService = inject(LocalStorageService);
-
-  // Array of Marker objects
-  markersData: MarkerData[] = [
-    { timeSecond: 22, title: 'Introduction' },
-    { timeSecond: 60, title: 'Chapter 1: Start' },
-    { timeSecond: 2000, title: 'Conclusion' },
-  ];
 
   constructor(private cd: ChangeDetectorRef) {}
 
@@ -138,6 +140,11 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
     // Use the stored bound function to ensure removal will work later
     video.addEventListener('loadedmetadata', this.onVideoMetadataLoadedBound);
 
+    // keep a simple isPaused boolean in sync with the video's state
+    this.isPaused = video.paused;
+    video.addEventListener('play', this.onVideoPlayBound);
+    video.addEventListener('pause', this.onVideoPauseBound);
+
     this.applySavedPreferences();
     // Ensure controls are visible initially for a moment.
     // Wrap in a macrotask to avoid ExpressionChangedAfterItHasBeenCheckedError
@@ -154,11 +161,20 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.clearHideControlsTimeout(); // Ensure timeout is cleared
+    this.clearOverlayTimeout();
     if (this.videoRef?.nativeElement) {
       // Remove the event listener using the bound function used for adding it
       this.videoRef.nativeElement.removeEventListener(
         'loadedmetadata',
         this.onVideoMetadataLoadedBound
+      );
+      this.videoRef.nativeElement.removeEventListener(
+        'play',
+        this.onVideoPlayBound
+      );
+      this.videoRef.nativeElement.removeEventListener(
+        'pause',
+        this.onVideoPauseBound
       );
     }
     // remove fullscreen listener
@@ -179,6 +195,7 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
       video.pause();
     }
     this.showControls();
+    this.showOverlay();
   }
 
   /** Handle single click with a small delay so double click can be detected. */
@@ -221,6 +238,25 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
       document.fullscreenElement === this.playerWrap?.nativeElement;
   }
 
+  /** Shows overlay and schedules hiding after fixed duration. */
+  private showOverlay() {
+    this.overlayVisible = true;
+    this.clearOverlayTimeout();
+    this.overlayTimeout = setTimeout(() => {
+      this.overlayVisible = false;
+      this.overlayTimeout = null;
+      this.cd.detectChanges();
+    }, this.OVERLAY_DURATION_MS);
+    this.cd.detectChanges();
+  }
+
+  private clearOverlayTimeout() {
+    if (this.overlayTimeout) {
+      clearTimeout(this.overlayTimeout);
+      this.overlayTimeout = null;
+    }
+  }
+
   // --- Controls Visibility Logic ---
 
   /** Clears the existing timeout for hiding controls. */
@@ -256,6 +292,16 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
           console.error('Error loading scrub thumbnails:', err);
         },
       });
+  }
+
+  private onVideoPlay() {
+    this.isPaused = false;
+    this.showOverlay();
+  }
+
+  private onVideoPause() {
+    this.isPaused = true;
+    this.showOverlay();
   }
 
   /** Handler for when video metadata is loaded. */

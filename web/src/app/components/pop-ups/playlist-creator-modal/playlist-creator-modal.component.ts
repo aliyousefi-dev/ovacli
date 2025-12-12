@@ -1,7 +1,7 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PlaylistAPIService } from '../../../../services/ova-backend-service/playlist-api.service';
+import { PlaylistAPIService } from '../../../../ova-angular-sdk/playlist-api.service';
 import { ViewChild } from '@angular/core';
 import { AfterViewInit } from '@angular/core';
 

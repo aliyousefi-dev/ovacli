@@ -1,4 +1,4 @@
-import { VideoData } from '../api-types/video-data';
+import { VideoData } from '../core-types/video-data';
 
 export interface SimilarVideosResponse {
   similarVideos: VideoData[];

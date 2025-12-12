@@ -23,9 +23,9 @@ import {
 
 defineCustomElement(MediaSliderThumbnailElement);
 
-import { VideoData } from '../../../../services/ova-backend-service/api-types/video-data';
-import { VideoApiService } from '../../../../services/ova-backend-service/video-api.service';
-import { MarkerApiService } from '../../../../services/ova-backend-service/marker-api.service';
+import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
+import { VideoApiService } from '../../../../ova-angular-sdk/video-api.service';
+import { MarkerApiService } from '../../../../ova-angular-sdk/marker-api.service';
 
 @Component({
   selector: 'app-vidstack-player',

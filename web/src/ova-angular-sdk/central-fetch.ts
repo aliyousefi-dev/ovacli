@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { VideoData } from './api-types/video-data';
+import { VideoData } from './core-types/video-data';
 
 import { LatestVideosService } from './latest-api.service';
 import { VideoApiService } from './video-api.service';
@@ -10,7 +10,7 @@ import { WatchedApiService } from './recent-api.service';
 import { SavedApiService } from './saved-api.service';
 import { PlaylistContentAPIService } from './playlist-content-api.service';
 
-import { VideoGallery } from './api-types/video-gallery';
+import { VideoGallery } from './core-types/video-gallery';
 
 @Injectable({
   providedIn: 'root',

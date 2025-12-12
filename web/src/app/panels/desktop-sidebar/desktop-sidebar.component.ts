@@ -3,7 +3,7 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { OvaAboutModalComponent } from '../../components/pop-ups/ova-about-modal/ova-about-modal.component';
 import { ViewChild } from '@angular/core';
-import { AuthApiService } from '../../../services/ova-backend-service/auth-api.service';
+import { AuthApiService } from '../../../ova-angular-sdk/auth-api.service';
 import { Router } from '@angular/router';
 import { GlobalOVAConfig } from '../../../global-config';
 

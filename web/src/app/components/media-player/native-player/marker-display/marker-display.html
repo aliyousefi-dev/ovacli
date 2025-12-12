@@ -1,0 +1,23 @@
+<div class="dropdown dropdown-start dropdown-left" [ngClass]="{'dropdown-open': isOpen}">
+    <button class="btn btn-circle" (click)="toggle($event)">
+        <i class='bx bxs-detail bx-xs'></i>
+    </button>
+
+    <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 text-xs"
+        (click)="$event.stopPropagation()">
+
+        @if (this.videoData.markers.length > 0) {
+        <li class="menu-title">Total Markers: {{this.videoData.markers.length}}</li>
+
+        @for (marker of this.videoData.markers; track $index) {
+        <li (click)="selectMarker(marker)">
+            <a>{{ formatTime(marker.timeSecond) }} - {{ marker.title }}</a>
+        </li>
+        }
+        }
+        @else {
+        <li class="opacity-50"><a>No markers</a></li>
+        }
+
+    </ul>
+</div>

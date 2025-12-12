@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ScrubThumbData } from './api-types/scrub-thumb-data';
-import { environment } from '../../environments/environment';
+import { ScrubThumbData } from './core-types/scrub-thumb-data';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root',

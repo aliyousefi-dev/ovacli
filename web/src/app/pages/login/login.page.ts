@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router'; // Import Router for navigation
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AuthApiService } from '../../../services/ova-backend-service/auth-api.service';
+import { AuthApiService } from '../../../ova-angular-sdk/auth-api.service';
 
 @Component({
   selector: 'app-login',

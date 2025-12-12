@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ClipboardModule } from '@angular/cdk/clipboard';
-import { ProfileApiService } from '../../../../../services/ova-backend-service/profile-api.service';
-import { UserProfile } from '../../../../../services/ova-backend-service/api-types/user-profile';
+import { ProfileApiService } from '../../../../../ova-angular-sdk/profile-api.service';
+import { UserProfile } from '../../../../../ova-angular-sdk/core-types/user-profile';
 
 @Component({
   selector: 'app-space-header',

@@ -41,12 +41,19 @@ func getVideoByID(repoMgr *repo.RepoManager) gin.HandlerFunc {
 			return
 		}
 
+		fakeMarkers := []apitypes.MarkerData{
+			{TimeSecond: 22, Title: "Introduction"},
+			{TimeSecond: 60, Title: "Chapter 1: Start"},
+			{TimeSecond: 2000, Title: "Conclusion"},
+		}
+
 		// Create the VideoDataAPIResponse from VideoData
 		videoResponse := apitypes.VideoDataAPIResponse{
 			VideoID:              video.VideoID,
 			FileName:             video.GetFileName(),
 			Tags:                 video.Tags,
 			Codecs:               video.Codecs,
+			Markers:              fakeMarkers,
 			IsCooked:             video.IsCooked,
 			OwnerAccountUsername: userdata.Username,
 			TotalViews:           video.TotalViews,

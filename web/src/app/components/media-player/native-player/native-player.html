@@ -6,6 +6,26 @@
     [src]="videoUrl" [poster]="thumbnailUrl" (click)="onSingleClick()" (dblclick)="onDoubleClick($event)">
   </video>
 
+  <!-- Top-left marker display -->
+  @if(videoReady){
+  <div class="absolute top-5 right-5 z-50 pointer-events-auto transition-opacity duration-300"
+    [ngClass]="{ 'opacity-0 pointer-events-none': !controlsVisible }" (click)="$event.stopPropagation()">
+    <app-marker-display [videoData]="this.videoData" [videoRef]="this.videoRef"></app-marker-display>
+  </div>
+  }
+
+  <!-- Center play/pause swap overlay (shows on play/pause) -->
+  <div
+    class="absolute inset-0 flex items-center justify-center pointer-events-none z-50 transition-opacity duration-300"
+    [ngClass]="{ 'opacity-0': !overlayVisible }">
+    <label class="btn btn-ghost btn-sm btn-square swap swap-rotate text-white" [ngClass]="{ 'swap-active': isPaused }">
+
+      <i class='bx bx-play  text-[10rem] swap-on'></i>
+
+      <i class='bx bx-pause text-[10rem] swap-off'></i>
+    </label>
+  </div>
+
   <div class="absolute bottom-0 left-0 right-0 h-1/2 pointer-events-none 
     bg-gradient-to-t from-black/90 to-transparent transition-opacity duration-300"
     [ngClass]="{ 'opacity-0': !controlsVisible }">
@@ -19,16 +39,13 @@
     @if(videoReady){
     <div (click)="$event.stopPropagation()">
 
-
+      <!-- Controls -->
       <div class="flex items-center justify-between gap-2 mt-2 text-white">
 
         <div class="flex items-center gap-2 ">
-          <app-mute-button #muteButtonRef [videoRef]="this.videoRef"></app-mute-button>
-        </div>
-
-        <div>
           <app-play-pause-button [videoRef]="this.videoRef">
           </app-play-pause-button>
+          <app-mute-button #muteButtonRef [videoRef]="this.videoRef"></app-mute-button>
         </div>
 
         <div class="flex items-center gap-2">
@@ -38,10 +55,11 @@
 
       </div>
 
+      <!-- Timeline and time display -->
       <div class="flex justify-center items-end gap-5 text-sm text-white">
         <app-display-current-time [videoRef]="this.videoRef"></app-display-current-time>
         <app-main-timeline class="w-full" #mainTimelineRef [videoRef]="this.videoRef"
-          [scrubThumbData]="this.thumbnailData" [markersData]="this.markersData">
+          [scrubThumbData]="this.thumbnailData" [markersData]="this.videoData.markers">
         </app-main-timeline>
         <app-display-total-time [videoRef]="this.videoRef"></app-display-total-time>
       </div>

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { ApiSuccessResponse } from './api-responses/core-response';
 
-import { environment } from '../../environments/environment';
+import { environment } from '../environments/environment';
 import { SearchResponse } from './api-responses/search-response';
 
 @Injectable({

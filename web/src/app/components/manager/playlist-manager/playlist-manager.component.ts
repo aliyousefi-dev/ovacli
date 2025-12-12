@@ -2,11 +2,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 
-import { PlaylistAPIService } from '../../../../services/ova-backend-service/playlist-api.service';
+import { PlaylistAPIService } from '../../../../ova-angular-sdk/playlist-api.service';
 import { PlaylistGridComponent } from '../../containers/playlists-view/playlists-view.component';
 import { PlaylistCreatorModal } from '../../pop-ups/playlist-creator-modal/playlist-creator-modal.component';
 import { ConfirmModalComponent } from '../../pop-ups/confirm-modal/confirm-modal.component';
-import { PlaylistSummary } from '../../../../services/ova-backend-service/api-responses/playlist-response';
+import { PlaylistSummary } from '../../../../ova-angular-sdk/api-responses/playlist-response';
 
 @Component({
   selector: 'app-playlist-manager',

@@ -8,12 +8,12 @@ import {
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { VideoApiService } from '../../../../services/ova-backend-service/video-api.service';
-import { PlaylistAPIService } from '../../../../services/ova-backend-service/playlist-api.service';
+import { VideoApiService } from '../../../../ova-angular-sdk/video-api.service';
+import { PlaylistAPIService } from '../../../../ova-angular-sdk/playlist-api.service';
 import { ConfirmModalComponent } from '../../pop-ups/confirm-modal/confirm-modal.component';
 import { EditPlaylistModalComponent } from '../../pop-ups/edit-playlist-modal/edit-playlist-modal.component';
 import { Router } from '@angular/router';
-import { PlaylistSummary } from '../../../../services/ova-backend-service/api-responses/playlist-response';
+import { PlaylistSummary } from '../../../../ova-angular-sdk/api-responses/playlist-response';
 
 @Component({
   selector: 'app-playlist-card',

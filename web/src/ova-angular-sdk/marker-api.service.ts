@@ -2,9 +2,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { environment } from '../environments/environment';
 import { ApiSuccessResponse } from './api-responses/core-response';
-import { VideoMarker } from './api-types/video-marker';
+import { VideoMarker } from './core-types/video-marker';
 
 @Injectable({
   providedIn: 'root',
