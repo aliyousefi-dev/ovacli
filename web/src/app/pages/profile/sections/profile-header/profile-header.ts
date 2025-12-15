@@ -13,7 +13,7 @@ import { UserProfile } from '../../../../../ova-angular-sdk/core-types/user-prof
 export class ProfileHeaderSection implements OnInit {
   private profileApiService = inject(ProfileApiService);
   profile!: UserProfile;
-  copied = false; // 🔹 Track copy status
+  copied = false;
 
   OpenSettingsModal(): void {
     const modal: any = document.getElementById('settings_modal');
@@ -24,7 +24,7 @@ export class ProfileHeaderSection implements OnInit {
 
   onCopy(): void {
     this.copied = true;
-    setTimeout(() => (this.copied = false), 2000); // 🔹 Reset after 2s
+    setTimeout(() => (this.copied = false), 2000);
   }
 
   ngOnInit() {

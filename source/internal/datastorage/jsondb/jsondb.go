@@ -1,9 +1,6 @@
 package jsondb
 
-import (
-	"ova-cli/source/internal/interfaces"
-	"sync"
-)
+import "sync"
 
 type JsonDB struct {
 	mu         sync.Mutex
@@ -13,5 +10,3 @@ type JsonDB struct {
 func NewJsonDB(storageDir string) *JsonDB {
 	return &JsonDB{storageDir: storageDir}
 }
-
-var _ interfaces.DiskDataStorage = (*JsonDB)(nil)

@@ -13,11 +13,6 @@ func (r *RepoManager) GetAllSpaces() {
 // CreateSpace creates a new space with a directory and owner.
 func (r *RepoManager) CreateSpace(spacedata datatypes.SpaceData) error {
 
-	// Save space data in disk storage
-	if err := r.diskDataStorage.CreateSpace(&spacedata); err != nil {
-		return fmt.Errorf("failed to save space data: %w", err)
-	}
-
 	return nil
 }
 

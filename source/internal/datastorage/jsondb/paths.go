@@ -21,3 +21,7 @@ func (s *JsonDB) getSpaceDataFilePath() string {
 func (s *JsonDB) getWatchedDataFilePath() string {
 	return filepath.Join(s.storageDir, "watched.json")
 }
+
+func (s *JsonDB) getVideoRatesDataFilePath() string {
+	return filepath.Join(s.storageDir, "video-rates.json")
+}

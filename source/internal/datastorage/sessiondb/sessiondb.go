@@ -1,9 +1,6 @@
 package sessiondb
 
-import (
-	"ova-cli/source/internal/interfaces"
-	"sync"
-)
+import "sync"
 
 type SessionDB struct {
 
@@ -20,6 +17,3 @@ func NewSessionDB(storageDir string) *SessionDB {
 		storageDir: storageDir,
 	}
 }
-
-var _ interfaces.SessionDataStorage = (*SessionDB)(nil)
-

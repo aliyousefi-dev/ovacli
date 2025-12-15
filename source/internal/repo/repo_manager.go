@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"ova-cli/source/internal/datastorage"
 	"ova-cli/source/internal/datatypes"
-	"ova-cli/source/internal/interfaces"
 )
 
 // RepoManager handles video registration, thumbnails, previews, etc.
@@ -12,8 +11,8 @@ type RepoManager struct {
 	rootDir            string
 	configs            datatypes.ConfigData
 	AuthEnabled        bool
-	diskDataStorage    interfaces.DiskDataStorage
-	sessionDataStorage interfaces.SessionDataStorage
+	diskDataStorage    datastorage.DiskDataStorage
+	sessionDataStorage datastorage.SessionDataStorage
 }
 
 // NewRepoManager creates a new instance of RepoManager and initializes data storage.

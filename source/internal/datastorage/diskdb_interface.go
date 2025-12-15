@@ -1,4 +1,4 @@
-package interfaces
+package datastorage
 
 import "ova-cli/source/internal/datatypes"
 
@@ -30,6 +30,22 @@ type DiskDataStorage interface {
 	GetUserPlaylistContentVideosCount(username, playlistSlug string) (int, error)
 	GetUserPlaylistContentVideosInRange(username, playlistSlug string, start, end int) ([]string, error)
 
+	// Spaces Management
+	CreateSpace(space *datatypes.SpaceData) error
+	GetVideosBySpace(spacePath string) ([]datatypes.VideoData, error)
+	GetVideoCountInSpace(spacePath string) (int, error)
+	GetVideoIDsBySpaceInRange(spacePath string, start, end int) ([]string, error)
+	AddVideoIDToSpace(videoId, filePath string) error
+
+	// New method to get total video count
+	GetTotalVideoCount() (int, error)
+
+	// New method to add video to user's watched list
+	AddVideoToWatched(username, videoID string) error
+	GetUserWatchedVideos(username string) ([]string, error)
+	ClearUserWatchedHistory(username string) error
+
+	GetSearchSuggestions(query string) ([]string, error)
 	// Video tags management
 	AddTagToVideo(videoID, tag string) error
 	RemoveTagFromVideo(videoID, tag string) error
@@ -47,21 +63,4 @@ type DiskDataStorage interface {
 
 	// Folder management
 	GetFolderList() ([]string, error)
-
-	// Spaces Management
-	CreateSpace(space *datatypes.SpaceData) error
-	GetVideosBySpace(spacePath string) ([]datatypes.VideoData, error)
-	GetVideoCountInSpace(spacePath string) (int, error)
-	GetVideoIDsBySpaceInRange(spacePath string, start, end int) ([]string, error)
-	AddVideoIDToSpace(videoId, filePath string) error
-
-	// New method to get total video count
-	GetTotalVideoCount() (int, error)
-
-	// New method to add video to user's watched list
-	AddVideoToWatched(username, videoID string) error
-	GetUserWatchedVideos(username string) ([]string, error)
-	ClearUserWatchedHistory(username string) error
-
-	GetSearchSuggestions(query string) ([]string, error)
 }

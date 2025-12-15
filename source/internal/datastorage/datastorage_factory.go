@@ -4,13 +4,12 @@ import (
 	"fmt"
 	"ova-cli/source/internal/datastorage/jsondb"
 	"ova-cli/source/internal/datastorage/sessiondb"
-	"ova-cli/source/internal/interfaces"
 )
 
 // NewDiskStorage creates a new storage backend instance based on the given type.
 // storageType can be "jsondb" or "boltdb".
 // storagePath is the base path to store the data.
-func NewDiskStorage(storageType, dataStoragePath string) (interfaces.DiskDataStorage, error) {
+func NewDiskStorage(storageType, dataStoragePath string) (DiskDataStorage, error) {
 	switch storageType {
 	case "jsondb":
 		return jsondb.NewJsonDB(dataStoragePath), nil
@@ -19,6 +18,6 @@ func NewDiskStorage(storageType, dataStoragePath string) (interfaces.DiskDataSto
 	}
 }
 
-func NewSessionStorage(dataStoragePath string) (interfaces.SessionDataStorage, error) {
+func NewSessionStorage(dataStoragePath string) (SessionDataStorage, error) {
 	return sessiondb.NewSessionDB(dataStoragePath), nil
 }
