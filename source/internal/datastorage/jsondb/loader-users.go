@@ -3,7 +3,7 @@ package jsondb
 import (
 	"encoding/json"
 	"os"
-	"ova-cli/source/internal/datatypes"
+	"ova-cli/source/internal/datastorage/datatypes"
 )
 
 func (s *JsonDB) loadUsers() (map[string]datatypes.UserData, error) {

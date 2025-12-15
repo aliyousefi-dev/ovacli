@@ -3,7 +3,7 @@ package jsondb
 import (
 	"encoding/json"
 	"os"
-	"ova-cli/source/internal/datatypes"
+	"ova-cli/source/internal/datastorage/datatypes"
 )
 
 // Load video marker data for all videos (assuming the data is stored in a map with videoID as key, value as array of markers)

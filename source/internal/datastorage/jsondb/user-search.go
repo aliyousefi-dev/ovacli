@@ -2,7 +2,7 @@ package jsondb
 
 import (
 	"fmt"
-	"ova-cli/source/internal/datatypes"
+	"ova-cli/source/internal/datastorage/datatypes"
 )
 
 // GetUserByUsername finds a user by their username.

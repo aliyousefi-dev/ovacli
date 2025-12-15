@@ -1,13 +1,13 @@
 package jsondb
 
-import "ova-cli/source/internal/datatypes"
+import "ova-cli/source/internal/datastorage/datatypes"
 
 // Get all video markers (returns the map of video IDs to array of VideoMarkerData)
 func (jsdb *JsonDB) GetAllMarkers() (map[string][]datatypes.VideoMarkerData, error) {
 	return jsdb.loadMarkers()
 }
 
-func (jsdb *JsonDB) GetMarkerByVideoId(videoID string) ([]datatypes.VideoMarkerData, error) {
+func (jsdb *JsonDB) GetMarkersByVideoId(videoID string) ([]datatypes.VideoMarkerData, error) {
 	allMarkers, err := jsdb.GetAllMarkers()
 	if err != nil {
 		return nil, err
@@ -67,37 +67,4 @@ func (jsdb *JsonDB) MarkerExists(videoID string) (bool, error) {
 	}
 	markers, exists := allMarkers[videoID]
 	return exists && len(markers) > 0, nil
-}
-
-// ClearAllMarkers removes all markers
-func (jsdb *JsonDB) ClearAllMarkers() error {
-	return jsdb.saveMarkers(make(map[string][]datatypes.VideoMarkerData))
-}
-
-// GetMarkerCount returns the total number of markers across all videos
-func (jsdb *JsonDB) GetMarkerCount() (int, error) {
-	allMarkers, err := jsdb.GetAllMarkers()
-	if err != nil {
-		return 0, err
-	}
-	count := 0
-	for _, markers := range allMarkers {
-		count += len(markers)
-	}
-	return count, nil
-}
-
-// GetMarkersByVideoIds retrieves all markers for multiple video IDs
-func (jsdb *JsonDB) GetMarkersByVideoIds(videoIDs []string) (map[string][]datatypes.VideoMarkerData, error) {
-	allMarkers, err := jsdb.GetAllMarkers()
-	if err != nil {
-		return nil, err
-	}
-	result := make(map[string][]datatypes.VideoMarkerData)
-	for _, id := range videoIDs {
-		if markers, exists := allMarkers[id]; exists {
-			result[id] = markers
-		}
-	}
-	return result, nil
 }

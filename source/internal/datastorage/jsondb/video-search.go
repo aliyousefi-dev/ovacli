@@ -3,7 +3,7 @@ package jsondb
 import (
 	"fmt"
 	"math/rand/v2"
-	"ova-cli/source/internal/datatypes"
+	"ova-cli/source/internal/datastorage/datatypes"
 	"path/filepath"
 	"sort"
 	"strings"

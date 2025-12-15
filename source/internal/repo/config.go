@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"ova-cli/source/internal/datatypes"
+	"ova-cli/source/internal/datastorage/datatypes"
 	"time"
 )
 

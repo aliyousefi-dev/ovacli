@@ -3,7 +3,7 @@ package repo
 import (
 	"fmt"
 
-	"ova-cli/source/internal/datatypes"
+	"ova-cli/source/internal/datastorage/datatypes"
 )
 
 // AddVideo adds a new video if it does not already exist.

@@ -3,7 +3,8 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"ova-cli/source/internal/datatypes"
+
+	"ova-cli/source/internal/datastorage/datatypes"
 	"ova-cli/source/internal/repo"
 	"path/filepath"
 

@@ -3,7 +3,7 @@ package repo
 import (
 	"fmt"
 	"ova-cli/source/internal/datastorage"
-	"ova-cli/source/internal/datatypes"
+	"ova-cli/source/internal/datastorage/datatypes"
 )
 
 // RepoManager handles video registration, thumbnails, previews, etc.

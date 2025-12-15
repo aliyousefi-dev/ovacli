@@ -5,10 +5,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gin-gonic/gin"
-
-	"ova-cli/source/internal/api"
 	"ova-cli/source/internal/repo"
+	"ova-cli/source/internal/server/api"
+
+	"github.com/gin-gonic/gin"
 )
 
 type OvaServer struct {

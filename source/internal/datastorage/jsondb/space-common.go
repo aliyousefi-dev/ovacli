@@ -2,7 +2,8 @@ package jsondb
 
 import (
 	"fmt"
-	"ova-cli/source/internal/datatypes"
+	"ova-cli/source/internal/datastorage/datatypes"
+
 	"path/filepath"
 	"strings"
 )

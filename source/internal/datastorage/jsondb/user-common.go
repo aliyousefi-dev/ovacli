@@ -2,7 +2,7 @@ package jsondb
 
 import (
 	"fmt"
-	"ova-cli/source/internal/datatypes"
+	"ova-cli/source/internal/datastorage/datatypes"
 )
 
 // CreateUser adds a new user if a user with the same username does not already exist.

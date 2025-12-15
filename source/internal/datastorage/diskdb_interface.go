@@ -1,6 +1,6 @@
 package datastorage
 
-import "ova-cli/source/internal/datatypes"
+import "ova-cli/source/internal/datastorage/datatypes"
 
 // DiskDataStorage defines methods for user and video data operations without context.
 type DiskDataStorage interface {
@@ -36,6 +36,10 @@ type DiskDataStorage interface {
 	GetVideoCountInSpace(spacePath string) (int, error)
 	GetVideoIDsBySpaceInRange(spacePath string, start, end int) ([]string, error)
 	AddVideoIDToSpace(videoId, filePath string) error
+
+	// marker management
+	GetMarkersByVideoId(videoID string) ([]datatypes.VideoMarkerData, error)
+	AddMarker(videoID string, markerData datatypes.VideoMarkerData) error
 
 	// New method to get total video count
 	GetTotalVideoCount() (int, error)

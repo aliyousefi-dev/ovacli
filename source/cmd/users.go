@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"ova-cli/source/internal/datatypes"
+	"ova-cli/source/internal/datastorage/datatypes"
 	"ova-cli/source/internal/logs"
 	"ova-cli/source/internal/repo"
 

@@ -3,7 +3,8 @@ package repo
 import (
 	"fmt"
 	"os"
-	"ova-cli/source/internal/datatypes"
+	"ova-cli/source/internal/datastorage/datatypes"
+
 	"path/filepath"
 	"sort"
 	"strings"

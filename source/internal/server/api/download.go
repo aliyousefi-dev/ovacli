@@ -8,8 +8,8 @@ import (
 	"os/exec"
 	"strconv"
 
-	apitypes "ova-cli/source/internal/api-types"
 	"ova-cli/source/internal/repo"
+	apitypes "ova-cli/source/internal/server/api-types"
 	"ova-cli/source/internal/thirdparty"
 
 	"github.com/gin-gonic/gin"

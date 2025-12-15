@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	apitypes "ova-cli/source/internal/api-types"
 	"ova-cli/source/internal/repo"
+	apitypes "ova-cli/source/internal/server/api-types"
 
 	"github.com/gin-gonic/gin"
 )
