@@ -1,7 +1,22 @@
 @baseUrl = http://localhost:443
+@videoID = c711210f-8073-482e-a734-34e9a8ee9794
 
 ###
 
 # Get server status to check if API is running
-GET {{baseUrl}}/api/v1/status
+POST {{baseUrl}}/api/v1/videos/{{videoID}}/markers
+Content-Type: application/json
 Accept: application/json
+
+{
+  "markers": [
+    {
+      "time": 60,
+      "label": "Intro"
+    },
+    {
+      "time": 150,
+      "label": "Main Content"
+    }
+  ]
+}

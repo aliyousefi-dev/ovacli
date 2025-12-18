@@ -12,15 +12,14 @@ import (
 )
 
 type OvaServer struct {
-	RepoManager    *repo.RepoManager
-	SessionManager *api.SessionManager
-	router         *gin.Engine
-	BaseDir        string
-	ServeFrontend  bool
-	FrontendPath   string
-	ExeDir         string
-	UseHttps       bool
-	Addr           string
+	RepoManager   *repo.RepoManager
+	router        *gin.Engine
+	BaseDir       string
+	ServeFrontend bool
+	FrontendPath  string
+	ExeDir        string
+	UseHttps      bool
+	Addr          string
 }
 
 // NewBackendServer creates and configures the unified server.
@@ -36,19 +35,17 @@ func NewBackendServer(
 ) *OvaServer {
 	gin.SetMode(gin.ReleaseMode)
 
-	sessionManager := api.NewSessionManager()
-	sessionManager.DisableAuth = disableAuth
+	repoManager.AuthEnabled = !disableAuth
 
 	return &OvaServer{
-		RepoManager:    repoManager,
-		SessionManager: sessionManager,
-		router:         gin.Default(),
-		BaseDir:        basedir,
-		ServeFrontend:  serveFrontend,
-		FrontendPath:   frontendPath,
-		ExeDir:         exeDir,
-		UseHttps:       useHttps,
-		Addr:           addr,
+		RepoManager:   repoManager,
+		router:        gin.Default(),
+		BaseDir:       basedir,
+		ServeFrontend: serveFrontend,
+		FrontendPath:  frontendPath,
+		ExeDir:        exeDir,
+		UseHttps:      useHttps,
+		Addr:          addr,
 	}
 }
 
