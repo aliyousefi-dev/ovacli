@@ -2,7 +2,7 @@ package jsondb
 
 import "ova-cli/source/internal/datastorage/datatypes"
 
-func (jsdb *JsonDB) GetMarkersForVideo(videoID string) ([]datatypes.VideoMarkerData, error) {
+func (jsdb *JsonDB) GetMarkersForVideo(videoID string) ([]datatypes.MarkerData, error) {
 	allMarkers, err := jsdb.loadMarkers()
 	if err != nil {
 		return nil, err
@@ -11,10 +11,10 @@ func (jsdb *JsonDB) GetMarkersForVideo(videoID string) ([]datatypes.VideoMarkerD
 }
 
 // InsertMarker adds a new marker to a video ID
-func (jsdb *JsonDB) InsertMarker(videoID string, markerData datatypes.VideoMarkerData) error {
+func (jsdb *JsonDB) InsertMarker(videoID string, markerData datatypes.MarkerData) error {
 	allMarkers, err := jsdb.loadMarkers()
 	if err != nil {
-		allMarkers = make(map[string][]datatypes.VideoMarkerData)
+		allMarkers = make(map[string][]datatypes.MarkerData)
 	}
 	allMarkers[videoID] = append(allMarkers[videoID], markerData)
 	return jsdb.saveMarkers(allMarkers)

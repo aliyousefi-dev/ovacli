@@ -1,9 +1,9 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 
+	"ova-cli/source/internal/datastorage/datatypes"
 	"ova-cli/source/internal/repo"
 	apitypes "ova-cli/source/internal/server/api-types"
 
@@ -26,28 +26,43 @@ func getMarkers(rm *repo.RepoManager) gin.HandlerFunc {
 			return
 		}
 
-		markersForResponse, err := rm.GetMarkersForVideo(videoId)
+		markers, err := rm.GetMarkersByVideoID(videoId)
 		if err != nil {
-			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to get markers: "+err.Error())
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to fetch markers")
 			return
 		}
 
 		apitypes.RespondSuccess(c, http.StatusOK, gin.H{
-			"videoId": videoId,
-			"markers": markersForResponse,
+			"markers": markers,
 		}, "Markers fetched successfully")
 	}
 }
 
 func addMarker(rm *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// videoId := c.Param("videoId")
-		var markerData apitypes.MarkerData
+		videoId := c.Param("videoId")
 
-		markerData.Title = "New Marker"
-		markerData.Description = "Description"
-		markerData.TimeSecond = 0
+		var req apitypes.MarkerDataRequest
+		if err := c.ShouldBindJSON(&req); err != nil {
+			apitypes.RespondError(c, http.StatusBadRequest, "Invalid JSON payload")
+			return
+		}
 
-		apitypes.RespondSuccess(c, http.StatusOK, nil, "Marker added successfully"+markerData.Title+markerData.Description+fmt.Sprint(markerData.TimeSecond))
+		// 3. Verify the video exists
+		_, err := rm.GetVideoByID(videoId)
+		if err != nil {
+			// Note: If video is not found, 404 is usually better than 500
+			apitypes.RespondError(c, http.StatusNotFound, ErrVideoNotFound)
+			return
+		}
+
+		// 4. Pass the bound data to your repository
+		rm.AddMarkerToVideo(videoId, datatypes.MarkerData{
+			TimeSecond:  req.TimeSecond,
+			Title:       req.Label,
+			Description: req.Description,
+		})
+
+		apitypes.RespondSuccess(c, http.StatusCreated, nil, "Marker added successfully")
 	}
 }

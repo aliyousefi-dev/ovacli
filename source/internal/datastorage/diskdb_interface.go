@@ -41,8 +41,8 @@ type DiskDataStorage interface {
 	GetTotalVideoCount() (int, error)
 
 	// marker management
-	InsertMarker(videoID string, markerData datatypes.VideoMarkerData) error
-	GetMarkersForVideo(videoID string) ([]datatypes.VideoMarkerData, error)
+	InsertMarker(videoID string, markerData datatypes.MarkerData) error
+	GetMarkersForVideo(videoID string) ([]datatypes.MarkerData, error)
 	DeleteMarkersForVideo(videoID string) error
 
 	// New method to add video to user's watched list

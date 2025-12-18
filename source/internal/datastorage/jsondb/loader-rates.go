@@ -7,7 +7,7 @@ import (
 )
 
 // Load video marker data for all videos (assuming the data is stored in a map with videoID as key, value as array of markers)
-func (jsdb *JsonDB) loadRates() (map[string][]datatypes.VideoMarkerData, error) {
+func (jsdb *JsonDB) loadRates() (map[string][]datatypes.MarkerData, error) {
 	path := jsdb.getVideoMarkerDataFilePath()
 
 	// Ensure the file exists with "{}" if missing
@@ -22,7 +22,7 @@ func (jsdb *JsonDB) loadRates() (map[string][]datatypes.VideoMarkerData, error) 
 	defer file.Close()
 
 	// A map where video ID is the key, and an array of VideoMarkerData is the value
-	var markers map[string][]datatypes.VideoMarkerData
+	var markers map[string][]datatypes.MarkerData
 	decoder := json.NewDecoder(file)
 	if err := decoder.Decode(&markers); err != nil {
 		return nil, err
@@ -32,7 +32,7 @@ func (jsdb *JsonDB) loadRates() (map[string][]datatypes.VideoMarkerData, error) 
 }
 
 // Save video marker data (assuming the data is a map with videoID as the key and array of markers as value)
-func (jsdb *JsonDB) saveRates(markers map[string][]datatypes.VideoMarkerData) error {
+func (jsdb *JsonDB) saveRates(markers map[string][]datatypes.MarkerData) error {
 	data, err := json.MarshalIndent(markers, "", "  ")
 	if err != nil {
 		return err

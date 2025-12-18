@@ -1,22 +1,21 @@
 @baseUrl = http://localhost:443
-@videoID = c711210f-8073-482e-a734-34e9a8ee9794
+@videoID = d186543129e295769599eb390e7934765658136ccb3811766b226696ae78d34a
 
 ###
 
-# Get server status to check if API is running
+# Add a marker to a video
 POST {{baseUrl}}/api/v1/videos/{{videoID}}/markers
 Content-Type: application/json
 Accept: application/json
 
 {
-  "markers": [
-    {
-      "time": 60,
-      "label": "Intro"
-    },
-    {
-      "time": 150,
-      "label": "Main Content"
-    }
-  ]
+  "timeSecond": 60,
+  "label": "Intro",
+  "description": "Start of the video"
 }
+
+
+### 
+
+# Get markers for a video
+GET {{baseUrl}}/api/v1/videos/{{videoID}}/markers   

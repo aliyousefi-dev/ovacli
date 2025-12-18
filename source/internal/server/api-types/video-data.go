@@ -11,17 +11,11 @@ type UserVideoStatus struct {
 	IsSaved   bool `json:"isSaved"`
 }
 
-type MarkerData struct {
-	TimeSecond  int    `json:"timeSecond"`  // Time in seconds where the marker is placed
-	Title       string `json:"title"`       // Title or description of the marker
-	Description string `json:"description"` // Detailed description of the marker
-}
-
 type VideoDataAPIResponse struct {
 	VideoID              string                `json:"videoId"`
 	FileName             string                `json:"fileName"`
 	Tags                 []string              `json:"tags"`
-	Markers              []MarkerData          `json:"markers"`
+	Markers              []MarkerDataRequest   `json:"markers"`
 	Codecs               datatypes.VideoCodecs `json:"codecs"`
 	IsCooked             bool                  `json:"isCooked"`
 	OwnerAccountUsername string                `json:"ownerAccountUsername"`
