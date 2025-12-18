@@ -24,7 +24,7 @@ func addVideoToWatched(r *repo.RepoManager) gin.HandlerFunc {
 		// Retrieve accountId set by the AuthMiddleware
 		accountID, exists := c.Get("accountId")
 		if !exists {
-			apitypes.RespondError(c, http.StatusUnauthorized, "Account ID not found")
+			apitypes.RespondError(c, http.StatusUnauthorized, ErrAccountIDNotFound)
 			return
 		}
 

@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"ova-cli/source/internal/repo"
 	apitypes "ova-cli/source/internal/server/api-types"
@@ -32,7 +31,7 @@ func getVideosByIds(repoMgr *repo.RepoManager) gin.HandlerFunc {
 		// Retrieve accountId set by the AuthMiddleware
 		accountID, exists := c.Get("accountId")
 		if !exists {
-			apitypes.RespondError(c, http.StatusUnauthorized, "Account ID not found")
+			apitypes.RespondError(c, http.StatusUnauthorized, ErrAccountIDNotFound)
 			return
 		}
 
@@ -42,7 +41,7 @@ func getVideosByIds(repoMgr *repo.RepoManager) gin.HandlerFunc {
 			video, err := repoMgr.GetVideoByID(id)
 			if err != nil || video == nil {
 				// Handle error retrieving video
-				apitypes.RespondError(c, http.StatusNotFound, fmt.Sprintf("Video with ID %s not found", id))
+				apitypes.RespondError(c, http.StatusNotFound, ErrVideoNotFound)
 				return
 			}
 
@@ -55,7 +54,7 @@ func getVideosByIds(repoMgr *repo.RepoManager) gin.HandlerFunc {
 
 			// Get user data for the video owner
 			currentuser, err := repoMgr.GetUserByAccountID(accountID.(string))
-			if err != nil || userdata == nil {
+			if err != nil || currentuser == nil {
 				// Skip if user data is not found
 				continue
 			}

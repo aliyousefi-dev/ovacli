@@ -5,10 +5,14 @@
   <!-- Video Area: 70% width on xl+ screens, 100% on smaller screens -->
   <div class="w-full xl:w-[70%] flex flex-col">
 
-
+    <div class="absolute bottom-20 right-20">
+      <div>Debug Panel</div>
+      Video Player Switcher
+      <input type="checkbox" checked="checked" class="toggle" (change)="togglePlayer($event)" />
+    </div>
 
     <div class="xl:p-10">
-      @if (true) {
+      @if (this.useVidstack) {
       <app-vidstack-player #vidstackPlayer [videoData]="video"></app-vidstack-player>
       }@else {
       <app-native-player [videoData]="video"></app-native-player>

@@ -65,7 +65,7 @@ func createUserPlaylist(rm *repo.RepoManager) gin.HandlerFunc {
 		// Retrieve accountId set by the AuthMiddleware
 		accountID, exists := c.Get("accountId")
 		if !exists {
-			apitypes.RespondError(c, http.StatusUnauthorized, "Account ID not found")
+			apitypes.RespondError(c, http.StatusUnauthorized, ErrAccountIDNotFound)
 			return
 		}
 
@@ -103,7 +103,7 @@ func deleteUserPlaylistBySlug(rm *repo.RepoManager) gin.HandlerFunc {
 		// Retrieve accountId set by the AuthMiddleware
 		accountID, exists := c.Get("accountId")
 		if !exists {
-			apitypes.RespondError(c, http.StatusUnauthorized, "Account ID not found")
+			apitypes.RespondError(c, http.StatusUnauthorized, ErrAccountIDNotFound)
 			return
 		}
 
@@ -123,7 +123,7 @@ func setUserPlaylistsOrder(rm *repo.RepoManager) gin.HandlerFunc {
 		// Retrieve accountId set by the AuthMiddleware
 		accountID, exists := c.Get("accountId")
 		if !exists {
-			apitypes.RespondError(c, http.StatusUnauthorized, "Account ID not found")
+			apitypes.RespondError(c, http.StatusUnauthorized, ErrAccountIDNotFound)
 			return
 		}
 
@@ -149,7 +149,7 @@ func updateUserPlaylistInfo(rm *repo.RepoManager) gin.HandlerFunc {
 		// Retrieve accountId set by the AuthMiddleware
 		accountID, exists := c.Get("accountId")
 		if !exists {
-			apitypes.RespondError(c, http.StatusUnauthorized, "Account ID not found")
+			apitypes.RespondError(c, http.StatusUnauthorized, ErrAccountIDNotFound)
 			return
 		}
 		slug := c.Param("slug")

@@ -17,7 +17,8 @@ type SearchSuggestionsRequest struct {
 
 // RegisterSearchSuggestionsRoutes adds the /search-suggestions endpoint to the router group.
 func RegisterSearchSuggestionsRoutes(rg *gin.RouterGroup, repoManager *repo.RepoManager) {
-	rg.POST("/search-suggestions", searchSuggestions(repoManager))
+	searchGroup := rg.Group("/search")
+	searchGroup.POST("/suggestions", searchSuggestions(repoManager))
 }
 
 // searchSuggestions handles POST /search-suggestions with a JSON body containing the search query.

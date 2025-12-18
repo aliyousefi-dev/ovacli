@@ -21,6 +21,7 @@ import { MainTimeline } from './controls/timeline/main-timeline';
 import { MarkerDisplay } from './marker-display/marker-display';
 import { FullScreenButton } from './controls/buttons/full-screen/full-screen-button';
 import { SettingsButton } from './controls/buttons/settings-button/settings-button';
+import { MarkerCreatorComponent } from './modals/marker-creator';
 
 import {
   PlayerInputHostDirective,
@@ -40,6 +41,7 @@ import { OvaPlayerPreferences } from './data-types/player-preferences-data';
     DisplayCurrentTime,
     DisplayTotalTime,
     MainTimeline,
+    MarkerCreatorComponent,
     PlayerInputHostDirective,
     FullScreenButton,
     MarkerDisplay,

@@ -27,17 +27,17 @@ func downloadVideo(rm *repo.RepoManager) gin.HandlerFunc {
 
 		video, err := rm.GetVideoByID(videoId)
 		if err != nil {
-			apitypes.RespondError(c, http.StatusNotFound, "Video not found")
+			apitypes.RespondError(c, http.StatusNotFound, ErrVideoNotFound)
 			return
 		}
 
 		videoPath := video.FilePath
 		info, err := os.Stat(videoPath)
 		if os.IsNotExist(err) {
-			apitypes.RespondError(c, http.StatusNotFound, "Video file not found on disk")
+			apitypes.RespondError(c, http.StatusNotFound, ErrVideoFileNotFound)
 			return
 		} else if err != nil {
-			apitypes.RespondError(c, http.StatusInternalServerError, "Error accessing video file")
+			apitypes.RespondError(c, http.StatusInternalServerError, ErrVideoFileAccess)
 			return
 		}
 

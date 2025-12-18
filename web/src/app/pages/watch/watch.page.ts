@@ -42,6 +42,9 @@ export class WatchPage implements AfterViewInit {
   @ViewChild('vidstackPlayer') vidstackPlayer!: VidstackPlayerComponent;
   @ViewChild('adminTabs') adminTabs!: VideoAdminTabsComponent;
 
+  // true -> use vidstack player; false -> use native player
+  useVidstack = false;
+
   loading = true;
   error = false;
   videoId: string | null = null;
@@ -62,6 +65,10 @@ export class WatchPage implements AfterViewInit {
     console.log('Current Time:', currentTime);
 
     this.adminTabs.addMarkerBySeconds(currentTime);
+  }
+
+  togglePlayer(event: Event) {
+    this.useVidstack = (event.target as HTMLInputElement).checked;
   }
 
   getCurrentTimeFromPlayer = () => this.vidstackPlayer.getCurrentTime();

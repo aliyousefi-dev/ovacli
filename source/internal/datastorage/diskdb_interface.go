@@ -37,12 +37,13 @@ type DiskDataStorage interface {
 	GetVideoIDsBySpaceInRange(spacePath string, start, end int) ([]string, error)
 	AddVideoIDToSpace(videoId, filePath string) error
 
-	// marker management
-	GetMarkersByVideoId(videoID string) ([]datatypes.VideoMarkerData, error)
-	AddMarker(videoID string, markerData datatypes.VideoMarkerData) error
-
 	// New method to get total video count
 	GetTotalVideoCount() (int, error)
+
+	// marker management
+	InsertMarker(videoID string, markerData datatypes.VideoMarkerData) error
+	GetMarkersForVideo(videoID string) ([]datatypes.VideoMarkerData, error)
+	DeleteMarkersForVideo(videoID string) error
 
 	// New method to add video to user's watched list
 	AddVideoToWatched(username, videoID string) error

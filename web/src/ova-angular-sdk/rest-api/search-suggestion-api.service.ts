@@ -20,7 +20,7 @@ export class SuggestionApiService {
     const params = { query }; // The query parameter to send in the request body
 
     return this.http.post<ApiSuccessResponse<SearchSuggestionsResponse>>(
-      `${this.config.apiBaseUrl}/search-suggestions`,
+      `${this.config.apiBaseUrl}/search/suggestions`,
       params
     );
   }
