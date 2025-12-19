@@ -22,44 +22,21 @@
 
     <!-- Modal Content Section (Scrollable) -->
     <div class="p-4 space-y-4 overflow-auto" style="flex-grow: 1;">
+
       <!-- General Tab Content -->
-      <div *ngIf="activeTab === 'general'" class="max-w-full">
-        <label for="display-name" class="label">Display Name:</label>
-        <input type="text" id="display-name" class="input input-bordered w-full" placeholder="Enter display name" />
+      @if (activeTab === 'general') {
+      <app-settings-general-tab></app-settings-general-tab>
+      }
 
-        <label for="username" class="label">Username:</label>
-        <input type="text" id="username" class="input input-bordered w-full" placeholder="Enter username" />
-
-        <label for="accountId" class="label">AccountId:</label>
-        <input type="text" id="accountId" class="input input-bordered w-full" placeholder="Enter accountId" disabled />
-
-        <fieldset class="fieldset bg-base-100  rounded-box w-64 p-4">
-          <legend class="fieldset-legend">Profile Visibility</legend>
-          <label class="label">
-            <input type="checkbox" checked="checked" class="toggle" />
-            Public
-          </label>
-        </fieldset>
-
-        <fieldset class="fieldset bg-base-100  rounded-box w-64 p-4">
-          <legend class="fieldset-legend">History</legend>
-
-          <button class="btn btn-error w-full">Clear Watch History</button>
-        </fieldset>
-      </div>
 
       <!-- Theme Tab Content -->
-      <div *ngIf="activeTab === 'theme'" class="max-w-full">
-        <p class="py-4">Choose your theme:</p>
-        <div class="form-control w-full max-w-xl p-4">
-          <div class="flex flex-wrap gap-2">
-            <button class="btn btn-sm" *ngFor="let theme of themes" (click)="setTheme(theme)"
-              [class.btn-active]="selectedTheme === theme">{{ theme }}</button>
-          </div>
-        </div>
-      </div>
+      @if(this.activeTab === "theme"){
+      <app-settings-appearance-tab></app-settings-appearance-tab>
+      }
 
-      <div *ngIf="activeTab === 'proxy'" class="max-w-full">
+
+      @if(this.activeTab === 'proxy'){
+      <div class="max-w-full">
         <fieldset class="fieldset bg-base-100 rounded-box w-64  p-4">
           <legend class="fieldset-legend">Password</legend>
           <label class="label">Current Password</label>
@@ -92,6 +69,8 @@
         </fieldset>
 
       </div>
+      }
+
     </div>
   </div>
   <form method="dialog" class="modal-backdrop">

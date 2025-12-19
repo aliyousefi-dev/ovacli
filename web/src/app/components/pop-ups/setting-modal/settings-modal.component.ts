@@ -5,16 +5,22 @@ import {
   EventEmitter,
   OnChanges,
   SimpleChanges,
-  OnInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { SettingsAppearanceTab } from './tabs/settings-appearance-tab/settings-appearance-tab';
+import { SettingsGeneralTab } from './tabs/settings-general-tab/settings-general-tab';
 
 @Component({
   selector: 'app-settings-modal',
   standalone: true,
   templateUrl: './settings-modal.component.html',
-  imports: [CommonModule, FormsModule], // Imports for Angular modules
+  imports: [
+    CommonModule,
+    FormsModule,
+    SettingsAppearanceTab,
+    SettingsGeneralTab,
+  ], // Imports for Angular modules
   styles: [
     `
       .success-message {
@@ -25,48 +31,10 @@ import { FormsModule } from '@angular/forms';
     `,
   ],
 })
-export class SettingsModalComponent implements OnChanges, OnInit {
+export class SettingsModalComponent implements OnChanges {
   @Input() showModal = false;
   @Output() close = new EventEmitter<void>();
 
-  // Remove modalRef usage since we're handling visibility via `showModal`
-  themes = [
-    'light',
-    'dark',
-    'mytheme',
-    'cupcake',
-    'bumblebee',
-    'emerald',
-    'corporate',
-    'synthwave',
-    'retro',
-    'cyberpunk',
-    'valentine',
-    'halloween',
-    'garden',
-    'forest',
-    'aqua',
-    'lofi',
-    'pastel',
-    'fantasy',
-    'wireframe',
-    'black',
-    'luxury',
-    'dracula',
-    'cmyk',
-    'autumn',
-    'business',
-    'acid',
-    'lemonade',
-    'night',
-    'coffee',
-    'winter',
-    'dim',
-    'nord',
-    'sunset',
-  ];
-
-  selectedTheme = 'light';
   activeTab: 'general' | 'theme' | 'proxy' = 'general'; // Default tab is 'general'
 
   // Proxy Config properties
@@ -76,12 +44,6 @@ export class SettingsModalComponent implements OnChanges, OnInit {
     : null;
   proxyUser = localStorage.getItem('proxyUser') || '';
   proxyPassword = localStorage.getItem('proxyPassword') || '';
-
-  ngOnInit() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    this.selectedTheme = savedTheme;
-    document.documentElement.setAttribute('data-theme', savedTheme);
-  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['showModal']) {
@@ -97,12 +59,6 @@ export class SettingsModalComponent implements OnChanges, OnInit {
 
   setActiveTab(tab: 'general' | 'theme' | 'proxy') {
     this.activeTab = tab;
-  }
-
-  setTheme(theme: string) {
-    this.selectedTheme = theme;
-    localStorage.setItem('theme', theme);
-    document.documentElement.setAttribute('data-theme', theme);
   }
 
   saveProxySettings() {

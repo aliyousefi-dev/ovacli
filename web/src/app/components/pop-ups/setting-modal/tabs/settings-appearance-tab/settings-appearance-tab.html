@@ -1,0 +1,31 @@
+<div class="max-w-full">
+    <label class="label text-xs">
+        <input type="checkbox" class="toggle toggle-xs" />
+        Preview Playback
+    </label>
+</div>
+<div class="max-w-full">
+    <label class="label text-xs">
+        <input type="checkbox" class="toggle toggle-xs" />
+        Infinite Fetch
+    </label>
+</div>
+<div class="max-w-full">
+    <label class="label text-xs">
+        <input type="checkbox" class="toggle toggle-xs" />
+        Video Card Mini View
+    </label>
+</div>
+<div class="max-w-full">
+    <p class="py-4">Themes:</p>
+    <div class="form-control w-full max-w-xl p-4">
+        <div class="flex flex-wrap gap-2">
+            @for (theme of this.themes; track $index) {
+            <button class="btn btn-sm" (click)="setTheme(theme)" [class.btn-active]="selectedTheme === theme">
+                {{ theme}}
+            </button>
+            }
+
+        </div>
+    </div>
+</div>

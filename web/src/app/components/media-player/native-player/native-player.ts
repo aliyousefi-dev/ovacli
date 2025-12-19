@@ -14,7 +14,7 @@ import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
 import { ScrubThumbApiService } from '../../../../ova-angular-sdk/rest-api/scrub-thumb-api.service';
 import { ScrubThumbData } from './data-types/scrub-thumb-data';
 import { PlayPauseButton } from './controls/buttons/play-pause-button/play-pause-button';
-import { VolumeButton } from './controls/buttons/volume-button/volume-button';
+import { VolumeButton } from './controls/volume-button/volume-button';
 import { DisplayCurrentTime } from './controls/display-current-time/display-current-time';
 import { DisplayTotalTime } from './controls/display-total-time/display-total-time';
 import { MainTimeline } from './controls/timeline/main-timeline';
