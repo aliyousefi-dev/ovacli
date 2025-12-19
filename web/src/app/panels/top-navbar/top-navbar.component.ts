@@ -40,13 +40,11 @@ export class TopNavbarComponent implements OnInit {
     setTimeout(() => (this.dropdownOpen = false), 150);
   }
 
-  openSettingsModal(): void {
-    this.showSettingsModal = true;
-    this.dropdownOpen = false;
-  }
-
-  closeSettingsModal(): void {
-    this.showSettingsModal = false;
+  OpenSettingsModal(): void {
+    const modal: any = document.getElementById('settings_modal');
+    if (modal && typeof modal.showModal === 'function') {
+      modal.showModal();
+    }
   }
 
   // Dynamically set page title based on the route
@@ -66,9 +64,5 @@ export class TopNavbarComponent implements OnInit {
 
     // Set the title dynamically
     this.pageTitle = capitalizedSegment;
-  }
-
-  openSearchBar(): void {
-    this.searchBarVisible = true;
   }
 }

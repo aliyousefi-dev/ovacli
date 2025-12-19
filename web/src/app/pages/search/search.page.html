@@ -7,18 +7,24 @@
   </div>
 
   <!-- Loading State -->
-  <div *ngIf="loading">
+  @if (this.loading) {
+  <div>
     <p class="font-medium text-center">Loading videos...</p>
   </div>
+  }
 
+  @if(!this.loading && videos.length > 0){
   <!-- Gallery View -->
-  <app-gallery-view ViewMode="full" *ngIf="!loading && videos.length > 0" [videos]="videos"></app-gallery-view>
+  <app-gallery-view ViewMode="full" [videos]="videos"></app-gallery-view>
+  }
 
+  @if (!loading && videos.length === 0 && query) {
   <!-- No results state -->
-  <div *ngIf="!loading && videos.length === 0 && query">
+  <div>
     <p class="text-center mt-4">
       No videos found for "{{ query }}"
     </p>
   </div>
+  }
 
 </div>

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { VideoBucketResponse } from './api-types/video-bucket';
+import { VideoBucketContainer } from './api-types/video-bucket';
 
 import { ApiSuccessResponse } from './api-types/core-response';
 
@@ -17,9 +17,9 @@ export class LatestVideosService {
   // Fetch the latest videos based on the specified bucket
   getLatestVideos(
     bucket: number = 1
-  ): Observable<ApiSuccessResponse<VideoBucketResponse>> {
+  ): Observable<ApiSuccessResponse<VideoBucketContainer>> {
     // Construct the URL with bucket query parameter
     const url = `${this.config.apiBaseUrl}/videos/global?bucket=${bucket}`;
-    return this.http.get<ApiSuccessResponse<VideoBucketResponse>>(url);
+    return this.http.get<ApiSuccessResponse<VideoBucketContainer>>(url);
   }
 }

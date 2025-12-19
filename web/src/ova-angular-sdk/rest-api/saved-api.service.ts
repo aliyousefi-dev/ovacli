@@ -4,7 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { ApiSuccessResponse } from './api-types/core-response';
 
-import { VideoBucketResponse } from './api-types/video-bucket';
+import { VideoBucketContainer } from './api-types/video-bucket';
 
 import { OVASDKConfig } from '../global-config';
 
@@ -20,9 +20,9 @@ export class SavedApiService {
 
   getUserSaved(
     bucket: number = 1
-  ): Observable<ApiSuccessResponse<VideoBucketResponse>> {
+  ): Observable<ApiSuccessResponse<VideoBucketContainer>> {
     return this.http
-      .get<ApiSuccessResponse<VideoBucketResponse>>(
+      .get<ApiSuccessResponse<VideoBucketContainer>>(
         `${this.config.apiBaseUrl}/me/saved?bucket=${bucket}`,
         this.httpOptions
       )

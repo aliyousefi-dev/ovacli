@@ -1,9 +1,9 @@
-import { VideoBucketResponse } from './video-bucket';
+import { VideoBucketContainer } from './video-bucket';
 
-export interface SearchResponse {
+export interface SearchResult {
   criteria: SearchCriteria;
   filters: VideoFilters;
-  result: VideoBucketResponse;
+  result: VideoBucketContainer;
 }
 
 export interface SearchCriteria {

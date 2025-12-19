@@ -9,7 +9,7 @@ import {
   of,
   map,
 } from 'rxjs';
-import { ActivatedRoute, Router, Params } from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
 
 import { GalleryViewComponent } from '../../components/containers/gallery-view/gallery-view.component';
 import { SearchApiService } from '../../../ova-angular-sdk/rest-api/search-api.service';
@@ -17,7 +17,7 @@ import { VideoData } from '../../../ova-angular-sdk/core-types/video-data';
 import { VideoApiService } from '../../../ova-angular-sdk/rest-api/video-api.service';
 
 @Component({
-  selector: 'app-explore',
+  selector: 'app-search',
   standalone: true,
   imports: [CommonModule, FormsModule, GalleryViewComponent],
   templateUrl: './search.page.html',

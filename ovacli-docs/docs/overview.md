@@ -6,6 +6,8 @@
 
 # Overview
 
+it is a new and smart video archieve platform for content creators.
+
 OVA (Online Video Archive): A local, collaborative, multi-user online database for managing and streaming MP4 videos designed for professional editor teams and studios.
 
 ## One Online DB for All Your Video Needs

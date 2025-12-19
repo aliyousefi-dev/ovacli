@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { ApiSuccessResponse } from './api-types/core-response';
 
-import { SearchResponse } from './api-types/search-response';
+import { SearchResult } from './api-types/search-response';
 
 import { OVASDKConfig } from '../global-config';
 
@@ -19,9 +19,9 @@ export class SearchApiService {
   searchVideos(params: {
     query?: string;
     tags?: string[];
-  }): Observable<ApiSuccessResponse<SearchResponse>> {
-    return this.http.post<ApiSuccessResponse<SearchResponse>>(
-      `${this.config.apiBaseUrl}/search`,
+  }): Observable<ApiSuccessResponse<SearchResult>> {
+    return this.http.post<ApiSuccessResponse<SearchResult>>(
+      `${this.config.apiBaseUrl}/search?bucket=0`,
       params
     );
   }

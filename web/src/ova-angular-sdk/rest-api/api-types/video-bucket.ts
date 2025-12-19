@@ -1,4 +1,4 @@
-export interface VideoBucketResponse {
+export interface VideoBucketContainer {
   videoIds: string[]; // Array of video IDs
   totalVideos: number; // Total number of videos cached
   currentBucket: number; // The current bucket requested

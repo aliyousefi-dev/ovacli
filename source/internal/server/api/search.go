@@ -41,9 +41,8 @@ func searchVideos(repoManager *repo.RepoManager) gin.HandlerFunc {
 
 		// Get pagination params
 		currentBucket := 0
-		bucketSize := repoManager.GetConfigs().MaxBucketSize // Adjust to your preferred bucket size
+		bucketSize := repoManager.GetConfigs().MaxBucketSize
 		if bucket, ok := c.GetQuery("bucket"); ok {
-			// Parse and handle the bucket pagination if provided in the request query
 			currentBucketParam, err := strconv.Atoi(bucket)
 			if err != nil {
 				apitypes.RespondError(c, http.StatusBadRequest, "Invalid bucket parameter")
@@ -53,31 +52,30 @@ func searchVideos(repoManager *repo.RepoManager) gin.HandlerFunc {
 		}
 
 		// Search with pagination (bucket logic)
-		results, err := repoManager.SearchVideosWithBuckets(criteria, currentBucket, bucketSize)
+		// result is now the BucketSearchResult struct we defined
+		result, err := repoManager.SearchVideosWithBuckets(criteria, currentBucket, bucketSize)
 		if err != nil {
-			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to search videos")
+			// Handle the "out of range" error specifically if you want a 400 instead of 500
+			apitypes.RespondError(c, http.StatusInternalServerError, err.Error())
 			return
 		}
 
-		// Calculate total buckets
-		totalVideos := len(results) // Assuming `results` contains video IDs
-		totalBuckets := (totalVideos + bucketSize - 1) / bucketSize
-
-		// Create the response with pagination
+		// Create the response
+		// Note: We use the result struct directly or map its fields.
 		response := apitypes.SearchResponse{
 			Criteria: apitypes.SearchCriteria{
 				Query: req.Query,
 				Tags:  req.Tags,
 			},
 			Result: apitypes.VideoBucketResponse{
-				VideoIDs:          results, // Video IDs only
-				TotalVideos:       totalVideos,
-				CurrentBucket:     currentBucket,
+				VideoIDs:          result.VideoIDs,
+				TotalVideos:       result.TotalVideos,
+				CurrentBucket:     result.CurrentBucket,
 				BucketContentSize: bucketSize,
-				TotalBuckets:      totalBuckets,
+				TotalBuckets:      result.TotalBuckets,
 			},
 		}
-		// Respond with the paginated search result
+
 		apitypes.RespondSuccess(c, http.StatusOK, response, "Search completed successfully")
 	}
 }

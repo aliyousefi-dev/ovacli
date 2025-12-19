@@ -8,3 +8,10 @@ type VideoSearchCriteria struct {
 	MinRating   float64  `json:"minRating,omitempty"`
 	MaxDuration int      `json:"maxDuration,omitempty"` // Duration in seconds
 }
+
+type BucketSearchResult struct {
+	VideoIDs      []string `json:"videoIds"`
+	TotalVideos   int      `json:"totalVideos"`
+	TotalBuckets  int      `json:"totalBuckets"`
+	CurrentBucket int      `json:"currentBucket"`
+}

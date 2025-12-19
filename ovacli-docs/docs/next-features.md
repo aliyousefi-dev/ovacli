@@ -38,3 +38,4 @@ here we demonstrate what features we want to add to next versions.
 - (natvie-player) support playlist button on ui and next previous video
 - (native-player) group markers with colors
 - (native-player) adding playlist label on vidoe player for when playing playlist
+- (native-player) i think its good the video version history just be visible for the owner user

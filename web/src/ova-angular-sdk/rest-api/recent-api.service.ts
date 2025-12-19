@@ -4,7 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ApiSuccessResponse } from './api-types/core-response';
 
-import { VideoBucketResponse } from './api-types/video-bucket';
+import { VideoBucketContainer } from './api-types/video-bucket';
 
 import { OVASDKConfig } from '../global-config';
 
@@ -17,10 +17,10 @@ export class WatchedApiService {
 
   getUserWatched(
     bucket: number = 1
-  ): Observable<ApiSuccessResponse<VideoBucketResponse>> {
+  ): Observable<ApiSuccessResponse<VideoBucketContainer>> {
     // Use ApiResponse wrapper
     return this.http
-      .get<ApiSuccessResponse<VideoBucketResponse>>(
+      .get<ApiSuccessResponse<VideoBucketContainer>>(
         `${this.config.apiBaseUrl}/me/recent?bucket=${bucket}`,
         { withCredentials: true }
       )
