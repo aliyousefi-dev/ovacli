@@ -1,11 +1,13 @@
 <div class="relative w-full overflow-hidden bg-black" [class.flex]="isFullscreen" [class.items-center]="isFullscreen"
   [class.justify-center]="isFullscreen" #playerWrap appPlayerControlsHost (inputEvents)="handleInputs($event)">
 
+  <!-- Video element -->
   <video #videoRef
     [ngClass]="{ 'w-full': !isFullscreen, 'w-auto': isFullscreen, 'max-h-screen': isFullscreen, 'aspect-video': true, 'block': true }"
     [src]="videoUrl" [poster]="thumbnailUrl" (touchstart)="handleTouch($event)">
   </video>
 
+  <!-- Marker display -->
   <div class="absolute top-5 right-5 z-50">
     <app-marker-display [videoData]="this.videoData" [videoRef]="this.videoRef"></app-marker-display>
   </div>
@@ -42,14 +44,17 @@
     </div>
   </div>
 
+  <!-- Controls black overlay -->
   <div class="absolute bottom-0 left-0 right-0 h-1/2 pointer-events-none z-40
     bg-gradient-to-t from-black/90 to-transparent transition-opacity duration-300"
     [ngClass]="{ 'opacity-0': !controlsVisible }">
   </div>
 
+  <!-- Bottom Controls container -->
   <div class="absolute inset-0 flex flex-col justify-end p-8 transition-all duration-300 z-50 pointer-events-none"
     [ngClass]="{ 'opacity-0': !controlsVisible }">
 
+    <!-- Pause / Sound / Settings / Fullscreen -->
     @if(videoReady){
     <div (touchstart)="$event.stopPropagation()" class="pointer-events-auto">
       <div class="flex items-center justify-between gap-2 mt-2 text-white">
@@ -63,6 +68,7 @@
         </div>
       </div>
 
+      <!-- Timeline / Display time -->
       <div class="flex justify-center items-end gap-5 text-sm text-white">
         <app-display-current-time [videoRef]="this.videoRef"></app-display-current-time>
         <app-main-timeline class="w-full" #mainTimelineRef [videoRef]="this.videoRef"

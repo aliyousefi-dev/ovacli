@@ -5,6 +5,7 @@ import {
   OnInit,
   OnDestroy,
   ViewChild,
+  AfterViewInit,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -17,7 +18,7 @@ import { MarkerData } from '../../../data-types/marker-data';
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MarkerTrack implements OnInit, OnDestroy {
+export class MarkerTrack implements OnInit, OnDestroy, AfterViewInit {
   @Input({ required: true }) videoRef!: ElementRef<HTMLVideoElement>;
   @Input({ required: true }) markersData!: MarkerData[];
 
@@ -26,16 +27,19 @@ export class MarkerTrack implements OnInit, OnDestroy {
   private video!: HTMLVideoElement;
 
   ngOnInit() {
+    console.log(this.markersData);
     if (this.videoRef && this.videoRef.nativeElement) {
       this.video = this.videoRef.nativeElement;
 
       // Ensure markers are rendered only when video duration is available
       this.video.addEventListener('loadedmetadata', this.renderMarkers);
+    }
+  }
 
-      // Initial check, in case metadata was already loaded
-      if (isFinite(this.video.duration) && this.video.duration > 0) {
-        this.renderMarkers();
-      }
+  ngAfterViewInit() {
+    // Initial check, in case metadata was already loaded
+    if (isFinite(this.video.duration) && this.video.duration > 0) {
+      this.renderMarkers();
     }
   }
 
@@ -49,6 +53,10 @@ export class MarkerTrack implements OnInit, OnDestroy {
    * Renders the chapter/key point markers onto the timeline track.
    */
   private renderMarkers = () => {
+    console.log(!this.video);
+    console.log(!this.markersRef);
+    console.log(!this.markersData.length);
+
     if (!this.video || !this.markersRef || !this.markersData.length) {
       return;
     }
@@ -61,7 +69,7 @@ export class MarkerTrack implements OnInit, OnDestroy {
 
     if (videoDuration && videoDuration > 0) {
       this.markersData.forEach((markerData) => {
-        const { timeSecond, label, description } = markerData;
+        const { timeSecond } = markerData;
 
         // Calculate the position percentage
         const pct = (timeSecond / videoDuration) * 100;
