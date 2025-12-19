@@ -6,7 +6,7 @@ import { PlaylistAPIService } from '../../../../ova-angular-sdk/rest-api/playlis
 import { PlaylistGridComponent } from '../../containers/playlists-view/playlists-view.component';
 import { PlaylistCreatorModal } from '../../pop-ups/playlist-creator-modal/playlist-creator-modal.component';
 import { ConfirmModalComponent } from '../../pop-ups/confirm-modal/confirm-modal.component';
-import { PlaylistSummary } from '../../../../ova-angular-sdk/rest-api/api-responses/playlist-response';
+import { PlaylistSummary } from '../../../../ova-angular-sdk/rest-api/api-types/playlist-response';
 
 @Component({
   selector: 'app-playlist-manager',

@@ -4,8 +4,8 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map } from 'rxjs/operators';
 
 import { PlaylistData } from '../core-types/playlist-data';
-import { ApiSuccessResponse } from './api-responses/core-response';
-import { PlaylistDataResponse } from './api-responses/playlist-response';
+import { ApiSuccessResponse } from './api-types/core-response';
+import { PlaylistDataResponse } from './api-types/playlist-response';
 import { OVASDKConfig } from '../global-config';
 
 @Injectable({

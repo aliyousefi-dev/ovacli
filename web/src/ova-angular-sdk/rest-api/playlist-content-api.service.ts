@@ -4,9 +4,9 @@ import { HttpClient } from '@angular/common/http';
 
 import { PlaylistData } from '../core-types/playlist-data';
 
-import { ApiSuccessResponse } from './api-responses/core-response';
+import { ApiSuccessResponse } from './api-types/core-response';
 
-import { PlaylistContentResponse } from './api-responses/playlist-response';
+import { PlaylistContentResponse } from './api-types/playlist-response';
 import { OVASDKConfig } from '../global-config';
 
 @Injectable({

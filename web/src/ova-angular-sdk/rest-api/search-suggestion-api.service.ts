@@ -2,9 +2,9 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { ApiSuccessResponse } from './api-responses/core-response';
+import { ApiSuccessResponse } from './api-types/core-response';
 
-import { SearchSuggestionsResponse } from './api-responses/searchsuggestions-response';
+import { SearchSuggestionsResponse } from './api-types/searchsuggestions-response';
 import { OVASDKConfig } from '../global-config';
 
 @Injectable({

@@ -4,7 +4,7 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { VideoData } from './core-types/video-data';
 
-import { LatestVideosService } from './rest-api/latest-api.service';
+import { LatestVideosService } from './rest-api/global-api.service';
 import { VideoApiService } from './rest-api/video-api.service';
 import { WatchedApiService } from './rest-api/recent-api.service';
 import { SavedApiService } from './rest-api/saved-api.service';

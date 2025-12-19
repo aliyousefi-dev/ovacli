@@ -11,7 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PlaylistContentAPIService } from '../../../../ova-angular-sdk/rest-api/playlist-content-api.service';
 import { PlaylistAPIService } from '../../../../ova-angular-sdk/rest-api/playlist-api.service';
-import { PlaylistSummary } from '../../../../ova-angular-sdk/rest-api/api-responses/playlist-response';
+import { PlaylistSummary } from '../../../../ova-angular-sdk/rest-api/api-types/playlist-response';
 
 // Define PlaylistWrapper interface outside the component class
 export interface PlaylistWrapper extends PlaylistSummary {

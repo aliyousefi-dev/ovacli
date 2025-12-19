@@ -13,7 +13,7 @@ import { PlaylistAPIService } from '../../../../ova-angular-sdk/rest-api/playlis
 import { ConfirmModalComponent } from '../../pop-ups/confirm-modal/confirm-modal.component';
 import { EditPlaylistModalComponent } from '../../pop-ups/edit-playlist-modal/edit-playlist-modal.component';
 import { Router } from '@angular/router';
-import { PlaylistSummary } from '../../../../ova-angular-sdk/rest-api/api-responses/playlist-response';
+import { PlaylistSummary } from '../../../../ova-angular-sdk/rest-api/api-types/playlist-response';
 
 @Component({
   selector: 'app-playlist-card',

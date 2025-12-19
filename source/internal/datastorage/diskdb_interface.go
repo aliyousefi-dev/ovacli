@@ -4,6 +4,7 @@ import "ova-cli/source/internal/datastorage/datatypes"
 
 // DiskDataStorage defines methods for user and video data operations without context.
 type DiskDataStorage interface {
+	GetGlobalFilters() ([]datatypes.GlobalFilter, error)
 
 	// User management
 	CreateUser(user *datatypes.UserData) error

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { SuggestionApiService } from '../../../../ova-angular-sdk/rest-api/search-suggestion-api.service';
-import { ApiSuccessResponse } from '../../../../ova-angular-sdk/rest-api/api-responses/core-response';
+import { ApiSuccessResponse } from '../../../../ova-angular-sdk/rest-api/api-types/core-response';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ViewChild, ElementRef, HostListener } from '@angular/core';

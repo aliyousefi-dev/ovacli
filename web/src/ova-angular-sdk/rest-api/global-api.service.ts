@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { VideoBucketResponse } from './api-responses/video-bucket';
+import { VideoBucketResponse } from './api-types/video-bucket';
 
-import { ApiSuccessResponse } from './api-responses/core-response';
+import { ApiSuccessResponse } from './api-types/core-response';
 
 import { OVASDKConfig } from '../global-config';
 

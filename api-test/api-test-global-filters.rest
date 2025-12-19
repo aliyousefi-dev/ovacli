@@ -1,0 +1,7 @@
+@baseUrl = http://localhost:443
+@videoID = d186543129e295769599eb390e7934765658136ccb3811766b226696ae78d34a
+
+### 
+
+# Get markers for a video
+GET {{baseUrl}}/api/v1/videos/global/filters  

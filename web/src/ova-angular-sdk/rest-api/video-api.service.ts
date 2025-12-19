@@ -4,8 +4,8 @@ import { Observable } from 'rxjs';
 import { OVASDKConfig } from '../global-config';
 
 import { VideoData } from '../core-types/video-data';
-import { ApiSuccessResponse } from './api-responses/core-response';
-import { SimilarVideosResponse } from './api-responses/similar-videos-response';
+import { ApiSuccessResponse } from './api-types/core-response';
+import { SimilarVideosResponse } from './api-types/similar-videos-response';
 
 @Injectable({
   providedIn: 'root',

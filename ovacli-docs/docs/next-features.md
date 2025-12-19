@@ -29,5 +29,12 @@ here we demonstrate what features we want to add to next versions.
 - (collections) support sharing collections between users
 - (collections) dynamic collection creation based on tags and markers
 - (cooking) support extra cooking options
+- (gallery) support open video in new tab
+- (sidebar) can create collection for my self on sidebar like telegram channels
+- (sidebar) send videos to collection
+- (appreaceance) transfer mini view to settings (card view settings)
 - (native-player) VR video support
 - (native-player) play pause when click on the video area
+- (natvie-player) support playlist button on ui and next previous video
+- (native-player) group markers with colors
+- (native-player) adding playlist label on vidoe player for when playing playlist

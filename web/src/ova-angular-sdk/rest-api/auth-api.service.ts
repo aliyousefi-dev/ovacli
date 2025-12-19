@@ -2,12 +2,11 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ApiSuccessResponse } from './api-responses/core-response';
-import { environment } from '../../environments/environment';
+import { ApiSuccessResponse } from './api-types/core-response';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-import { AuthStatusResponse } from './api-responses/auth-status';
-import { handleApiError } from './api-responses/error-handler';
+import { AuthStatusResponse } from './api-types/auth-status';
+import { handleApiError } from './api-types/error-handler';
 import { OVASDKConfig } from '../global-config';
 
 @Injectable({

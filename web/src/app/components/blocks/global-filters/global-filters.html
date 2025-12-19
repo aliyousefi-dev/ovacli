@@ -1,0 +1,6 @@
+<form class="filter flex justify-center">
+  <input class="btn btn-sm btn-square" type="reset" value="×" />
+  @for (filter of this.filters; track $index) {
+  <input class="btn btn-sm " type="radio" name="frameworks" [attr.aria-label]="filter.name" />
+  }
+</form>

@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { PlaylistCardComponent } from '../../blocks/playlist-card/playlist-card.component';
 import { CommonModule } from '@angular/common';
-import { PlaylistSummary } from '../../../../ova-angular-sdk/rest-api/api-responses/playlist-response';
+import { PlaylistSummary } from '../../../../ova-angular-sdk/rest-api/api-types/playlist-response';
 
 import {
   DragDropModule,

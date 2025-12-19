@@ -3,8 +3,8 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { UserProfile } from '../core-types/user-profile';
 
-import { ApiSuccessResponse } from './api-responses/core-response';
-import { AuthStatusResponse } from './api-responses/auth-status';
+import { ApiSuccessResponse } from './api-types/core-response';
+import { AuthStatusResponse } from './api-types/auth-status';
 import { OVASDKConfig } from '../global-config';
 
 @Injectable({

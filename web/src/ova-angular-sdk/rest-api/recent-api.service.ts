@@ -2,10 +2,9 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { ApiSuccessResponse } from './api-responses/core-response';
+import { ApiSuccessResponse } from './api-types/core-response';
 
-import { environment } from '../../environments/environment';
-import { VideoBucketResponse } from './api-responses/video-bucket';
+import { VideoBucketResponse } from './api-types/video-bucket';
 
 import { OVASDKConfig } from '../global-config';
 

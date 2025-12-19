@@ -2,7 +2,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ApiSuccessResponse } from './api-responses/core-response';
+import { ApiSuccessResponse } from './api-types/core-response';
 import { VideoMarker } from '../core-types/video-marker';
 
 import { OVASDKConfig } from '../global-config';
