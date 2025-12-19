@@ -61,7 +61,7 @@ export class MarkerTrack implements OnInit, OnDestroy {
 
     if (videoDuration && videoDuration > 0) {
       this.markersData.forEach((markerData) => {
-        const { timeSecond, title } = markerData;
+        const { timeSecond, label, description } = markerData;
 
         // Calculate the position percentage
         const pct = (timeSecond / videoDuration) * 100;

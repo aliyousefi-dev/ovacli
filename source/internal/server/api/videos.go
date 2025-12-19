@@ -41,10 +41,19 @@ func getVideoByID(repoMgr *repo.RepoManager) gin.HandlerFunc {
 			return
 		}
 
-		fakeMarkers := []apitypes.MarkerDataRequest{
-			{TimeSecond: 22, Label: "Introduction"},
-			{TimeSecond: 60, Label: "Chapter 1: Start"},
-			{TimeSecond: 2000, Label: "Conclusion"},
+		markers, err := repoMgr.GetMarkersByVideoID(videoId)
+		if err != nil {
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to retrieve markers")
+			return
+		}
+
+		markersCoverted := []apitypes.MarkerDataRequest{}
+		for _, marker := range markers {
+			markersCoverted = append(markersCoverted, apitypes.MarkerDataRequest{
+				TimeSecond:  marker.TimeSecond,
+				Label:       marker.Label,
+				Description: marker.Description,
+			})
 		}
 
 		// Create the VideoDataAPIResponse from VideoData
@@ -53,7 +62,7 @@ func getVideoByID(repoMgr *repo.RepoManager) gin.HandlerFunc {
 			FileName:             video.GetFileName(),
 			Tags:                 video.Tags,
 			Codecs:               video.Codecs,
-			Markers:              fakeMarkers,
+			Markers:              markersCoverted,
 			IsCooked:             video.IsCooked,
 			OwnerAccountUsername: userdata.Username,
 			TotalViews:           video.TotalViews,

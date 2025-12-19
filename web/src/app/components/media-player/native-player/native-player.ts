@@ -21,14 +21,11 @@ import { MainTimeline } from './controls/timeline/main-timeline';
 import { MarkerDisplay } from './marker-display/marker-display';
 import { FullScreenButton } from './controls/buttons/full-screen/full-screen-button';
 import { SettingsButton } from './controls/buttons/settings-button/settings-button';
-import { MarkerCreatorComponent } from './modals/marker-creator';
-
 import {
   PlayerInputHostDirective,
   PlayerHostEvents,
 } from './controls/player-input-host';
 import { LocalStorageService } from './services/localstorage.service';
-import { OvaPlayerPreferences } from './data-types/player-preferences-data';
 
 @Component({
   selector: 'app-native-player',
@@ -41,7 +38,6 @@ import { OvaPlayerPreferences } from './data-types/player-preferences-data';
     DisplayCurrentTime,
     DisplayTotalTime,
     MainTimeline,
-    MarkerCreatorComponent,
     PlayerInputHostDirective,
     FullScreenButton,
     MarkerDisplay,
@@ -56,70 +52,179 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   @ViewChild('mainTimelineRef') mainTimelineRef!: MainTimeline;
   @ViewChild('muteButtonRef') muteButtonRef!: VolumeButton;
 
-  currentTime: number = 0;
+  videoReady = false;
+  controlsVisible = false;
+  isFullscreen = false;
+  overlayVisible = false;
+  isPaused = true;
 
-  // Signals template children are ready to render, set after the video's ViewChild is initialized
-  videoReady: boolean = false;
+  rewindVisible = false;
+  forwardVisible = false;
 
-  // ✨ Controls Visibility State
-  controlsVisible: boolean = false;
+  thumbnailData: ScrubThumbData[] = [];
+
   private hideControlsTimeout: any;
-  private readonly HIDE_DELAY_MS = 3000; // 3 seconds delay
-  private clickTimeout: any;
-  private readonly CLICK_DELAY_MS = 250; // ms used to discriminate singe/double click
-  isFullscreen: boolean = false;
-  // Overlay visibility state used for center play/pause animation
-  overlayVisible: boolean = false;
   private overlayTimeout: any;
-  private readonly OVERLAY_DURATION_MS = 1000; // 1 second duration
-  // local property to reflect the video's paused state for ngClass swap-active
-  isPaused: boolean = true;
-  private onVideoMetadataLoadedBound = this.onVideoMetadataLoaded.bind(this);
-  private onVideoPlayBound = this.onVideoPlay.bind(this);
-  private onVideoPauseBound = this.onVideoPause.bind(this);
-  private fullscreenChangeHandler = this.onFullscreenChange.bind(this);
-  // --- Constant for seek step size (5 seconds) ---
+  private rewindTimeout: any;
+  private forwardTimeout: any;
+  private lastTap = 0;
+  private tapTimeout: any;
+
+  private readonly HIDE_DELAY_MS = 3000;
+  private readonly DOUBLE_TAP_DELAY = 300;
+  private readonly ICON_FLASH_MS = 800;
 
   private videoapi = inject(VideoApiService);
   private scrubThumbApiService = inject(ScrubThumbApiService);
-  thumbnailData: ScrubThumbData[] = [];
   private localStorageService = inject(LocalStorageService);
+
+  // Bind handlers so they can be removed correctly on destroy
+  private fullscreenHandler = this.onFullscreenChange.bind(this);
 
   constructor(private cd: ChangeDetectorRef) {}
 
-  private applySavedPreferences() {
-    const prefs: OvaPlayerPreferences =
-      this.localStorageService.loadPreferences(); // Apply sound level
+  ngAfterViewInit() {
+    this.loadScrubThumbnails();
+    const video = this.videoRef.nativeElement;
 
-    this.videoRef.nativeElement.volume = prefs.soundLevel;
+    // Handle metadata loading for markers/timeline
+    if (video.readyState >= 1) {
+      this.initVideoState();
+    } else {
+      video.addEventListener('loadedmetadata', () => this.initVideoState());
+    }
+
+    video.addEventListener('play', () => {
+      this.isPaused = false;
+      this.showOverlay();
+      this.scheduleHideControls();
+    });
+
+    video.addEventListener('pause', () => {
+      this.isPaused = true;
+      this.showOverlay();
+      this.showControls();
+    });
+
+    this.applySavedPreferences();
+    document.addEventListener('fullscreenchange', this.fullscreenHandler);
+    this.showControls();
+  }
+
+  private initVideoState() {
+    this.videoReady = true;
+    this.cd.detectChanges();
+  }
+
+  handleCenterTap(event: MouseEvent) {
+    event.stopPropagation();
+    this.togglePlayPause();
+    this.showControls();
+  }
+
+  handleTouch(event: TouchEvent) {
+    event.stopPropagation();
+    const now = Date.now();
+    const timeSinceLastTap = now - this.lastTap;
+
+    if (timeSinceLastTap < this.DOUBLE_TAP_DELAY) {
+      clearTimeout(this.tapTimeout);
+      this.lastTap = 0;
+
+      const touchX = event.touches[0].clientX;
+      const screenWidth = window.innerWidth;
+
+      if (touchX < screenWidth / 2) this.stepBackward();
+      else this.stepForward();
+
+      this.showControls();
+    } else {
+      this.lastTap = now;
+      this.tapTimeout = setTimeout(() => {
+        this.controlsVisible
+          ? this.hideControlsManually()
+          : this.showControls();
+      }, this.DOUBLE_TAP_DELAY);
+    }
+  }
+
+  togglePlayPause() {
+    const v = this.videoRef.nativeElement;
+    v.paused ? v.play() : v.pause();
+    this.cd.detectChanges();
+  }
+
+  showControls() {
+    this.controlsVisible = true;
+    this.cd.detectChanges();
+    this.scheduleHideControls();
+  }
+
+  private hideControlsManually() {
+    this.controlsVisible = false;
+    clearTimeout(this.hideControlsTimeout);
+    this.cd.detectChanges();
+  }
+
+  private scheduleHideControls() {
+    clearTimeout(this.hideControlsTimeout);
+    if (!this.isPaused) {
+      this.hideControlsTimeout = setTimeout(() => {
+        this.controlsVisible = false;
+        this.cd.detectChanges();
+      }, this.HIDE_DELAY_MS);
+    }
+  }
+
+  private showOverlay() {
+    this.overlayVisible = true;
+    clearTimeout(this.overlayTimeout);
+    this.overlayTimeout = setTimeout(() => {
+      this.overlayVisible = false;
+      this.cd.detectChanges();
+    }, 1000);
+    this.cd.detectChanges();
+  }
+
+  private stepForward() {
+    this.mainTimelineRef?.stepForward();
+    this.forwardVisible = true;
+    clearTimeout(this.forwardTimeout);
+    this.forwardTimeout = setTimeout(() => {
+      this.forwardVisible = false;
+      this.cd.detectChanges();
+    }, this.ICON_FLASH_MS);
+    this.cd.detectChanges();
+  }
+
+  private stepBackward() {
+    this.mainTimelineRef?.stepBackward();
+    this.rewindVisible = true;
+    clearTimeout(this.rewindTimeout);
+    this.rewindTimeout = setTimeout(() => {
+      this.rewindVisible = false;
+      this.cd.detectChanges();
+    }, this.ICON_FLASH_MS);
+    this.cd.detectChanges();
   }
 
   handleInputs(event: keyof PlayerHostEvents) {
+    this.showControls();
     switch (event) {
       case 'playPauseToggle':
-        this.showControls();
         this.togglePlayPause();
         break;
-      case 'showControls':
-        this.showControls();
-        break;
-      case 'hideControls':
-        break;
       case 'stepForward':
-        this.showControls();
-        this.mainTimelineRef.stepForward();
+        this.stepForward();
         break;
       case 'stepBackward':
-        this.showControls();
-        this.mainTimelineRef.stepBackward();
+        this.stepBackward();
         break;
       case 'volumeUp':
-        this.showControls();
-        this.muteButtonRef.volumeLevelUp();
+        this.muteButtonRef?.volumeLevelUp();
         break;
       case 'volumeDown':
-        this.showControls();
-        this.muteButtonRef.volumeLevelDown();
+        this.muteButtonRef?.volumeLevelDown();
         break;
     }
   }
@@ -127,187 +232,35 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   get videoUrl() {
     return this.videoapi.getStreamUrl(this.videoData.videoId);
   }
-
   get thumbnailUrl() {
     return this.videoapi.getThumbnailUrl(this.videoData.videoId);
   }
 
-  async ngAfterViewInit() {
-    this.loadScrubThumbnails();
-
-    const video = this.videoRef.nativeElement;
-    this.currentTime = video.currentTime;
-
-    // Wait until the video's metadata is loaded before proceeding with other logic
-    // Use the stored bound function to ensure removal will work later
-    video.addEventListener('loadedmetadata', this.onVideoMetadataLoadedBound);
-
-    // keep a simple isPaused boolean in sync with the video's state
-    this.isPaused = video.paused;
-    video.addEventListener('play', this.onVideoPlayBound);
-    video.addEventListener('pause', this.onVideoPauseBound);
-
-    this.applySavedPreferences();
-    // Ensure controls are visible initially for a moment.
-    // Wrap in a macrotask to avoid ExpressionChangedAfterItHasBeenCheckedError
-    setTimeout(() => this.showControls());
-
-    // Listen to fullscreen change to adjust local state for styling
-    document.addEventListener('fullscreenchange', this.fullscreenChangeHandler);
-
-    // Child controls rely on the presence of the video ElementRef; expose a flag
-    // so the template can defer rendering children until the ViewChild is set.
-    this.videoReady = true;
-    this.cd.detectChanges();
-  }
-
-  ngOnDestroy() {
-    this.clearHideControlsTimeout(); // Ensure timeout is cleared
-    this.clearOverlayTimeout();
-    if (this.videoRef?.nativeElement) {
-      // Remove the event listener using the bound function used for adding it
-      this.videoRef.nativeElement.removeEventListener(
-        'loadedmetadata',
-        this.onVideoMetadataLoadedBound
-      );
-      this.videoRef.nativeElement.removeEventListener(
-        'play',
-        this.onVideoPlayBound
-      );
-      this.videoRef.nativeElement.removeEventListener(
-        'pause',
-        this.onVideoPauseBound
-      );
-    }
-    // remove fullscreen listener
-    document.removeEventListener(
-      'fullscreenchange',
-      this.fullscreenChangeHandler
-    );
-  }
-
-  // --- NEW: Play/Pause on Video Click Logic ---
-
-  /** Toggles the video between play and pause. Called on video click. */
-  togglePlayPause() {
-    const video = this.videoRef.nativeElement; // This uses the ElementRef's native element
-    if (video.paused) {
-      video.play();
-    } else {
-      video.pause();
-    }
-    this.showControls();
-    this.showOverlay();
-  }
-
-  /** Handle single click with a small delay so double click can be detected. */
-  onSingleClick() {
-    // schedule a click action and store timer id
-    this.clearClickTimeout();
-    this.clickTimeout = setTimeout(() => {
-      this.togglePlayPause();
-      this.clickTimeout = null;
-    }, this.CLICK_DELAY_MS);
-  }
-
-  /** Handle double click - cancel any pending single click timer and toggle fullscreen. */
-  onDoubleClick(evt?: Event) {
-    if (evt) evt.preventDefault();
-    this.clearClickTimeout();
-    this.toggleFullScreen();
-  }
-
-  private clearClickTimeout() {
-    if (this.clickTimeout) {
-      clearTimeout(this.clickTimeout);
-      this.clickTimeout = null;
-    }
-  }
-
-  toggleFullScreen() {
-    const containerElement = this.playerWrap.nativeElement;
-    if (this.isFullscreen && document.exitFullscreen) {
-      document.exitFullscreen();
-    } else if (containerElement.requestFullscreen) {
-      containerElement.requestFullscreen();
-    }
+  private applySavedPreferences() {
+    const prefs = this.localStorageService.loadPreferences();
+    if (this.videoRef) this.videoRef.nativeElement.volume = prefs.soundLevel;
   }
 
   private onFullscreenChange() {
-    // set local state; ensures the video and container classes update
-    this.isFullscreen =
-      !!document.fullscreenElement &&
-      document.fullscreenElement === this.playerWrap?.nativeElement;
-  }
-
-  /** Shows overlay and schedules hiding after fixed duration. */
-  private showOverlay() {
-    this.overlayVisible = true;
-    this.clearOverlayTimeout();
-    this.overlayTimeout = setTimeout(() => {
-      this.overlayVisible = false;
-      this.overlayTimeout = null;
-      this.cd.detectChanges();
-    }, this.OVERLAY_DURATION_MS);
+    this.isFullscreen = !!document.fullscreenElement;
     this.cd.detectChanges();
-  }
-
-  private clearOverlayTimeout() {
-    if (this.overlayTimeout) {
-      clearTimeout(this.overlayTimeout);
-      this.overlayTimeout = null;
-    }
-  }
-
-  // --- Controls Visibility Logic ---
-
-  /** Clears the existing timeout for hiding controls. */
-  private clearHideControlsTimeout() {
-    if (this.hideControlsTimeout) {
-      clearTimeout(this.hideControlsTimeout);
-      this.hideControlsTimeout = null;
-    }
-  }
-
-  /** Shows controls and sets a timer to hide them. */
-  showControls() {
-    this.controlsVisible = true;
-    this.scheduleHideControls();
-  }
-
-  /** Schedules the controls to hide after the delay. */
-  private scheduleHideControls() {
-    this.clearHideControlsTimeout();
-    this.hideControlsTimeout = setTimeout(() => {
-      this.controlsVisible = false;
-    }, this.HIDE_DELAY_MS);
   }
 
   private loadScrubThumbnails() {
     this.scrubThumbApiService
       .loadScrubThumbnails(this.videoData.videoId)
-      .subscribe({
-        next: (thumbnails) => {
-          this.thumbnailData = thumbnails;
-        },
-        error: (err) => {
-          console.error('Error loading scrub thumbnails:', err);
-        },
+      .subscribe((thumbnails) => {
+        this.thumbnailData = thumbnails;
+        this.cd.detectChanges();
       });
   }
 
-  private onVideoPlay() {
-    this.isPaused = false;
-    this.showOverlay();
-  }
-
-  private onVideoPause() {
-    this.isPaused = true;
-    this.showOverlay();
-  }
-
-  /** Handler for when video metadata is loaded. */
-  private onVideoMetadataLoaded() {
-    console.log('Video metadata loaded.');
+  ngOnDestroy() {
+    clearTimeout(this.hideControlsTimeout);
+    clearTimeout(this.overlayTimeout);
+    clearTimeout(this.tapTimeout);
+    clearTimeout(this.rewindTimeout);
+    clearTimeout(this.forwardTimeout);
+    document.removeEventListener('fullscreenchange', this.fullscreenHandler);
   }
 }

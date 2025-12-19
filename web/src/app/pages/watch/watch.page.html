@@ -5,10 +5,10 @@
   <!-- Video Area: 70% width on xl+ screens, 100% on smaller screens -->
   <div class="w-full xl:w-[70%] flex flex-col">
 
-    <div class="absolute bottom-20 right-20">
+    <div class="">
       <div>Debug Panel</div>
       Video Player Switcher
-      <input type="checkbox" checked="checked" class="toggle" (change)="togglePlayer($event)" />
+      <input type="checkbox" class="toggle" (change)="togglePlayer($event)" />
     </div>
 
     <div class="xl:p-10">
@@ -38,7 +38,7 @@
 
       <div class="flex flex-col gap-6 mt-6 p-6 pb-10 bg-base-100 rounded-xl shadow-md">
         <app-video-admin-tabs #adminTabs [videoId]="video.videoId" [currentTags]="video.tags"
-          (tagsUpdated)="video.tags = $event" (addMarkerClicked)="onAddMarkerClicked()"></app-video-admin-tabs>
+          (tagsUpdated)="video.tags = $event"></app-video-admin-tabs>
       </div>
     </div>
 

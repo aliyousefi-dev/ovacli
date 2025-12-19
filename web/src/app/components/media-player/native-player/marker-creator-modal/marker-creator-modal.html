@@ -1,9 +1,16 @@
 <dialog id="markerCreator" class="modal" (click)="onDialogClick($event)" (cancel)="onCancel()">
   <div class="modal-box" (click)="$event.stopPropagation()">
     <h3 class="text-lg font-bold">Marker Creator</h3>
-    <div class="mt-5 flex flex-col gap-5">
-      <input type="text" class="input" placeholder="Enter marker name" />
-      <input type="text" class="input" placeholder="Enter marker description" />
+    <div class="mt-5 flex flex-col">
+
+      <label class="label">Label</label>
+      <input #labelInput type="text" class="input" placeholder="Enter Label" [(ngModel)]="title" name="markerTitle" />
+
+      <label class="label">Description</label>
+      <input type="text" class="input" placeholder="Enter description" [(ngModel)]="description"
+        name="markerDescription" />
+
+
     </div>
     <div class="modal-action">
       <button class="btn" (click)="onCancel()">Cancel</button>

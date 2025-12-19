@@ -34,18 +34,37 @@ export class FullScreenButton implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  toggleFullscreen() {
+  async toggleFullscreen() {
     const containerElement = this.playerContainerRef.nativeElement;
 
     if (this.isFullscreen) {
-      // Exit fullscreen
       if (document.exitFullscreen) {
-        document.exitFullscreen();
+        // Unlock orientation when exiting
+        if (screen.orientation && screen.orientation.unlock) {
+          screen.orientation.unlock();
+        }
+        await document.exitFullscreen();
       }
     } else {
-      // Enter fullscreen
       if (containerElement.requestFullscreen) {
-        containerElement.requestFullscreen();
+        try {
+          await containerElement.requestFullscreen();
+
+          // ✨ New: Lock to landscape on mobile
+          if (screen.orientation && (screen.orientation as any).lock) {
+            // We use 'landscape' to cover both landscape-primary and landscape-secondary
+            await (screen.orientation as any)
+              .lock('landscape')
+              .catch((err: any) => {
+                console.log(
+                  'Orientation lock failed or not supported on this device:',
+                  err
+                );
+              });
+          }
+        } catch (err) {
+          console.error('Error attempting to enable full-screen mode:', err);
+        }
       }
     }
   }

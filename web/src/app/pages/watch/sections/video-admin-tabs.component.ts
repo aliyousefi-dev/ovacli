@@ -9,17 +9,11 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TagManagementPanelComponent } from './tag-management-panel.component';
-import { MarkerEditPanelComponent } from './marker-edit-panel.component';
 
 @Component({
   selector: 'app-video-admin-tabs',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    TagManagementPanelComponent,
-    MarkerEditPanelComponent,
-  ],
+  imports: [CommonModule, FormsModule, TagManagementPanelComponent],
   templateUrl: './video-admin-tabs.component.html',
 })
 export class VideoAdminTabsComponent implements OnInit {
@@ -27,7 +21,6 @@ export class VideoAdminTabsComponent implements OnInit {
   @Input() currentTags: string[] = [];
   @Output() tagsUpdated = new EventEmitter<string[]>();
   @Output() addMarkerClicked = new EventEmitter<void>();
-  @ViewChild(MarkerEditPanelComponent) markerPanel!: MarkerEditPanelComponent;
 
   selectedTab: 'tag' | 'marker' = 'tag';
 
@@ -37,15 +30,6 @@ export class VideoAdminTabsComponent implements OnInit {
   persistTab(tab: 'tag' | 'marker') {
     this.selectedTab = tab;
     localStorage.setItem('admin_tab', tab);
-  }
-
-  // Remove toggle method
-  // toggleAdminPanel() { ... }
-
-  addMarkerBySeconds(seconds: number) {
-    if (this.markerPanel) {
-      this.markerPanel.addMarkerBySeconds(seconds);
-    }
   }
 
   ngOnInit() {

@@ -1,61 +1,68 @@
-<div class="relative w-full" [class.flex]="isFullscreen" [class.items-center]="isFullscreen"
+<div class="relative w-full overflow-hidden bg-black" [class.flex]="isFullscreen" [class.items-center]="isFullscreen"
   [class.justify-center]="isFullscreen" #playerWrap appPlayerControlsHost (inputEvents)="handleInputs($event)">
 
   <video #videoRef
     [ngClass]="{ 'w-full': !isFullscreen, 'w-auto': isFullscreen, 'max-h-screen': isFullscreen, 'aspect-video': true, 'block': true }"
-    [src]="videoUrl" [poster]="thumbnailUrl" (click)="onSingleClick()" (dblclick)="onDoubleClick($event)">
+    [src]="videoUrl" [poster]="thumbnailUrl" (touchstart)="handleTouch($event)">
   </video>
 
-  <!-- Top-left marker display -->
-  @if(videoReady){
-  <div class="absolute top-5 right-5 z-50 pointer-events-auto transition-opacity duration-300"
-    [ngClass]="{ 'opacity-0 pointer-events-none': !controlsVisible }" (click)="$event.stopPropagation()">
+  <div class="absolute top-5 right-5 z-50">
     <app-marker-display [videoData]="this.videoData" [videoRef]="this.videoRef"></app-marker-display>
   </div>
-  }
 
-  <!-- Center play/pause swap overlay (shows on play/pause) -->
-  <div
-    class="absolute inset-0 flex items-center justify-center pointer-events-none z-50 transition-opacity duration-300"
-    [ngClass]="{ 'opacity-0': !overlayVisible }">
-    <label class="btn btn-ghost btn-sm btn-square swap swap-rotate text-white" [ngClass]="{ 'swap-active': isPaused }">
+  <!-- Touch controls -->
+  <div class="absolute inset-0 z-30 flex justify-center items-center pointer-events-none">
 
-      <i class='bx bx-play  text-[10rem] swap-on'></i>
+    <!-- Rewind -->
+    <div class="w-1/3 h-1/2 pointer-events-auto " (touchstart)="handleTouch($event)">
+      <div class="flex items-center justify-center h-full transition-opacity duration-200"
+        [ngClass]="{ 'opacity-0': !rewindVisible }">
+        <div class="bg-black/40 rounded-full p-6">
+          <i class='bx bx-rewind text-[6rem] text-white'></i>
+        </div>
+      </div>
+    </div>
 
-      <i class='bx bx-pause text-[10rem] swap-off'></i>
-    </label>
+    <!-- Play/Pause -->
+    <div class="w-1/3 h-1/2 pointer-events-auto flex items-center justify-center" (click)="handleCenterTap($event)">
+      <div class="w-40 h-40 flex items-center justify-center rounded-full transition-all duration-300"
+        [ngClass]="{ 'bg-black/20 opacity-100': overlayVisible, 'opacity-0': !overlayVisible }">
+        <i class='bx text-[8rem] text-white' [ngClass]="isPaused ? 'bx-play' : 'bx-pause'"></i>
+      </div>
+    </div>
+
+    <!-- Forward -->
+    <div class="w-1/3 h-1/2 pointer-events-auto " (touchstart)="handleTouch($event)">
+      <div class="flex items-center justify-center h-full transition-opacity duration-200"
+        [ngClass]="{ 'opacity-0': !forwardVisible }">
+        <div class="bg-black/40 rounded-full p-6">
+          <i class='bx bx-fast-forward text-[6rem] text-white'></i>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="absolute bottom-0 left-0 right-0 h-1/2 pointer-events-none 
+  <div class="absolute bottom-0 left-0 right-0 h-1/2 pointer-events-none z-40
     bg-gradient-to-t from-black/90 to-transparent transition-opacity duration-300"
     [ngClass]="{ 'opacity-0': !controlsVisible }">
   </div>
 
-  <div class="absolute inset-0 flex flex-col justify-end p-8 transition-all duration-300" [ngClass]="{
-      'opacity-0 pointer-events-none': !controlsVisible,
-      'cursor-none': !controlsVisible
-    }" (click)="onSingleClick()" (dblclick)="onDoubleClick($event)">
+  <div class="absolute inset-0 flex flex-col justify-end p-8 transition-all duration-300 z-50 pointer-events-none"
+    [ngClass]="{ 'opacity-0': !controlsVisible }">
 
     @if(videoReady){
-    <div (click)="$event.stopPropagation()">
-
-      <!-- Controls -->
+    <div (touchstart)="$event.stopPropagation()" class="pointer-events-auto">
       <div class="flex items-center justify-between gap-2 mt-2 text-white">
-
         <div class="flex items-center gap-2 ">
-          <app-play-pause-button [videoRef]="this.videoRef">
-          </app-play-pause-button>
+          <app-play-pause-button [videoRef]="this.videoRef"></app-play-pause-button>
           <app-mute-button #muteButtonRef [videoRef]="this.videoRef"></app-mute-button>
         </div>
-
         <div class="flex items-center gap-2">
           <app-settings-button [videoRef]="this.videoRef"></app-settings-button>
           <app-full-screen-button [playerContainerRef]="this.playerWrap"></app-full-screen-button>
         </div>
-
       </div>
 
-      <!-- Timeline and time display -->
       <div class="flex justify-center items-end gap-5 text-sm text-white">
         <app-display-current-time [videoRef]="this.videoRef"></app-display-current-time>
         <app-main-timeline class="w-full" #mainTimelineRef [videoRef]="this.videoRef"
@@ -63,12 +70,7 @@
         </app-main-timeline>
         <app-display-total-time [videoRef]="this.videoRef"></app-display-total-time>
       </div>
-
     </div>
     }
-
   </div>
-
 </div>
-
-<app-marker-creator #markerCreatorModal></app-marker-creator>

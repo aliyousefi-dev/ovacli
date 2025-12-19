@@ -15,11 +15,5 @@
         (tagsUpdated)="tagsUpdated.emit($event)"></app-tag-management-panel>
     </div>
 
-    <!-- Marker Editor Tab -->
-    <input type="radio" name="watch_tabs" class="tab" aria-label="Marker Editor" [(ngModel)]="selectedTab"
-      [value]="'marker'" (change)="persistTab('marker')" />
-    <div class="tab-content bg-base-100 p-6" *ngIf="selectedTab === 'marker'">
-      <app-marker-edit-panel [videoId]="videoId" (addMarkerClicked)="addMarkerClicked.emit()"></app-marker-edit-panel>
-    </div>
   </div>
 </div>

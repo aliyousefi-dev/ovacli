@@ -9,7 +9,6 @@ import { PlaylistAPIService } from '../../../ova-angular-sdk/rest-api/playlist-a
 import { WatchedApiService } from '../../../ova-angular-sdk/rest-api/recent-api.service';
 import { VidstackPlayerComponent } from '../../components/media-player/vidstack-player/vidstack-player.component';
 import { NativePlayer } from '../../components/media-player/native-player/native-player';
-import { MarkerApiService } from '../../../ova-angular-sdk/rest-api/marker-api.service';
 
 // Updated: Import new child components
 import { VideoTitleBarComponent } from './sections/video-title-bar.component'; // Path assuming it's in the same directory as watch.page.ts
@@ -60,13 +59,6 @@ export class WatchPage implements AfterViewInit {
   playlists: { title: string; slug: string; checked: boolean }[] = [];
   originalPlaylists: { title: string; slug: string; checked: boolean }[] = [];
 
-  onAddMarkerClicked() {
-    const currentTime = this.vidstackPlayer.getCurrentTime();
-    console.log('Current Time:', currentTime);
-
-    this.adminTabs.addMarkerBySeconds(currentTime);
-  }
-
   togglePlayer(event: Event) {
     this.useVidstack = (event.target as HTMLInputElement).checked;
   }
@@ -79,7 +71,6 @@ export class WatchPage implements AfterViewInit {
     public videoapi: VideoApiService,
     private playlistapi: PlaylistAPIService,
     private watchedapi: WatchedApiService,
-    private markerapi: MarkerApiService,
     private playlistContentAPI: PlaylistContentAPIService,
     private cd: ChangeDetectorRef
   ) {
@@ -147,10 +138,6 @@ export class WatchPage implements AfterViewInit {
 
   get storyboardVttUrl(): string {
     return this.videoapi.getPreviewThumbsUrl(this.video.videoId);
-  }
-
-  get markerFileUrl(): string {
-    return this.markerapi.getMarkerFileUrl(this.video.videoId);
   }
 
   toggleSaved() {

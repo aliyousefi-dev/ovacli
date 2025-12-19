@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { UserProfile } from '../core-types/user-profile';
 
 import { ApiSuccessResponse } from './api-responses/core-response';
-import { environment } from '../../environments/environment';
 import { AuthStatusResponse } from './api-responses/auth-status';
 import { OVASDKConfig } from '../global-config';
 

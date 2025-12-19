@@ -1,4 +1,5 @@
 export interface MarkerData {
   timeSecond: number;
-  title: string;
+  label: string;
+  description: string;
 }

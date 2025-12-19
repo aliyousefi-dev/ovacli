@@ -59,7 +59,7 @@ func addMarker(rm *repo.RepoManager) gin.HandlerFunc {
 		// 4. Pass the bound data to your repository
 		rm.AddMarkerToVideo(videoId, datatypes.MarkerData{
 			TimeSecond:  req.TimeSecond,
-			Title:       req.Label,
+			Label:       req.Label,
 			Description: req.Description,
 		})
 

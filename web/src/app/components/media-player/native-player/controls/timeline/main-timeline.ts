@@ -55,7 +55,7 @@ export class MainTimeline implements OnInit, OnDestroy, AfterViewInit {
   timelineWidthPx: number = 0;
   private resizeHandler = this.updateTimelineWidth.bind(this);
   private fullscreenChangeHandler = this.updateTimelineWidth.bind(this);
-  private readonly SEEK_STEP = 5;
+  private readonly SEEK_STEP = 15;
 
   // Inject ChangeDetectorRef so we can safely notify Angular of property changes
   constructor(private cd: ChangeDetectorRef) {}

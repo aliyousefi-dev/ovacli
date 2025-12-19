@@ -9,7 +9,7 @@
         [scrubXPositionPx]="scrubXPositionPx" [timelineWidthPx]="timelineWidthPx"> <!-- NEW INPUT ADDED -->
     </app-scrub-preview>
 
-    <app-marker-track [videoRef]="this.videoRef" [markersData]="markersData"></app-marker-track>
+    <app-marker-track class="z-20" [videoRef]="this.videoRef" [markersData]="markersData"></app-marker-track>
     <app-buffered-track [videoRef]="this.videoRef"></app-buffered-track>
 
     <app-progress-track #progressTrack [videoRef]="this.videoRef" (scrubMove)="onScrubMove($event)"
