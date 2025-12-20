@@ -8,10 +8,10 @@ export class AppSettingsService {
 
   private defaultSettings: AppSettings = {
     ActiveTheme: 'light',
-    GalleryInfiniteMode: false,
+    GalleryInfiniteMode: true,
     GalleryMiniCardViewMode: true,
     GalleryPreviewPlayback: false,
-    useNativePlayer: false,
+    useNativePlayer: true,
   };
 
   // 1. Create the BehaviorSubject with default values
