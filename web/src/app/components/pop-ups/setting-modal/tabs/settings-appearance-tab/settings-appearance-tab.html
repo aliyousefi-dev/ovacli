@@ -1,18 +1,21 @@
 <div class="max-w-full">
     <label class="label text-xs">
-        <input type="checkbox" class="toggle toggle-xs" />
+        <input type="checkbox" class="toggle toggle-xs" [(ngModel)]="previewPlayback" [checked]="previewPlayback"
+            (click)="togglePreviewPlayback()" />
         Preview Playback
     </label>
 </div>
 <div class="max-w-full">
     <label class="label text-xs">
-        <input type="checkbox" class="toggle toggle-xs" />
+        <input type="checkbox" class="toggle toggle-xs" [(ngModel)]="infiniteMode" [checked]="infiniteMode"
+            (click)="toggleInfiniteMode()" />
         Infinite Fetch
     </label>
 </div>
 <div class="max-w-full">
     <label class="label text-xs">
-        <input type="checkbox" class="toggle toggle-xs" />
+        <input type="checkbox" class="toggle toggle-xs" [(ngModel)]="isMiniView" [checked]="isMiniView"
+            (click)="toggleMiniView()" />
         Video Card Mini View
     </label>
 </div>

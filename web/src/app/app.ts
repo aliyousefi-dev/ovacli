@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   Router,
@@ -8,8 +8,8 @@ import {
   NavigationCancel,
   NavigationError,
 } from '@angular/router';
+import { AppSettingsService } from '../app-settings/app-settings.service';
 
-import { OnInit, inject } from '@angular/core';
 import { LoadingService } from '../services/loading.service';
 
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -22,16 +22,13 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 })
 export class App implements OnInit {
   private router = inject(Router);
+  private appSettings = inject(AppSettingsService);
   private loadingService = inject(LoadingService);
 
   loading$ = this.loadingService.loading$;
   isNotFoundRoute: boolean = false;
 
   ngOnInit() {
-    // Set theme from localStorage
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-
     // Listen to router navigation events to toggle loading spinner
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {

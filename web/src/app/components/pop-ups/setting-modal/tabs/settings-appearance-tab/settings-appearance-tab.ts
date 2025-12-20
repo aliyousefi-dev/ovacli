@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AppSettingsService } from '../../../../../../app-settings/app-settings.service';
+import { AppTheme, APP_THEMES } from '../../../../../../app-settings/themes';
 
 @Component({
   selector: 'app-settings-appearance-tab',
@@ -8,55 +10,52 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './settings-appearance-tab.html',
   imports: [CommonModule, FormsModule],
 })
-export class SettingsAppearanceTab {
-  // Remove modalRef usage since we're handling visibility via `showModal`
-  themes = [
-    'light',
-    'dark',
-    'mytheme',
-    'cupcake',
-    'bumblebee',
-    'emerald',
-    'corporate',
-    'synthwave',
-    'retro',
-    'cyberpunk',
-    'valentine',
-    'halloween',
-    'garden',
-    'forest',
-    'aqua',
-    'lofi',
-    'pastel',
-    'fantasy',
-    'wireframe',
-    'black',
-    'luxury',
-    'dracula',
-    'cmyk',
-    'autumn',
-    'business',
-    'acid',
-    'lemonade',
-    'night',
-    'coffee',
-    'winter',
-    'dim',
-    'nord',
-    'sunset',
-  ];
+export class SettingsAppearanceTab implements OnInit {
+  private appSettings = inject(AppSettingsService);
 
-  selectedTheme = 'light';
+  infiniteMode = true; // Default to infinite mode, you can change based on preference
+  previewPlayback = true; // Default for preview playback
+  isMiniView = false; // Default to full view
+
+  // Use the central list from your themes.ts file
+  themes = APP_THEMES;
+
+  // Getter to stay in sync with the service memory
+  get selectedTheme(): AppTheme {
+    return this.appSettings.currentSettings.ActiveTheme;
+  }
 
   ngOnInit() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    this.selectedTheme = savedTheme;
-    document.documentElement.setAttribute('data-theme', savedTheme);
+    this.appSettings.settings$.subscribe((settings) => {
+      this.infiniteMode = settings.GalleryInfiniteMode;
+      this.isMiniView = settings.GalleryMiniCardViewMode;
+      this.previewPlayback = settings.GalleryPreviewPlayback;
+    });
+  }
+
+  toggleInfiniteMode() {
+    this.appSettings.updateSetting(
+      'GalleryInfiniteMode',
+      !this.appSettings.currentSettings.GalleryInfiniteMode
+    );
+  }
+
+  togglePreviewPlayback() {
+    this.appSettings.updateSetting(
+      'GalleryPreviewPlayback',
+      !this.appSettings.currentSettings.GalleryPreviewPlayback
+    );
+  }
+
+  toggleMiniView() {
+    this.appSettings.updateSetting(
+      'GalleryMiniCardViewMode',
+      !this.appSettings.currentSettings.GalleryMiniCardViewMode
+    );
   }
 
   setTheme(theme: string) {
-    this.selectedTheme = theme;
-    localStorage.setItem('theme', theme);
-    document.documentElement.setAttribute('data-theme', theme);
+    // We cast to AppTheme because the UI usually passes a string
+    this.appSettings.updateSetting('ActiveTheme', theme as AppTheme);
   }
 }

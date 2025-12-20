@@ -42,7 +42,7 @@ export class WatchPage implements AfterViewInit {
   @ViewChild('adminTabs') adminTabs!: VideoAdminTabsComponent;
 
   // true -> use vidstack player; false -> use native player
-  useVidstack = false;
+  useVidstack = true;
 
   loading = true;
   error = false;

@@ -10,12 +10,7 @@ import { CreateTeamSpacePage } from './pages/create-team-space/create-team-space
 import { JoinTeamSpacePage } from './pages/join-team-space/join-team-space.page';
 import { UploadPage } from './pages/upload/upload.page';
 import { ProfileSettingsPage } from './pages/profile-settings/profile.page';
-import { SettingsPage } from './pages/settings/settings.page';
 import { SavedPage } from './pages/saved/saved.page';
-import { AppearanceSettingsComponent } from './pages/settings/panels/appearance-settings/appearance-settings.component';
-import { SecuritySettingsComponent } from './pages/settings/panels/security-settings/security-settings.component';
-import { AddonsSettingsComponent } from './pages/settings/panels/addons-settings/addons-settings.component';
-import { GeneralSettingsComponent } from './pages/settings/panels/general-settings/general-settings.component';
 import { SearchPage } from './pages/search/search.page';
 import { PlaylistsPage } from './pages/playlists/playlists.page';
 import { MaterialsPage } from './pages/materials/materials.page';
@@ -88,17 +83,6 @@ export const MainRoutes: Routes = [
   {
     path: 'saved',
     component: SavedPage,
-  },
-  {
-    path: 'settings',
-    component: SettingsPage,
-    children: [
-      { path: 'appearance', component: AppearanceSettingsComponent },
-      { path: 'security', component: SecuritySettingsComponent },
-      { path: 'addons', component: AddonsSettingsComponent },
-      { path: 'general', component: GeneralSettingsComponent },
-      { path: '', redirectTo: 'profile', pathMatch: 'full' }, // default
-    ],
   },
   {
     path: 'search',
