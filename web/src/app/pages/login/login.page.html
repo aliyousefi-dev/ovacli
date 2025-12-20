@@ -28,7 +28,9 @@
                 title="Must be more than 8 characters, including number, lowercase letter, uppercase letter"
                 autocomplete="current-password" />
             </label>
-            <div *ngIf="error" class="text-red-500 text-sm font-medium">{{ error }}</div>
+            @if(this.error){
+            <div class="text-red-500 text-sm font-medium">{{ error }}</div>
+            }
             <div><a class="link link-hover">Forgot password?</a></div>
             <button type="submit" class="btn btn-neutral mt-4">Login</button>
           </fieldset>

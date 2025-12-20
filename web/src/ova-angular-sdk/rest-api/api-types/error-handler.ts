@@ -10,8 +10,7 @@ export function handleApiError(error: HttpErrorResponse): ApiErrorResponse {
       message:
         error.status === 0
           ? 'Cannot connect to the server. Please try again later.'
-          : error.error?.message ||
-            'An error occurred. Please try again later.',
+          : error.error?.error?.message || 'Uknown Error.',
     },
   };
 }

@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router'; // Import Router for navigation
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthApiService } from '../../../ova-angular-sdk/rest-api/auth-api.service';
+import { ApiErrorResponse } from '../../../ova-angular-sdk/rest-api/api-types/core-response';
 
 @Component({
   selector: 'app-login',
@@ -12,12 +13,12 @@ import { AuthApiService } from '../../../ova-angular-sdk/rest-api/auth-api.servi
   styleUrl: 'login.page.css',
 })
 export class LoginPage {
+  private authApiService = inject(AuthApiService);
+  private router = inject(Router);
+
   username: string = '';
   password: string = '';
   error: string | null = null;
-  sessionId: string | null = null;
-
-  constructor(private authapi: AuthApiService, private router: Router) {}
 
   onSubmit() {
     this.error = null;
@@ -26,7 +27,7 @@ export class LoginPage {
       return;
     }
 
-    this.authapi.login(this.username, this.password).subscribe({
+    this.authApiService.login(this.username, this.password).subscribe({
       next: (res) => {
         if (res.status === 'success') {
           // Navigate to /home after successful login
@@ -35,8 +36,8 @@ export class LoginPage {
           this.error = res.message || 'Login failed';
         }
       },
-      error: (errorMessage) => {
-        this.error = errorMessage;
+      error: (err: ApiErrorResponse) => {
+        this.error = err.error.message;
       },
     });
   }
