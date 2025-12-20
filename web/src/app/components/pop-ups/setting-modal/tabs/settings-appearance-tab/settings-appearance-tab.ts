@@ -16,6 +16,7 @@ export class SettingsAppearanceTab implements OnInit {
   infiniteMode = true; // Default to infinite mode, you can change based on preference
   previewPlayback = true; // Default for preview playback
   isMiniView = false; // Default to full view
+  useNativePlayer = false;
 
   // Use the central list from your themes.ts file
   themes = APP_THEMES;
@@ -30,6 +31,7 @@ export class SettingsAppearanceTab implements OnInit {
       this.infiniteMode = settings.GalleryInfiniteMode;
       this.isMiniView = settings.GalleryMiniCardViewMode;
       this.previewPlayback = settings.GalleryPreviewPlayback;
+      this.useNativePlayer = settings.useNativePlayer;
     });
   }
 
@@ -44,6 +46,13 @@ export class SettingsAppearanceTab implements OnInit {
     this.appSettings.updateSetting(
       'GalleryPreviewPlayback',
       !this.appSettings.currentSettings.GalleryPreviewPlayback
+    );
+  }
+
+  toggleNativePlayer() {
+    this.appSettings.updateSetting(
+      'useNativePlayer',
+      !this.appSettings.currentSettings.useNativePlayer
     );
   }
 

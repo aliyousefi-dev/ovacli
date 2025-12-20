@@ -5,4 +5,5 @@ export interface AppSettings {
   GalleryInfiniteMode: boolean;
   GalleryMiniCardViewMode: boolean;
   GalleryPreviewPlayback: boolean;
+  useNativePlayer: boolean;
 }

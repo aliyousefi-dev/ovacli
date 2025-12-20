@@ -14,6 +14,7 @@ here we demonstrate what features we want to add to next versions.
 - (user) keep history of watched videos
 - (cli) linux support
 - (cli) show elapsed time for indexing and cooking
+- (api) enable rate limit for login user/pass
 - (global) random video
 - (global) most liked videos
 - (global) most viewed videos

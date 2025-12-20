@@ -1,3 +1,4 @@
+@if (videoData) {
 <media-player #mediaPlayer view-type="video" stream-type="on-demand" crossorigin playsinline [poster]="thumbnailUrl"
   storage="video-player-options" class="z-100">
   <media-provider>
@@ -16,4 +17,5 @@
 
 @if (isFullscreenOverlay){
 <div class="fullscreen-block-overlay"></div>
+}
 }

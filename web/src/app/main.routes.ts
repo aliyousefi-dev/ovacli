@@ -59,6 +59,7 @@ export const MainRoutes: Routes = [
   {
     path: 'watch/:videoId',
     component: WatchPage,
+    data: { reuse: true },
   },
   {
     path: 'create-space',

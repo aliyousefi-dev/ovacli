@@ -20,6 +20,13 @@
     </label>
 </div>
 <div class="max-w-full">
+    <label class="label text-xs">
+        <input type="checkbox" class="toggle toggle-xs" [(ngModel)]="useNativePlayer" [checked]="useNativePlayer"
+            (click)="toggleNativePlayer()" />
+        Use Native Player
+    </label>
+</div>
+<div class="max-w-full">
     <p class="py-4">Themes:</p>
     <div class="form-control w-full max-w-xl p-4">
         <div class="flex flex-wrap gap-2">

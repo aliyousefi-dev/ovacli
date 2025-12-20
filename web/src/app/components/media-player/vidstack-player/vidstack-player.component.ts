@@ -6,7 +6,6 @@ import {
   ViewChild,
   ElementRef,
   inject,
-  OnInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -43,7 +42,6 @@ export class VidstackPlayerComponent implements AfterViewInit {
   isFullscreenOverlay = false;
 
   private videoapi = inject(VideoApiService);
-  private markerapi = inject(MarkerApiService);
 
   ngAfterViewInit(): void {
     const updateOverlay = () => {

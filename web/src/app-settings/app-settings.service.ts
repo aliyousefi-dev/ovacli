@@ -11,6 +11,7 @@ export class AppSettingsService {
     GalleryInfiniteMode: false,
     GalleryMiniCardViewMode: true,
     GalleryPreviewPlayback: false,
+    useNativePlayer: false,
   };
 
   // 1. Create the BehaviorSubject with default values

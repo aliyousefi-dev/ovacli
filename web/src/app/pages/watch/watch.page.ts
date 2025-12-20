@@ -1,4 +1,10 @@
-import { Component, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  AfterViewInit,
+  ChangeDetectorRef,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -9,6 +15,7 @@ import { PlaylistAPIService } from '../../../ova-angular-sdk/rest-api/playlist-a
 import { WatchedApiService } from '../../../ova-angular-sdk/rest-api/recent-api.service';
 import { VidstackPlayerComponent } from '../../components/media-player/vidstack-player/vidstack-player.component';
 import { NativePlayer } from '../../components/media-player/native-player/native-player';
+import { AppSettingsService } from '../../../app-settings/app-settings.service';
 
 // Updated: Import new child components
 import { VideoTitleBarComponent } from './sections/video-title-bar.component'; // Path assuming it's in the same directory as watch.page.ts
@@ -33,22 +40,28 @@ import { ViewChild } from '@angular/core';
     VideoAdminTabsComponent,
     WatchDetailSection,
     VideoActionBarComponent,
-    VideoTitleBarComponent,
   ],
   templateUrl: './watch.page.html',
 })
-export class WatchPage implements AfterViewInit {
+export class WatchPage implements AfterViewInit, OnInit {
   @ViewChild('vidstackPlayer') vidstackPlayer!: VidstackPlayerComponent;
   @ViewChild('adminTabs') adminTabs!: VideoAdminTabsComponent;
 
+  private appSettings = inject(AppSettingsService);
+  private activatedRoute = inject(ActivatedRoute);
+  private savedApiService = inject(SavedApiService);
+  private videoApiService = inject(VideoApiService);
+  private playlistApiService = inject(PlaylistAPIService);
+  private watchedApiService = inject(WatchedApiService);
+  private playlistContentApiService = inject(PlaylistContentAPIService);
+  private cd = inject(ChangeDetectorRef);
+
   // true -> use vidstack player; false -> use native player
   useVidstack = true;
-
   loading = true;
   error = false;
   videoId: string | null = null;
   video!: VideoData;
-
   isSaved = false;
   loadingSavedVideo = false;
   username = '';
@@ -59,30 +72,22 @@ export class WatchPage implements AfterViewInit {
   playlists: { title: string; slug: string; checked: boolean }[] = [];
   originalPlaylists: { title: string; slug: string; checked: boolean }[] = [];
 
-  togglePlayer(event: Event) {
-    this.useVidstack = (event.target as HTMLInputElement).checked;
+  ngOnInit(): void {
+    this.activatedRoute.params.subscribe((params) => {
+      const newId = params['videoId'];
+      if (newId) {
+        this.video = null as any;
+        this.videoId = newId;
+        this.fetchVideo(newId);
+      }
+    });
+
+    this.appSettings.settings$.subscribe((settings) => {
+      this.useVidstack = !settings.useNativePlayer;
+    });
   }
 
   getCurrentTimeFromPlayer = () => this.vidstackPlayer.getCurrentTime();
-
-  constructor(
-    private route: ActivatedRoute,
-    private savedapi: SavedApiService,
-    public videoapi: VideoApiService,
-    private playlistapi: PlaylistAPIService,
-    private watchedapi: WatchedApiService,
-    private playlistContentAPI: PlaylistContentAPIService,
-    private cd: ChangeDetectorRef
-  ) {
-    this.videoId = this.route.snapshot.paramMap.get('videoId');
-
-    if (this.videoId) {
-      this.fetchVideo(this.videoId);
-    } else {
-      this.error = true;
-      this.loading = false;
-    }
-  }
 
   ngAfterViewInit(): void {
     window.scrollTo(0, 0);
@@ -97,7 +102,7 @@ export class WatchPage implements AfterViewInit {
   fetchVideo(videoId: string) {
     this.loading = true;
     this.error = false;
-    this.videoapi.getVideoById(videoId).subscribe({
+    this.videoApiService.getVideoById(videoId).subscribe({
       next: (response) => {
         this.video = response.data;
         (window as any).video = this.video; // Consider removing this if not debugging
@@ -105,7 +110,7 @@ export class WatchPage implements AfterViewInit {
         this.username = localStorage.getItem('username') ?? '';
 
         if (this.username && this.videoId) {
-          this.watchedapi
+          this.watchedApiService
             .addUserWatched(this.username, this.videoId)
             .subscribe({
               next: () => {
@@ -129,15 +134,15 @@ export class WatchPage implements AfterViewInit {
   }
 
   get videoUrl(): string {
-    return this.videoapi.getStreamUrl(this.video.videoId);
+    return this.videoApiService.getStreamUrl(this.video.videoId);
   }
 
   get thumbnailUrl(): string {
-    return this.videoapi.getThumbnailUrl(this.video.videoId);
+    return this.videoApiService.getThumbnailUrl(this.video.videoId);
   }
 
   get storyboardVttUrl(): string {
-    return this.videoapi.getPreviewThumbsUrl(this.video.videoId);
+    return this.videoApiService.getPreviewThumbsUrl(this.video.videoId);
   }
 
   toggleSaved() {
@@ -148,7 +153,7 @@ export class WatchPage implements AfterViewInit {
     const done = () => (this.loadingSavedVideo = false);
 
     if (this.isSaved) {
-      this.savedapi.removeUserSaved(this.videoId).subscribe({
+      this.savedApiService.removeUserSaved(this.videoId).subscribe({
         next: () => {
           this.isSaved = false;
           done();
@@ -156,7 +161,7 @@ export class WatchPage implements AfterViewInit {
         error: () => done(),
       });
     } else {
-      this.savedapi.addUserSaved(this.videoId).subscribe({
+      this.savedApiService.addUserSaved(this.videoId).subscribe({
         next: () => {
           this.isSaved = true;
           done();
@@ -170,7 +175,7 @@ export class WatchPage implements AfterViewInit {
     event.stopPropagation();
     if (!this.username || !this.video) return;
 
-    this.playlistapi.getUserPlaylists().subscribe((response) => {
+    this.playlistApiService.getUserPlaylists().subscribe((response) => {
       const pls = response.data.playlists;
       const checkList = pls.map((p) => ({ ...p, checked: false }));
 
@@ -178,7 +183,7 @@ export class WatchPage implements AfterViewInit {
         checkList.map(
           (playlist) =>
             new Promise<void>((resolve) => {
-              this.playlistContentAPI
+              this.playlistContentApiService
                 .fetchPlaylistContent(playlist.slug)
                 .subscribe((plData) => {
                   playlist.checked = plData.data.videoIds.includes(
@@ -210,11 +215,11 @@ export class WatchPage implements AfterViewInit {
       if (!original) return;
 
       if (playlist.checked && !original.checked) {
-        this.playlistContentAPI
+        this.playlistContentApiService
           .addVideoToPlaylist(playlist.slug, this.video.videoId)
           .subscribe();
       } else if (!playlist.checked && original.checked) {
-        this.playlistContentAPI
+        this.playlistContentApiService
           .deleteVideoFromPlaylist(playlist.slug, this.video.videoId)
           .subscribe();
       }

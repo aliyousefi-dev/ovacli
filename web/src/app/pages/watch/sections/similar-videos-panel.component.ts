@@ -45,10 +45,6 @@ export class SimilarVideosPanelComponent implements OnChanges {
   }
 
   navigateToVideo(videoId: string) {
-    // Navigate to the video detail page
-    this.router.navigate(['/watch', videoId], { replaceUrl: true }).then(() => {
-      // Force the page to reload after navigation
-      window.location.reload();
-    });
+    this.router.navigate(['/watch', videoId]);
   }
 }
