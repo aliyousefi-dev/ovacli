@@ -19,9 +19,9 @@ export class AuthApiService {
   login(
     username: string,
     password: string
-  ): Observable<ApiSuccessResponse<{ sessionId: string }>> {
+  ): Observable<ApiSuccessResponse<null>> {
     return this.http
-      .post<ApiSuccessResponse<{ sessionId: string }>>(
+      .post<ApiSuccessResponse<null>>(
         `${this.config.apiBaseUrl}/auth/login`,
         { username, password },
         { withCredentials: true }

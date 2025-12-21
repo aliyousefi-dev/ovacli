@@ -69,6 +69,11 @@ func getVideosByIds(repoMgr *repo.RepoManager) gin.HandlerFunc {
 				IsSaved:   isSaved,
 			}
 
+			video_stats := apitypes.VideoStats{
+				Views:     video.TotalViews,
+				Downloads: video.TotalDownloads,
+			}
+
 			// Create the video response
 			videoResponse := apitypes.VideoDataAPIResponse{
 				VideoID:              video.VideoID,
@@ -77,8 +82,7 @@ func getVideosByIds(repoMgr *repo.RepoManager) gin.HandlerFunc {
 				Codecs:               video.Codecs,
 				IsCooked:             video.IsCooked,
 				OwnerAccountUsername: userdata.Username,
-				TotalViews:           video.TotalViews,
-				TotalDownloads:       video.TotalDownloads,
+				VideoStats:           video_stats,
 				VideoStatus:          video_user_status,
 				IsPublic:             video.IsPublic,
 				UploadedAt:           video.UploadedAt,

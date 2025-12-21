@@ -1,41 +1,52 @@
-<div class="max-w-full">
-    <label class="label text-xs">
-        <input type="checkbox" class="toggle toggle-xs" [(ngModel)]="previewPlayback" [checked]="previewPlayback"
-            (click)="togglePreviewPlayback()" />
-        Preview Playback
-    </label>
-</div>
-<div class="max-w-full">
-    <label class="label text-xs">
-        <input type="checkbox" class="toggle toggle-xs" [(ngModel)]="infiniteMode" [checked]="infiniteMode"
-            (click)="toggleInfiniteMode()" />
-        Infinite Fetch
-    </label>
-</div>
-<div class="max-w-full">
-    <label class="label text-xs">
-        <input type="checkbox" class="toggle toggle-xs" [(ngModel)]="isMiniView" [checked]="isMiniView"
-            (click)="toggleMiniView()" />
-        Video Card Mini View
-    </label>
-</div>
-<div class="max-w-full">
-    <label class="label text-xs">
-        <input type="checkbox" class="toggle toggle-xs" [(ngModel)]="useNativePlayer" [checked]="useNativePlayer"
-            (click)="toggleNativePlayer()" />
-        Use Native Player
-    </label>
-</div>
-<div class="max-w-full">
-    <p class="py-4">Themes:</p>
-    <div class="form-control w-full max-w-xl p-4">
-        <div class="flex flex-wrap gap-2">
-            @for (theme of this.themes; track $index) {
-            <button class="btn btn-sm" (click)="setTheme(theme)" [class.btn-active]="selectedTheme === theme">
-                {{ theme}}
-            </button>
-            }
-
+<span class="px-6 py-4 text-xs select-none font-bold opacity-70">Gallery View</span>
+<div class="mb-5">
+    <div class="flex flex-col">
+        <div class="flex justify-between items-center hover:bg-base-300 px-6 py-3 cursor-pointer"
+            (click)="togglePreviewPlayback()">
+            <span class="text-xs select-none">Preview Playback</span>
+            <input type="checkbox" class="toggle toggle-xs pointer-events-none" [checked]="previewPlayback" />
+        </div>
+        <div class="flex justify-between items-center hover:bg-base-300 px-6 py-3 cursor-pointer"
+            (click)="toggleInfiniteMode()">
+            <span class="text-xs select-none">Infinite Fetch</span>
+            <input type="checkbox" class="toggle toggle-xs pointer-events-none" [checked]="infiniteMode" />
+        </div>
+        <div class="flex justify-between items-center hover:bg-base-300 px-6 py-3 cursor-pointer"
+            (click)="toggleMiniView()">
+            <span class="text-xs select-none">Video Card Mini View</span>
+            <input type="checkbox" class="toggle toggle-xs pointer-events-none" [checked]="isMiniView" />
         </div>
     </div>
+</div>
+
+<span class="px-6 py-4 text-xs select-none font-bold opacity-70">Video Player</span>
+<div class="mb-5">
+    <div class="flex flex-col">
+        <div class="flex justify-between items-center hover:bg-base-300 px-6 py-3 cursor-pointer"
+            (click)="toggleNativePlayer()">
+            <span class="text-xs select-none">Use Native Player</span>
+            <input type="checkbox" class="toggle toggle-xs pointer-events-none" [checked]="useNativePlayer" />
+        </div>
+    </div>
+</div>
+
+<span class="px-6 py-4 text-xs select-none font-bold opacity-70">Interface Theme</span>
+<div class="px-6 mb-2">
+    <label class="input border-0 outline-0 input-sm flex items-center gap-2 w-full">
+        <i class='bx bx-search bx-xs opacity-70'></i>
+        <input type="search" class="grow text-xs" placeholder="Search themes..." [(ngModel)]="searchQuery" />
+    </label>
+</div>
+
+<div class="flex flex-col max-h-64 overflow-y-auto [scrollbar-width:thin]">
+    @for (theme of filteredThemes; track theme) {
+    <div class="flex gap-2 items-center hover:bg-base-300 px-6 py-2 cursor-pointer" (click)="setTheme(theme)">
+        <input type="radio" name="theme-radio" class="radio radio-xs" [checked]="selectedTheme === theme" />
+        <span class="text-xs select-none">{{theme}}</span>
+    </div>
+    } @empty {
+    <div class="px-6 py-4 text-xs italic opacity-50">
+        No themes match "{{searchQuery}}"
+    </div>
+    }
 </div>

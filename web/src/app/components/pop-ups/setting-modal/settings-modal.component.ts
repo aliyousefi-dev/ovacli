@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SettingsAppearanceTab } from './tabs/settings-appearance-tab/settings-appearance-tab';
 import { SettingsGeneralTab } from './tabs/settings-general-tab/settings-general-tab';
+import { SettingsSecurityTab } from './tabs/settings-security-tab/settings-security-tab';
 
 @Component({
   selector: 'app-settings-modal',
@@ -20,6 +21,7 @@ import { SettingsGeneralTab } from './tabs/settings-general-tab/settings-general
     FormsModule,
     SettingsAppearanceTab,
     SettingsGeneralTab,
+    SettingsSecurityTab,
   ], // Imports for Angular modules
   styles: [
     `

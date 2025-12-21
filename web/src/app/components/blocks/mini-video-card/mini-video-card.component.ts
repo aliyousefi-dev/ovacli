@@ -6,42 +6,36 @@ import {
   SimpleChanges,
   ViewChild,
   ElementRef,
-  AfterViewInit,
   OnInit,
+  inject,
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SendtoModalComponent } from '../../pop-ups/sendto-modal/sendto-modal.component';
-
 import { VideoApiService } from '../../../../ova-angular-sdk/rest-api/video-api.service';
-import { SavedApiService } from '../../../../ova-angular-sdk/rest-api/saved-api.service';
 import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
 
 @Component({
   selector: 'app-mini-video-card',
   templateUrl: './mini-video-card.component.html',
   standalone: true,
-  styles: `.filled-icon {
-  fill: #fff !important;
-  stroke: none !important; /* or set stroke color if you want */
-}`,
   imports: [CommonModule, RouterModule, FormsModule, SendtoModalComponent],
 })
 export class MiniVideoCardComponent implements OnChanges, OnInit {
   @Input() video!: VideoData;
-  @Input() username: string = '';
   @Input() PreviewPlayback: boolean = false;
+  @ViewChild('preview') videoElement!: ElementRef<HTMLVideoElement>;
 
   isSaved: boolean = false;
   isWatched: boolean = false;
 
-  @ViewChild('preview') videoElement!: ElementRef<HTMLVideoElement>;
-
+  private videoApiService = inject(VideoApiService);
+  private router = inject(Router);
+  private cd = inject(ChangeDetectorRef);
   private observer: IntersectionObserver | null = null;
 
-  // Updated ngAfterViewInit
   ngOnInit() {
     this.isSaved = this.video.userVideoStatus.isSaved;
     this.isWatched = this.video.userVideoStatus.isWatched;
@@ -87,19 +81,12 @@ export class MiniVideoCardComponent implements OnChanges, OnInit {
 
   playlistModalVisible = false;
 
-  constructor(
-    private savedapi: SavedApiService,
-    private videoapi: VideoApiService,
-    private router: Router,
-    private cd: ChangeDetectorRef
-  ) {}
-
   getThumbnailUrl(): string {
-    return this.videoapi.getThumbnailUrl(this.video.videoId);
+    return this.videoApiService.getThumbnailUrl(this.video.videoId);
   }
 
   getPreviewUrl(): string {
-    return this.videoapi.getPreviewUrl(this.video.videoId);
+    return this.videoApiService.getPreviewUrl(this.video.videoId);
   }
 
   get videoQuality(): string {
@@ -138,43 +125,6 @@ export class MiniVideoCardComponent implements OnChanges, OnInit {
     this.cd.detectChanges();
   }
 
-  toggleSaved(event: MouseEvent): void {
-    event.stopPropagation();
-
-    if (this.isSaved) {
-      this.savedapi.removeUserSaved(this.video.videoId).subscribe({
-        next: () => {
-          this.isSaved = false;
-          this.cd.detectChanges();
-        },
-        error: (err) => {
-          console.error('Error removing from saved:', err);
-        },
-      });
-    } else {
-      this.savedapi.addUserSaved(this.video.videoId).subscribe({
-        next: () => {
-          this.isSaved = true;
-          this.cd.detectChanges();
-        },
-        error: (err) => {
-          console.error('Error adding to saved:', err);
-        },
-      });
-    }
-  }
-
-  download(event: MouseEvent): void {
-    event.stopPropagation();
-    const streamUrl = this.videoapi.getDownloadUrl(this.video.videoId);
-    const anchor = document.createElement('a');
-    anchor.href = streamUrl;
-    anchor.download = `${this.video.fileName}.mp4`;
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
-  }
-
   formatDuration(seconds: number): string {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
@@ -186,30 +136,7 @@ export class MiniVideoCardComponent implements OnChanges, OnInit {
     return parts.join(' ');
   }
 
-  get timeSinceAdded(): string {
-    const addedDate = new Date(this.video.uploadedAt);
-    const now = new Date();
-    const diffMs = now.getTime() - addedDate.getTime();
-    if (diffMs < 0) return 'just now';
-
-    const seconds = Math.floor(diffMs / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-
-    if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
-    if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-    if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-    return 'just now';
-  }
-
   navigateToWatch(): void {
     this.router.navigate(['/watch', this.video.videoId]);
-  }
-
-  truncateTitle(title: string, maxLength: number = 20): string {
-    return title.length > maxLength
-      ? title.substring(0, maxLength) + '...'
-      : title;
   }
 }

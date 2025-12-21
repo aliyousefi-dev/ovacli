@@ -10,6 +10,10 @@ type UserVideoStatus struct {
 	IsWatched bool `json:"isWatched"`
 	IsSaved   bool `json:"isSaved"`
 }
+type VideoStats struct {
+	Views     int `json:"views"`
+	Downloads int `json:"downloads"`
+}
 
 type VideoDataAPIResponse struct {
 	VideoID              string                `json:"videoId"`
@@ -19,9 +23,8 @@ type VideoDataAPIResponse struct {
 	Codecs               datatypes.VideoCodecs `json:"codecs"`
 	IsCooked             bool                  `json:"isCooked"`
 	OwnerAccountUsername string                `json:"ownerAccountUsername"`
-	TotalViews           int                   `json:"totalViews"`
-	TotalDownloads       int                   `json:"totalDownloads"`
+	VideoStats           VideoStats            `json:"stats"`
 	IsPublic             bool                  `json:"isPublic"`
 	UploadedAt           time.Time             `json:"uploadedAt"`
-	VideoStatus          UserVideoStatus       `json:"userVideoStatus"` // New field
+	VideoStatus          UserVideoStatus       `json:"userVideoStatus"`
 }

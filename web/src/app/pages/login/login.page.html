@@ -1,7 +1,7 @@
 <div class="hero bg-base-200 min-h-screen">
   <div class="hero-content flex-col lg:flex-row-reverse ">
     <div class="text-center lg:text-left prose m-5">
-      <h1>Login now!</h1>
+      <h1>Welcome back!</h1>
       <p>
         ova (online video archive) is a local multi-user online database for managing and streaming MP4 videos.
       </p>
@@ -28,8 +28,14 @@
                 title="Must be more than 8 characters, including number, lowercase letter, uppercase letter"
                 autocomplete="current-password" />
             </label>
+            @if(this.loading){
+            <div class="flex items-center justify-center gap-2">
+              <span class="loading loading-spinner loading-xs"></span>
+              <p class="skeleton skeleton-text select-none">Sending Request...</p>
+            </div>
+            }
             @if(this.error){
-            <div class="text-red-500 text-sm font-medium">{{ error }}</div>
+            <div class="text-red-500 text-xs font-medium">{{ error }}</div>
             }
             <div><a class="link link-hover">Forgot password?</a></div>
             <button type="submit" class="btn btn-neutral mt-4">Login</button>

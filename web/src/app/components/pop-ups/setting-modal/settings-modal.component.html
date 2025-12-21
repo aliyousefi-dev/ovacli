@@ -1,14 +1,14 @@
 <dialog id="settings_modal" class="modal">
-  <div class="modal-box flex flex-col" style="width: 1200px; height: 600px; overflow: hidden;"
+  <div class="modal-box flex flex-col p-0" style="width: 80vw; height: 60vh; overflow: hidden;"
     (click)="$event.stopPropagation()">
     <!-- Modal Header with Close Button -->
-    <div class="w-full dark:border-gray-700 relative">
+    <div class="w-full flex justify-between items-center p-5">
       <div class=" flex items-center justify-start">
         <h3 class="font-bold text-lg">Settings</h3>
       </div>
       <!-- Close Button in top-right corner -->
       <form method="dialog">
-        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+        <button class="btn btn-sm btn-circle btn-ghost">✕</button>
       </form>
 
     </div>
@@ -21,13 +21,12 @@
     </div>
 
     <!-- Modal Content Section (Scrollable) -->
-    <div class="p-4 space-y-4 overflow-auto" style="flex-grow: 1;">
+    <div class="space-y-4 overflow-y-auto  [scrollbar-width:thin] " style="flex-grow: 1;">
 
       <!-- General Tab Content -->
       @if (activeTab === 'general') {
       <app-settings-general-tab></app-settings-general-tab>
       }
-
 
       <!-- Theme Tab Content -->
       @if(this.activeTab === "theme"){
@@ -36,39 +35,7 @@
 
 
       @if(this.activeTab === 'proxy'){
-      <div class="max-w-full">
-        <fieldset class="fieldset bg-base-100 rounded-box w-64  p-4">
-          <legend class="fieldset-legend">Password</legend>
-          <label class="label">Current Password</label>
-          <input type="password" class="input" placeholder="Enter current password" />
-
-          <label class="label">New Password</label>
-          <input type="password" class="input" placeholder="Enter new password" />
-
-          <label class="label">Confirm Password</label>
-          <input type="password" class="input" placeholder="Confirm new password" />
-
-          <label class="label">
-            <button class="btn btn-info w-full">Update</button>
-          </label>
-        </fieldset>
-
-        <fieldset class="fieldset bg-base-100  rounded-box w-64 p-4">
-          <legend class="fieldset-legend">Active Sessions</legend>
-
-          <div class="flex flex-col gap-2">
-            <div class="flex items-center">
-              <span class="mr-2">Session 1</span>
-              <button class="btn btn-error btn-xs">Terminate</button>
-            </div>
-            <div class="flex items-center">
-              <span class="mr-2">Session 2</span>
-              <button class="btn btn-error btn-xs">Terminate</button>
-            </div>
-          </div>
-        </fieldset>
-
-      </div>
+      <app-settings-security-tab></app-settings-security-tab>
       }
 
     </div>

@@ -13,13 +13,27 @@ import { AppTheme, APP_THEMES } from '../../../../../../app-settings/themes';
 export class SettingsAppearanceTab implements OnInit {
   private appSettings = inject(AppSettingsService);
 
-  infiniteMode = true; // Default to infinite mode, you can change based on preference
-  previewPlayback = true; // Default for preview playback
-  isMiniView = false; // Default to full view
+  // UI State
+  infiniteMode = true;
+  previewPlayback = true;
+  isMiniView = false;
   useNativePlayer = false;
 
-  // Use the central list from your themes.ts file
+  // Search State
+  searchQuery: string = '';
+
+  // Theme Data
   themes = APP_THEMES;
+
+  // Getter to filter themes based on search input
+  get filteredThemes() {
+    if (!this.searchQuery.trim()) {
+      return this.themes;
+    }
+    return this.themes.filter((theme) =>
+      theme.toLowerCase().includes(this.searchQuery.toLowerCase())
+    );
+  }
 
   // Getter to stay in sync with the service memory
   get selectedTheme(): AppTheme {
@@ -64,7 +78,6 @@ export class SettingsAppearanceTab implements OnInit {
   }
 
   setTheme(theme: string) {
-    // We cast to AppTheme because the UI usually passes a string
     this.appSettings.updateSetting('ActiveTheme', theme as AppTheme);
   }
 }

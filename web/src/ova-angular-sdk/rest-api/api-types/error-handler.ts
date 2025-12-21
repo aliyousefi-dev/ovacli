@@ -8,8 +8,8 @@ export function handleApiError(error: HttpErrorResponse): ApiErrorResponse {
     error: {
       code: error.status,
       message:
-        error.status === 0
-          ? 'Cannot connect to the server. Please try again later.'
+        error.status === 500
+          ? 'Server unavailable'
           : error.error?.error?.message || 'Uknown Error.',
     },
   };
