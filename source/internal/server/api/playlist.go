@@ -2,7 +2,7 @@ package api
 
 import (
 	"net/http"
-	"ova-cli/source/internal/datastorage/datatypes"
+	"ova-cli/source/internal/datatypes"
 	"ova-cli/source/internal/repo"
 	apitypes "ova-cli/source/internal/server/api-types"
 	"ova-cli/source/internal/utils"

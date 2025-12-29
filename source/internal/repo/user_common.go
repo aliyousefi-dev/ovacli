@@ -2,7 +2,7 @@ package repo
 
 import (
 	"fmt"
-	"ova-cli/source/internal/datastorage/datatypes"
+	"ova-cli/source/internal/datatypes"
 )
 
 // CreateUser creates a new user with a hashed password and an optional role.

@@ -2,7 +2,7 @@ package repo
 
 import (
 	"fmt"
-	"ova-cli/source/internal/datastorage/datatypes"
+	"ova-cli/source/internal/datatypes"
 )
 
 // GetVideoByID returns video data by ID.

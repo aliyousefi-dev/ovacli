@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os/exec"
-	"ova-cli/source/internal/datastorage/datatypes"
+	"ova-cli/source/internal/datatypes"
 	"strconv"
 	"strings"
 )

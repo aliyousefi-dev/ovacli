@@ -1,7 +1,7 @@
 package apitypes
 
 import (
-	"ova-cli/source/internal/datastorage/datatypes"
+	"ova-cli/source/internal/datatypes"
 	"time"
 )
 

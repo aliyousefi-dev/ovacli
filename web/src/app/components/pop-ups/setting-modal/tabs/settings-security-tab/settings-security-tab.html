@@ -1,29 +1,16 @@
 <div class="max-w-full">
-  <fieldset class="fieldset bg-base-100 rounded-box w-64  p-4">
-    <legend class="fieldset-legend">Password</legend>
-    <label class="label">Current Password</label>
-    <input type="password" class="input" placeholder="Enter current password" />
 
-    <label class="label">New Password</label>
-    <input type="password" class="input" placeholder="Enter new password" />
+  <button class="btn w-full" (click)="this.changepassmodal.OpenModal()">Change Password</button>
 
-    <label class="label">Confirm Password</label>
-    <input type="password" class="input" placeholder="Confirm new password" />
+  <fieldset class="fieldset bg-base-100  rounded-box">
+    <legend class="fieldset-legend p-3">Active Sessions</legend>
 
-    <label class="label">
-      <button class="btn btn-info w-full">Update</button>
-    </label>
-  </fieldset>
-
-  <fieldset class="fieldset bg-base-100  rounded-box w-64 p-4">
-    <legend class="fieldset-legend">Active Sessions</legend>
-
-    <div class="flex flex-col gap-2">
-      <div class="flex items-center">
+    <div class="flex flex-col">
+      <div class="flex items-center justify-between hover:bg-base-300 p-4">
         <span class="mr-2">Session 1</span>
         <button class="btn btn-error btn-xs">Terminate</button>
       </div>
-      <div class="flex items-center">
+      <div class="flex items-center justify-between hover:bg-base-300 p-4">
         <span class="mr-2">Session 2</span>
         <button class="btn btn-error btn-xs">Terminate</button>
       </div>
@@ -31,3 +18,5 @@
   </fieldset>
 
 </div>
+
+<app-change-password-modal></app-change-password-modal>

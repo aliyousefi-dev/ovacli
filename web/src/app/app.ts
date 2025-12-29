@@ -8,21 +8,18 @@ import {
   NavigationCancel,
   NavigationError,
 } from '@angular/router';
-import { AppSettingsService } from '../app-settings/app-settings.service';
-
 import { LoadingService } from '../services/loading.service';
-
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { DeleteAlert } from './components/pop-ups/delete-alert/delete-alert';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, MatProgressBarModule],
+  imports: [RouterOutlet, CommonModule, MatProgressBarModule, DeleteAlert],
   templateUrl: './app.html',
 })
 export class App implements OnInit {
   private router = inject(Router);
-  private appSettings = inject(AppSettingsService);
   private loadingService = inject(LoadingService);
 
   loading$ = this.loadingService.loading$;

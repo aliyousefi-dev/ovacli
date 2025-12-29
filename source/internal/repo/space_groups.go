@@ -1,6 +1,6 @@
 package repo
 
-import "ova-cli/source/internal/datastorage/datatypes"
+import "ova-cli/source/internal/datatypes"
 
 // GetGroupsInSpace returns all groups within the specified space.
 func (r *RepoManager) GetGroupsInSpace(spaceId string) []datatypes.SpaceGroup {

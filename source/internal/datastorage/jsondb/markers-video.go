@@ -1,6 +1,6 @@
 package jsondb
 
-import "ova-cli/source/internal/datastorage/datatypes"
+import "ova-cli/source/internal/datatypes"
 
 func (jsdb *JsonDB) GetMarkersForVideo(videoID string) ([]datatypes.MarkerData, error) {
 	allMarkers, err := jsdb.loadMarkers()

@@ -3,7 +3,7 @@ package jsondb
 import (
 	"encoding/json"
 	"os"
-	"ova-cli/source/internal/datastorage/datatypes"
+	"ova-cli/source/internal/datatypes"
 )
 
 func (s *JsonDB) loadSpaces() (map[string]datatypes.SpaceData, error) {

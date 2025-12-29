@@ -1,6 +1,6 @@
 package datastorage
 
-import "ova-cli/source/internal/datastorage/datatypes"
+import "ova-cli/source/internal/datatypes"
 
 // DiskDataStorage defines methods for user and video data operations without context.
 type DiskDataStorage interface {

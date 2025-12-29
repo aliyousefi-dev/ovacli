@@ -26,8 +26,6 @@ including features for video processing, metadata management, and more.`,
 	cmd.InitCommandIndex(rootCmd)
 	cmd.InitCommandChecksum(rootCmd)
 
-	cmd.InitCommandSpace(rootCmd)
-
 	cmd.InitCommandSSL(rootCmd)
 
 	// server commands

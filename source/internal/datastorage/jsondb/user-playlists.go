@@ -2,7 +2,7 @@ package jsondb
 
 import (
 	"fmt"
-	"ova-cli/source/internal/datastorage/datatypes"
+	"ova-cli/source/internal/datatypes"
 )
 
 // --- User Playlist Management ---

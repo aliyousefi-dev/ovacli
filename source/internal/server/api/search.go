@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"ova-cli/source/internal/datastorage/datatypes"
+	"ova-cli/source/internal/datatypes"
 	"ova-cli/source/internal/repo"
 	apitypes "ova-cli/source/internal/server/api-types"
 

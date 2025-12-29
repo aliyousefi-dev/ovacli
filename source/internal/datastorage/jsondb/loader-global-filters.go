@@ -3,7 +3,7 @@ package jsondb
 import (
 	"encoding/json"
 	"os"
-	"ova-cli/source/internal/datastorage/datatypes"
+	"ova-cli/source/internal/datatypes"
 )
 
 // loadGlobalFilters retrieves the global filters from the JSON file.

@@ -2,42 +2,45 @@ package repo
 
 import (
 	"fmt"
-	"ova-cli/source/internal/datastorage/datatypes"
+	"ova-cli/source/internal/datatypes"
 	"sort"
 )
-
-// GetSimilarVideos returns videos similar to the one identified by videoID.
-func (r *RepoManager) GetSimilarVideos(videoID string) ([]datatypes.VideoData, error) {
-	if !r.IsDataStorageInitialized() {
-		return nil, fmt.Errorf("data storage is not initialized")
-	}
-	return r.diskDataStorage.GetSimilarVideos(videoID)
-}
 
 // SearchVideos searches videos based on criteria.
 func (r *RepoManager) SearchVideos(criteria datatypes.VideoSearchCriteria) ([]string, error) {
 	if !r.IsDataStorageInitialized() {
-		return nil, fmt.Errorf("data storage is not initialized")
+		return nil, fmt.Errorf("%s", ErrDataStorageNotInitialized)
 	}
 	return r.diskDataStorage.SearchVideos(criteria)
 }
 
 // SearchVideosWithBuckets returns paginated video IDs based on search criteria.
-func (r *RepoManager) SearchVideosWithBuckets(criteria datatypes.VideoSearchCriteria, currentBucket, bucketSize int) (datatypes.BucketSearchResult, error) {
+// curent bucket start from 1
+func (r *RepoManager) SearchVideosWithBuckets(criteria datatypes.VideoSearchCriteria, selectedBucket, bucketSize int) (datatypes.BucketSearchResult, error) {
 	if !r.IsDataStorageInitialized() {
-		return datatypes.BucketSearchResult{}, fmt.Errorf("data storage is not initialized")
+		return datatypes.BucketSearchResult{}, fmt.Errorf("%s", ErrDataStorageNotInitialized)
 	}
 
 	// Perform the search to get all matching video IDs
 	allResults, err := r.diskDataStorage.SearchVideos(criteria)
 	if err != nil {
-		return datatypes.BucketSearchResult{}, fmt.Errorf("failed to search videos: %v", err)
+		return datatypes.BucketSearchResult{}, fmt.Errorf("%s : %v", ErrSearchFailed, err)
 	}
 
 	// Sort alphabetically (A → Z)
 	sort.Strings(allResults)
 
 	totalVideos := len(allResults)
+
+	// Handle case where search finds nothing
+	if totalVideos == 0 {
+		return datatypes.BucketSearchResult{
+			VideoIDs:      []string{},
+			TotalVideos:   0,
+			TotalBuckets:  0,
+			CurrentBucket: selectedBucket,
+		}, nil
+	}
 
 	// Calculate total buckets (rounding up)
 	totalBuckets := 0
@@ -46,18 +49,8 @@ func (r *RepoManager) SearchVideosWithBuckets(criteria datatypes.VideoSearchCrit
 	}
 
 	// Calculate the starting and ending indices for pagination
-	start := currentBucket * bucketSize
+	start := (selectedBucket - 1) * bucketSize
 	end := start + bucketSize
-
-	// Handle case where search finds nothing
-	if totalVideos == 0 {
-		return datatypes.BucketSearchResult{
-			VideoIDs:      []string{},
-			TotalVideos:   0,
-			TotalBuckets:  0,
-			CurrentBucket: currentBucket,
-		}, nil
-	}
 
 	// Validate the range
 	if start >= totalVideos {
@@ -73,16 +66,6 @@ func (r *RepoManager) SearchVideosWithBuckets(criteria datatypes.VideoSearchCrit
 		VideoIDs:      allResults[start:end],
 		TotalVideos:   totalVideos,
 		TotalBuckets:  totalBuckets,
-		CurrentBucket: currentBucket,
+		CurrentBucket: selectedBucket,
 	}, nil
-}
-
-// GetSearchSuggestions fetches video titles based on a partial query.
-func (r *RepoManager) GetSearchSuggestions(query string) ([]string, error) {
-	if !r.IsDataStorageInitialized() {
-		return nil, fmt.Errorf("data storage is not initialized")
-	}
-
-	// Delegate the suggestion fetching to the appropriate data storage
-	return r.diskDataStorage.GetSearchSuggestions(query)
 }

@@ -2,7 +2,7 @@ package jsondb
 
 import (
 	"fmt" // os is not directly used in the provided functions, but good to keep if used elsewhere in the package.
-	"ova-cli/source/internal/datastorage/datatypes"
+	"ova-cli/source/internal/datatypes"
 	"path/filepath"
 	"sort"
 	"strings"

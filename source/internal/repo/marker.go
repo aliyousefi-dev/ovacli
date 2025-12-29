@@ -2,7 +2,7 @@ package repo
 
 import (
 	"fmt"
-	"ova-cli/source/internal/datastorage/datatypes"
+	"ova-cli/source/internal/datatypes"
 )
 
 func (r *RepoManager) AddMarkerToVideo(videoID string, marker datatypes.MarkerData) error {

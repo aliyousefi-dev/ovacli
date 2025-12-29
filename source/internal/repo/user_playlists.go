@@ -2,7 +2,7 @@ package repo
 
 import (
 	"fmt"
-	"ova-cli/source/internal/datastorage/datatypes"
+	"ova-cli/source/internal/datatypes"
 )
 
 // AddPlaylistToUser adds a playlist to a user's list.

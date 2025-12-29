@@ -3,8 +3,6 @@ package api
 
 import (
 	"net/http"
-	"path/filepath"
-	"strings"
 
 	"ova-cli/source/internal/repo"
 	apitypes "ova-cli/source/internal/server/api-types"
@@ -18,7 +16,6 @@ func RegisterVideoRoutes(rg *gin.RouterGroup, repoMgr *repo.RepoManager) {
 	{
 		videos.GET("/:videoId", getVideoByID(repoMgr)) // GET /api/v1/videos/{videoId}
 		videos.GET("/:videoId/similar", getSimilarVideos(repoMgr))
-		videos.GET("", getVideosByFolder(repoMgr)) // GET /api/v1/videos?folder=...
 	}
 }
 
@@ -77,26 +74,6 @@ func getVideoByID(repoMgr *repo.RepoManager) gin.HandlerFunc {
 
 		// Respond with the converted video data
 		apitypes.RespondSuccess(c, http.StatusOK, videoResponse, "Video retrieved successfully")
-	}
-}
-
-// getVideosByFolder returns a list of videos inside the given folder path.
-func getVideosByFolder(repoMgr *repo.RepoManager) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		folderQuery := c.Query("folder")
-		requestedPath := filepath.ToSlash(strings.Trim(folderQuery, "/"))
-
-		videosInFolder, err := repoMgr.GetIndxedVideosOnSpace(requestedPath)
-		if err != nil {
-			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to load videos")
-			return
-		}
-
-		response := gin.H{
-			"videos": videosInFolder,
-		}
-
-		apitypes.RespondSuccess(c, http.StatusOK, response, "Videos in folder retrieved")
 	}
 }
 

@@ -1,6 +1,6 @@
 package jsondb
 
-import "ova-cli/source/internal/datastorage/datatypes"
+import "ova-cli/source/internal/datatypes"
 
 func (jsdb *JsonDB) GetGlobalFilters() ([]datatypes.GlobalFilter, error) {
 	// Load all global filters from the JSON file

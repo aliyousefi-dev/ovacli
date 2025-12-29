@@ -3,7 +3,7 @@ package repo
 import (
 	"fmt"
 	"os"
-	"ova-cli/source/internal/datastorage/datatypes"
+	"ova-cli/source/internal/datatypes"
 )
 
 func (r *RepoManager) CreateDefaultConfigFile() error {

@@ -3,7 +3,7 @@ package jsondb
 import (
 	"encoding/json"
 	"os"
-	"ova-cli/source/internal/datastorage/datatypes"
+	"ova-cli/source/internal/datatypes"
 )
 
 // Load all videos (assuming videos stored in a map)
