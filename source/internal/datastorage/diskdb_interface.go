@@ -31,13 +31,6 @@ type DiskDataStorage interface {
 	GetUserPlaylistContentVideosCount(username, playlistSlug string) (int, error)
 	GetUserPlaylistContentVideosInRange(username, playlistSlug string, start, end int) ([]string, error)
 
-	// Spaces Management
-	CreateSpace(space *datatypes.SpaceData) error
-	GetVideosBySpace(spacePath string) ([]datatypes.VideoData, error)
-	GetVideoCountInSpace(spacePath string) (int, error)
-	GetVideoIDsBySpaceInRange(spacePath string, start, end int) ([]string, error)
-	AddVideoIDToSpace(videoId, filePath string) error
-
 	// New method to get total video count
 	GetTotalVideoCount() (int, error)
 

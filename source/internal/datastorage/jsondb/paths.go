@@ -14,16 +14,8 @@ func (s *JsonDB) getVideoMarkerDataFilePath() string {
 	return filepath.Join(s.storageDir, "video-markers.json")
 }
 
-func (s *JsonDB) getSpaceDataFilePath() string {
-	return filepath.Join(s.storageDir, "spaces.json")
-}
-
 func (s *JsonDB) getWatchedDataFilePath() string {
 	return filepath.Join(s.storageDir, "watched.json")
-}
-
-func (s *JsonDB) getVideoRatesDataFilePath() string {
-	return filepath.Join(s.storageDir, "video-rates.json")
 }
 
 func (s *JsonDB) getGlobalFiltersDataFilePath() string {

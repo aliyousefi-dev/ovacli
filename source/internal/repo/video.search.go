@@ -16,7 +16,7 @@ func (r *RepoManager) SearchVideos(criteria datatypes.VideoSearchCriteria) ([]st
 
 // SearchVideosWithBuckets returns paginated video IDs based on search criteria.
 // curent bucket start from 1
-func (r *RepoManager) SearchVideosWithBuckets(criteria datatypes.VideoSearchCriteria, selectedBucket, bucketSize int) (datatypes.BucketSearchResult, error) {
+func (r *RepoManager) SearchVideosWithBuckets(criteria datatypes.VideoSearchCriteria, selectedBucket, maxBucketSize int) (datatypes.BucketSearchResult, error) {
 	if !r.IsDataStorageInitialized() {
 		return datatypes.BucketSearchResult{}, fmt.Errorf("%s", ErrDataStorageNotInitialized)
 	}
@@ -44,13 +44,13 @@ func (r *RepoManager) SearchVideosWithBuckets(criteria datatypes.VideoSearchCrit
 
 	// Calculate total buckets (rounding up)
 	totalBuckets := 0
-	if bucketSize > 0 {
-		totalBuckets = (totalVideos + bucketSize - 1) / bucketSize
+	if maxBucketSize > 0 {
+		totalBuckets = (totalVideos + maxBucketSize - 1) / maxBucketSize
 	}
 
 	// Calculate the starting and ending indices for pagination
-	start := (selectedBucket - 1) * bucketSize
-	end := start + bucketSize
+	start := (selectedBucket - 1) * maxBucketSize
+	end := start + maxBucketSize
 
 	// Validate the range
 	if start >= totalVideos {

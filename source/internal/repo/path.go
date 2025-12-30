@@ -43,6 +43,10 @@ func (r *RepoManager) getThumbsDir() string {
 	return filepath.Join(r.rootDir, ".ova-repo", "storage", "thumbnails")
 }
 
+func (r *RepoManager) GetLogDir() string {
+	return filepath.Join(r.rootDir, ".ova-repo", "logs")
+}
+
 func (r *RepoManager) getPreviewsDir() string {
 	return filepath.Join(r.rootDir, ".ova-repo", "storage", "previews")
 }

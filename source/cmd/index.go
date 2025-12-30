@@ -4,114 +4,115 @@ import (
 	"fmt"
 	"os"
 	"ova-cli/source/internal/repo"
+	"path/filepath"
 	"sync"
+	"time"
 
 	"github.com/spf13/cobra"
 )
 
-// Command to index all videos
 var indexCmd = &cobra.Command{
 	Use:   "index",
-	Short: "index all videos from disk",
+	Short: "Index all videos from disk",
 	Run: func(cmd *cobra.Command, args []string) {
-		repoRoot, err := os.Getwd()
+		currentPath, err := os.Getwd()
 		if err != nil {
 			fmt.Println("Failed to get working directory:", err)
 			return
 		}
 
-		repository, err := repo.NewRepoManager(repoRoot)
+		repManager, err := repo.NewRepoManager(currentPath)
 		if err != nil {
 			fmt.Println("Failed to initialize repository:", err)
 			return
 		}
 
-		repository.ScanAndAddAllSpaces()
+		ownerID := repManager.GetRepoOwnerID()
 
-		// Step 1: Scan the disk for all spaces
-		spaces, err := repository.ScanDiskForSpaces()
+		// Step 1: Scan
+		fmt.Println("Scanning disk for videos...")
+		videoPaths, err := repManager.ScanDiskForVideos()
 		if err != nil {
-			fmt.Printf("Error scanning disk at path '%s': %v\n", repoRoot, err)
+			fmt.Printf("Error scanning disk: %v\n", err)
 			return
 		}
 
-		if len(spaces) == 0 {
-			fmt.Println("No spaces found on disk to process.")
+		totalVideos := len(videoPaths)
+		if totalVideos == 0 {
+			fmt.Println("No videos found to process.")
 			return
 		}
 
-		// Step 2: Loop through each space and index its videos
-		for _, space := range spaces {
-			spaceVideos := repository.GetVideosFromSpaceScan(space)
+		fmt.Printf("Found %d videos. Starting indexing...\n", totalVideos)
 
-			if len(spaceVideos) == 0 {
-				fmt.Printf("\nNo videos found in space '%s'. Skipping.\n", space.Space)
-				continue
-			}
-
-			fmt.Printf("\nIndexing Videos on space: '%s'\n", space.Space)
-			fmt.Printf("Found %d videos.\n", len(spaceVideos))
-
-			// Channels for THIS SPACE ONLY
-			indexingProgressChan := make(chan int)
-			indexingErrorChan := make(chan error)
-
-			var wg sync.WaitGroup
-			var errors []error
-
-			// Handle progress
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
-				for progress := range indexingProgressChan {
-					fmt.Printf("\rProgress: %3d%%", progress)
-				}
-			}()
-
-			// Handle errors (collect for later printing)
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
-				for err := range indexingErrorChan {
-					errors = append(errors, err)
-				}
-			}()
-
-			// ---- Call IndexMultiVideos ----
-			_, err := repository.IndexMultiVideos(
-				spaceVideos,
-				repository.GetRootAccouuntID(),
-				indexingProgressChan,
-				indexingErrorChan,
-			)
-
-			// Wait for goroutines
-			wg.Wait()
-
-			// Print result
-			fmt.Printf("\rProgress: 100%%\n")
-			if err != nil {
-				fmt.Printf("Failed to index space '%s': %v\n", space.Space, err)
-			}
-
-			// Print collected errors if any
-			if len(errors) > 0 {
-				fmt.Printf("Errors: %d\n", len(errors))
-			}
+		// Step 2: Prepare Logging
+		logDir := repManager.GetLogDir()
+		if err := os.MkdirAll(logDir, 0755); err != nil {
+			fmt.Printf("Failed to create log directory: %v\n", err)
+			return
 		}
 
-		fmt.Println()
+		logFileName := fmt.Sprintf("indexing_%s.log", time.Now().Format("20060102_150405"))
+		logFilePath := filepath.Join(logDir, logFileName)
+		logFile, err := os.Create(logFilePath)
+		if err != nil {
+			fmt.Printf("Failed to create log file: %v\n", err)
+			return
+		}
+		defer logFile.Close()
+
+		// Step 3: Setup Channels
+		indexingProgressChan := make(chan int)
+		indexingErrorChan := make(chan error)
+
+		var wg sync.WaitGroup
+		errorCount := 0
+
+		// Handle progress
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for progress := range indexingProgressChan {
+				fmt.Printf("\rIndexing Progress: %3d%%", progress)
+			}
+		}()
+
+		// Handle error logging to file
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for err := range indexingErrorChan {
+				errorCount++
+				// Write error to the file with a timestamp
+				timestamp := time.Now().Format("15:04:05")
+				fmt.Fprintf(logFile, "[%s] ERROR: %v\n", timestamp, err)
+			}
+		}()
+
+		// Step 4: Run Indexing
+		repManager.IndexMultiVideos(
+			videoPaths,
+			ownerID,
+			indexingProgressChan,
+			indexingErrorChan,
+		)
+
+		wg.Wait()
+
+		// Final output
+		fmt.Printf("\rIndexing Progress: 100%%\n\n")
+
 		fmt.Println("Indexing Summary")
 		fmt.Println("================")
-		fmt.Printf("Spaces processed: %d\n", 4)
-		fmt.Printf("Videos found: %d\n", 6)
-		fmt.Printf("Indexed: %d\n", 0)
-		fmt.Printf("Skipped (already indexed): %d\n", 6)
-		fmt.Printf("Errors: %d\n", 0)
+		fmt.Printf("Total videos: %d\n", totalVideos)
+		fmt.Printf("Errors encountered: %d\n", errorCount)
+
+		if errorCount > 0 {
+			fmt.Printf("Detailed logs saved to: %s\n", logFilePath)
+		}
 	},
 }
 
 func InitCommandIndex(rootCmd *cobra.Command) {
-
 	rootCmd.AddCommand(indexCmd)
 }

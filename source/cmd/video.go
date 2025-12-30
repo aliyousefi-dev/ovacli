@@ -59,7 +59,7 @@ var videoAddOneCmd = &cobra.Command{
 		cook, _ := cmd.Flags().GetBool("cook")
 
 		// Use AddOneVideo to add the single video
-		err = repository.AddOneVideo(absPath, repository.GetRootAccouuntID(), cook)
+		err = repository.AddOneVideo(absPath, repository.GetRepoOwnerID(), cook)
 		if err != nil {
 			fmt.Println("Failed to add video:", err)
 			return
