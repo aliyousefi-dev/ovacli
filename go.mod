@@ -12,6 +12,7 @@ require (
 )
 
 require (
+	github.com/abema/go-mp4 v1.4.1 // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
 	github.com/dgraph-io/ristretto v0.1.1 // indirect

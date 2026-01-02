@@ -25,6 +25,7 @@ including features for video processing, metadata management, and more.`,
 	cmd.InitCommandStatus(rootCmd)
 	cmd.InitCommandIndex(rootCmd)
 	cmd.InitCommandChecksum(rootCmd)
+	cmd.InitCommandTest(rootCmd)
 
 	cmd.InitCommandSSL(rootCmd)
 
@@ -42,5 +43,4 @@ including features for video processing, metadata management, and more.`,
 	cmd.InitCommandDebug(rootCmd)
 
 	rootCmd.Execute()
-	// Initialize the root command and add subcommands
 }

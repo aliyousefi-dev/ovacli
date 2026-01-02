@@ -21,7 +21,7 @@ export class SearchApiService {
     tags?: string[];
   }): Observable<ApiSuccessResponse<SearchResult>> {
     return this.http.post<ApiSuccessResponse<SearchResult>>(
-      `${this.config.apiBaseUrl}/search?bucket=0`,
+      `${this.config.apiBaseUrl}/search?bucket=1`,
       params
     );
   }

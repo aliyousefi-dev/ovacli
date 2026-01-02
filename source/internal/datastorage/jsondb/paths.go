@@ -21,3 +21,7 @@ func (s *JsonDB) getWatchedDataFilePath() string {
 func (s *JsonDB) getGlobalFiltersDataFilePath() string {
 	return filepath.Join(s.storageDir, "global-filters.json")
 }
+
+func (s *JsonDB) getLookupCollectionFilePath() string {
+	return filepath.Join(s.storageDir, "lookup.json")
+}
