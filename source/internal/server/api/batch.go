@@ -77,7 +77,7 @@ func getVideosByIds(repoMgr *repo.RepoManager) gin.HandlerFunc {
 			// Create the video response
 			videoResponse := apitypes.VideoDataAPIResponse{
 				VideoID:              video.VideoID,
-				FileName:             video.GetFileName(),
+				FileName:             video.Title,
 				Tags:                 video.Tags,
 				Codecs:               video.Codecs,
 				IsCooked:             video.IsCooked,

@@ -75,14 +75,6 @@ func (r *RepoManager) DeleteVideoByID(id string) error {
 	return r.UnIndexVideo(id)
 }
 
-// GetFolderList returns unique folder paths containing videos.
-func (r *RepoManager) GetFolderList() ([]string, error) {
-	if !r.IsDataStorageInitialized() {
-		return nil, fmt.Errorf("data storage is not initialized")
-	}
-	return r.diskDataStorage.GetFolderList()
-}
-
 // GetAllIndexedVideos returns all videos.
 func (r *RepoManager) GetAllIndexedVideos() ([]datatypes.VideoData, error) {
 	if !r.IsDataStorageInitialized() {
@@ -99,20 +91,26 @@ func (r *RepoManager) DeleteAllVideos() error {
 	return r.diskDataStorage.DeleteAllVideos()
 }
 
-// UpdateVideoLocalPath updates the file path of a video by its ID.
-func (r *RepoManager) UpdateVideoLocalPath(videoID, newPath string) error {
-	if !r.IsDataStorageInitialized() {
-		return fmt.Errorf("data storage is not initialized")
-	}
-	return r.diskDataStorage.UpdateVideoLocalPath(videoID, newPath)
-}
-
 // GetTotalIndexedVideoCount returns total number of videos.
 func (r *RepoManager) GetTotalIndexedVideoCount() (int, error) {
 	if !r.IsDataStorageInitialized() {
 		return 0, fmt.Errorf("data storage is not initialized")
 	}
 	return r.diskDataStorage.GetTotalVideoCount()
+}
+
+// GetTotalIndexedVideoCount returns total number of videos.
+func (r *RepoManager) GetVideoPathByID(videoid string) (string, error) {
+	if !r.IsDataStorageInitialized() {
+		return "", fmt.Errorf("data storage is not initialized")
+	}
+
+	path, err := r.diskDataStorage.GetVideoLookup(videoid)
+	if err != nil {
+		return "", fmt.Errorf("failed to get video lookup for ID %q: %w", videoid, err)
+	}
+
+	return path, nil
 }
 
 // GetGlobalVideosInRange returns a range of video IDs for global videos.

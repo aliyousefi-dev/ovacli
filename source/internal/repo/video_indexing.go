@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"ova-cli/source/internal/datatypes"
 	"ova-cli/source/internal/utils"
+	"path/filepath"
+	"strings"
 )
 
 // IndexVideo handles hashing, thumbnail/preview generation, and metadata storage.
@@ -36,6 +38,8 @@ func (r *RepoManager) IndexVideo(absolutePath, accountId string) (datatypes.Vide
 		return datatypes.VideoData{}, err
 	}
 
+	r.diskDataStorage.InsertVideoLookup(videoID, relativePath)
+
 	if r.CheckVideoIndexedByID(videoID) {
 		return datatypes.VideoData{}, fmt.Errorf("video with ID %s is already indexed", videoID)
 	}
@@ -56,9 +60,10 @@ func (r *RepoManager) IndexVideo(absolutePath, accountId string) (datatypes.Vide
 		return datatypes.VideoData{}, fmt.Errorf("failed to generate preview: %w", err)
 	}
 
-	videoData := datatypes.NewVideoData(videoID)
+	title := strings.TrimSuffix(filepath.Base(absolutePath), filepath.Ext(absolutePath))
+
+	videoData := datatypes.NewVideoData(title, videoID)
 	videoData.Codecs = codec
-	videoData.SetFilePath(relativePath)
 	videoData.OwnerAccountId = accountId
 
 	// 8. Store metadata

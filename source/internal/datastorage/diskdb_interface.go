@@ -24,7 +24,6 @@ type DiskDataStorage interface {
 	DeleteUserPlaylist(username, playlistSlug string) error
 	AddVideoToPlaylist(username, playlistSlug, videoID string) error
 	RemoveVideoFromPlaylist(username, playlistSlug, videoID string) error
-	UpdateVideoLocalPath(videoID, newPath string) error
 	SetPlaylistsOrder(username string, newOrderSlugs []string) error
 	UpdatePlaylistInfo(username, playlistSlug, newTitle, newDescription string) error
 	UpdateUserPassword(username, newHashedPassword string) error
@@ -38,6 +37,9 @@ type DiskDataStorage interface {
 	InsertMarker(videoID string, markerData datatypes.MarkerData) error
 	GetMarkersForVideo(videoID string) ([]datatypes.MarkerData, error)
 	DeleteMarkersForVideo(videoID string) error
+
+	InsertVideoLookup(videoID string, filePath string) error
+	GetVideoLookup(videoID string) (string, error)
 
 	// New method to add video to user's watched list
 	AddVideoToWatched(username, videoID string) error
@@ -54,12 +56,8 @@ type DiskDataStorage interface {
 	DeleteVideoByID(id string) error
 	DeleteAllVideos() error
 	GetVideoByID(id string) (*datatypes.VideoData, error)
-	GetVideoByPath(path string) (*datatypes.VideoData, error)
 
 	SearchVideos(criteria datatypes.VideoSearchCriteria) ([]string, error)
 	GetAllVideos() ([]datatypes.VideoData, error)
 	GetSimilarVideos(videoID string) ([]datatypes.VideoData, error)
-
-	// Folder management
-	GetFolderList() ([]string, error)
 }

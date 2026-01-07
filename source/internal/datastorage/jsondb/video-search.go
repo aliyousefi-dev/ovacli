@@ -53,8 +53,8 @@ func (s *JsonDB) GetSimilarVideos(videoID string) ([]datatypes.VideoData, error)
 		}
 
 		// Title word overlap (case-insensitive)
-		targetWords := strings.Fields(strings.ToLower(targetVideo.GetFileName()))
-		videoWords := strings.Fields(strings.ToLower(video.GetFileName()))
+		targetWords := strings.Fields(strings.ToLower(targetVideo.Title))
+		videoWords := strings.Fields(strings.ToLower(video.Title))
 		wordMatch := 0
 		for _, w1 := range targetWords {
 			for _, w2 := range videoWords {
@@ -76,7 +76,7 @@ func (s *JsonDB) GetSimilarVideos(videoID string) ([]datatypes.VideoData, error)
 		}
 
 		// Optional: folder similarity
-		if filepath.Dir(video.GetFileName()) == filepath.Dir(targetVideo.GetFileName()) {
+		if filepath.Dir(video.Title) == filepath.Dir(targetVideo.Title) {
 			score += 1.0
 		}
 
@@ -152,7 +152,7 @@ func (s *JsonDB) SearchVideos(criteria datatypes.VideoSearchCriteria) ([]string,
 	// Search by query
 	if query != "" {
 		for _, video := range videos {
-			if strings.Contains(strings.ToLower(video.GetFileName()), query) {
+			if strings.Contains(strings.ToLower(video.Title), query) {
 				if filterExtras(video) {
 					resultsMap[video.VideoID] = struct{}{}
 				}
@@ -234,8 +234,8 @@ func (s *JsonDB) GetSearchSuggestions(query string) ([]string, error) {
 
 	// Iterate over the videos and check if the title contains the query (case-insensitive)
 	for _, video := range videos {
-		if strings.Contains(strings.ToLower(video.GetFileName()), strings.ToLower(query)) {
-			suggestions = append(suggestions, video.GetFileName())
+		if strings.Contains(strings.ToLower(video.Title), strings.ToLower(query)) {
+			suggestions = append(suggestions, video.Title)
 		}
 	}
 

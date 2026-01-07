@@ -41,3 +41,6 @@ here we demonstrate what features we want to add to next versions.
 - (native-player) adding playlist label on vidoe player for when playing playlist
 - (native-player) i think its good the video version history just be visible for the owner user
 - fix(search-api): when give the search bucket 0 .. server panic happen.
+- support minio db for digital assets (like previews and thumbnail and ...)
+- what is the project? in project we can find some videos and then it have multiple video lists (playlists) and give them to the user.
+- working on a digital asset db for better management of video registry.

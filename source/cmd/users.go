@@ -86,7 +86,7 @@ var userListCmd = &cobra.Command{
 
 			fmt.Println("Username\tRoles\tCreated At")
 			for _, user := range users {
-				fmt.Printf("%s\t%s\t%s\n",
+				fmt.Printf("%s\t%s\n",
 					user.Username,
 					user.CreatedAt.Format("2006-01-02 15:04:05"), // Consistent time format
 				)

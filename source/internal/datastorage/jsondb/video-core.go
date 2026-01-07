@@ -3,9 +3,7 @@ package jsondb
 import (
 	"fmt" // os is not directly used in the provided functions, but good to keep if used elsewhere in the package.
 	"ova-cli/source/internal/datatypes"
-	"path/filepath"
 	"sort"
-	"strings"
 )
 
 // AddVideo adds a new video if it does not already exist.
@@ -63,23 +61,6 @@ func (s *JsonDB) GetVideoByID(id string) (*datatypes.VideoData, error) {
 	return &video, nil
 }
 
-func (s *JsonDB) GetVideoByPath(path string) (*datatypes.VideoData, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	videos, err := s.loadVideos()
-	if err != nil {
-		return nil, fmt.Errorf("failed to load videos: %w", err)
-	}
-
-	for _, video := range videos {
-		if video.FilePath == path {
-			return &video, nil
-		}
-	}
-	return nil, fmt.Errorf("video with path %q not found", path)
-}
-
 // UpdateVideo replaces an existing video with the provided new video data.
 // Returns an error if the video to be updated does not exist.
 func (s *JsonDB) UpdateVideo(newVideo datatypes.VideoData) error {
@@ -97,45 +78,6 @@ func (s *JsonDB) UpdateVideo(newVideo datatypes.VideoData) error {
 
 	videos[newVideo.VideoID] = newVideo
 	return s.saveVideos(videos)
-}
-
-// GetFolderList returns a slice of unique folder paths where videos are stored.
-// Paths are relative to the repository root.
-func (s *JsonDB) GetFolderList() ([]string, error) {
-	s.mu.Lock() // Added lock for read operation
-	defer s.mu.Unlock()
-
-	// Directly load all videos instead of using SearchVideos with empty criteria.
-	allVideosMap, err := s.loadVideos()
-	if err != nil {
-		return nil, fmt.Errorf("failed to load all videos for folder list: %w", err)
-	}
-
-	folderSet := make(map[string]struct{})
-
-	for _, video := range allVideosMap {
-		// Ensure paths are consistently slash-separated
-		relPath := filepath.ToSlash(video.FilePath)
-		folder := filepath.Dir(relPath)
-
-		// Trim leading/trailing slashes and handle root directory
-		folder = strings.Trim(folder, "/")
-		if folder == "." { // If it's the current directory (root of the repo)
-			folder = "" // Represent root as an empty string
-		}
-		folderSet[folder] = struct{}{}
-	}
-
-	// Convert set keys to slice
-	folders := make([]string, 0, len(folderSet)+1)
-	folders = append(folders, "") // Always include root folder as empty string
-	for folder := range folderSet {
-		if folder != "" {
-			folders = append(folders, folder)
-		}
-	}
-
-	return folders, nil
 }
 
 // GetAllVideos returns all videos currently in storage as a slice.
@@ -169,28 +111,6 @@ func (s *JsonDB) DeleteAllVideos() error {
 
 	// Clear all videos by resetting the map
 	videos := make(map[string]datatypes.VideoData)
-
-	return s.saveVideos(videos)
-}
-
-// UpdateVideoLocalPath updates the file path of a video by its ID.
-// Returns an error if the video is not found.
-func (s *JsonDB) UpdateVideoLocalPath(videoID, newPath string) error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	videos, err := s.loadVideos()
-	if err != nil {
-		return fmt.Errorf("failed to load videos: %w", err)
-	}
-
-	video, exists := videos[videoID]
-	if !exists {
-		return fmt.Errorf("video %q not found", videoID)
-	}
-
-	video.FilePath = newPath
-	videos[videoID] = video
 
 	return s.saveVideos(videos)
 }

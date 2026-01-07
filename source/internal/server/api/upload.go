@@ -70,8 +70,7 @@ func uploadVideo(repoMgr *repo.RepoManager) gin.HandlerFunc {
 
 		// Build minimal video metadata
 		video := datatypes.VideoData{
-			VideoID:  uuid.New().String(), // You can still use UUID here for video metadata if needed
-			FilePath: savePath,
+			VideoID: uuid.New().String(), // You can still use UUID here for video metadata if needed
 		}
 
 		repoMgr.IndexVideo(savePath, accountIdStr)

@@ -112,30 +112,27 @@ func GetFFprobePath() (string, error) {
 	return ffprobePath, nil
 }
 
-// GetPythonSpriteGenPath returns the full path to the Python-generated sprite sheet EXE.
-// It assumes the EXE is located relative to your Go executable in a folder named "python_tools".
-func GetPythonSpriteGenPath() (string, error) {
+func GetOvaxPath() (string, error) {
 	exePath, err := os.Executable()
 	if err != nil {
 		return "", fmt.Errorf("failed to get executable path: %w", err)
 	}
 	exeDir := filepath.Dir(exePath)
 
-	// Adjust this path as per your deployment structure
-	pythonExePath := filepath.Join(exeDir, "python_tools", "generate_sprites")
+	ovaxPath := filepath.Join(exeDir, "ovax", "ovax")
 	if runtime.GOOS == "windows" {
-		pythonExePath += ".exe"
+		ovaxPath += ".exe"
 	}
 
-	info, err := os.Stat(pythonExePath)
+	info, err := os.Stat(ovaxPath)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return "", fmt.Errorf("sprite sheet generator exe not found: %s", pythonExePath)
+			return "", fmt.Errorf("ovax not found: %s", ovaxPath)
 		}
-		return "", fmt.Errorf("error checking sprite sheet generator exe: %w", err)
+		return "", fmt.Errorf("error checking ovax: %w", err)
 	}
 	if info.IsDir() {
-		return "", fmt.Errorf("sprite sheet generator path is a directory: %s", pythonExePath)
+		return "", fmt.Errorf("ovax path is a directory: %s", ovaxPath)
 	}
-	return pythonExePath, nil
+	return ovaxPath, nil
 }

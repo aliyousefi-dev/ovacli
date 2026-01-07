@@ -1,33 +1,41 @@
 package jsondb
 
-import "ova-cli/source/internal/datatypes"
+import (
+	"fmt"
+	"path/filepath"
+)
 
 // InsertVideoLookup updates or inserts the physical location of a video in the lookup table.
-func (jsdb *JsonDB) InsertVideoLookup(videoID string, lookupData datatypes.VideoLookup) error {
-	// 1. Load the existing lookup map
+// Now accepts videoID and filePath directly as strings.
+func (jsdb *JsonDB) InsertVideoLookup(videoID string, path string) error {
+	// 1. Load the existing lookup map (now map[string]string)
 	allLookups, err := jsdb.LoadLookupCollection()
 	if err != nil {
 		return err
 	}
 
-	// 2. Set the location (This performs an "Upsert" - Update or Insert)
-	// We don't use append() because one VideoID maps to exactly one FilePath
-	allLookups[videoID] = lookupData
+	// 2. Set the location
+	allLookups[videoID] = filepath.ToSlash(path)
 
 	// 3. Save the updated map back to lookup.json
 	return jsdb.SaveLookupCollection(allLookups)
 }
 
-// GetVideoLookup retrieves the location data for a specific video ID.
-// Returns the data, a boolean (true if found), and any error.
-func (jsdb *JsonDB) GetVideoLookup(videoID string) (datatypes.VideoLookup, bool, error) {
+// GetVideoLookup retrieves the location path for a specific video ID.
+// Returns the path string, a boolean (true if found), and any error.
+func (jsdb *JsonDB) GetVideoLookup(videoID string) (string, error) {
 	allLookups, err := jsdb.LoadLookupCollection()
 	if err != nil {
-		return datatypes.VideoLookup{}, false, err
+		return "", err
 	}
 
-	lookup, exists := allLookups[videoID]
-	return lookup, exists, nil
+	path, exists := allLookups[videoID]
+	if !exists {
+		// Return a formatted error including the missing ID
+		return "", fmt.Errorf("video lookup failed: ID %s not found in index", videoID)
+	}
+
+	return path, nil
 }
 
 // DeleteVideoLookup removes a video's location record from the lookup table.

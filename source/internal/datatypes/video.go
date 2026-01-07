@@ -1,8 +1,6 @@
 package datatypes
 
 import (
-	"path/filepath"
-	"strings"
 	"time"
 )
 
@@ -25,8 +23,8 @@ type VideoResolution struct {
 
 // VideoData represents a single video entry.
 type VideoData struct {
+	Title          string      `json:"title"`
 	VideoID        string      `json:"videoId"`        // Unique identifier for the
-	FilePath       string      `json:"filePath"`       // Path to the video file
 	Tags           []string    `json:"tags"`           // Tags for categorization and search
 	Codecs         VideoCodecs `json:"codecs"`         // Codec information
 	IsCooked       bool        `json:"isCooked"`       // Indicates if the video is processed (cooked)
@@ -39,10 +37,10 @@ type VideoData struct {
 
 // NewVideoData returns an initialized VideoData struct.
 // Renamed for clarity and added 'Description' field.
-func NewVideoData(videoID string) VideoData {
+func NewVideoData(title string, videoID string) VideoData {
 	return VideoData{
+		Title:          title,
 		VideoID:        videoID,
-		FilePath:       "",
 		IsCooked:       true,
 		Tags:           []string{},
 		OwnerAccountId: "",
@@ -52,12 +50,4 @@ func NewVideoData(videoID string) VideoData {
 		UploadedAt:     time.Now().UTC(),
 		Codecs:         VideoCodecs{}, // zero value
 	}
-}
-
-func (vd *VideoData) GetFileName() string {
-	return strings.TrimSuffix(filepath.Base(vd.FilePath), filepath.Ext(vd.FilePath))
-}
-
-func (vd *VideoData) SetFilePath(path string) {
-	vd.FilePath = filepath.ToSlash(path)
 }

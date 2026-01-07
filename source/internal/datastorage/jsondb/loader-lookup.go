@@ -3,12 +3,11 @@ package jsondb
 import (
 	"encoding/json"
 	"os"
-	"ova-cli/source/internal/datatypes"
 )
 
 // LoadLookupCollection reads the video-to-path mapping.
-// It uses a simple map[string]datatypes.VideoLookup for O(1) access by VideoID.
-func (jsdb *JsonDB) LoadLookupCollection() (map[string]datatypes.VideoLookup, error) {
+// Now returns map[string]string for the flat format: {"hash": "path"}
+func (jsdb *JsonDB) LoadLookupCollection() (map[string]string, error) {
 	path := jsdb.getLookupCollectionFilePath()
 
 	// Ensure the file exists with "{}" if missing to avoid EOF errors
@@ -22,21 +21,22 @@ func (jsdb *JsonDB) LoadLookupCollection() (map[string]datatypes.VideoLookup, er
 	}
 	defer file.Close()
 
-	// Map: Key = VideoID (Hash), Value = VideoLookup (Path/Size)
-	var data map[string]datatypes.VideoLookup
+	// Map: Key = VideoID (Hash), Value = FilePath (String)
+	var data map[string]string
 	decoder := json.NewDecoder(file)
 	if err := decoder.Decode(&data); err != nil {
-		// If file is empty or corrupted, return an empty map instead of failing
-		return make(map[string]datatypes.VideoLookup), nil
+		// If file is empty or corrupted, return an empty map
+		return make(map[string]string), nil
 	}
 
 	return data, nil
 }
 
-// SaveLookupCollection writes the current disk mapping to lookup.json
-func (jsdb *JsonDB) SaveLookupCollection(lookupMap map[string]datatypes.VideoLookup) error {
+// SaveLookupCollection writes the flat mapping to lookup.json
+func (jsdb *JsonDB) SaveLookupCollection(lookupMap map[string]string) error {
 	path := jsdb.getLookupCollectionFilePath()
 
+	// Marshal the map[string]string into the flat JSON structure
 	data, err := json.MarshalIndent(lookupMap, "", "  ")
 	if err != nil {
 		return err

@@ -22,13 +22,12 @@ func streamVideo(repoManager *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		videoId := c.Param("videoId")
 
-		video, err := repoManager.GetVideoByID(videoId)
+		videoPath, err := repoManager.GetVideoPathByID(videoId)
 		if err != nil {
-			apitypes.RespondError(c, http.StatusNotFound, "Video not found")
+			apitypes.RespondError(c, http.StatusNotFound, "Video file not found on disk")
 			return
 		}
 
-		videoPath := video.FilePath
 		file, err := os.Open(videoPath)
 		if err != nil {
 			if os.IsNotExist(err) {

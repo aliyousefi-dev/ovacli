@@ -61,7 +61,7 @@ func getVideoByID(repoMgr *repo.RepoManager) gin.HandlerFunc {
 		// Create the VideoDataAPIResponse from VideoData
 		videoResponse := apitypes.VideoDataAPIResponse{
 			VideoID:              video.VideoID,
-			FileName:             video.GetFileName(),
+			FileName:             video.Title,
 			Tags:                 video.Tags,
 			Codecs:               video.Codecs,
 			Markers:              markersCoverted,
