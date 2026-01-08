@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"path/filepath"
 	"syscall"
 
 	"ova-cli/source/internal/logs"
@@ -16,89 +15,56 @@ import (
 )
 
 var serveLogger = logs.Loggers("Serve")
-var serveBackendOnly bool
-var serveDisableAuth bool
+var serveApiOnly bool
+var bDisableAuth bool
 var serveUseHttps bool
-
-
 
 var serveCmd = &cobra.Command{
 	Use:   "serve <repo-path>",
-	Short: "Start the backend API server (optionally with web)",
+	Short: "Start the backend API server and WebSocket server",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		repoPath := args[0]
 
-		repository, err := repo.NewRepoManager(repoPath)
+		repoManager, err := repo.NewRepoManager(repoPath)
 		if err != nil {
 			fmt.Println("Failed to initialize repository:", err)
 			return
 		}
 
+		repoConfig := repoManager.GetConfigs()
+		serverAddr := fmt.Sprintf("%s:%d", repoConfig.ServerHost, repoConfig.ServerPort)
 
-		// Handle Ctrl+C (SIGINT) to call repository.OnShutdown()
-		shutdownCh := make(chan os.Signal, 1)
-		signal.Notify(shutdownCh, os.Interrupt, syscall.SIGTERM)
+		// Handle Graceful Shutdown
+		handleShutdown(repoManager)
+
+		// 1. Launch WebSocket Server in a Goroutine (Non-blocking)
+		wsPort := ":8081" // You can also move this to repoConfig
+		wsServer := server.NewWsServer(repoManager, wsPort)
+
 		go func() {
-			<-shutdownCh
-			serveLogger.Info("Received interrupt signal, shutting down...")
-			repository.OnShutdown()
-			os.Exit(0)
+			serveLogger.Info("Launching WebSocket Server on %s", wsPort)
+			if err := wsServer.Run(); err != nil {
+				serveLogger.Error("WebSocket server error: %v", err)
+			}
 		}()
 
-		cfg := repository.GetConfigs()
-
-		// Determine current directory and executable path
-		cwd, err := os.Getwd()
-		if err != nil {
-			serveLogger.Error("Failed to get current working directory: %v", err)
-			os.Exit(1)
-		}
-		exePath, err := os.Executable()
-		if err != nil {
-			serveLogger.Error("Failed to get executable path: %v", err)
-			os.Exit(1)
-		}
-		exeDir := filepath.Dir(exePath)	
-
-		// Server address
-		addr := fmt.Sprintf("%s:%d", cfg.ServerHost, cfg.ServerPort)
-
-		// Web UI check
-		webPath := filepath.Join(exeDir, "web")
-		serveweb := false
-		if !serveBackendOnly {
-			if _, err := os.Stat(webPath); err == nil {
-				serveweb = true
-				serveLogger.Info("Serving web at %s", addr)
-			} else {
-				serveLogger.Warn("Web build not found at %s. Only backend will be served.", webPath)
-			}
+		// 2. Log Info
+		if serveApiOnly {
+			serveLogger.Info("serving API at %s", serverAddr)
 		} else {
-			serveLogger.Info("Backend-only mode enabled. Web will not be served.")
+			serveLogger.Info("Serving frontend %s", serverAddr)
+			serveLogger.Info("serving api at %s/api/v1", serverAddr)
 		}
 
-		serveLogger.Info("Serving API at %s/api/v1/", addr)
+		printLocalIPs(repoManager)
 
-		// Print local IPs
-		localIPs, err := utils.GetLocalIPs()
-		if err != nil {
-			serveLogger.Warn("Could not determine local IP addresses: %v", err)
-		} else {
-			for _, ip := range localIPs {
-				serveLogger.Info("Server reachable at http://%s:%d/", ip, cfg.ServerPort)
-			}
-		}
-
-		// Launch server
+		// 3. Launch Main Backend Server (Blocking)
 		serverInstance := server.NewBackendServer(
-			repository,
-			addr,
-			exeDir,
-			cwd,
-			serveweb,
-			webPath,
-			serveDisableAuth,
+			repoManager,
+			serverAddr,
+			!serveApiOnly,
+			!bDisableAuth,
 			serveUseHttps,
 		)
 
@@ -110,8 +76,32 @@ var serveCmd = &cobra.Command{
 }
 
 func InitCommandServe(rootCmd *cobra.Command) {
-	serveCmd.Flags().BoolVarP(&serveBackendOnly, "backend", "b", false, "Serve backend API only (no web)")
-	serveCmd.Flags().BoolVar(&serveDisableAuth, "noauth", false, "Disable authentication (for testing only)")
+	serveCmd.Flags().BoolVarP(&serveApiOnly, "apionly", "a", false, "Serve API only (no frontend)")
+	serveCmd.Flags().BoolVar(&bDisableAuth, "noauth", false, "Disable authentication (for testing only)")
 	serveCmd.Flags().BoolVar(&serveUseHttps, "https", false, "Enable HTTPS (default is HTTP)")
 	rootCmd.AddCommand(serveCmd)
+}
+
+func handleShutdown(manager *repo.RepoManager) {
+	shutdownCh := make(chan os.Signal, 1)
+	signal.Notify(shutdownCh, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		<-shutdownCh
+		serveLogger.Info("Received interrupt signal, shutting down...")
+		manager.OnShutdown()
+		serveLogger.Info("Cleanup complete. Goodbye!")
+		os.Exit(0)
+	}()
+}
+
+func printLocalIPs(repoManager *repo.RepoManager) {
+	localIPs, err := utils.GetLocalIPs()
+	if err != nil {
+		serveLogger.Warn("Could not determine local IP addresses: %v", err)
+	} else {
+		for _, ip := range localIPs {
+			serveLogger.Info("Server reachable at http://%s:%d/", ip, repoManager.GetConfigs().ServerPort)
+		}
+	}
 }

@@ -14,10 +14,7 @@ import (
 type OvaServer struct {
 	RepoManager   *repo.RepoManager
 	router        *gin.Engine
-	BaseDir       string
 	ServeFrontend bool
-	FrontendPath  string
-	ExeDir        string
 	UseHttps      bool
 	Addr          string
 }
@@ -26,24 +23,18 @@ type OvaServer struct {
 func NewBackendServer(
 	repoManager *repo.RepoManager,
 	addr string,
-	exeDir string,
-	basedir string,
 	serveFrontend bool,
-	frontendPath string,
-	disableAuth bool,
+	enableAuth bool,
 	useHttps bool,
 ) *OvaServer {
 	gin.SetMode(gin.ReleaseMode)
 
-	repoManager.AuthEnabled = !disableAuth
+	repoManager.AuthEnabled = enableAuth
 
 	return &OvaServer{
 		RepoManager:   repoManager,
 		router:        gin.Default(),
-		BaseDir:       basedir,
 		ServeFrontend: serveFrontend,
-		FrontendPath:  frontendPath,
-		ExeDir:        exeDir,
 		UseHttps:      useHttps,
 		Addr:          addr,
 	}
@@ -90,15 +81,30 @@ func (s *OvaServer) initRoutes() {
 	}
 }
 
+func getFrontendPath() (string, error) {
+	exePath, err := os.Executable()
+	if err != nil {
+		return "", err
+	}
+	exeDir := filepath.Dir(exePath)
+	webPath := filepath.Join(exeDir, "web")
+	return webPath, nil
+}
+
 func (s *OvaServer) serveFrontendStatic() {
-	fs := http.FileServer(http.Dir(s.FrontendPath))
+	frontendPath, err := getFrontendPath()
+	if err != nil {
+		panic("Failed to get frontend path: " + err.Error())
+	}
+
+	fs := http.FileServer(http.Dir(frontendPath))
 	s.router.NoRoute(func(c *gin.Context) {
-		path := filepath.Join(s.FrontendPath, c.Request.URL.Path)
+		path := filepath.Join(frontendPath, c.Request.URL.Path)
 		if info, err := os.Stat(path); err == nil && !info.IsDir() {
 			fs.ServeHTTP(c.Writer, c.Request)
 			return
 		}
-		c.File(filepath.Join(s.FrontendPath, "index.html"))
+		c.File(filepath.Join(frontendPath, "index.html"))
 	})
 }
 

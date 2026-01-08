@@ -27,6 +27,7 @@ including features for video processing, metadata management, and more.`,
 	cmd.InitCommandChecksum(rootCmd)
 	cmd.InitCommandTest(rootCmd)
 	cmd.InitCommandGrpc(rootCmd)
+	cmd.InitCommandWebsocket(rootCmd)
 
 	cmd.InitCommandSSL(rootCmd)
 

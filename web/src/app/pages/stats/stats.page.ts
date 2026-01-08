@@ -1,123 +1,38 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgApexchartsModule } from 'ng-apexcharts';
-
-import { ApexChart, ApexAxisChartSeries, ApexDataLabels } from 'ng-apexcharts';
-
-// Use 'string[]' for labels instead of 'any' for better type safety
-export type ChartOptions = {
-  series: ApexAxisChartSeries;
-  chart: ApexChart;
-  stroke: ApexStroke;
-  xaxis: ApexXAxis;
-  dataLabels: ApexDataLabels;
-};
-
-export type ChartOptions2 = {
-  series: ApexNonAxisChartSeries;
-  chart: ApexChart;
-  labels: string[];
-  stroke: ApexStroke;
-  colors: string[];
-  legend: ApexLegend;
-  plotOptions: ApexPlotOptions;
-  responsive: ApexResponsive[];
-};
+import { WebSocketService } from '../../../ova-angular-sdk/web-socket.service';
 
 @Component({
-  selector: 'app-history-page',
+  selector: 'app-stats-page',
   standalone: true,
-  imports: [CommonModule, NgApexchartsModule],
+  imports: [CommonModule],
   templateUrl: './stats.page.html',
 })
-export class StatsPage {
-  public userChart: Partial<ChartOptions>;
-  public userChart2: Partial<ChartOptions2>;
+export class StatsPage implements OnInit {
+  private ws = inject(WebSocketService);
 
-  constructor() {
-    // The data assigned here MUST match the ChartOptions structure exactly
-    this.userChart = {
-      series: [
-        {
-          name: 'TotalVideos',
-          data: [10, 41, 35, 51, 49, 62, 69, 91, 148],
-        },
-        {
-          name: 'TotalUsers',
-          data: [2, 3, 2, 5, 10, 20, 30, 50, 60],
-        },
-      ],
-      chart: {
-        type: 'area',
-        height: 500,
-      },
-      dataLabels: {
-        enabled: false,
-      },
-      stroke: {
-        curve: 'smooth',
-      },
+  // Property to hold the last message for the UI
+  public lastReceived: any = null;
+
+  ngOnInit(): void {
+    this.ws.status$.subscribe((message) => {
+      console.log('Received WebSocket message in StatsPage:', message);
+      this.lastReceived = message;
+    });
+
+    // Ensure connection is established
+    this.ws.connect();
+  }
+
+  // Method triggered by the button
+  sendTestMessage(): void {
+    const testData = {
+      action: 'hello',
+      timestamp: new Date().toISOString(),
+      client: 'Angular-Dashboard',
     };
 
-    this.userChart2 = {
-      series: [76, 67, 61, 90],
-      chart: {
-        type: 'radialBar',
-        height: 500,
-      },
-      stroke: {
-        lineCap: 'round',
-      },
-      plotOptions: {
-        radialBar: {
-          offsetY: 0,
-          startAngle: 0,
-          endAngle: 270,
-          hollow: {
-            margin: 5,
-            size: '30%',
-            background: 'transparent',
-            image: undefined,
-          },
-          dataLabels: {
-            name: {
-              show: false,
-            },
-            value: {
-              show: false,
-            },
-          },
-        },
-      },
-      colors: ['#1ab7ea', '#0084ff', '#39539E', '#0077B5'],
-      labels: ['Vimeo', 'Messenger', 'Facebook', 'LinkedIn'],
-      legend: {
-        show: true,
-        floating: true,
-        fontSize: '16px',
-        position: 'right',
-        offsetX: 50,
-        offsetY: 10,
-        labels: {
-          useSeriesColors: true,
-        },
-        formatter: function (seriesName, opts) {
-          return seriesName + ':  ' + opts.w.globals.series[opts.seriesIndex];
-        },
-        itemMargin: {
-          horizontal: 3,
-        },
-      },
-      responsive: [
-        {
-          breakpoint: 480,
-          options: {
-            legend: {
-              show: false,
-            },
-          },
-        },
-      ],
-    };
+    console.log('Sending test message to WebSocket:', testData);
+    this.ws.sendMessage(testData);
   }
 }
