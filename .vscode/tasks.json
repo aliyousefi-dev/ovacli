@@ -32,6 +32,16 @@
 			}
 		},
 		{
+			"label": "Generate gRPC Code (Go)",
+			"type": "shell",
+			"command": "protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative ovaproto.proto",
+			"options": {
+				"cwd": "${workspaceFolder}/ovaproto"
+			},
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
 			"label": "Copy ThirdParty to Build",
 			"type": "shell",
 			"windows": {
