@@ -40,7 +40,7 @@ export class PlaylistAPIService {
       .post<ApiSuccessResponse<PlaylistData>>(
         `${this.config.apiBaseUrl}/me/playlists`,
         playlist,
-        { withCredentials: true } // ✅ important
+        { withCredentials: true }
       )
       .pipe(
         catchError((error: HttpErrorResponse) => {
@@ -60,7 +60,7 @@ export class PlaylistAPIService {
   deleteUserPlaylistBySlug(slug: string): Observable<ApiSuccessResponse<null>> {
     return this.http.delete<ApiSuccessResponse<null>>(
       `${this.config.apiBaseUrl}/me/playlists/${slug}`,
-      { withCredentials: true } // ✅ important
+      { withCredentials: true }
     );
   }
 

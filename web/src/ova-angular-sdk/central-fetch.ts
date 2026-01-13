@@ -17,7 +17,7 @@ import { VideoGallery } from './core-types/video-gallery';
 })
 export class CentralFetchService {
   constructor(
-    private latestVideosService: LatestVideosService,
+    private globalVideosService: LatestVideosService,
     private videoApiService: VideoApiService,
     private watchedApiService: WatchedApiService,
     private savedApiService: SavedApiService,
@@ -26,14 +26,14 @@ export class CentralFetchService {
 
   // Fetch the gallery data using LatestVideosService and switch based on route
   fetchGallery(
-    route: string = 'recent', // Default route is 'recent'
+    route: string = 'global', // Default route is 'recent'
     bucket: number = 1, // Default bucket is 1
     slug?: string // Optional slug for playlists
   ): Observable<VideoGallery> {
     switch (route) {
-      case 'recent': {
+      case 'global': {
         // Use LatestVideosService to fetch the latest videos for the given bucket
-        return this.latestVideosService.getLatestVideos(bucket).pipe(
+        return this.globalVideosService.fetchGlobalVideos(bucket).pipe(
           switchMap((response) => {
             const totalVideos = response.data.totalVideos;
             const currentBucket = response.data.currentBucket;

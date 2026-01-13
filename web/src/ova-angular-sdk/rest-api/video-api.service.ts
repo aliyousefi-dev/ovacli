@@ -14,17 +14,6 @@ export class VideoApiService {
   private http = inject(HttpClient);
   private config = inject(OVASDKConfig);
 
-  getVideosByFolder(folder: string): Observable<ApiSuccessResponse<any>> {
-    const params = new URLSearchParams();
-    if (folder) {
-      params.set('folder', folder);
-    }
-    return this.http.get<ApiSuccessResponse<any>>(
-      `${this.config.apiBaseUrl}/videos?${params.toString()}`,
-      { withCredentials: true }
-    );
-  }
-
   getVideoById(videoId: string): Observable<ApiSuccessResponse<VideoData>> {
     return this.http.get<ApiSuccessResponse<VideoData>>(
       `${this.config.apiBaseUrl}/videos/${videoId}`,

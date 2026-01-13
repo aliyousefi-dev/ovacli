@@ -5,8 +5,10 @@ import (
 	"log"
 	"net/http"
 	"sync"
+	"time"
 
 	"ova-cli/source/internal/repo" // Ensure this path is correct
+	wstypes "ova-cli/source/internal/server/ws-types"
 
 	"github.com/gorilla/websocket"
 )
@@ -38,6 +40,8 @@ func NewWsServer(repoManager *repo.RepoManager, addr string) *WsServer {
 // Run starts the dedicated HTTP server for WebSockets
 func (s *WsServer) Run() error {
 	go s.listenToBroadcast()
+
+	go s.startHeartbeat()
 
 	mux := http.NewServeMux()
 
@@ -73,7 +77,6 @@ func (s *WsServer) listenToBroadcast() {
 		s.mu.Unlock()
 	}
 }
-
 func (s *WsServer) HandleConnections(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -86,27 +89,41 @@ func (s *WsServer) HandleConnections(w http.ResponseWriter, r *http.Request) {
 	s.clients[conn] = true
 	s.mu.Unlock()
 
-	log.Printf("[WS] new connection to websocket server %s", w.Header().Get("Host"))
+	log.Printf("[WS] new connection: %s", r.RemoteAddr)
 
 	for {
-		var msg map[string]string
-		if err := conn.ReadJSON(&msg); err != nil {
+		// CHANGED: Use the struct instead of map[string]string
+		var req wstypes.WsRequest
+		if err := conn.ReadJSON(&req); err != nil {
+			log.Printf("[WS] Read/Parse Error: %v", err) // This will now show you the specific error
 			s.mu.Lock()
 			delete(s.clients, conn)
 			s.mu.Unlock()
 			break
 		}
 
-		if msg["action"] == "hello" {
-			// You can use s.RepoManager here to fetch real data for the client
-			conn.WriteJSON(map[string]string{
-				"message": "Hello from WebSocket Server!",
-				"storage": s.RepoManager.GetSSLPath(), // Just an example
-			})
+		// Handle based on req.Action
+		if req.Action == "hello" {
+			// Using your helper to send a success response back
+			response := wstypes.NewWsSuccess("hello_response", map[string]string{
+				"storage": s.RepoManager.GetSSLPath(),
+			}, "Hello from WebSocket Server!")
+
+			conn.WriteJSON(response)
 		}
 	}
 }
-
 func (s *WsServer) SendUpdate(data interface{}) {
 	s.broadcast <- data
+}
+
+func (s *WsServer) startHeartbeat() {
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+
+	// S1000 Fix: Use range instead of select for single-channel loops
+	for t := range ticker.C {
+		msg := wstypes.NewWsSuccess("heartbeat", t.Unix(), "server is alive")
+		s.SendUpdate(msg)
+	}
 }

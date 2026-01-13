@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { WebSocketService } from '../../../ova-angular-sdk/web-socket.service';
+import { WebSocketService } from '../../../ova-angular-sdk/websocket/web-socket.service';
 
 @Component({
   selector: 'app-stats-page',
@@ -16,7 +16,6 @@ export class StatsPage implements OnInit {
 
   ngOnInit(): void {
     this.ws.status$.subscribe((message) => {
-      console.log('Received WebSocket message in StatsPage:', message);
       this.lastReceived = message;
     });
 
@@ -26,13 +25,6 @@ export class StatsPage implements OnInit {
 
   // Method triggered by the button
   sendTestMessage(): void {
-    const testData = {
-      action: 'hello',
-      timestamp: new Date().toISOString(),
-      client: 'Angular-Dashboard',
-    };
-
-    console.log('Sending test message to WebSocket:', testData);
-    this.ws.sendMessage(testData);
+    this.ws.sendHello();
   }
 }

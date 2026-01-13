@@ -16,7 +16,7 @@
             @if (this.videoData.markers.length > 0) {
             <li class="menu-title text-gray-500 uppercase text-[10px]">Markers</li>
 
-            @for (marker of this.videoData.markers; track $index) {
+            @for (marker of this.markers; track $index) {
             <li class="group">
                 <div
                     class="flex flex-row items-center justify-between gap-2 p-1 hover:bg-base-200 rounded-md cursor-pointer">
@@ -40,7 +40,7 @@
             </li>
             }
             } @else {
-            <li class="opacity-50 p-2 text-center"><a>No markers found</a></li>
+            <li class="opacity-50 p-2 text-center"><a>No tag-time found</a></li>
             }
         </div>
     </ul>

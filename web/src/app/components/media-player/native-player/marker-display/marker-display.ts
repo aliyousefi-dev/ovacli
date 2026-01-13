@@ -50,6 +50,8 @@ export class MarkerDisplay implements OnInit {
     this.markerApi.getMarkers(this.videoData.videoId).subscribe((response) => {
       if (response.status === 'success') {
         this.markers = response.data.markers;
+        if (this.markers !== null)
+          this.markers.sort((a, b) => a.timeSecond - b.timeSecond);
       }
     });
   }

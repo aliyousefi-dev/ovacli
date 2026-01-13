@@ -1,0 +1,48 @@
+<div class="bg-black/40 p-3 flex flex-col gap-3">
+    <div class="text-xs flex flex-col gap-1">
+        <span class="font-bold">Core Player</span>
+        <div class=" flex flex-col">
+            <div class="flex flex-row justify-between gap-3">
+                <span>time</span>
+                <span>{{this.currentTime}} sec</span>
+            </div>
+            <div class="flex flex-row justify-between gap-3">
+                <span>duration</span>
+                <span>{{this.duration}} sec</span>
+            </div>
+            <div class="flex flex-row justify-between gap-3">
+                <span>Resolution</span>
+                <span>{{this.resolution}}</span>
+            </div>
+            <div class="flex flex-row justify-between gap-3">
+                <span>playing</span>
+                <span>{{this.isPlaying}}</span>
+            </div>
+            <div class="flex flex-row justify-between gap-3">
+                <span>volume</span>
+                <span>{{this.volume}}</span>
+            </div>
+            <div class="flex flex-row justify-between gap-3">
+                <span>muted</span>
+                <span>{{this.isMuted}}</span>
+            </div>
+            <div class="flex flex-row justify-between gap-3">
+                <span>speed</span>
+                <span>{{this.speed}}</span>
+            </div>
+            <div class="flex flex-row justify-between gap-3">
+                <span>buffered</span>
+                <span>{{this.buffered}} sec</span>
+            </div>
+        </div>
+    </div>
+    <div class="text-xs flex flex-col gap-1">
+        <span class="font-bold">Markers</span>
+        <div class=" flex flex-col">
+            <div class="flex flex-row justify-between gap-3">
+                <span>counts</span>
+                <span>5</span>
+            </div>
+        </div>
+    </div>
+</div>

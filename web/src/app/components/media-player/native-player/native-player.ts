@@ -21,6 +21,7 @@ import { MainTimeline } from './controls/timeline/main-timeline';
 import { MarkerDisplay } from './marker-display/marker-display';
 import { FullScreenButton } from './controls/buttons/full-screen/full-screen-button';
 import { SettingsButton } from './controls/buttons/settings-button/settings-button';
+import { ScreenDebugger } from './debugger/debugger';
 import {
   PlayerInputHostDirective,
   PlayerHostEvents,
@@ -40,6 +41,7 @@ import { LocalStorageService } from './services/localstorage.service';
     MainTimeline,
     PlayerInputHostDirective,
     FullScreenButton,
+    ScreenDebugger,
     MarkerDisplay,
     SettingsButton,
   ],
@@ -63,6 +65,8 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
 
   thumbnailData: ScrubThumbData[] = [];
 
+  nativeplayerViewInit = false;
+
   private hideControlsTimeout: any;
   private overlayTimeout: any;
   private rewindTimeout: any;
@@ -84,9 +88,11 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   constructor(private cd: ChangeDetectorRef) {}
 
   ngAfterViewInit() {
+    this.nativeplayerViewInit = true;
     this.loadScrubThumbnails();
     const video = this.videoRef.nativeElement;
 
+    console.log('natvie view init');
     // Handle metadata loading for markers/timeline
     if (video.readyState >= 1) {
       this.initVideoState();
@@ -136,34 +142,25 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
 
       if (touchX < screenWidth / 2) this.stepBackward();
       else this.stepForward();
-
-      this.showControls();
     } else {
       this.lastTap = now;
-      this.tapTimeout = setTimeout(() => {
-        this.controlsVisible
-          ? this.hideControlsManually()
-          : this.showControls();
-      }, this.DOUBLE_TAP_DELAY);
+      this.tapTimeout = setTimeout(() => {}, this.DOUBLE_TAP_DELAY);
     }
   }
 
   togglePlayPause() {
     const v = this.videoRef.nativeElement;
     v.paused ? v.play() : v.pause();
-    this.cd.detectChanges();
   }
 
   showControls() {
     this.controlsVisible = true;
-    this.cd.detectChanges();
     this.scheduleHideControls();
   }
 
   private hideControlsManually() {
     this.controlsVisible = false;
     clearTimeout(this.hideControlsTimeout);
-    this.cd.detectChanges();
   }
 
   private scheduleHideControls() {
@@ -171,7 +168,6 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
     if (!this.isPaused) {
       this.hideControlsTimeout = setTimeout(() => {
         this.controlsVisible = false;
-        this.cd.detectChanges();
       }, this.HIDE_DELAY_MS);
     }
   }

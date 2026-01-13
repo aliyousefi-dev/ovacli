@@ -20,7 +20,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 export class GalleryPageFetcher implements OnInit {
   @Input() isMiniView: boolean = false;
   @Input() PreviewPlayback: boolean = false;
-  @Input() route: string = 'recent'; // Default route is 'recent'
+  @Input() route: string = 'global'; // Default route is 'recent'
   @Input() slug: string = ''; // New Input for slug (for playlists)
 
   videos: VideoData[] = [];

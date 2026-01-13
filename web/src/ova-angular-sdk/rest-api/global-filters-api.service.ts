@@ -15,7 +15,11 @@ export class GlobalFiltersApiService {
   private config = inject(OVASDKConfig);
 
   getGlobalFilters(): Observable<ApiSuccessResponse<GlobalFilter[]>> {
-    const url = `${this.config.apiBaseUrl}/videos/global/filters`; // API endpoint for filters
+    const url = this.getGlobalFiltersUrl();
     return this.http.get<ApiSuccessResponse<GlobalFilter[]>>(url);
+  }
+
+  getGlobalFiltersUrl(): string {
+    return `${this.config.apiBaseUrl}/videos/global/filters`;
   }
 }

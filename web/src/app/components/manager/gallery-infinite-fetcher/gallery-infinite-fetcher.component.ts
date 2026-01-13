@@ -17,7 +17,7 @@ import { filter } from 'rxjs/internal/operators/filter';
 export class GalleryInfiniteFetcher implements OnInit {
   @Input() isMiniView: boolean = false;
   @Input() PreviewPlayback: boolean = false;
-  @Input() route: string = 'recent'; // Default route is 'recent'
+  @Input() route: string = 'global'; // Default route is 'recent'
   @Input() slug: string = ''; // New Input for slug
 
   videos: VideoData[] = [];

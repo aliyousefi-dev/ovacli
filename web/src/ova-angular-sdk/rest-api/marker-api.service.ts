@@ -11,9 +11,6 @@ import { OVASDKConfig } from '../global-config';
   providedIn: 'root',
 })
 export class MarkerApiService {
-  // Ensure baseUrl is safely initialized with a fallback.
-  // In a typical Angular setup, environment.apiBaseUrl will be defined.
-
   private http = inject(HttpClient);
   private config = inject(OVASDKConfig);
 

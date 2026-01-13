@@ -1,6 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
-import { OVASDKConfig } from './global-config';
+import { Subject } from 'rxjs';
+import { OVASDKConfig } from '../global-config';
+import { createWsRequest } from './ws-types';
+import * as Commands from './hello.command';
 
 @Injectable({
   providedIn: 'root',
@@ -18,8 +20,6 @@ export class WebSocketService {
 
     this.socket.onopen = () => {
       console.log('[WS] Connected to dedicated WebSocket server');
-      // Send the "hello" action you requested in the Go code
-      this.sendMessage({ action: 'hello' });
     };
 
     this.socket.onmessage = (event) => {
@@ -38,9 +38,18 @@ export class WebSocketService {
     };
   }
 
-  sendMessage(msg: any): void {
+  sendHello(): void {
+    Commands.sendHelloCommand(this);
+  }
+
+  sendMessage(action: string, payload: any = {}): void {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-      this.socket.send(JSON.stringify(msg));
+      // Create the request object using our helper
+      const request = createWsRequest(action, payload);
+
+      this.socket.send(JSON.stringify(request));
+    } else {
+      console.warn('[WS] Socket is closed. Message not sent:', action);
     }
   }
 }

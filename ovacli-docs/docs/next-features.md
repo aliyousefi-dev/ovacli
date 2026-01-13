@@ -44,3 +44,5 @@ here we demonstrate what features we want to add to next versions.
 - support minio db for digital assets (like previews and thumbnail and ...)
 - what is the project? in project we can find some videos and then it have multiple video lists (playlists) and give them to the user.
 - working on a digital asset db for better management of video registry.
+- (native-player) support reload markers after changes
+- (native-player) change video marker name to time-tag feature.

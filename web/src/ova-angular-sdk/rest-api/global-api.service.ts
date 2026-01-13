@@ -15,11 +15,15 @@ export class LatestVideosService {
   private config = inject(OVASDKConfig);
 
   // Fetch the latest videos based on the specified bucket
-  getLatestVideos(
+  fetchGlobalVideos(
     bucket: number = 1
   ): Observable<ApiSuccessResponse<VideoBucketContainer>> {
     // Construct the URL with bucket query parameter
-    const url = `${this.config.apiBaseUrl}/videos/global?bucket=${bucket}`;
+    const url = this.getGlobalVideosUrl(bucket);
     return this.http.get<ApiSuccessResponse<VideoBucketContainer>>(url);
+  }
+
+  getGlobalVideosUrl(bucket: number): string {
+    return `${this.config.apiBaseUrl}/videos/global?bucket=${bucket}`;
   }
 }

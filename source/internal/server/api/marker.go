@@ -13,7 +13,10 @@ import (
 // RegisterMarkerRoutes sets up the API endpoints for marker management using RepoManager.
 func RegisterMarkerRoutes(rg *gin.RouterGroup, rm *repo.RepoManager) {
 
+	// fetch markers
 	rg.GET("/videos/:videoId/markers", getMarkers(rm))
+
+	// add markers
 	rg.POST("/videos/:videoId/markers", addMarker(rm))
 
 }
@@ -42,8 +45,14 @@ func addMarker(rm *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		videoId := c.Param("videoId")
 
-		var req apitypes.MarkerDataRequest
-		if err := c.ShouldBindJSON(&req); err != nil {
+		//
+		var body struct {
+			TimeSecond  int    `json:"timeSecond"`
+			Label       string `json:"label"`
+			Description string `json:"description"`
+		}
+
+		if err := c.ShouldBindJSON(&body); err != nil {
 			apitypes.RespondError(c, http.StatusBadRequest, "Invalid JSON payload")
 			return
 		}
@@ -58,9 +67,9 @@ func addMarker(rm *repo.RepoManager) gin.HandlerFunc {
 
 		// 4. Pass the bound data to your repository
 		rm.AddMarkerToVideo(videoId, datatypes.MarkerData{
-			TimeSecond:  req.TimeSecond,
-			Label:       req.Label,
-			Description: req.Description,
+			TimeSecond:  body.TimeSecond,
+			Label:       body.Label,
+			Description: body.Description,
 		})
 
 		apitypes.RespondSuccess(c, http.StatusCreated, nil, "Marker added successfully")

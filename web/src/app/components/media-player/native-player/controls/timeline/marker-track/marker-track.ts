@@ -27,7 +27,6 @@ export class MarkerTrack implements OnInit, OnDestroy, AfterViewInit {
   private video!: HTMLVideoElement;
 
   ngOnInit() {
-    console.log(this.markersData);
     if (this.videoRef && this.videoRef.nativeElement) {
       this.video = this.videoRef.nativeElement;
 
@@ -53,10 +52,6 @@ export class MarkerTrack implements OnInit, OnDestroy, AfterViewInit {
    * Renders the chapter/key point markers onto the timeline track.
    */
   private renderMarkers = () => {
-    console.log(!this.video);
-    console.log(!this.markersRef);
-    console.log(!this.markersData.length);
-
     if (!this.video || !this.markersRef || !this.markersData.length) {
       return;
     }

@@ -36,6 +36,10 @@ export class SettingsButton implements OnInit {
     this.currentView = view;
   }
 
+  toggleDebuggerVisibility() {
+    console.log('debugger clicked');
+  }
+
   /**
    * Handles setting the playback speed on the video element.
    * @param speed The desired playback rate.
@@ -43,14 +47,9 @@ export class SettingsButton implements OnInit {
   setSpeed(speed: number) {
     this.videoRef.nativeElement.playbackRate = speed;
 
-    // Optional: Reset to main view and close the dropdown after selection
     this.currentView = 'main';
-    // You'd typically need a way to programmatically close the dropdown
-    // which may involve more complex DOM manipulation or Angular logic
-    // but for simplicity, we'll just reset the view.
   }
 
-  // Resets the menu to 'main' if the dropdown loses focus (optional cleanup)
   onDocumentClick(event: Event): void {
     if (!this.el.nativeElement.contains(event.target as Node)) {
       this.currentView = 'main';
