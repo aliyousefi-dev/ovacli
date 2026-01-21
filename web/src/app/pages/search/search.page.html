@@ -3,7 +3,9 @@
   <div class="p-3 text-xs">
     <div>Query: "{{ query }}"</div>
     <div>Tags Query: "{{ tagsQuery }}"</div>
-    <div>Total Result: {{ totalCount }} videos</div>
+    <div>Total Videos: {{ this.totalCount }} videos</div>
+    <div>Total Pages: {{ this.totalPages }} pages</div>
+    <div>Current Page: {{ this.currentBucket }} bucket</div>
   </div>
 
   <!-- Loading State -->

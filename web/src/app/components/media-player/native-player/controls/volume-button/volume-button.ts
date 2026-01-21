@@ -8,12 +8,8 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LocalStorageService } from '../../services/localstorage.service';
+import { PlayerSettingsService } from '../../services/player-settings.service';
 
-interface OvaPlayerPreferences {
-  soundLevel: number;
-  isMuted: boolean;
-}
 
 @Component({
   selector: 'app-mute-button',
@@ -24,13 +20,12 @@ interface OvaPlayerPreferences {
 export class VolumeButton implements OnInit, OnDestroy {
   @Input({ required: true }) videoRef!: ElementRef<HTMLVideoElement>;
 
-  private localStorageService = inject(LocalStorageService);
+  private playerSettings = inject(PlayerSettingsService)
 
   public isMuted: boolean = false;
   public volumeLevel: number = 1;
   public hoverPercent: number = 100;
 
-  private readonly VOLUME_STEP: number = 0.1; // 10% steps
   private video!: HTMLVideoElement;
   private lastKnownVolume: number = 1;
 
@@ -38,12 +33,9 @@ export class VolumeButton implements OnInit, OnDestroy {
     if (this.videoRef && this.videoRef.nativeElement) {
       this.video = this.videoRef.nativeElement;
 
-      const prefs =
-        this.localStorageService.loadPreferences() as OvaPlayerPreferences;
-
       // Load preferences with fallbacks
-      this.volumeLevel = prefs?.soundLevel ?? 1;
-      this.isMuted = prefs?.isMuted ?? false;
+      this.volumeLevel = this.playerSettings.currentSettings.soundLevel;
+      this.isMuted = this.playerSettings.currentSettings.isMuted;
 
       this.video.volume = this.volumeLevel;
       this.video.muted = this.isMuted;
@@ -95,15 +87,15 @@ export class VolumeButton implements OnInit, OnDestroy {
   /**
    * Methods called by parent component for keyboard shortcuts
    */
-  volumeLevelUp() {
+  volumeLevelUp(step: number) {
     if (!this.video) return;
-    this.volumeLevel = Math.min(this.volumeLevel + this.VOLUME_STEP, 1.0);
+    this.volumeLevel = Math.min(this.volumeLevel + step, 1.0);
     this.onVolumeChange();
   }
 
-  volumeLevelDown() {
+  volumeLevelDown(step: number) {
     if (!this.video) return;
-    this.volumeLevel = Math.max(this.volumeLevel - this.VOLUME_STEP, 0.0);
+    this.volumeLevel = Math.max(this.volumeLevel - step, 0.0);
     this.onVolumeChange();
   }
 
@@ -133,10 +125,8 @@ export class VolumeButton implements OnInit, OnDestroy {
       this.lastKnownVolume = this.video.volume;
     }
 
-    this.localStorageService.savePreferences({
-      soundLevel: this.volumeLevel,
-      isMuted: this.isMuted,
-    } as Partial<OvaPlayerPreferences>);
+    this.playerSettings.updateSetting("isMuted", this.isMuted)
+    this.playerSettings.updateSetting("soundLevel",this.volumeLevel)
 
     this.resetHoverPercent();
   };

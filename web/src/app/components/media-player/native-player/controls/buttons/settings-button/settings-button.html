@@ -27,7 +27,8 @@
         <li>
             <label class="label flex justify-between items-center p-2 cursor-pointer">
                 Debugger
-                <input type="checkbox" class="toggle toggle-xs" (click)="toggleDebuggerVisibility()" />
+                <input type="checkbox" class="toggle toggle-xs" (click)="toggleDebuggerVisibility()"
+                    [checked]="debuggerEnabled" />
             </label>
         </li>
         <li>

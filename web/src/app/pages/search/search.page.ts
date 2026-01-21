@@ -36,6 +36,7 @@ export class SearchPage implements OnInit, OnDestroy {
   currentBucket: number = 1;
 
   totalCount: number = 0;
+  totalPages: number = 0;
 
   // Change this subscription to listen to the URL query params for the main search
   // and remove the direct API call in ngOnInit to avoid double-fetching.
@@ -63,7 +64,11 @@ export class SearchPage implements OnInit, OnDestroy {
         switchMap((apiSearchState) => {
           const { query } = apiSearchState;
 
-          const searchParams: { query?: string; tags?: string[] } = {};
+          const searchParams: {
+            query?: string;
+            tags?: string[];
+            bucketnumber?: number;
+          } = {};
           const tags = this.extractTagsFromQuery(query);
           const shouldPerformApiSearch =
             query.trim() !== '' || this.tagsQuery.length > 0;
@@ -80,6 +85,7 @@ export class SearchPage implements OnInit, OnDestroy {
               searchParams.query = query;
               searchParams.tags = tags;
             }
+            searchParams.bucketnumber = this.currentBucket;
           }
 
           this.loading = true;
@@ -89,13 +95,14 @@ export class SearchPage implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (response?.data?.result?.videoIds) {
+            this.totalCount = response.data.result.totalVideos;
+            this.totalPages = response.data.result.totalBuckets;
             // Fetch video data based on video IDs
             this.videoApi
               .getVideosByIds(response.data.result.videoIds)
               .subscribe({
                 next: (videoDataResponse) => {
                   this.videos = videoDataResponse.data || []; // Assign video data to the component
-                  this.totalCount = videoDataResponse.data.length || 0;
                   this.loading = false;
                 },
                 error: (err) => {

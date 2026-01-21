@@ -5,10 +5,13 @@ import {
   Input,
   ElementRef,
   AfterViewInit,
+  OnInit,
   OnDestroy,
+  inject
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { PlayerSettingsService } from '../services/player-settings.service';
 
 @Component({
   selector: 'app-debugger',
@@ -17,8 +20,10 @@ import { FormsModule } from '@angular/forms';
   // Assuming the template is full-screen-button.component.html or full-screen-button.html
   templateUrl: './debugger.html',
 })
-export class ScreenDebugger implements AfterViewInit, OnDestroy {
+export class ScreenDebugger implements AfterViewInit,OnInit, OnDestroy {
   @Input({ required: true }) htmlPlayer!: ElementRef<HTMLVideoElement>;
+
+  enableDebugger: boolean = false;
 
   currentTime: number = 0;
   volume: number = 0;
@@ -28,6 +33,14 @@ export class ScreenDebugger implements AfterViewInit, OnDestroy {
   isPlaying: boolean = false;
   resolution: string = '';
   buffered: number = 0;
+
+  private playerSettings = inject(PlayerSettingsService)
+
+ngOnInit(): void {
+  this.playerSettings.settings$.subscribe((s) => {
+    this.enableDebugger = s.enableDebugger;
+  })
+}
 
   ngAfterViewInit() {
     console.log('debugger view init');

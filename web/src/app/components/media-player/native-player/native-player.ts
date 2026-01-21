@@ -22,11 +22,12 @@ import { MarkerDisplay } from './marker-display/marker-display';
 import { FullScreenButton } from './controls/buttons/full-screen/full-screen-button';
 import { SettingsButton } from './controls/buttons/settings-button/settings-button';
 import { ScreenDebugger } from './debugger/debugger';
+import { PlayerSettingsService } from './services/player-settings.service';
+
 import {
   PlayerInputHostDirective,
   PlayerHostEvents,
 } from './controls/player-input-host';
-import { LocalStorageService } from './services/localstorage.service';
 
 @Component({
   selector: 'app-native-player',
@@ -80,7 +81,7 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
 
   private videoapi = inject(VideoApiService);
   private scrubThumbApiService = inject(ScrubThumbApiService);
-  private localStorageService = inject(LocalStorageService);
+  private playerSettings = inject(PlayerSettingsService);
 
   // Bind handlers so they can be removed correctly on destroy
   private fullscreenHandler = this.onFullscreenChange.bind(this);
@@ -112,7 +113,7 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
       this.showControls();
     });
 
-    this.applySavedPreferences();
+    this.applyPlayerSettings();
     document.addEventListener('fullscreenchange', this.fullscreenHandler);
     this.showControls();
   }
@@ -205,6 +206,9 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   }
 
   handleInputs(event: keyof PlayerHostEvents) {
+    let volumeDefultStep = 0.01
+    let volumeDefultShiftStep = 0.05
+
     this.showControls();
     switch (event) {
       case 'playPauseToggle':
@@ -217,10 +221,16 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
         this.stepBackward();
         break;
       case 'volumeUp':
-        this.muteButtonRef?.volumeLevelUp();
+        this.muteButtonRef?.volumeLevelUp(volumeDefultStep);
+        break;
+      case 'shiftVolumeUp':
+        this.muteButtonRef?.volumeLevelUp(volumeDefultShiftStep);
         break;
       case 'volumeDown':
-        this.muteButtonRef?.volumeLevelDown();
+        this.muteButtonRef?.volumeLevelDown(volumeDefultStep);
+        break;
+      case 'shiftVolumeDown':
+        this.muteButtonRef?.volumeLevelDown(volumeDefultShiftStep);
         break;
     }
   }
@@ -232,9 +242,8 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
     return this.videoapi.getThumbnailUrl(this.videoData.videoId);
   }
 
-  private applySavedPreferences() {
-    const prefs = this.localStorageService.loadPreferences();
-    if (this.videoRef) this.videoRef.nativeElement.volume = prefs.soundLevel;
+  private applyPlayerSettings() {
+    if (this.videoRef) this.videoRef.nativeElement.volume = this.playerSettings.currentSettings.soundLevel;
   }
 
   private onFullscreenChange() {

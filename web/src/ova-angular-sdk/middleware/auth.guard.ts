@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Router, UrlTree } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -8,17 +8,15 @@ import { AuthApiService } from '../rest-api/auth-api.service';
   providedIn: 'root',
 })
 export class AuthGuard {
-  constructor(private authapi: AuthApiService, private router: Router) {}
+  private authapi = inject(AuthApiService);
+  private router = inject(Router);
 
   canActivate(): Observable<boolean | UrlTree> {
-    console.log('AuthGuard: Checking login state...');
+    console.log('AuthGuard Enabled');
 
     return this.authapi.checkLoginState().pipe(
       map((res) => {
-        console.log('AuthGuard: Response from checkLoginState:', res);
-
         if (res.status === 'success' && res.data.authenticated) {
-          console.log('AuthGuard: User is authenticated, allowing access.');
           return true;
         } else {
           console.log(

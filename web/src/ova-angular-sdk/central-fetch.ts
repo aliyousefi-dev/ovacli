@@ -4,20 +4,20 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { VideoData } from './core-types/video-data';
 
-import { LatestVideosService } from './rest-api/global-api.service';
+import { GlobalVideosService } from './rest-api/global-api.service';
 import { VideoApiService } from './rest-api/video-api.service';
 import { WatchedApiService } from './rest-api/recent-api.service';
 import { SavedApiService } from './rest-api/saved-api.service';
 import { PlaylistContentAPIService } from './rest-api/playlist-content-api.service';
 
-import { VideoGallery } from './core-types/video-gallery';
+import { GalleryContainer } from './core-types/video-gallery';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CentralFetchService {
   constructor(
-    private globalVideosService: LatestVideosService,
+    private globalVideosService: GlobalVideosService,
     private videoApiService: VideoApiService,
     private watchedApiService: WatchedApiService,
     private savedApiService: SavedApiService,
@@ -29,7 +29,7 @@ export class CentralFetchService {
     route: string = 'global', // Default route is 'recent'
     bucket: number = 1, // Default bucket is 1
     slug?: string // Optional slug for playlists
-  ): Observable<VideoGallery> {
+  ): Observable<GalleryContainer> {
     switch (route) {
       case 'global': {
         // Use LatestVideosService to fetch the latest videos for the given bucket
@@ -156,7 +156,7 @@ export class CentralFetchService {
 
       // You can add more routes like 'favorites' or others as needed
       default: {
-        return new Observable<VideoGallery>(); // Return an empty observable for unknown routes
+        return new Observable<GalleryContainer>(); // Return an empty observable for unknown routes
       }
     }
   }

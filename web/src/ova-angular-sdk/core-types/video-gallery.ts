@@ -1,6 +1,6 @@
 import { VideoData } from './video-data';
 
-export interface VideoGallery {
+export interface GalleryContainer {
   videos: VideoData[]; // Array of video data
   totalVideos: number; // Total number of videos cached
   currentBucket: number; // The current bucket requested

@@ -1,7 +1,8 @@
 // src/app/components/default-video-player/controls/play-pause-button/settings-button.component.ts
 
-import { Component, Input, ElementRef, OnInit } from '@angular/core';
+import { Component, Input, ElementRef, OnInit , inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { PlayerSettingsService } from '../../../services/player-settings.service';
 
 // Define a type for your menu states for clarity
 type MenuViews = 'main' | 'playback';
@@ -25,9 +26,16 @@ export class SettingsButton implements OnInit {
   // 🌟 New State Variable
   currentView: MenuViews = 'main';
 
+  private playerSettings = inject(PlayerSettingsService)
+  debuggerEnabled: boolean = false;
+
   constructor(private el: ElementRef) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.playerSettings.settings$.subscribe((s) => { 
+      this.debuggerEnabled = s.enableDebugger;
+    })
+  }
 
   /**
    * Updates the current menu view.
@@ -37,7 +45,10 @@ export class SettingsButton implements OnInit {
   }
 
   toggleDebuggerVisibility() {
-    console.log('debugger clicked');
+      this.playerSettings.updateSetting(
+      'enableDebugger',
+      !this.playerSettings.currentSettings.enableDebugger
+    );
   }
 
   /**

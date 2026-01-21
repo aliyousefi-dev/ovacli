@@ -19,9 +19,10 @@ export class SearchApiService {
   searchVideos(params: {
     query?: string;
     tags?: string[];
+    bucketnumber?: number;
   }): Observable<ApiSuccessResponse<SearchResult>> {
     return this.http.post<ApiSuccessResponse<SearchResult>>(
-      `${this.config.apiBaseUrl}/search?bucket=1`,
+      `${this.config.apiBaseUrl}/search?bucket=${params.bucketnumber}`,
       params
     );
   }

@@ -10,7 +10,7 @@ import { OVASDKConfig } from '../global-config';
 @Injectable({
   providedIn: 'root',
 })
-export class LatestVideosService {
+export class GlobalVideosService {
   private http = inject(HttpClient);
   private config = inject(OVASDKConfig);
 
