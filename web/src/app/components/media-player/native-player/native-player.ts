@@ -12,7 +12,6 @@ import { CommonModule } from '@angular/common';
 import { VideoApiService } from '../../../../ova-angular-sdk/rest-api/video-api.service';
 import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
 import { ScrubThumbApiService } from '../../../../ova-angular-sdk/rest-api/scrub-thumb-api.service';
-import { ScrubThumbData } from './data-types/scrub-thumb-data';
 import { PlayPauseButton } from './controls/buttons/play-pause-button/play-pause-button';
 import { VolumeButton } from './controls/volume-button/volume-button';
 import { DisplayCurrentTime } from './controls/display-current-time/display-current-time';
@@ -26,6 +25,7 @@ import { PlayerSettingsService } from './services/player-settings.service';
 import { TimeTagButton } from './controls/buttons/time-tag-button/time-tag-button';
 import { ScrubImageComponent } from './scrub-image/scrub-image';
 import { PlayerStateService } from './services/player-state.service';
+import { ScrubThumbStream } from './data-types/scrub-thumb-data';
 
 import {
   PlayerInputHostDirective,
@@ -69,7 +69,11 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   rewindVisible = false;
   forwardVisible = false;
 
-  thumbnailData: ScrubThumbData[] = [];
+  thumbnailData: ScrubThumbStream = {
+    cropedWidth: 0,
+    cropedHeight: 0,
+    thumbStats: [],
+  };
 
   nativeplayerViewInit = false;
 
