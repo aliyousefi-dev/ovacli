@@ -1,4 +1,3 @@
-// src/app/components/media-player/native-player/controls/display-current-time/display-current-time.component.ts
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { formatTime } from '../../utils/time-utils';
@@ -11,10 +10,9 @@ import { PlayerStateService } from '../../services/player-state.service';
   templateUrl: './display-current-time.html',
 })
 export class DisplayCurrentTime implements OnInit, OnDestroy {
-  playerState = inject(PlayerStateService);
+  private playerState = inject(PlayerStateService);
 
-  public currentTime: string = '00';
-  private video!: HTMLVideoElement;
+  currentTime: string = '00';
   formatTime = formatTime;
 
   ngOnInit() {

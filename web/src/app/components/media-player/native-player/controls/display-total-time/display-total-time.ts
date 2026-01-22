@@ -1,7 +1,8 @@
 // src/app/components/media-player/native-player/controls/display-total-time/display-total-time.component.ts
-import { Component, Input, ElementRef, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { formatTime } from '../../utils/time-utils';
+import { PlayerStateService } from '../../services/player-state.service';
 
 @Component({
   selector: 'app-display-total-time',
@@ -10,29 +11,16 @@ import { formatTime } from '../../utils/time-utils';
   templateUrl: './display-total-time.html',
 })
 export class DisplayTotalTime implements OnInit, OnDestroy {
-  @Input({ required: true }) videoRef!: ElementRef<HTMLVideoElement>;
+  private playerState = inject(PlayerStateService);
 
-  public videoDuration: number = 0;
-  private video!: HTMLVideoElement;
+  videoDuration: string = '00';
   formatTime = formatTime;
 
   ngOnInit() {
-    if (this.videoRef && this.videoRef.nativeElement) {
-      this.video = this.videoRef.nativeElement;
-      this.video.addEventListener('loadedmetadata', this.updateDuration);
-      // Initialize duration if metadata already loaded
-      this.updateDuration();
-    }
+    this.playerState.duration$.subscribe((d) => {
+      this.videoDuration = formatTime(d);
+    });
   }
 
-  ngOnDestroy() {
-    if (this.video) {
-      this.video.removeEventListener('loadedmetadata', this.updateDuration);
-    }
-  }
-
-  private updateDuration = () => {
-    const duration = this.video?.duration ?? 0;
-    this.videoDuration = Number.isFinite(duration) ? duration : 0;
-  };
+  ngOnDestroy() {}
 }
