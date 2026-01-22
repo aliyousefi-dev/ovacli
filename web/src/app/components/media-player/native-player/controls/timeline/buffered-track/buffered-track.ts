@@ -8,10 +8,12 @@ import {
   OnDestroy,
   ViewChild,
   ChangeDetectionStrategy,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BufferedRangeData } from '../../../data-types/buffered-range-data';
 import { mergeBufferedRanges } from '../../../utils/buffer-utils';
+import { PlayerStateService } from '../../../services/player-state.service';
 
 @Component({
   selector: 'app-buffered-track',
@@ -21,45 +23,35 @@ import { mergeBufferedRanges } from '../../../utils/buffer-utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BufferedTrack implements OnInit, OnDestroy {
-  @Input({ required: true }) videoRef!: ElementRef<HTMLVideoElement>;
-
   /**
    * Local ViewChild for the buffered div element.
    * This is where the dynamic buffered range segments will be rendered.
    */
   @ViewChild('buffered') bufferedRef!: ElementRef<HTMLDivElement>;
 
-  private video!: HTMLVideoElement;
+  private playerState = inject(PlayerStateService);
 
   ngOnInit() {
-    if (this.videoRef && this.videoRef.nativeElement) {
-      this.video = this.videoRef.nativeElement;
-
-      // The 'progress' event fires when the browser downloads data
-      this.video.addEventListener('progress', this.updateBuffered);
-
-      // Initial update, in case some buffering occurred before ngOnInit
+    this.playerState.bufferedRanges$.subscribe(() => {
       this.updateBuffered();
-    }
+    });
   }
 
-  ngOnDestroy() {
-    if (this.video) {
-      this.video.removeEventListener('progress', this.updateBuffered);
-    }
-  }
+  ngOnDestroy() {}
 
   /**
    * Updates the buffered range display by creating and inserting dynamic DIV segments.
    * (Refactored from your parent component)
    */
   private updateBuffered = () => {
-    if (!this.video || !this.bufferedRef || !isFinite(this.video.duration)) {
+    if (!this.bufferedRef) {
       return;
     }
 
-    const buffered = this.video.buffered;
-    const duration = this.video.duration;
+    const buffered = this.playerState.bufferedRanges$.value;
+    const duration = this.playerState.duration$.value;
+
+    if (!buffered) return;
 
     if (buffered.length > 0) {
       let ranges: BufferedRangeData[] = [];

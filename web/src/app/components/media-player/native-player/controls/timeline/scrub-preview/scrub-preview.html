@@ -7,12 +7,12 @@
   </div>
 
   <div class="flex items-center text-sm py-1 px-3 rounded-2xl bg-black text-white">
-    <div>
+    <div class="select-none">
       {{ formatTime(timeInSeconds) }}
     </div>
 
     @if (nearMarker; as marker) {
-    <div class="ml-2 pl-2 font-semibold">
+    <div class="ml-2 pl-2 font-semibold select-none">
       {{ marker.label }}
     </div>
     }

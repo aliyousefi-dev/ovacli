@@ -9,6 +9,7 @@ export class PlayerStateService implements OnDestroy {
   readonly currentTime$ = new BehaviorSubject<number>(0);
   readonly remainingTime$ = new BehaviorSubject<number>(0);
   readonly bufferedSec$ = new BehaviorSubject<number>(0);
+  readonly bufferedRanges$ = new BehaviorSubject<TimeRanges | null>(null);
   readonly currentSpeed$ = new BehaviorSubject<number>(1);
   readonly duration$ = new BehaviorSubject<number>(0);
   readonly volume$ = new BehaviorSubject<number>(1);
@@ -40,7 +41,10 @@ export class PlayerStateService implements OnDestroy {
 
     // set default settings
     this.videoEl.muted = this.playerSettings.currentSettings.isMuted;
-    this.videoEl.volume = this.playerSettings.currentSettings.soundLevel;
+    this.videoEl.volume = Math.max(
+      0,
+      Math.min(this.playerSettings.currentSettings.soundLevel, 1)
+    );
     this.videoEl.playbackRate =
       this.playerSettings.currentSettings.playbackSpeed;
 
@@ -78,6 +82,7 @@ export class PlayerStateService implements OnDestroy {
     });
 
     progress$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.bufferedRanges$.next(videoEl.buffered);
       let bf = videoEl.buffered;
       let length = 0;
       for (let i = 0; i < bf.length; i++) {
@@ -117,6 +122,18 @@ export class PlayerStateService implements OnDestroy {
     if (!this.videoEl) return;
     const clamped = Math.max(0, Math.min(seconds, this.videoEl.duration));
     this.videoEl.currentTime = clamped;
+  }
+
+  stepForward() {
+    if (!this.videoEl) return;
+    const SEEK_STEP = 15;
+    this.seekToTime(this.videoEl.currentTime + SEEK_STEP);
+  }
+
+  stepBackward() {
+    if (!this.videoEl) return;
+    const SEEK_STEP = 15;
+    this.seekToTime(this.videoEl.currentTime - SEEK_STEP);
   }
 
   /** Sets the volume (0 – 1). */

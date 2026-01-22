@@ -16,9 +16,9 @@
   </div>
   }
 
-  <div class="absolute inset-0 w-full h-full z-1 pointer-events-none">
+  <!-- <div class="absolute inset-0 w-full h-full z-1 pointer-events-none">
     <app-scrub-image [scrubThumbStream]="this.thumbnailData"></app-scrub-image>
-  </div>
+  </div> -->
 
   <!-- Touch controls -->
   <div class="absolute inset-0 z-30 flex justify-center items-center pointer-events-none">
@@ -70,7 +70,7 @@
       <div class="flex justify-center items-end px-3 text-sm text-white">
 
         <app-main-timeline class="w-full" #mainTimelineRef [videoRef]="this.videoRef"
-          [scrubThumbData]="this.thumbnailData" [markersData]="this.videoData.markers">
+          [scrubThumbData]="this.thumbnailData">
         </app-main-timeline>
 
       </div>

@@ -1,8 +1,9 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { formatTime } from '../../../utils/time-utils';
 import { MarkerData } from '../../../data-types/marker-data';
 import { ScrubThumbStream } from '../../../data-types/scrub-thumb-data';
+import { TimeTagService } from '../../../services/time-tag.service';
 
 @Component({
   selector: 'app-scrub-preview',
@@ -10,10 +11,9 @@ import { ScrubThumbStream } from '../../../data-types/scrub-thumb-data';
   templateUrl: './scrub-preview.html',
   imports: [CommonModule],
 })
-export class ScrubPreview implements OnChanges {
+export class ScrubPreview implements OnInit, OnChanges {
   /* ---------- Existing inputs ---------- */
   @Input({ required: true }) isVisible: boolean = false;
-  @Input({ required: true }) markers: MarkerData[] = [];
   @Input({ required: true }) timeInSeconds: number = 0;
   @Input({ required: true }) scrubXPositionPercent: number = 0;
   @Input() scrubXPositionPx: number = 0;
@@ -33,6 +33,15 @@ export class ScrubPreview implements OnChanges {
   formatTime = formatTime;
   previewImageStyles: any = { opacity: '0' };
   markerTitle: string = '';
+
+  markers: MarkerData[] = [];
+  private timeTagService = inject(TimeTagService);
+
+  ngOnInit(): void {
+    this.timeTagService.timeTags$.subscribe((data) => {
+      this.markers = data;
+    });
+  }
 
   /* ---------- Internal state ---------- */
   /** Current width (in px) of the preview box – updated on every change. */
@@ -71,15 +80,12 @@ export class ScrubPreview implements OnChanges {
     const stream = this.scrubThumbStream;
     const { cropedWidth, cropedHeight, thumbStats } = stream;
 
-    /* 1️⃣ Find the cue that covers the current time. */
     const exactCue = thumbStats.find(
       (thumb) =>
         this.timeInSeconds >= thumb.startTime &&
         this.timeInSeconds < thumb.endTime
     );
 
-    /* 2️⃣ If we don't have an exact cue, fallback to the most recent
-       or the very first cue (same logic that existed before). */
     let displayCue = exactCue;
     let displayFrameIndex = 0;
 
@@ -108,7 +114,6 @@ export class ScrubPreview implements OnChanges {
       }
     }
 
-    /* 3️⃣ Update the preview (style + width) if a cue was found. */
     if (displayCue) {
       /* Internal width used for clamping the popup. */
       this.currentPreviewWidthPx = Math.round(cropedWidth * this.previewScale);
@@ -147,7 +152,6 @@ export class ScrubPreview implements OnChanges {
     }
   }
 
-  /* ---------- Marker helper ---------- */
   get nearMarker(): MarkerData | undefined {
     if (!this.markers || this.markers.length === 0) {
       return undefined;

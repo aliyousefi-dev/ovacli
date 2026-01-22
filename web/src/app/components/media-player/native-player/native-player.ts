@@ -187,7 +187,7 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   }
 
   private stepForward() {
-    this.mainTimelineRef?.stepForward();
+    this.playerState.stepForward();
     this.forwardVisible = true;
     clearTimeout(this.forwardTimeout);
     this.forwardTimeout = setTimeout(() => {
@@ -196,7 +196,7 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   }
 
   private stepBackward() {
-    this.mainTimelineRef?.stepBackward();
+    this.playerState.stepBackward();
     this.rewindVisible = true;
     clearTimeout(this.rewindTimeout);
     this.rewindTimeout = setTimeout(() => {

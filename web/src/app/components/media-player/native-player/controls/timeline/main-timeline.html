@@ -4,13 +4,13 @@
         [style.width.px]="progressTrackWidthPx"></div>
 
     @if(videoRef){
-    <app-scrub-preview [isVisible]="isScrubPreviewVisible" [timeInSeconds]="scrubTime" [markers]="markersData"
+    <app-scrub-preview [isVisible]="isScrubPreviewVisible" [timeInSeconds]="scrubTime"
         [scrubThumbStream]="scrubThumbData" [scrubXPositionPercent]="scrubXPositionPercent"
         [scrubXPositionPx]="scrubXPositionPx" [timelineWidthPx]="timelineWidthPx"> <!-- NEW INPUT ADDED -->
     </app-scrub-preview>
 
-    <app-marker-track class="z-20" [videoRef]="this.videoRef" [markersData]="markersData"></app-marker-track>
-    <app-buffered-track [videoRef]="this.videoRef"></app-buffered-track>
+    <app-marker-track class="z-20"></app-marker-track>
+    <app-buffered-track></app-buffered-track>
 
     <app-progress-track #progressTrack [videoRef]="this.videoRef" (scrubMove)="onScrubMove($event)"
         (scrubEnd)="onScrubEnd()" (mouseLeave)="onScrubEnd()" (mouseHover)="onScrubMove($event)">

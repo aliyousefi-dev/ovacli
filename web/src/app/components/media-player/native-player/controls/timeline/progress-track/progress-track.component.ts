@@ -8,8 +8,11 @@ import {
   ChangeDetectionStrategy,
   Output,
   EventEmitter,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ScrubTimelineService } from '../../../services/scrub-timeline.service';
+import { PlayerStateService } from '../../../services/player-state.service';
 
 @Component({
   selector: 'app-progress-track',
@@ -22,7 +25,7 @@ export class ProgressTrack implements OnInit, OnDestroy {
   @Input({ required: true }) videoRef!: ElementRef<HTMLVideoElement>;
 
   @ViewChild('progress') progressRef!: ElementRef<HTMLDivElement>;
-  @ViewChild('pivot') pivotRef!: ElementRef<HTMLDivElement>;
+  @ViewChild('playHeadCircle') playHeadCircleRef!: ElementRef<HTMLDivElement>;
   @ViewChild('trackContainer') trackContainerRef!: ElementRef<HTMLDivElement>;
 
   @Output() scrubMove = new EventEmitter<{ time: number; xPercent: number }>();
@@ -37,11 +40,16 @@ export class ProgressTrack implements OnInit, OnDestroy {
   private pendingSeekTime: number | null = null;
   private wasPlayingBeforeDrag: boolean = false;
 
+  private scrubTimeline = inject(ScrubTimelineService);
+  private playerState = inject(PlayerStateService);
+
   ngOnInit() {
+    this.playerState.currentTime$.subscribe((t) => {
+      this.updateProgress();
+    });
+
     if (this.videoRef && this.videoRef.nativeElement) {
       this.video = this.videoRef.nativeElement;
-
-      this.video.addEventListener('timeupdate', this.updateProgress); // --- Global Mouse Handlers ---
 
       window.addEventListener('mousemove', this.onDrag);
       window.addEventListener('mouseup', this.stopDrag); // --- Global Touch Handlers (NEW) --- // { passive: false } is essential to allow preventDefault() inside onTouchMove
@@ -54,19 +62,12 @@ export class ProgressTrack implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.video) {
-      this.video.removeEventListener('timeupdate', this.updateProgress);
-    } // --- Cleanup Global Mouse Handlers ---
-
     window.removeEventListener('mousemove', this.onDrag);
     window.removeEventListener('mouseup', this.stopDrag); // --- Cleanup Global Touch Handlers ---
 
     window.removeEventListener('touchmove', this.onTouchMove);
     window.removeEventListener('touchend', this.stopDrag);
   }
-  /**
-   * Calculates the video playback percentage and updates the bar width and pivot position.
-   */
 
   private updateProgress = () => {
     // Only update based on timeupdate if we are NOT currently dragging
@@ -77,19 +78,16 @@ export class ProgressTrack implements OnInit, OnDestroy {
     if (
       this.video &&
       this.progressRef &&
-      this.pivotRef &&
+      this.playHeadCircleRef &&
       isFinite(this.video.duration)
     ) {
       const video = this.video;
       const pct = (video.currentTime / video.duration) * 100;
 
       this.progressRef.nativeElement.style.width = pct + '%';
-      this.pivotRef.nativeElement.style.left = pct + '%';
+      this.playHeadCircleRef.nativeElement.style.left = pct + '%';
     }
   };
-  /**
-   * Calculates the new time and its position percentage based on a clientX position.
-   */
 
   private calculateTimeAndPosition(
     clientX: number
@@ -125,18 +123,15 @@ export class ProgressTrack implements OnInit, OnDestroy {
       Math.min(timeInSeconds, this.video.duration)
     ); // 2. Apply the time to the video element
 
-    this.video.currentTime = clampedTime; // 3. Manually update the UI (since 'timeupdate' is asynchronous) // Calculate the percentage based on the new time
+    this.playerState.seekToTime(clampedTime);
 
     const pct = (clampedTime / this.video.duration) * 100; // Update the visual position immediately
 
-    if (this.progressRef && this.pivotRef) {
+    if (this.progressRef && this.playHeadCircleRef) {
       this.progressRef.nativeElement.style.width = pct + '%';
-      this.pivotRef.nativeElement.style.left = pct + '%';
+      this.playHeadCircleRef.nativeElement.style.left = pct + '%';
     }
   }
-  /**
-   * Calculates and sets the UI position. Optionally updates the video time immediately or stores it.
-   */
 
   private seekTo(clientX: number, updateVideoTime: boolean): number | null {
     const data = this.calculateTimeAndPosition(clientX);
@@ -157,10 +152,10 @@ export class ProgressTrack implements OnInit, OnDestroy {
     } // Manually update the progress bar and pivot position (ALWAYS update the UI)
 
     this.progressRef.nativeElement.style.width = pct + '%';
-    this.pivotRef.nativeElement.style.left = pct + '%';
+    this.playHeadCircleRef.nativeElement.style.left = pct + '%';
 
     return newTime;
-  } // --- Utility to get clientX for both Mouse and Touch events ---
+  }
 
   private getClientX(event: MouseEvent | TouchEvent): number | null {
     if (event instanceof MouseEvent) {
@@ -169,7 +164,7 @@ export class ProgressTrack implements OnInit, OnDestroy {
       return event.touches[0].clientX;
     }
     return null;
-  } // --- Drag/Scrub Operations ---
+  }
 
   private startDragOperation(clientX: number): void {
     if (this.isDragging) return; // Pause the video and record playback state
@@ -181,21 +176,17 @@ export class ProgressTrack implements OnInit, OnDestroy {
 
     this.seekTo(clientX, false);
   }
-  /**
-   * Handler for mousedown/touchstart on the pivot element.
-   */
 
-  startDrag = (event: MouseEvent | TouchEvent): void => {
+  playheadCircleDragStart = (event: MouseEvent | TouchEvent): void => {
     // Prevents the track mousedown/touchstart handler from also firing
     event.stopPropagation();
+    this.scrubTimeline.setScrubVisibility(true);
+
     const clientX = this.getClientX(event);
     if (clientX !== null) {
       this.startDragOperation(clientX);
     }
   };
-  /**
-   * Handles mouse or touch movement while dragging (bound globally).
-   */
 
   onDrag = (event: MouseEvent): void => {
     if (!this.isDragging) {
@@ -204,9 +195,6 @@ export class ProgressTrack implements OnInit, OnDestroy {
     event.preventDefault();
     this.handleScrubMove(event.clientX);
   };
-  /**
-   * Handles touch movement while dragging (bound globally).
-   */
 
   onTouchMove = (event: TouchEvent): void => {
     if (!this.isDragging) {
@@ -219,9 +207,6 @@ export class ProgressTrack implements OnInit, OnDestroy {
       this.handleScrubMove(clientX);
     }
   };
-  /**
-   * Core logic to update UI during a drag and emit scrubMove.
-   */
 
   private handleScrubMove(clientX: number): void {
     // Update the UI via seekTo (updateVideoTime: false)
@@ -256,13 +241,10 @@ export class ProgressTrack implements OnInit, OnDestroy {
 
     this.scrubEnd.emit();
   }; // --- Mousedown/Touchstart Handler (for track area) ---
-  /**
-   * Handles mousedown or touchstart events on the track.
-   */
 
   onTrackStart(event: MouseEvent | TouchEvent): void {
     // Prevent double-handling if the event started on the pivot itself
-    if (event.target === this.pivotRef.nativeElement) {
+    if (event.target === this.playHeadCircleRef.nativeElement) {
       return;
     } // Prevent default touch behavior (scrolling) for track initiation
 
@@ -291,9 +273,6 @@ export class ProgressTrack implements OnInit, OnDestroy {
       }
     }
   }
-  /**
-   * Handler for mouseleave on the track container (non-dragging).
-   */
 
   onTrackMouseLeave(): void {
     // Only emit the leave event if we are NOT currently dragging

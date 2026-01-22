@@ -7,9 +7,12 @@ import {
   ViewChild,
   AfterViewInit,
   ChangeDetectionStrategy,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MarkerData } from '../../../data-types/marker-data';
+import { TimeTagService } from '../../../services/time-tag.service';
+import { PlayerStateService } from '../../../services/player-state.service';
 
 @Component({
   selector: 'app-marker-track',
@@ -19,44 +22,35 @@ import { MarkerData } from '../../../data-types/marker-data';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MarkerTrack implements OnInit, OnDestroy, AfterViewInit {
-  @Input({ required: true }) videoRef!: ElementRef<HTMLVideoElement>;
-  @Input({ required: true }) markersData!: MarkerData[];
-
+  markersData: MarkerData[] = [];
   @ViewChild('markers') markersRef!: ElementRef<HTMLDivElement>;
 
-  private video!: HTMLVideoElement;
+  private timeTagService = inject(TimeTagService);
+  private playerState = inject(PlayerStateService);
 
   ngOnInit() {
-    if (this.videoRef && this.videoRef.nativeElement) {
-      this.video = this.videoRef.nativeElement;
-
-      // Ensure markers are rendered only when video duration is available
-      this.video.addEventListener('loadedmetadata', this.renderMarkers);
-    }
+    this.timeTagService.timeTags$.subscribe((data) => {
+      console.log('tagtime updated ');
+      this.markersData = data;
+      this.renderMarkers();
+    });
   }
 
   ngAfterViewInit() {
-    // Initial check, in case metadata was already loaded
-    if (isFinite(this.video.duration) && this.video.duration > 0) {
-      this.renderMarkers();
-    }
+    this.renderMarkers();
   }
 
-  ngOnDestroy() {
-    if (this.video) {
-      this.video.removeEventListener('loadedmetadata', this.renderMarkers);
-    }
-  }
+  ngOnDestroy() {}
 
   /**
    * Renders the chapter/key point markers onto the timeline track.
    */
   private renderMarkers = () => {
-    if (!this.video || !this.markersRef || !this.markersData.length) {
+    if (!this.markersRef || !this.markersData.length) {
       return;
     }
 
-    const videoDuration = this.video.duration;
+    const videoDuration = this.playerState.duration$.value;
     const timelineElement = this.markersRef.nativeElement;
 
     // Clear existing markers before re-rendering

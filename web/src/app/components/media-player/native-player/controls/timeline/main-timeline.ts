@@ -7,15 +7,16 @@ import {
   ViewChild,
   AfterViewInit,
   ChangeDetectorRef,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProgressTrack } from './progress-track/progress-track.component';
 import { BufferedTrack } from './buffered-track/buffered-track';
 import { MarkerTrack } from './marker-track/marker-track';
-import { MarkerData } from '../../data-types/marker-data';
 
 import { ScrubPreview } from './scrub-preview/scrub-preview';
 import { ScrubThumbStream } from '../../data-types/scrub-thumb-data';
+import { ScrubTimelineService } from '../../services/scrub-timeline.service';
 
 @Component({
   selector: 'app-main-timeline',
@@ -36,7 +37,6 @@ export class MainTimeline implements OnInit, OnDestroy, AfterViewInit {
    */
   @Input({ required: true }) videoRef!: ElementRef<HTMLVideoElement>;
   @Input() scrubThumbData!: ScrubThumbStream;
-  @Input() markersData!: MarkerData[];
   // Reference to the timeline container to get its width
   @ViewChild('timelineRef', { read: ElementRef })
   timelineRef!: ElementRef<HTMLDivElement>;
@@ -51,11 +51,12 @@ export class MainTimeline implements OnInit, OnDestroy, AfterViewInit {
   progressTrackLeftPx: number = 0;
   progressTrackWidthPx: number = 0;
 
+  private scrubTimelineService = inject(ScrubTimelineService);
+
   // NEW: Stores the pixel width of the timeline for clamping calculations
   timelineWidthPx: number = 0;
   private resizeHandler = this.updateTimelineWidth.bind(this);
   private fullscreenChangeHandler = this.updateTimelineWidth.bind(this);
-  private readonly SEEK_STEP = 15;
 
   // Inject ChangeDetectorRef so we can safely notify Angular of property changes
   constructor(private cd: ChangeDetectorRef) {}
@@ -83,6 +84,9 @@ export class MainTimeline implements OnInit, OnDestroy, AfterViewInit {
   onScrubMove(data: { time: number; xPercent: number; clientX?: number }) {
     this.isScrubPreviewVisible = true;
     this.scrubTime = data.time;
+
+    this.scrubTimelineService.setScrubTime(data.time);
+
     this.scrubXPositionPercent = data.xPercent;
     if (
       typeof data.clientX === 'number' &&
@@ -130,22 +134,5 @@ export class MainTimeline implements OnInit, OnDestroy, AfterViewInit {
   // Handler for scrubEnd event emitted by ProgressTrack
   onScrubEnd() {
     this.isScrubPreviewVisible = false;
-  }
-
-  stepForward() {
-    const video = this.videoRef.nativeElement;
-    const newTime = video.currentTime + this.SEEK_STEP;
-
-    // Use the exposed method on ProgressTrack to perform the seek
-    this.progressTrackRef.seekToTime(newTime);
-  }
-
-  /** Moves the video's playback position backward by SEEK_STEP seconds. */
-  stepBackward() {
-    const video = this.videoRef.nativeElement;
-    const newTime = video.currentTime - this.SEEK_STEP;
-
-    // Use the exposed method on ProgressTrack to perform the seek
-    this.progressTrackRef.seekToTime(newTime);
   }
 }
