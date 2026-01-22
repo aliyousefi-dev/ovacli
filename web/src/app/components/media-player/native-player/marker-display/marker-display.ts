@@ -15,6 +15,7 @@ import { VideoData } from '../../../../../ova-angular-sdk/core-types/video-data'
 import { MarkerApiService } from '../../../../../ova-angular-sdk/rest-api/marker-api.service';
 import { MarkerData } from '../data-types/marker-data';
 import { MarkerCreatorModal } from '../marker-creator-modal/marker-creator-modal';
+import { PlayerSettingsService } from '../services/player-settings.service';
 
 @Component({
   selector: 'app-marker-display',
@@ -30,13 +31,19 @@ export class MarkerDisplay implements OnInit {
 
   formatTime = formatTime;
   private markerApi = inject(MarkerApiService);
+  private playerSettings = inject(PlayerSettingsService);
 
   // Toggle state for the dropdown/menu
   isOpen = false;
+  tagTimeEnabled: boolean = false;
 
   @ViewChild('markerCreatorModal') markerCreator!: MarkerCreatorModal;
 
   ngOnInit() {
+    this.playerSettings.settings$.subscribe((s) => {
+      this.tagTimeEnabled = s.timeTagEnabled;
+    });
+
     this.fetchMarkers();
   }
 

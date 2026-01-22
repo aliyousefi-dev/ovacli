@@ -22,7 +22,7 @@
       (input)="onVolumeChange()" (mousemove)="updateHoverPercent($event)" (mouseleave)="resetHoverPercent()" />
   </div>
 
-  <div class="text-xs w-8">
+  <div class="text-xs w-8 select-none">
     {{ (volumeLevel * 100) | number:'1.0-0' }}%
   </div>
 

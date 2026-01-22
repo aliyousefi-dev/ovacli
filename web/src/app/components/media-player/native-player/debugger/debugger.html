@@ -5,35 +5,41 @@
         <div class=" flex flex-col">
             <div class="flex flex-row justify-between gap-3">
                 <span>time</span>
-                <span>{{this.currentTime}} sec</span>
+                <span>{{ playerState.currentTime$ | async | number:'1.2-2' }} sec</span>
             </div>
             <div class="flex flex-row justify-between gap-3">
-                <span>duration</span>
-                <span>{{this.duration}} sec</span>
-            </div>
-            <div class="flex flex-row justify-between gap-3">
-                <span>Resolution</span>
-                <span>{{this.resolution}}</span>
-            </div>
-            <div class="flex flex-row justify-between gap-3">
-                <span>playing</span>
-                <span>{{this.isPlaying}}</span>
-            </div>
-            <div class="flex flex-row justify-between gap-3">
-                <span>volume</span>
-                <span>{{this.volume}}</span>
-            </div>
-            <div class="flex flex-row justify-between gap-3">
-                <span>muted</span>
-                <span>{{this.isMuted}}</span>
-            </div>
-            <div class="flex flex-row justify-between gap-3">
-                <span>speed</span>
-                <span>{{this.speed}}</span>
+                <span>remainingTime</span>
+                <span>{{playerState.remainingTime$ | async | number:'1.2-2'}} sec</span>
             </div>
             <div class="flex flex-row justify-between gap-3">
                 <span>buffered</span>
-                <span>{{this.buffered}} sec</span>
+                <span>{{playerState.bufferedSec$ | async | number:'1.2-2'}} sec</span>
+            </div>
+            <div class="flex flex-row justify-between gap-3">
+                <span>duration</span>
+                <span>{{playerState.duration$ | async}} sec</span>
+            </div>
+            <div class="flex flex-row justify-between gap-3">
+                <span>resolution</span>
+                <span>
+                    {{ (playerState.resolution$ | async)?.width }}x{{ (playerState.resolution$ | async)?.height }}
+                </span>
+            </div>
+            <div class="flex flex-row justify-between gap-3">
+                <span>is playing</span>
+                <span>{{ playerState.isPlaying$ | async}}</span>
+            </div>
+            <div class="flex flex-row justify-between gap-3">
+                <span>volume</span>
+                <span>{{ playerState.volume$ | async | number:'1.2-2' }}</span>
+            </div>
+            <div class="flex flex-row justify-between gap-3">
+                <span>muted</span>
+                <span>{{ playerState.muted$ | async }}</span>
+            </div>
+            <div class="flex flex-row justify-between gap-3">
+                <span>speed</span>
+                <span>{{ playerState.currentSpeed$ | async | number:'1.2-2' }}</span>
             </div>
         </div>
     </div>

@@ -1,5 +1,6 @@
-<div class="relative w-full overflow-hidden bg-black" [class.flex]="isFullscreen" [class.items-center]="isFullscreen"
-  [class.justify-center]="isFullscreen" #playerWrap appPlayerControlsHost (inputEvents)="handleInputs($event)">
+<div class="relative w-full overflow-hidden bg-black rounded-xl" [class.flex]="isFullscreen"
+  [class.items-center]="isFullscreen" [class.justify-center]="isFullscreen" #playerWrap appPlayerControlsHost
+  (inputEvents)="handleInputs($event)">
 
   <!-- Video element -->
   <video #videoRef
@@ -9,16 +10,15 @@
 
   @if(this.nativeplayerViewInit){
   <!-- Marker display -->
-  <div class="absolute top-5 right-5 z-50">
-    <app-marker-display [videoData]="this.videoData" [videoRef]="this.videoRef"></app-marker-display>
+  <div class="absolute inset-0 w-full h-full flex justify-between items-start p-5 z-50 pointer-events-none">
+    <app-debugger [htmlPlayer]="this.videoRef"></app-debugger>
+    <app-marker-display class="pointer-events-auto" [videoData]="this.videoData"
+      [videoRef]="this.videoRef"></app-marker-display>
+    <app-scrub-image [scrubThumbData]="this.thumbnailData"></app-scrub-image>
   </div>
   }
 
-  @if(this.nativeplayerViewInit){
-  <div class="absolute top-5 left-5 z-50">
-    <app-debugger [htmlPlayer]="this.videoRef"></app-debugger>
-  </div>
-  }
+
 
   <!-- Touch controls -->
   <div class="absolute inset-0 z-30 flex justify-center items-center pointer-events-none">
@@ -59,30 +59,38 @@
   </div>
 
   <!-- Bottom Controls container -->
-  <div class="absolute inset-0 flex flex-col justify-end px-4 pb-6 transition-all duration-300 z-50 pointer-events-none"
+  <div class="absolute inset-0 flex flex-col justify-end px-4 pb-4 transition-all duration-300 z-50 pointer-events-none"
     [ngClass]="{ 'opacity-0': !controlsVisible }">
 
-    <!-- Pause / Sound / Settings / Fullscreen -->
     @if(videoReady){
     <div (touchstart)="$event.stopPropagation()" class="pointer-events-auto">
+
+
+      <!-- Timeline / Display time -->
+      <div class="flex justify-center items-end px-3 text-sm text-white">
+
+        <app-main-timeline class="w-full" #mainTimelineRef [videoRef]="this.videoRef"
+          [scrubThumbData]="this.thumbnailData" [markersData]="this.videoData.markers">
+        </app-main-timeline>
+
+      </div>
+
+      <!-- Pause / Sound / Settings / Fullscreen -->
       <div class="flex items-center justify-between gap-2 mt-2 text-white">
         <div class="flex items-center gap-2 ">
           <app-play-pause-button [videoRef]="this.videoRef"></app-play-pause-button>
           <app-mute-button #muteButtonRef [videoRef]="this.videoRef"></app-mute-button>
+          <div class="flex justify-center items-center gap-1">
+            <app-display-current-time [videoRef]="this.videoRef"></app-display-current-time>
+            <span class="select-none">/</span>
+            <app-display-total-time [videoRef]="this.videoRef"></app-display-total-time>
+          </div>
         </div>
         <div class="flex items-center gap-2">
+          <app-time-tag-button></app-time-tag-button>
           <app-settings-button [videoRef]="this.videoRef"></app-settings-button>
           <app-full-screen-button [playerContainerRef]="this.playerWrap"></app-full-screen-button>
         </div>
-      </div>
-
-      <!-- Timeline / Display time -->
-      <div class="flex justify-center items-end gap-5 text-sm text-white">
-        <app-display-current-time [videoRef]="this.videoRef"></app-display-current-time>
-        <app-main-timeline class="w-full" #mainTimelineRef [videoRef]="this.videoRef"
-          [scrubThumbData]="this.thumbnailData" [markersData]="this.videoData.markers">
-        </app-main-timeline>
-        <app-display-total-time [videoRef]="this.videoRef"></app-display-total-time>
       </div>
     </div>
     }

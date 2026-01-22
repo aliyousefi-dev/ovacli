@@ -1,20 +1,27 @@
-<dialog id="markerCreator" class="modal" (click)="onDialogClick($event)" (cancel)="onCancel()">
+<dialog id="markerCreator" class="modal" (click)="onDialogClick($event)">
   <div class="modal-box" (click)="$event.stopPropagation()">
     <h3 class="text-lg font-bold">Marker Creator</h3>
-    <div class="mt-5 flex flex-col">
 
-      <label class="label">Label</label>
-      <input #labelInput type="text" class="input" placeholder="Enter Label" [(ngModel)]="title" name="markerTitle" />
+    <!--  <form>  -->
+    <form (ngSubmit)="onConfirm()" #markerForm="ngForm">
+      <div class="mt-5 flex flex-col">
 
-      <label class="label">Description</label>
-      <input type="text" class="input" placeholder="Enter description" [(ngModel)]="description"
-        name="markerDescription" />
+        <label class="label">Label</label>
+        <input #labelInput type="text" class="input" placeholder="Enter Label" [(ngModel)]="title" name="markerTitle"
+          required />
 
+        <label class="label">Description</label>
+        <input type="text" class="input" placeholder="Enter description" [(ngModel)]="description"
+          name="markerDescription" />
 
-    </div>
-    <div class="modal-action">
-      <button class="btn" (click)="onCancel()">Cancel</button>
-      <button class="btn btn-error text-white" (click)="onConfirm()">Create</button>
-    </div>
+      </div>
+
+      <div class="modal-action">
+        <button type="button" class="btn" (click)="onCancel()">Cancel</button>
+        <!--  This button is of type "submit" so pressing Enter will fire the form -->
+        <button type="submit" class="btn btn-error text-white">Create</button>
+      </div>
+    </form>
+    <!--  </form>  -->
   </div>
 </dialog>

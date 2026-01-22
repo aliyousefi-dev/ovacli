@@ -4,12 +4,14 @@ import { PlayerSettings } from '../data-types/player-settings';
 
 @Injectable({ providedIn: 'root' })
 export class PlayerSettingsService {
-  private readonly SETTINGS_KEY = 'app_player_settings';
+  private readonly SETTINGS_KEY = 'ova_player_settings';
 
   private defaultSettings: PlayerSettings = {
-      soundLevel: 1,
-      isMuted: false,
-      enableDebugger: false
+    soundLevel: 1,
+    isMuted: false,
+    enableDebugger: false,
+    playbackSpeed: 1,
+    timeTagEnabled: false,
   };
 
   // 1. Create the BehaviorSubject with default values
@@ -21,7 +23,7 @@ export class PlayerSettingsService {
   // The '$' suffix is a naming convention for Observables
   settings$ = this.settingsSubject.asObservable();
 
-    constructor() {
+  constructor() {
     this.loadSettings();
   }
 
@@ -36,7 +38,6 @@ export class PlayerSettingsService {
 
       // 3. Update the Subject with loaded data
       this.settingsSubject.next(currentSettings);
-      
     } catch (error) {
       console.error('Could not load settings', error);
     }
@@ -61,7 +62,6 @@ export class PlayerSettingsService {
       console.error('Could not save settings', error);
     }
   }
-
 
   // Helper to get raw value without subscribing (useful for one-off checks)
   get currentSettings(): PlayerSettings {

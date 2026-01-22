@@ -1,49 +1,35 @@
-<div class="dropdown dropdown-start dropdown-left" [ngClass]="{'dropdown-open': isOpen}">
-    <button class="btn btn-circle" (click)="toggle($event)">
-        <i class='bx bxs-detail bx-xs'></i>
-    </button>
+@if(tagTimeEnabled){
+<ul tabindex="0" class="menu p-2 shadow bg-base-100/60 w-64 text-xs flex-nowrap" (click)="$event.stopPropagation()">
+    <li class="menu-title uppercase text-[10px] select-none">Time Tag Links</li>
+    <li class="pb-2 border-b border-base-300">
+        <button class="btn btn-xs btn-primary w-full" (click)="openMarkerCreator()">
+            <i class='bx bx-plus'></i> New Time Tag
+        </button>
+    </li>
 
-    <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-64 text-xs flex-nowrap"
-        (click)="$event.stopPropagation()">
+    <div class="max-h-60 overflow-y-auto mt-2 custom-scrollbar">
+        @if (this.videoData.markers.length > 0) {
 
-        <li class="pb-2 border-b border-base-300">
-            <button class="btn btn-xs btn-primary w-full" (click)="openMarkerCreator()">
-                <i class='bx bx-plus'></i> New Marker
-            </button>
+
+        @for (marker of this.markers; track $index) {
+        <li class="group">
+            <div class="flex items-center justify-between gap-2  hover:bg-base-200 rounded-md cursor-pointer"
+                (click)="selectMarker(marker)">
+                <a class="flex flex-col justify-center items-start gap-1">
+                    <span>{{ marker.label }}</span>
+                    <span class="bg-base-300 px-2 rounded-xl text-[10px]">{{ formatTime(marker.timeSecond) }}</span>
+                </a>
+                <button class="btn btn-ghost btn-xs px-1 ">
+                    <i class='bx bx-dots-vertical-rounded bx-xs'></i>
+                </button>
+            </div>
         </li>
-
-        <div class="max-h-60 overflow-y-auto mt-2 custom-scrollbar">
-            @if (this.videoData.markers.length > 0) {
-            <li class="menu-title text-gray-500 uppercase text-[10px]">Markers</li>
-
-            @for (marker of this.markers; track $index) {
-            <li class="group">
-                <div
-                    class="flex flex-row items-center justify-between gap-2 p-1 hover:bg-base-200 rounded-md cursor-pointer">
-                    <a class="flex-grow truncate" (click)="selectMarker(marker)">
-                        <span class="font-mono text-primary">{{ formatTime(marker.timeSecond) }}</span>
-                        - {{ marker.label }}
-                    </a>
-                    <div class="flex">
-                        <button class="btn btn-ghost btn-xs px-1  opacity-0 group-hover:opacity-100">
-                            <i class='bx bx-info-circle bx-xs'></i>
-                        </button>
-                        <button class="btn btn-ghost btn-xs px-1 opacity-0 group-hover:opacity-100">
-                            <i class='bx bxs-edit bx-xs'></i>
-                        </button>
-                        <button class="btn btn-ghost btn-xs px-1  opacity-0 group-hover:opacity-100">
-                            <i class='bx bxs-x-circle bx-xs text-red-600'></i>
-                        </button>
-                    </div>
-
-                </div>
-            </li>
-            }
-            } @else {
-            <li class="opacity-50 p-2 text-center"><a>No tag-time found</a></li>
-            }
-        </div>
-    </ul>
-</div>
+        }
+        } @else {
+        <li class="opacity-50 p-2 text-center"><a>No tag-time found</a></li>
+        }
+    </div>
+</ul>
 
 <app-marker-creator-modal #markerCreatorModal (confirmed)="onMarkerCreated($event)"></app-marker-creator-modal>
+}

@@ -1,5 +1,3 @@
-// src/app/components/default-video-player/controls/full-screen-button/full-screen-button.component.ts
-
 import {
   Component,
   Input,
@@ -7,11 +5,12 @@ import {
   AfterViewInit,
   OnInit,
   OnDestroy,
-  inject
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PlayerSettingsService } from '../services/player-settings.service';
+import { PlayerStateService } from '../services/player-state.service';
 
 @Component({
   selector: 'app-debugger',
@@ -20,7 +19,7 @@ import { PlayerSettingsService } from '../services/player-settings.service';
   // Assuming the template is full-screen-button.component.html or full-screen-button.html
   templateUrl: './debugger.html',
 })
-export class ScreenDebugger implements AfterViewInit,OnInit, OnDestroy {
+export class ScreenDebugger implements AfterViewInit, OnInit, OnDestroy {
   @Input({ required: true }) htmlPlayer!: ElementRef<HTMLVideoElement>;
 
   enableDebugger: boolean = false;
@@ -34,13 +33,14 @@ export class ScreenDebugger implements AfterViewInit,OnInit, OnDestroy {
   resolution: string = '';
   buffered: number = 0;
 
-  private playerSettings = inject(PlayerSettingsService)
+  private playerSettings = inject(PlayerSettingsService);
+  playerState = inject(PlayerStateService);
 
-ngOnInit(): void {
-  this.playerSettings.settings$.subscribe((s) => {
-    this.enableDebugger = s.enableDebugger;
-  })
-}
+  ngOnInit(): void {
+    this.playerSettings.settings$.subscribe((s) => {
+      this.enableDebugger = s.enableDebugger;
+    });
+  }
 
   ngAfterViewInit() {
     console.log('debugger view init');

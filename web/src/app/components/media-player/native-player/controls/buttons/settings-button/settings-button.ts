@@ -1,6 +1,6 @@
 // src/app/components/default-video-player/controls/play-pause-button/settings-button.component.ts
 
-import { Component, Input, ElementRef, OnInit , inject } from '@angular/core';
+import { Component, Input, ElementRef, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PlayerSettingsService } from '../../../services/player-settings.service';
 
@@ -26,15 +26,17 @@ export class SettingsButton implements OnInit {
   // 🌟 New State Variable
   currentView: MenuViews = 'main';
 
-  private playerSettings = inject(PlayerSettingsService)
+  private playerSettings = inject(PlayerSettingsService);
   debuggerEnabled: boolean = false;
+  currentPlayerSpeed: number = 1;
 
   constructor(private el: ElementRef) {}
 
   ngOnInit() {
-    this.playerSettings.settings$.subscribe((s) => { 
+    this.playerSettings.settings$.subscribe((s) => {
       this.debuggerEnabled = s.enableDebugger;
-    })
+      this.currentPlayerSpeed = s.playbackSpeed;
+    });
   }
 
   /**
@@ -45,7 +47,7 @@ export class SettingsButton implements OnInit {
   }
 
   toggleDebuggerVisibility() {
-      this.playerSettings.updateSetting(
+    this.playerSettings.updateSetting(
       'enableDebugger',
       !this.playerSettings.currentSettings.enableDebugger
     );
@@ -57,6 +59,8 @@ export class SettingsButton implements OnInit {
    */
   setSpeed(speed: number) {
     this.videoRef.nativeElement.playbackRate = speed;
+
+    this.playerSettings.updateSetting('playbackSpeed', speed);
 
     this.currentView = 'main';
   }

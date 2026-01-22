@@ -23,6 +23,9 @@ import { FullScreenButton } from './controls/buttons/full-screen/full-screen-but
 import { SettingsButton } from './controls/buttons/settings-button/settings-button';
 import { ScreenDebugger } from './debugger/debugger';
 import { PlayerSettingsService } from './services/player-settings.service';
+import { TimeTagButton } from './controls/buttons/time-tag-button/time-tag-button';
+import { ScrubImageComponent } from './scrub-image/scrub-image';
+import { PlayerStateService } from './services/player-state.service';
 
 import {
   PlayerInputHostDirective,
@@ -34,6 +37,7 @@ import {
   standalone: true,
   templateUrl: './native-player.html',
   imports: [
+    ScrubImageComponent,
     CommonModule,
     PlayPauseButton,
     VolumeButton,
@@ -45,6 +49,7 @@ import {
     ScreenDebugger,
     MarkerDisplay,
     SettingsButton,
+    TimeTagButton,
   ],
 })
 export class NativePlayer implements AfterViewInit, OnDestroy {
@@ -82,6 +87,7 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   private videoapi = inject(VideoApiService);
   private scrubThumbApiService = inject(ScrubThumbApiService);
   private playerSettings = inject(PlayerSettingsService);
+  private playerState = inject(PlayerStateService);
 
   // Bind handlers so they can be removed correctly on destroy
   private fullscreenHandler = this.onFullscreenChange.bind(this);
@@ -92,6 +98,8 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
     this.nativeplayerViewInit = true;
     this.loadScrubThumbnails();
     const video = this.videoRef.nativeElement;
+
+    this.playerState.init(this.videoRef);
 
     console.log('natvie view init');
     // Handle metadata loading for markers/timeline
@@ -159,11 +167,6 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
     this.scheduleHideControls();
   }
 
-  private hideControlsManually() {
-    this.controlsVisible = false;
-    clearTimeout(this.hideControlsTimeout);
-  }
-
   private scheduleHideControls() {
     clearTimeout(this.hideControlsTimeout);
     if (!this.isPaused) {
@@ -206,8 +209,8 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   }
 
   handleInputs(event: keyof PlayerHostEvents) {
-    let volumeDefultStep = 0.01
-    let volumeDefultShiftStep = 0.05
+    let volumeDefultStep = 0.01;
+    let volumeDefultShiftStep = 0.05;
 
     this.showControls();
     switch (event) {
@@ -243,7 +246,12 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   }
 
   private applyPlayerSettings() {
-    if (this.videoRef) this.videoRef.nativeElement.volume = this.playerSettings.currentSettings.soundLevel;
+    if (this.videoRef) {
+      this.videoRef.nativeElement.volume =
+        this.playerSettings.currentSettings.soundLevel;
+      this.videoRef.nativeElement.playbackRate =
+        this.playerSettings.currentSettings.playbackSpeed;
+    }
   }
 
   private onFullscreenChange() {

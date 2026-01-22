@@ -10,7 +10,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PlayerSettingsService } from '../../services/player-settings.service';
 
-
 @Component({
   selector: 'app-mute-button',
   standalone: true,
@@ -20,7 +19,7 @@ import { PlayerSettingsService } from '../../services/player-settings.service';
 export class VolumeButton implements OnInit, OnDestroy {
   @Input({ required: true }) videoRef!: ElementRef<HTMLVideoElement>;
 
-  private playerSettings = inject(PlayerSettingsService)
+  private playerSettings = inject(PlayerSettingsService);
 
   public isMuted: boolean = false;
   public volumeLevel: number = 1;
@@ -125,8 +124,8 @@ export class VolumeButton implements OnInit, OnDestroy {
       this.lastKnownVolume = this.video.volume;
     }
 
-    this.playerSettings.updateSetting("isMuted", this.isMuted)
-    this.playerSettings.updateSetting("soundLevel",this.volumeLevel)
+    this.playerSettings.updateSetting('isMuted', this.isMuted);
+    this.playerSettings.updateSetting('soundLevel', this.volumeLevel);
 
     this.resetHoverPercent();
   };

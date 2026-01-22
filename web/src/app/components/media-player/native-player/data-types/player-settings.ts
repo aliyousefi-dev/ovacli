@@ -1,7 +1,9 @@
 
 
 export interface PlayerSettings {
-  soundLevel: number;
+    soundLevel: number;
     isMuted: boolean;
     enableDebugger: boolean;
+    playbackSpeed: number;
+    timeTagEnabled: boolean;
 }
