@@ -1,7 +1,8 @@
-import { Injectable, ElementRef, OnDestroy } from '@angular/core';
+import { Injectable, ElementRef, OnDestroy, inject } from '@angular/core';
 import { BehaviorSubject, fromEvent, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Resolution } from '../data-types/resolution';
+import { PlayerSettingsService } from './player-settings.service';
 
 @Injectable({ providedIn: 'root' })
 export class PlayerStateService implements OnDestroy {
@@ -19,6 +20,8 @@ export class PlayerStateService implements OnDestroy {
     height: 0,
   });
 
+  private playerSettings = inject(PlayerSettingsService);
+
   private readonly destroy$ = new Subject<void>();
   /** Holds the actual DOM `<video>` element after `init()` is called. */
   private videoEl: HTMLVideoElement | null = null;
@@ -34,6 +37,12 @@ export class PlayerStateService implements OnDestroy {
     }
 
     this.videoEl = videoEl; // keep a reference for the helper methods
+
+    // set default settings
+    this.videoEl.muted = this.playerSettings.currentSettings.isMuted;
+    this.videoEl.volume = this.playerSettings.currentSettings.soundLevel;
+    this.videoEl.playbackRate =
+      this.playerSettings.currentSettings.playbackSpeed;
 
     /* ---------- Raw event streams ---------- */
     const timeUpdate$ = fromEvent(videoEl, 'timeupdate');
@@ -118,6 +127,7 @@ export class PlayerStateService implements OnDestroy {
     const clamped = Math.max(0, Math.min(v, 1));
     this.videoEl.volume = clamped;
     this.volume$.next(clamped);
+    this.playerSettings.updateSetting('soundLevel', v);
   }
 
   /** Mutes / unmutes the video. */
@@ -125,6 +135,7 @@ export class PlayerStateService implements OnDestroy {
     if (!this.videoEl) return;
     this.videoEl.muted = muted;
     this.muted$.next(muted);
+    this.playerSettings.updateSetting('isMuted', muted);
   }
 
   /** Loads a new source.  (Useful if you want to change the stream.) */

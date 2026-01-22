@@ -5,7 +5,6 @@ import {
   ElementRef,
   AfterViewInit,
   OnDestroy,
-  ChangeDetectorRef,
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -58,7 +57,6 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   @ViewChild('videoRef') videoRef!: ElementRef<HTMLVideoElement>;
   @ViewChild('playerWrap') playerWrap!: ElementRef<HTMLDivElement>;
   @ViewChild('mainTimelineRef') mainTimelineRef!: MainTimeline;
-  @ViewChild('muteButtonRef') muteButtonRef!: VolumeButton;
 
   videoReady = false;
   controlsVisible = false;
@@ -96,8 +94,6 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   // Bind handlers so they can be removed correctly on destroy
   private fullscreenHandler = this.onFullscreenChange.bind(this);
 
-  constructor(private cd: ChangeDetectorRef) {}
-
   ngAfterViewInit() {
     this.nativeplayerViewInit = true;
     this.loadScrubThumbnails();
@@ -132,7 +128,6 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
 
   private initVideoState() {
     this.videoReady = true;
-    this.cd.detectChanges();
   }
 
   handleCenterTap(event: MouseEvent) {
@@ -185,9 +180,7 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
     clearTimeout(this.overlayTimeout);
     this.overlayTimeout = setTimeout(() => {
       this.overlayVisible = false;
-      this.cd.detectChanges();
     }, 1000);
-    this.cd.detectChanges();
   }
 
   private stepForward() {
@@ -196,9 +189,7 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
     clearTimeout(this.forwardTimeout);
     this.forwardTimeout = setTimeout(() => {
       this.forwardVisible = false;
-      this.cd.detectChanges();
     }, this.ICON_FLASH_MS);
-    this.cd.detectChanges();
   }
 
   private stepBackward() {
@@ -207,9 +198,7 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
     clearTimeout(this.rewindTimeout);
     this.rewindTimeout = setTimeout(() => {
       this.rewindVisible = false;
-      this.cd.detectChanges();
     }, this.ICON_FLASH_MS);
-    this.cd.detectChanges();
   }
 
   handleInputs(event: keyof PlayerHostEvents) {
@@ -228,16 +217,24 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
         this.stepBackward();
         break;
       case 'volumeUp':
-        this.muteButtonRef?.volumeLevelUp(volumeDefultStep);
+        this.playerState.setVolume(
+          this.playerState.volume$.value + volumeDefultStep
+        );
         break;
       case 'shiftVolumeUp':
-        this.muteButtonRef?.volumeLevelUp(volumeDefultShiftStep);
+        this.playerState.setVolume(
+          this.playerState.volume$.value + volumeDefultShiftStep
+        );
         break;
       case 'volumeDown':
-        this.muteButtonRef?.volumeLevelDown(volumeDefultStep);
+        this.playerState.setVolume(
+          this.playerState.volume$.value - volumeDefultStep
+        );
         break;
       case 'shiftVolumeDown':
-        this.muteButtonRef?.volumeLevelDown(volumeDefultShiftStep);
+        this.playerState.setVolume(
+          this.playerState.volume$.value - volumeDefultShiftStep
+        );
         break;
     }
   }
@@ -260,7 +257,6 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
 
   private onFullscreenChange() {
     this.isFullscreen = !!document.fullscreenElement;
-    this.cd.detectChanges();
   }
 
   private loadScrubThumbnails() {
@@ -268,7 +264,6 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
       .loadScrubThumbnails(this.videoData.videoId)
       .subscribe((thumbnails) => {
         this.thumbnailData = thumbnails;
-        this.cd.detectChanges();
       });
   }
 

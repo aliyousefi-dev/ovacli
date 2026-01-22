@@ -19,7 +19,7 @@
 
   <div class="tooltip tooltip-top" [attr.data-tip]="hoverPercent + '%'">
     <input type="range" min="0" max="1" step="0.01" class="range range-xs w-24" [(ngModel)]="volumeLevel"
-      (input)="onVolumeChange()" (mousemove)="updateHoverPercent($event)" (mouseleave)="resetHoverPercent()" />
+      (input)="onVolumeChanged()" (mousemove)="updateHoverPercent($event)" />
   </div>
 
   <div class="text-xs w-8 select-none">
