@@ -3,7 +3,6 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PlayerSettings } from '../../../data-types/player-settings';
 import { PlayerSettingsService } from '../../../services/player-settings.service';
 
 @Component({

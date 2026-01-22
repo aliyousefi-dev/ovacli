@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PlayerSettingsService } from '../services/player-settings.service';
+import { PlayerUIService } from '../services/player-ui.service';
 import { PlayerStateService } from '../services/player-state.service';
 
 @Component({
@@ -33,12 +33,12 @@ export class ScreenDebugger implements AfterViewInit, OnInit, OnDestroy {
   resolution: string = '';
   buffered: number = 0;
 
-  private playerSettings = inject(PlayerSettingsService);
+  private playerUi = inject(PlayerUIService);
   playerState = inject(PlayerStateService);
 
   ngOnInit(): void {
-    this.playerSettings.settings$.subscribe((s) => {
-      this.enableDebugger = s.enableDebugger;
+    this.playerUi.debuggerMenuVisible$.subscribe((visible) => {
+      this.enableDebugger = visible;
     });
   }
 

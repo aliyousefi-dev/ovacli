@@ -2,7 +2,8 @@
 
 import { Component, Input, ElementRef, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PlayerSettingsService } from '../../../services/player-settings.service';
+import { PlayerStateService } from '../../../services/player-state.service';
+import { PlayerUIService } from '../../../services/player-ui.service';
 
 // Define a type for your menu states for clarity
 type MenuViews = 'main' | 'playback';
@@ -21,35 +22,35 @@ export class SettingsButton implements OnInit {
   /**
    * The reference to the actual <video> element from the parent component.
    */
-  @Input({ required: true }) videoRef!: ElementRef<HTMLVideoElement>;
 
   // 🌟 New State Variable
   currentView: MenuViews = 'main';
 
-  private playerSettings = inject(PlayerSettingsService);
+  constructor(private el: ElementRef) {}
+
+  playerState = inject(PlayerStateService);
+  playerUI = inject(PlayerUIService);
+
   debuggerEnabled: boolean = false;
   currentPlayerSpeed: number = 1;
 
-  constructor(private el: ElementRef) {}
-
   ngOnInit() {
-    this.playerSettings.settings$.subscribe((s) => {
-      this.debuggerEnabled = s.enableDebugger;
-      this.currentPlayerSpeed = s.playbackSpeed;
+    this.playerState.currentSpeed$.subscribe((s) => {
+      this.currentPlayerSpeed = s;
+    });
+
+    this.playerUI.debuggerMenuVisible$.subscribe((enabled) => {
+      this.debuggerEnabled = enabled;
     });
   }
 
-  /**
-   * Updates the current menu view.
-   */
   setCurrentView(view: MenuViews) {
     this.currentView = view;
   }
 
   toggleDebuggerVisibility() {
-    this.playerSettings.updateSetting(
-      'enableDebugger',
-      !this.playerSettings.currentSettings.enableDebugger
+    this.playerUI.setDebuggerMenuVisible(
+      this.playerUI.debuggerMenuVisible$.value
     );
   }
 
@@ -58,9 +59,7 @@ export class SettingsButton implements OnInit {
    * @param speed The desired playback rate.
    */
   setSpeed(speed: number) {
-    this.videoRef.nativeElement.playbackRate = speed;
-
-    this.playerSettings.updateSetting('playbackSpeed', speed);
+    this.playerState.setPlayRate(speed);
 
     this.currentView = 'main';
   }

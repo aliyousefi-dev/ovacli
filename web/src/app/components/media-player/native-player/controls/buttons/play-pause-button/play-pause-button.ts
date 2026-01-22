@@ -1,4 +1,4 @@
-import { Component, Input, ElementRef, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PlayerStateService } from '../../../services/player-state.service';
 

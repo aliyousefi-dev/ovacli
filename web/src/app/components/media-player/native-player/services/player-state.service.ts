@@ -89,7 +89,6 @@ export class PlayerStateService implements OnDestroy {
       this.bufferedSec$.next(length);
     });
 
-    /* ---------- Optional status helpers ---------- */
     play$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.isPlaying$.next(true));
@@ -99,18 +98,18 @@ export class PlayerStateService implements OnDestroy {
     ended$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.isPlaying$.next(false));
-
-    console.log('playerStateService initialized');
   }
 
   /** Plays the video (if it’s already bound). */
   play(): void {
-    this.videoEl?.play();
+    if (!this.videoEl) return;
+    this.videoEl.play();
   }
 
   /** Pauses the video. */
   pause(): void {
-    this.videoEl?.pause();
+    if (!this.videoEl) return;
+    this.videoEl.pause();
   }
 
   /** Seeks to a specific time (in seconds). */
@@ -118,7 +117,6 @@ export class PlayerStateService implements OnDestroy {
     if (!this.videoEl) return;
     const clamped = Math.max(0, Math.min(seconds, this.videoEl.duration));
     this.videoEl.currentTime = clamped;
-    this.currentTime$.next(clamped); // keep the stream in sync
   }
 
   /** Sets the volume (0 – 1). */
@@ -126,7 +124,6 @@ export class PlayerStateService implements OnDestroy {
     if (!this.videoEl) return;
     const clamped = Math.max(0, Math.min(v, 1));
     this.videoEl.volume = clamped;
-    this.volume$.next(clamped);
     this.playerSettings.updateSetting('soundLevel', v);
   }
 
@@ -134,17 +131,19 @@ export class PlayerStateService implements OnDestroy {
   setMuted(muted: boolean): void {
     if (!this.videoEl) return;
     this.videoEl.muted = muted;
-    this.muted$.next(muted);
     this.playerSettings.updateSetting('isMuted', muted);
+  }
+
+  setPlayRate(speedValue: number): void {
+    if (!this.videoEl) return;
+    this.videoEl.playbackRate = speedValue;
+    this.playerSettings.updateSetting('playbackSpeed', speedValue);
   }
 
   /** Loads a new source.  (Useful if you want to change the stream.) */
   setSource(src: string): void {
     if (!this.videoEl) return;
-    this.src$.next(src);
     this.videoEl.src = src;
-    // Note: you might want to call `load()` explicitly if the browser
-    // doesn’t automatically pick up the new `src` in your use‑case.
     this.videoEl.load();
   }
 
