@@ -23,8 +23,9 @@ import { ScreenDebugger } from './debugger/debugger';
 import { PlayerSettingsService } from './services/player-settings.service';
 import { TimeTagButton } from './controls/buttons/time-tag-button/time-tag-button';
 import { ScrubImageComponent } from './scrub-image/scrub-image';
-import { PlayerStateService } from './services/player-state.service';
 import { ScrubThumbStream } from './data-types/scrub-thumb-data';
+import { PlayerStateService } from './services/player-state.service';
+import { PlayerUIService } from './services/player-ui.service';
 
 import {
   PlayerInputHostDirective,
@@ -90,6 +91,7 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   private scrubThumbApiService = inject(ScrubThumbApiService);
   private playerSettings = inject(PlayerSettingsService);
   private playerState = inject(PlayerStateService);
+  private playerUi = inject(PlayerUIService);
 
   // Bind handlers so they can be removed correctly on destroy
   private fullscreenHandler = this.onFullscreenChange.bind(this);
@@ -100,6 +102,7 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
     const video = this.videoRef.nativeElement;
 
     this.playerState.init(this.videoRef);
+    this.playerUi.init(this.playerWrap);
 
     console.log('natvie view init');
     // Handle metadata loading for markers/timeline
