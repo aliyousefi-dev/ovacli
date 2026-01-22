@@ -113,7 +113,7 @@ export class PlayerStateService implements OnDestroy {
   }
 
   /** Seeks to a specific time (in seconds). */
-  seek(seconds: number): void {
+  seekToTime(seconds: number): void {
     if (!this.videoEl) return;
     const clamped = Math.max(0, Math.min(seconds, this.videoEl.duration));
     this.videoEl.currentTime = clamped;

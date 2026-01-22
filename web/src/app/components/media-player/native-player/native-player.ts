@@ -20,12 +20,12 @@ import { MarkerDisplay } from './marker-display/marker-display';
 import { FullScreenButton } from './controls/buttons/full-screen/full-screen-button';
 import { SettingsButton } from './controls/buttons/settings-button/settings-button';
 import { ScreenDebugger } from './debugger/debugger';
-import { PlayerSettingsService } from './services/player-settings.service';
 import { TimeTagButton } from './controls/buttons/time-tag-button/time-tag-button';
 import { ScrubImageComponent } from './scrub-image/scrub-image';
 import { ScrubThumbStream } from './data-types/scrub-thumb-data';
 import { PlayerStateService } from './services/player-state.service';
 import { PlayerUIService } from './services/player-ui.service';
+import { TimeTagService } from './services/time-tag.service';
 
 import {
   PlayerInputHostDirective,
@@ -89,9 +89,9 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
 
   private videoapi = inject(VideoApiService);
   private scrubThumbApiService = inject(ScrubThumbApiService);
-  private playerSettings = inject(PlayerSettingsService);
   private playerState = inject(PlayerStateService);
   private playerUi = inject(PlayerUIService);
+  private timeTagService = inject(TimeTagService);
 
   // Bind handlers so they can be removed correctly on destroy
   private fullscreenHandler = this.onFullscreenChange.bind(this);
@@ -103,6 +103,7 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
 
     this.playerState.init(this.videoRef);
     this.playerUi.init(this.playerWrap);
+    this.timeTagService.init(this.videoData.videoId);
 
     console.log('natvie view init');
     // Handle metadata loading for markers/timeline
@@ -124,7 +125,6 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
       this.showControls();
     });
 
-    this.applyPlayerSettings();
     document.addEventListener('fullscreenchange', this.fullscreenHandler);
     this.showControls();
   }
@@ -247,15 +247,6 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   }
   get thumbnailUrl() {
     return this.videoapi.getThumbnailUrl(this.videoData.videoId);
-  }
-
-  private applyPlayerSettings() {
-    if (this.videoRef) {
-      this.videoRef.nativeElement.volume =
-        this.playerSettings.currentSettings.soundLevel;
-      this.videoRef.nativeElement.playbackRate =
-        this.playerSettings.currentSettings.playbackSpeed;
-    }
   }
 
   private onFullscreenChange() {

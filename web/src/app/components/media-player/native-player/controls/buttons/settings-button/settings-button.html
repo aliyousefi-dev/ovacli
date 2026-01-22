@@ -21,7 +21,8 @@
         <li>
             <label class="label flex justify-between items-center p-2 cursor-pointer">
                 Show Markers
-                <input type="checkbox" class="toggle toggle-xs" />
+                <input type="checkbox" class="toggle toggle-xs" (click)="toggleTagTimeVisibility()"
+                    [checked]="tagtimeEnabled" />
             </label>
         </li>
         <li>

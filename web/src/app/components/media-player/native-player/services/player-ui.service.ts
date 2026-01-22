@@ -5,7 +5,6 @@ import {
   OnDestroy,
   inject,
   ElementRef,
-  Provider,
 } from '@angular/core';
 import { BehaviorSubject, fromEvent, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -16,10 +15,8 @@ export class PlayerUIService implements OnInit, OnDestroy {
   /** Injected settings service for persisting UI options */
   private playerSettings = inject(PlayerSettingsService);
 
-  /** Whether the debugger overlay is shown */
   readonly debuggerMenuVisible$ = new BehaviorSubject<boolean>(false);
-
-  /** Whether the player is currently in full‑screen mode */
+  readonly tagTimeMenuVisible$ = new BehaviorSubject<boolean>(false);
   readonly fullscreenEnabled$ = new BehaviorSubject<boolean>(false);
 
   /** Reference to the video container element */
@@ -37,6 +34,17 @@ export class PlayerUIService implements OnInit, OnDestroy {
    *
    * @param videoRef ElementRef to the `<video>` element
    */
+
+  preload() {
+    this.debuggerMenuVisible$.next(
+      this.playerSettings.currentSettings.enableDebugger
+    );
+
+    this.tagTimeMenuVisible$.next(
+      this.playerSettings.currentSettings.timeTagEnabled
+    );
+  }
+
   init(videoRef: ElementRef<HTMLElement>): void {
     const containerEl = videoRef?.nativeElement;
 
@@ -46,6 +54,8 @@ export class PlayerUIService implements OnInit, OnDestroy {
     }
 
     this.playerContainer = containerEl;
+
+    this.preload();
 
     // Subscribe to the native fullscreenchange event
     // and forward it to the fullscreenEnabled$ subject.
@@ -114,15 +124,16 @@ export class PlayerUIService implements OnInit, OnDestroy {
     this.playerSettings.updateSetting('enableDebugger', v);
   }
 
+  setTagTimeMenuVisible(v: boolean): void {
+    this.tagTimeMenuVisible$.next(v);
+    this.playerSettings.updateSetting('timeTagEnabled', v);
+  }
+
   /* --------------------------------------------------------------------- */
   /*                        Angular lifecycle hooks                       */
   /* --------------------------------------------------------------------- */
 
-  ngOnInit(): void {
-    this.debuggerMenuVisible$.next(
-      this.playerSettings.currentSettings.enableDebugger
-    );
-  }
+  ngOnInit(): void {}
 
   /** Clean up subscriptions when the service is destroyed */
   ngOnDestroy(): void {

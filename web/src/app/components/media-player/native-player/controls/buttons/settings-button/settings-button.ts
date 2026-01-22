@@ -32,6 +32,7 @@ export class SettingsButton implements OnInit {
   playerUI = inject(PlayerUIService);
 
   debuggerEnabled: boolean = false;
+  tagtimeEnabled: boolean = false;
   currentPlayerSpeed: number = 1;
 
   ngOnInit() {
@@ -42,6 +43,10 @@ export class SettingsButton implements OnInit {
     this.playerUI.debuggerMenuVisible$.subscribe((enabled) => {
       this.debuggerEnabled = enabled;
     });
+
+    this.playerUI.tagTimeMenuVisible$.subscribe((enabled) => {
+      this.tagtimeEnabled = enabled;
+    });
   }
 
   setCurrentView(view: MenuViews) {
@@ -50,7 +55,13 @@ export class SettingsButton implements OnInit {
 
   toggleDebuggerVisibility() {
     this.playerUI.setDebuggerMenuVisible(
-      this.playerUI.debuggerMenuVisible$.value
+      !this.playerUI.debuggerMenuVisible$.value
+    );
+  }
+
+  toggleTagTimeVisibility() {
+    this.playerUI.setTagTimeMenuVisible(
+      !this.playerUI.tagTimeMenuVisible$.value
     );
   }
 
