@@ -1,14 +1,14 @@
-<div class="relative h-2 w-full overflow-visible cursor-pointer group" #trackContainer
-  (mousedown)="onTrackStart($event)" (touchstart)="onTrackStart($event)" (mousemove)="onTrackMouseMove($event)"
-  (touchmove)="onTrackMouseMove($event)" (mouseleave)="onTrackMouseLeave()" (touchend)="onTrackMouseLeave()">
+<div class="relative h-2 py-3 w-full overflow-visible cursor-pointer group select-none" #trackContainer
+  (mousedown)="onDrag($event)">
 
   <div class="absolute h-1 w-full rounded bg-gray-400/50 top-1/2 -translate-y-1/2"></div>
 
   <div #progress class="absolute h-2 rounded bg-white w-0 top-1/2 -translate-y-1/2 z-[1]"></div>
 
+  <div class="absolute flex p-2 bg-amber-950 text-white bottom-10">{{debug}}</div>
+
   <div #playHeadCircle class="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full 
    shadow-lg cursor-grab z-10 
-  transition-transform duration-100 ease-in-out  hover:scale-150 group-hover:scale-125" style="left: 0%;"
-    (mousedown)="playheadCircleDragStart($event)" (touchstart)="playheadCircleDragStart($event)">
+  transition-transform duration-100 ease-in-out  hover:scale-150 group-hover:scale-125" style="left: 0%;">
   </div>
 </div>

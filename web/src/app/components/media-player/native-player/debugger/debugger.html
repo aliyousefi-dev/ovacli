@@ -8,6 +8,10 @@
                 <span>{{ playerState.currentTime$ | async | number:'1.2-2' }} sec</span>
             </div>
             <div class="flex flex-row justify-between gap-3">
+                <span>time percent</span>
+                <span>{{ playerState.currentTimepct$ | async | number:'1.2-2' }} %</span>
+            </div>
+            <div class="flex flex-row justify-between gap-3">
                 <span>remainingTime</span>
                 <span>{{playerState.remainingTime$ | async | number:'1.2-2'}} sec</span>
             </div>

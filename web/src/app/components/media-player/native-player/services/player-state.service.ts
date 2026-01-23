@@ -7,6 +7,7 @@ import { PlayerSettingsService } from './player-settings.service';
 @Injectable({ providedIn: 'root' })
 export class PlayerStateService implements OnDestroy {
   readonly currentTime$ = new BehaviorSubject<number>(0);
+  readonly currentTimepct$ = new BehaviorSubject<number>(0);
   readonly remainingTime$ = new BehaviorSubject<number>(0);
   readonly bufferedSec$ = new BehaviorSubject<number>(0);
   readonly bufferedRanges$ = new BehaviorSubject<TimeRanges | null>(null);
@@ -62,6 +63,8 @@ export class PlayerStateService implements OnDestroy {
     timeUpdate$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.currentTime$.next(videoEl.currentTime);
       this.remainingTime$.next(videoEl.duration - videoEl.currentTime);
+      let percent = (videoEl.currentTime / videoEl.duration) * 100;
+      this.currentTimepct$.next(percent);
     });
 
     speedRate$
