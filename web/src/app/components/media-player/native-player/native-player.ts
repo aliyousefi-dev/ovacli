@@ -21,11 +21,12 @@ import { FullScreenButton } from './controls/buttons/full-screen/full-screen-but
 import { SettingsButton } from './controls/buttons/settings-button/settings-button';
 import { ScreenDebugger } from './debugger/debugger';
 import { TimeTagButton } from './controls/buttons/time-tag-button/time-tag-button';
-import { ScrubImageComponent } from './scrub-image/scrub-image';
+import { ScrubImageComponent } from './controls/timeline/scrub-image/scrub-image';
 import { ScrubThumbStream } from './data-types/scrub-thumb-data';
 import { PlayerStateService } from './services/player-state.service';
 import { PlayerUIService } from './services/player-ui.service';
 import { TimeTagService } from './services/time-tag.service';
+import { ScrubTimelineService } from './services/scrub-timeline.service';
 
 import {
   PlayerInputHostDirective,
@@ -71,6 +72,8 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   thumbnailData: ScrubThumbStream = {
     cropedWidth: 0,
     cropedHeight: 0,
+    spriteWidth: 0,
+    spriteHeight: 0,
     thumbStats: [],
   };
 
@@ -92,6 +95,7 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   private playerState = inject(PlayerStateService);
   private playerUi = inject(PlayerUIService);
   private timeTagService = inject(TimeTagService);
+  private scrubTimeline = inject(ScrubTimelineService);
 
   // Bind handlers so they can be removed correctly on destroy
   private fullscreenHandler = this.onFullscreenChange.bind(this);
@@ -104,6 +108,7 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
     this.playerState.init(this.videoRef);
     this.playerUi.init(this.playerWrap);
     this.timeTagService.init(this.videoData.videoId);
+    this.scrubTimeline.init(this.videoData.videoId);
 
     console.log('natvie view init');
     // Handle metadata loading for markers/timeline
@@ -221,22 +226,22 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
         break;
       case 'volumeUp':
         this.playerState.setVolume(
-          this.playerState.volume$.value + volumeDefultStep
+          this.playerState.volume$.value + volumeDefultStep,
         );
         break;
       case 'shiftVolumeUp':
         this.playerState.setVolume(
-          this.playerState.volume$.value + volumeDefultShiftStep
+          this.playerState.volume$.value + volumeDefultShiftStep,
         );
         break;
       case 'volumeDown':
         this.playerState.setVolume(
-          this.playerState.volume$.value - volumeDefultStep
+          this.playerState.volume$.value - volumeDefultStep,
         );
         break;
       case 'shiftVolumeDown':
         this.playerState.setVolume(
-          this.playerState.volume$.value - volumeDefultShiftStep
+          this.playerState.volume$.value - volumeDefultShiftStep,
         );
         break;
     }

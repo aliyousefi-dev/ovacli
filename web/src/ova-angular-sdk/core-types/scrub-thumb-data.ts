@@ -9,5 +9,7 @@ export interface ScrubThumbStat {
 export interface ScrubThumbStream {
   cropedWidth: number;
   cropedHeight: number;
+  spriteWidth: number;
+  spriteHeight: number;
   thumbStats: ScrubThumbStat[];
 }

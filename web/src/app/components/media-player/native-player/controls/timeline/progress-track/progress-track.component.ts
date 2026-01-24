@@ -2,6 +2,7 @@ import {
   Component,
   ElementRef,
   OnInit,
+  AfterViewInit,
   OnDestroy,
   ViewChild,
   inject,
@@ -9,17 +10,20 @@ import {
 import { CommonModule } from '@angular/common';
 import { ScrubTimelineService } from '../../../services/scrub-timeline.service';
 import { PlayerStateService } from '../../../services/player-state.service';
+import { ScrubPreview } from '../scrub-preview/scrub-preview';
+import { clamp } from '../../../utils/clamp';
 
 @Component({
   selector: 'app-progress-track',
   standalone: true,
   templateUrl: './progress-track.component.html',
-  imports: [CommonModule],
+  imports: [CommonModule, ScrubPreview],
 })
-export class ProgressTrack implements OnInit, OnDestroy {
+export class ProgressTrack implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('progress') progressRef!: ElementRef<HTMLDivElement>;
   @ViewChild('playHeadCircle') playHeadCircleRef!: ElementRef<HTMLDivElement>;
   @ViewChild('trackContainer') trackContainerRef!: ElementRef<HTMLDivElement>;
+  @ViewChild('scrubPreview') scrubPreviewRef!: ElementRef<HTMLDivElement>;
 
   debug = 'none';
 
@@ -29,20 +33,39 @@ export class ProgressTrack implements OnInit, OnDestroy {
   private scrubTimeline = inject(ScrubTimelineService);
   private playerState = inject(PlayerStateService);
 
+  srubprevewVisible: boolean = false;
+
   ngOnInit() {
     this.playerState.currentTimepct$.subscribe((pct) => {
       if (this.isDragging) return;
-
       this.setCirclePlayheadPositionPct(pct);
     });
 
     this.scrubTimeline.seekTimePct$.subscribe((pct) => {
+      this.setSrubPreviewPositionPct(pct);
       if (!this.isDragging) return;
       this.setCirclePlayheadPositionPct(pct);
     });
+  }
 
+  ngAfterViewInit() {
     window.addEventListener('mousemove', this.setSeekPositionPct.bind(this));
     window.addEventListener('mouseup', this.onRelease.bind(this));
+    this.trackContainerRef.nativeElement.addEventListener(
+      'mousedown',
+      this.onDrag.bind(this),
+    );
+    this.trackContainerRef.nativeElement.addEventListener(
+      'mouseenter',
+      (event) => {
+        this.setSeekPositionPct(event);
+        this.srubprevewVisible = true;
+      },
+    );
+    this.trackContainerRef.nativeElement.addEventListener(
+      'mouseleave',
+      () => (this.srubprevewVisible = false),
+    );
   }
 
   ngOnDestroy() {}
@@ -63,6 +86,13 @@ export class ProgressTrack implements OnInit, OnDestroy {
     const safePct = Math.max(0, Math.min(100, pct));
 
     this.scrubTimeline.setSeekTimePct(safePct);
+  }
+
+  setSrubPreviewPositionPct(pct: number) {
+    if (this.scrubPreviewRef) {
+      const normalizedPct = clamp(pct, 10, 90);
+      this.scrubPreviewRef.nativeElement.style.left = normalizedPct + '%';
+    }
   }
 
   setCirclePlayheadPositionPct(pct: number) {

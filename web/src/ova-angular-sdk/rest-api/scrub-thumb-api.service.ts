@@ -34,26 +34,38 @@ export class ScrubThumbApiService {
           const blocks = vtt.split('\n\n').filter((b) => b.trim() !== '');
 
           const thumbStats: ScrubThumbStat[] = [];
-
-          // Capture the crop dimensions from the **first** block.
-          // All other blocks use the same width/height, so we just re‑use it.
           let cropedWidth = 0;
           let cropedHeight = 0;
 
-          for (const [index, block] of blocks.entries()) {
+          /* ---------- 1️⃣  Find sprite boundaries ---------------- */
+          let maxRight = 0; // max(x + w)
+          let maxBottom = 0; // max(y + h)
+          let spriteImgSrc = '';
+
+          for (const block of blocks) {
             const lines = block.split('\n');
             if (lines.length < 2) continue;
 
+            // ---------- 1a. Parse the timing ----------
             const [start, end] = lines[0]
               .split(' --> ')
               .map(this.timeToSeconds);
 
+            // ---------- 1b. Parse the URL & coordinates ----------
             const [urlBase, coords] = lines[1].split('#xywh=');
             const [x, y, w, h] = coords.split(',').map(Number);
 
+            // Crop size is the *same* for every block, so we just keep the last one.
             cropedWidth = w;
             cropedHeight = h;
 
+            // Update the “sprite” envelope.
+            const right = x + w;
+            const bottom = y + h;
+            if (right > maxRight) maxRight = right;
+            if (bottom > maxBottom) maxBottom = bottom;
+
+            // Collect the stat that the preview component needs.
             thumbStats.push({
               baseImgUrl: urlBase,
               startTime: start,
@@ -61,18 +73,22 @@ export class ScrubThumbApiService {
               xPos: x,
               yPos: y,
             });
+
+            // Keep the first image source – we’ll load it only once.
+            if (!spriteImgSrc) spriteImgSrc = urlBase;
           }
 
-          const result: ScrubThumbStream = {
-            cropedHeight: cropedHeight,
-            cropedWidth: cropedWidth,
-            thumbStats: thumbStats,
+          // ---- 2️⃣  The *expected* sprite size from coordinates  ----
+          const stream: ScrubThumbStream = {
+            cropedWidth,
+            cropedHeight,
+            spriteWidth: maxRight, // x + w  of the furthest tile
+            spriteHeight: maxBottom, // y + h  of the furthest tile
+            thumbStats,
           };
 
-          console.log(result);
-
-          return result;
-        })
+          return stream; // ← return right away if you’re happy with the coords
+        }),
       );
   }
 }

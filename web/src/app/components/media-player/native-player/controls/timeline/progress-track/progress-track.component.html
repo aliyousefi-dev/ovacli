@@ -1,5 +1,8 @@
-<div class="relative h-2 py-3 w-full overflow-visible cursor-pointer group select-none" #trackContainer
-  (mousedown)="onDrag($event)">
+<div class="relative h-2 py-3 w-full overflow-visible cursor-pointer group select-none" #trackContainer>
+
+  <div #scrubPreview class="absolute bottom-10 -translate-x-1/2" [class.hidden]="!srubprevewVisible">
+    <app-scrub-preview></app-scrub-preview>
+  </div>
 
   <div class="absolute h-1 w-full rounded bg-gray-400/50 top-1/2 -translate-y-1/2"></div>
 
