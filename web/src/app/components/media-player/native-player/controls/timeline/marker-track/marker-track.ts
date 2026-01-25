@@ -29,7 +29,6 @@ export class MarkerTrack implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.timeTagService.timeTags$.subscribe((data) => {
-      console.log('tagtime updated ');
       this.markersData = data;
       this.renderMarkers();
     });
@@ -74,7 +73,7 @@ export class MarkerTrack implements OnInit, OnDestroy, AfterViewInit {
       });
     } else {
       console.warn(
-        'Video duration is not available yet for rendering markers.'
+        'Video duration is not available yet for rendering markers.',
       );
     }
   };

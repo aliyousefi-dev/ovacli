@@ -67,13 +67,19 @@ export class NativePlayer implements AfterViewInit, OnInit, OnDestroy {
 
   private videoapi = inject(VideoApiService);
   private playerState = inject(PlayerStateService);
-  private playerUi = inject(PlayerUIService);
+  playerUi = inject(PlayerUIService);
   private timeTagService = inject(TimeTagService);
   private scrubTimeline = inject(ScrubTimelineService);
+
+  debuggerMenu: boolean = false;
 
   ngOnInit(): void {
     this.playerUi.uiControlsVisibility$.subscribe((visible) => {
       this.controlsVisible = visible;
+    });
+
+    this.playerUi.debuggerMenuVisible$.subscribe((visible) => {
+      this.debuggerMenu = visible;
     });
   }
 

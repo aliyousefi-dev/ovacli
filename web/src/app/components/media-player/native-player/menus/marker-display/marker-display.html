@@ -1,4 +1,3 @@
-@if(tagTimeEnabled){
 <ul tabindex="0" class="menu p-2 shadow bg-base-100/60 w-64 text-xs flex-nowrap" (click)="$event.stopPropagation()">
     <li class="menu-title uppercase text-[10px] select-none">Time Tag Links</li>
     <li class="pb-2 border-b border-base-300">
@@ -32,4 +31,3 @@
 </ul>
 
 <app-marker-creator-modal #markerCreatorModal (confirmed)="onMarkerCreated($event)"></app-marker-creator-modal>
-}

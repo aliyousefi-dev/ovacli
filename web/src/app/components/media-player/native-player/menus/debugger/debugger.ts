@@ -1,7 +1,5 @@
 import {
   Component,
-  Input,
-  ElementRef,
   AfterViewInit,
   OnInit,
   OnDestroy,
@@ -9,7 +7,6 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PlayerUIService } from '../../services/player-ui.service';
 import { PlayerStateService } from '../../services/player-state.service';
 
 @Component({
@@ -31,18 +28,11 @@ export class ScreenDebugger implements AfterViewInit, OnInit, OnDestroy {
   resolution: string = '';
   buffered: number = 0;
 
-  private playerUi = inject(PlayerUIService);
   playerState = inject(PlayerStateService);
 
-  ngOnInit(): void {
-    this.playerUi.debuggerMenuVisible$.subscribe((visible) => {
-      this.enableDebugger = visible;
-    });
-  }
+  ngOnInit(): void {}
 
-  ngAfterViewInit() {
-    console.log('debugger view init');
-  }
+  ngAfterViewInit() {}
 
   ngOnDestroy() {}
 }

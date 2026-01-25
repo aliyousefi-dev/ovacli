@@ -3,7 +3,7 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PlayerSettingsService } from '../../../services/player-settings.service';
+import { PlayerUIService } from '../../../services/player-ui.service';
 
 @Component({
   selector: 'app-time-tag-button',
@@ -12,22 +12,21 @@ import { PlayerSettingsService } from '../../../services/player-settings.service
   templateUrl: './time-tag-button.html',
 })
 export class TimeTagButton implements OnInit, OnDestroy {
-  private playerSettings = inject(PlayerSettingsService);
+  private playerUI = inject(PlayerUIService);
 
   timeTagEnabled: boolean = false;
 
   ngOnInit() {
-    this.playerSettings.settings$.subscribe((s) => {
-      this.timeTagEnabled = s.timeTagEnabled;
+    this.playerUI.tagTimeMenuVisible$.subscribe((visbile) => {
+      this.timeTagEnabled = visbile;
     });
   }
 
   ngOnDestroy() {}
 
   toggleTimeTagPanel() {
-    this.playerSettings.updateSetting(
-      'timeTagEnabled',
-      !this.playerSettings.currentSettings.timeTagEnabled
+    this.playerUI.setTagTimeMenuVisible(
+      !this.playerUI.tagTimeMenuVisible$.value,
     );
   }
 }

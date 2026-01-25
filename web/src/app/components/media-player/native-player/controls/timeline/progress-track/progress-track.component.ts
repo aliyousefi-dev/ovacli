@@ -33,7 +33,7 @@ export class ProgressTrack implements OnInit, OnDestroy, AfterViewInit {
   private scrubTimeline = inject(ScrubTimelineService);
   private playerState = inject(PlayerStateService);
 
-  srubprevewVisible: boolean = false;
+  scrubprevewVisibility: boolean = false;
 
   ngOnInit() {
     this.playerState.currentTimepct$.subscribe((pct) => {
@@ -42,7 +42,7 @@ export class ProgressTrack implements OnInit, OnDestroy, AfterViewInit {
     });
 
     this.scrubTimeline.seekTimePct$.subscribe((pct) => {
-      this.setSrubPreviewPositionPct(pct);
+      this.setScrubPreviewPositionPct(pct);
       if (!this.isDragging) return;
       this.setCirclePlayheadPositionPct(pct);
     });
@@ -50,22 +50,35 @@ export class ProgressTrack implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     window.addEventListener('mousemove', this.setSeekPositionPct.bind(this));
+    window.addEventListener('touchmove', this.setSeekPositionPct.bind(this));
     window.addEventListener('mouseup', this.onRelease.bind(this));
+    window.addEventListener('touchend', (event) => {
+      this.scrubprevewVisibility = false;
+      this.onRelease();
+    });
     this.trackContainerRef.nativeElement.addEventListener(
       'mousedown',
       this.onDrag.bind(this),
     );
+
+    this.trackContainerRef.nativeElement.addEventListener(
+      'touchstart',
+      (event) => {
+        this.scrubprevewVisibility = true;
+        this.onDrag(event);
+      },
+    );
+
     this.trackContainerRef.nativeElement.addEventListener(
       'mouseenter',
       (event) => {
+        this.scrubprevewVisibility = true;
         this.setSeekPositionPct(event);
-        this.srubprevewVisible = true;
       },
     );
-    this.trackContainerRef.nativeElement.addEventListener(
-      'mouseleave',
-      () => (this.srubprevewVisible = false),
-    );
+    this.trackContainerRef.nativeElement.addEventListener('mouseleave', () => {
+      if (!this.isDragging) this.scrubprevewVisibility = false;
+    });
   }
 
   ngOnDestroy() {}
@@ -76,7 +89,6 @@ export class ProgressTrack implements OnInit, OnDestroy, AfterViewInit {
       event instanceof MouseEvent ? event.clientX : event.touches[0].clientX;
 
     const rect = this.trackContainerRef.nativeElement.getBoundingClientRect();
-
     const relX = x - rect.left;
     const width = rect.width;
 
@@ -88,11 +100,24 @@ export class ProgressTrack implements OnInit, OnDestroy, AfterViewInit {
     this.scrubTimeline.setSeekTimePct(safePct);
   }
 
-  setSrubPreviewPositionPct(pct: number) {
-    if (this.scrubPreviewRef) {
-      const normalizedPct = clamp(pct, 10, 90);
-      this.scrubPreviewRef.nativeElement.style.left = normalizedPct + '%';
-    }
+  setScrubPreviewPositionPct(pct: number) {
+    if (!this.scrubPreviewRef || !this.trackContainerRef) return;
+
+    if (!this.scrubprevewVisibility) return;
+
+    const previewWidth =
+      this.scrubPreviewRef.nativeElement.getBoundingClientRect().width;
+    const trackWidth =
+      this.trackContainerRef.nativeElement.getBoundingClientRect().width;
+    const halfPreviewWidth = previewWidth / 2;
+    const halfpct = Math.round((halfPreviewWidth / trackWidth) * 100);
+    const startClamp = halfpct;
+    const endClamp = 100 - halfpct;
+
+    const clampedPct = clamp(pct, startClamp, endClamp);
+    this.debug = previewWidth.toString();
+
+    this.scrubPreviewRef.nativeElement.style.left = `${clampedPct}%`;
   }
 
   setCirclePlayheadPositionPct(pct: number) {
@@ -102,14 +127,13 @@ export class ProgressTrack implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  onDrag(event: MouseEvent) {
+  onDrag(event: MouseEvent | TouchEvent) {
     this.isDragging = true;
     this.dragStartedOnTrack = true;
     if (event) {
       event.preventDefault();
       event.stopPropagation();
       this.setSeekPositionPct(event);
-      console.log('ok');
     }
   }
 
@@ -117,6 +141,7 @@ export class ProgressTrack implements OnInit, OnDestroy, AfterViewInit {
     if (this.dragStartedOnTrack) {
       this.playerState.seekToTime(this.scrubTimeline.seekTime$.value);
     }
+    this.scrubprevewVisibility = false;
     this.isDragging = false;
     this.dragStartedOnTrack = false;
   }
