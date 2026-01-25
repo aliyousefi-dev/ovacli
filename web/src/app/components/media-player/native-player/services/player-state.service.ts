@@ -33,7 +33,7 @@ export class PlayerStateService implements OnDestroy {
 
     if (!videoEl) {
       console.warn(
-        '[PlayerStateService] init() called with missing ElementRef'
+        '[PlayerStateService] init() called with missing ElementRef',
       );
       return;
     }
@@ -44,7 +44,7 @@ export class PlayerStateService implements OnDestroy {
     this.videoEl.muted = this.playerSettings.currentSettings.isMuted;
     this.videoEl.volume = Math.max(
       0,
-      Math.min(this.playerSettings.currentSettings.soundLevel, 1)
+      Math.min(this.playerSettings.currentSettings.soundLevel, 1),
     );
     this.videoEl.playbackRate =
       this.playerSettings.currentSettings.playbackSpeed;
@@ -54,6 +54,7 @@ export class PlayerStateService implements OnDestroy {
     const speedRate$ = fromEvent(videoEl, 'ratechange');
     const metadata$ = fromEvent(videoEl, 'loadedmetadata');
     const volume$ = fromEvent(videoEl, 'volumechange');
+    const mute$ = fromEvent(videoEl, 'muted');
     const play$ = fromEvent(videoEl, 'play');
     const pause$ = fromEvent(videoEl, 'pause');
     const ended$ = fromEvent(videoEl, 'ended');
@@ -79,9 +80,13 @@ export class PlayerStateService implements OnDestroy {
       });
     });
 
+    mute$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      console.log('muted called');
+      this.muted$.next(videoEl.muted);
+    });
+
     volume$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.volume$.next(videoEl.volume);
-      this.muted$.next(videoEl.muted);
     });
 
     progress$.pipe(takeUntil(this.destroy$)).subscribe(() => {
@@ -151,6 +156,7 @@ export class PlayerStateService implements OnDestroy {
   setMuted(muted: boolean): void {
     if (!this.videoEl) return;
     this.videoEl.muted = muted;
+    this.muted$.next(muted);
     this.playerSettings.updateSetting('isMuted', muted);
   }
 

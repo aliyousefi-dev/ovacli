@@ -10,19 +10,16 @@ import {
 import { CommonModule } from '@angular/common';
 import { VideoApiService } from '../../../../ova-angular-sdk/rest-api/video-api.service';
 import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
-import { ScrubThumbApiService } from '../../../../ova-angular-sdk/rest-api/scrub-thumb-api.service';
 import { PlayPauseButton } from './controls/buttons/play-pause-button/play-pause-button';
 import { VolumeButton } from './controls/volume-button/volume-button';
 import { DisplayCurrentTime } from './controls/display-current-time/display-current-time';
 import { DisplayTotalTime } from './controls/display-total-time/display-total-time';
 import { MainTimeline } from './controls/timeline/main-timeline';
-import { MarkerDisplay } from './marker-display/marker-display';
+import { MarkerDisplay } from './menus/marker-display/marker-display';
 import { FullScreenButton } from './controls/buttons/full-screen/full-screen-button';
 import { SettingsButton } from './controls/buttons/settings-button/settings-button';
-import { ScreenDebugger } from './debugger/debugger';
+import { ScreenDebugger } from './menus/debugger/debugger';
 import { TimeTagButton } from './controls/buttons/time-tag-button/time-tag-button';
-import { ScrubImageComponent } from './controls/timeline/scrub-image/scrub-image';
-import { ScrubThumbStream } from './data-types/scrub-thumb-data';
 import { PlayerStateService } from './services/player-state.service';
 import { PlayerUIService } from './services/player-ui.service';
 import { TimeTagService } from './services/time-tag.service';
@@ -38,7 +35,6 @@ import {
   standalone: true,
   templateUrl: './native-player.html',
   imports: [
-    ScrubImageComponent,
     CommonModule,
     PlayPauseButton,
     VolumeButton,
@@ -69,16 +65,6 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   rewindVisible = false;
   forwardVisible = false;
 
-  thumbnailData: ScrubThumbStream = {
-    cropedWidth: 0,
-    cropedHeight: 0,
-    spriteWidth: 0,
-    spriteHeight: 0,
-    thumbStats: [],
-  };
-
-  nativeplayerViewInit = false;
-
   private hideControlsTimeout: any;
   private overlayTimeout: any;
   private rewindTimeout: any;
@@ -91,7 +77,6 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   private readonly ICON_FLASH_MS = 800;
 
   private videoapi = inject(VideoApiService);
-  private scrubThumbApiService = inject(ScrubThumbApiService);
   private playerState = inject(PlayerStateService);
   private playerUi = inject(PlayerUIService);
   private timeTagService = inject(TimeTagService);
@@ -101,8 +86,6 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   private fullscreenHandler = this.onFullscreenChange.bind(this);
 
   ngAfterViewInit() {
-    this.nativeplayerViewInit = true;
-    this.loadScrubThumbnails();
     const video = this.videoRef.nativeElement;
 
     this.playerState.init(this.videoRef);
@@ -256,14 +239,6 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
 
   private onFullscreenChange() {
     this.isFullscreen = !!document.fullscreenElement;
-  }
-
-  private loadScrubThumbnails() {
-    this.scrubThumbApiService
-      .loadScrubThumbnails(this.videoData.videoId)
-      .subscribe((thumbnails) => {
-        this.thumbnailData = thumbnails;
-      });
   }
 
   ngOnDestroy() {

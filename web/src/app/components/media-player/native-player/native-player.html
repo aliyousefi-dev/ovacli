@@ -8,17 +8,13 @@
     [src]="videoUrl" [poster]="thumbnailUrl" (touchstart)="showControls()">
   </video>
 
-  @if(this.nativeplayerViewInit){
+
   <!-- Marker display -->
   <div class="absolute inset-0 w-full h-full flex justify-between items-start p-5 z-50 pointer-events-none">
-    <app-debugger [htmlPlayer]="this.videoRef"></app-debugger>
+    <app-debugger></app-debugger>
     <app-marker-display class="pointer-events-auto"></app-marker-display>
   </div>
-  }
 
-  <!-- <div class="absolute inset-0 w-full h-full z-1 pointer-events-none">
-    <app-scrub-image [scrubThumbStream]="this.thumbnailData"></app-scrub-image>
-  </div> -->
 
   <!-- Touch controls -->
   <div class="absolute inset-0 z-30 flex justify-center items-center pointer-events-none">
@@ -69,8 +65,7 @@
       <!-- Timeline / Display time -->
       <div class="flex justify-center items-end px-3 text-sm text-white">
 
-        <app-main-timeline class="w-full" #mainTimelineRef [videoRef]="this.videoRef"
-          [scrubThumbData]="this.thumbnailData">
+        <app-main-timeline class="w-full" #mainTimelineRef>
         </app-main-timeline>
 
       </div>

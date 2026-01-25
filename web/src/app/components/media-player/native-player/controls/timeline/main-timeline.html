@@ -1,15 +1,10 @@
 <div #mainTimelineRef class="w-full flex flex-col justify-between relative">
-    @if(videoRef){
 
-    <!-- <app-scrub-preview [isVisible]="isScrubPreviewVisible" [timeInSeconds]="scrubTime"
-        [scrubThumbStream]="scrubThumbData" [scrubXPositionPercent]="scrubXPositionPercent"
-        [scrubXPositionPx]="scrubXPositionPx" [timelineWidthPx]="timelineWidthPx">
-    </app-scrub-preview> -->
 
     <app-marker-track class="z-20"></app-marker-track>
     <app-buffered-track></app-buffered-track>
 
     <app-progress-track #progressTrack>
     </app-progress-track>
-    }
+
 </div>

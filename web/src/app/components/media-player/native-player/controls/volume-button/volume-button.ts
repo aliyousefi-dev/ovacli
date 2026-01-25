@@ -22,7 +22,6 @@ export class VolumeButton implements OnInit, OnDestroy {
     });
 
     this.playerState.muted$.subscribe((m) => {
-      console.log('muted called');
       this.isMuted = m;
     });
   }

@@ -1,4 +1,12 @@
-import { Directive, EventEmitter, HostListener, Output } from '@angular/core';
+import {
+  Directive,
+  EventEmitter,
+  HostListener,
+  Output,
+  inject,
+} from '@angular/core';
+import { PlayerStateService } from '../services/player-state.service';
+import { PlayerUIService } from '../services/player-ui.service';
 
 /**
  * Defines the contract for events emitted by the host directive.
@@ -20,21 +28,25 @@ export interface PlayerHostEvents {
   standalone: true,
 })
 export class PlayerInputHostDirective {
+  private playerState = inject(PlayerStateService);
+  private playerUIService = inject(PlayerUIService);
+
   // Event emitter to communicate mouse/keyboard events back to the component
   @Output() inputEvents = new EventEmitter<keyof PlayerHostEvents>(); // --- Activity Listeners (Player Area) --- // When the mouse enters, moves, or a touch occurs, signal the component to show controls. // Note: Touch events like 'touchstart' and 'touchmove' don't require an explicit 'mouseleave' // counterpart; the component handles hiding after a timeout.
 
   @HostListener('mouseenter')
   @HostListener('mousemove')
-  @HostListener('touchstart') 
-  @HostListener('touchmove') 
+  @HostListener('touchstart')
+  @HostListener('touchmove')
   onUserActivity() {
     this.inputEvents.emit('showControls');
-  } 
+    this.playerUIService.triggerUIControlsVisibility();
+  }
 
   @HostListener('mouseleave')
   onMouseLeave() {
     this.inputEvents.emit('hideControls');
-  } 
+  }
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
@@ -69,21 +81,18 @@ export class PlayerInputHostDirective {
       return;
     } // Arrow Keys for Volume Up/Down
 
-    
-
     if (event.key === 'ArrowUp') {
       event.preventDefault();
       if (event.shiftKey) {
         this.inputEvents.emit('shiftVolumeUp');
-      } else { 
+      } else {
         this.inputEvents.emit('volumeUp');
       }
     } else if (event.key === 'ArrowDown') {
       event.preventDefault();
-      if (event.shiftKey) { 
-      this.inputEvents.emit('shiftVolumeDown');
-      }
-      else { 
+      if (event.shiftKey) {
+        this.inputEvents.emit('shiftVolumeDown');
+      } else {
         this.inputEvents.emit('volumeDown');
       }
     }

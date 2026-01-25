@@ -9,12 +9,12 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { formatTime } from '../utils/time-utils';
-import { MarkerData } from '../data-types/marker-data';
+import { formatTime } from '../../utils/time-utils';
+import { MarkerData } from '../../data-types/marker-data';
 import { MarkerCreatorModal } from '../marker-creator-modal/marker-creator-modal';
-import { PlayerUIService } from '../services/player-ui.service';
-import { PlayerStateService } from '../services/player-state.service';
-import { TimeTagService } from '../services/time-tag.service';
+import { PlayerUIService } from '../../services/player-ui.service';
+import { PlayerStateService } from '../../services/player-state.service';
+import { TimeTagService } from '../../services/time-tag.service';
 
 @Component({
   selector: 'app-marker-display',

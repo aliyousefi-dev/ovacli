@@ -18,6 +18,7 @@ export class PlayerUIService implements OnInit, OnDestroy {
   readonly debuggerMenuVisible$ = new BehaviorSubject<boolean>(false);
   readonly tagTimeMenuVisible$ = new BehaviorSubject<boolean>(false);
   readonly fullscreenEnabled$ = new BehaviorSubject<boolean>(false);
+  readonly uiControlsVisible$ = new BehaviorSubject<boolean>(false);
 
   /** Reference to the video container element */
   private playerContainer: HTMLElement | null = null;
@@ -25,23 +26,13 @@ export class PlayerUIService implements OnInit, OnDestroy {
   /** Cleanup subject used for unsubscription */
   private readonly destroy$ = new Subject<void>();
 
-  /* --------------------------------------------------------------------- */
-  /*                         Service API                                    */
-  /* --------------------------------------------------------------------- */
-
-  /**
-   * Initialise the service with a reference to the `<video>` element.
-   *
-   * @param videoRef ElementRef to the `<video>` element
-   */
-
   preload() {
     this.debuggerMenuVisible$.next(
-      this.playerSettings.currentSettings.enableDebugger
+      this.playerSettings.currentSettings.enableDebugger,
     );
 
     this.tagTimeMenuVisible$.next(
-      this.playerSettings.currentSettings.timeTagEnabled
+      this.playerSettings.currentSettings.timeTagEnabled,
     );
   }
 
@@ -66,10 +57,6 @@ export class PlayerUIService implements OnInit, OnDestroy {
       });
   }
 
-  /**
-   * Toggle full‑screen mode for the player.
-   * Mirrors the logic from the component but is available to any consumer.
-   */
   async toggleFullscreen(): Promise<void> {
     if (!this.playerContainer) {
       console.warn('[PlayerUIService] toggleFullscreen() called before init()');
@@ -104,7 +91,7 @@ export class PlayerUIService implements OnInit, OnDestroy {
               .catch((err: any) => {
                 console.log(
                   'Orientation lock failed or not supported on this device:',
-                  err
+                  err,
                 );
               });
           }
@@ -115,23 +102,19 @@ export class PlayerUIService implements OnInit, OnDestroy {
     }
   }
 
-  /* --------------------------------------------------------------------- */
-  /*                     Debugger menu helpers                             */
-  /* --------------------------------------------------------------------- */
-
   setDebuggerMenuVisible(v: boolean): void {
     this.debuggerMenuVisible$.next(v);
     this.playerSettings.updateSetting('enableDebugger', v);
+  }
+
+  triggerUIControlsVisibility(): void {
+    this.uiControlsVisible$.next(true);
   }
 
   setTagTimeMenuVisible(v: boolean): void {
     this.tagTimeMenuVisible$.next(v);
     this.playerSettings.updateSetting('timeTagEnabled', v);
   }
-
-  /* --------------------------------------------------------------------- */
-  /*                        Angular lifecycle hooks                       */
-  /* --------------------------------------------------------------------- */
 
   ngOnInit(): void {}
 

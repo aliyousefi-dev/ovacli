@@ -7,6 +7,9 @@
 
     @if (!isMuted) {
     @switch (true) {
+    @case (volumeLevel == 0) {
+    <i class="bx bxs-volume-mute bx-sm swap-off"></i>
+    }
     @case (volumeLevel > 0.5) {
     <i class="bx bxs-volume-full bx-sm swap-off"></i>
     }
