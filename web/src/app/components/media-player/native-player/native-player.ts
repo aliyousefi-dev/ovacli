@@ -71,15 +71,9 @@ export class NativePlayer implements AfterViewInit, OnInit, OnDestroy {
   private timeTagService = inject(TimeTagService);
   private scrubTimeline = inject(ScrubTimelineService);
 
-  debuggerMenu: boolean = false;
-
   ngOnInit(): void {
     this.playerUi.uiControlsVisibility$.subscribe((visible) => {
       this.controlsVisible = visible;
-    });
-
-    this.playerUi.debuggerMenuVisible$.subscribe((visible) => {
-      this.debuggerMenu = visible;
     });
   }
 

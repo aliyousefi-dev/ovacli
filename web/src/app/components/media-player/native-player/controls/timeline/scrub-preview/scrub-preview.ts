@@ -1,11 +1,4 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-  inject,
-} from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ScrubImageComponent } from '../scrub-image/scrub-image';
 import { ScrubTimelineService } from '../../../services/scrub-timeline.service';
@@ -17,16 +10,19 @@ import { formatTime } from '../../../utils/time-utils';
   templateUrl: './scrub-preview.html',
   imports: [CommonModule, ScrubImageComponent],
 })
-export class ScrubPreview implements OnInit, OnChanges {
+export class ScrubPreview implements OnInit {
   scrubTimeline = inject(ScrubTimelineService);
 
   seekTime: string = formatTime(0);
+  timeTagLabel: string = '';
 
   ngOnInit(): void {
     this.scrubTimeline.seekTime$.subscribe((time) => {
       this.seekTime = formatTime(time);
     });
-  }
 
-  ngOnChanges(changes: SimpleChanges): void {}
+    this.scrubTimeline.nearTimeTagLable$.subscribe((label) => {
+      this.timeTagLabel = label;
+    });
+  }
 }

@@ -11,18 +11,21 @@ import { takeUntil } from 'rxjs/operators';
 import { PlayerStateService } from './player-state.service';
 import { ScrubThumbApiService } from '../../../../../ova-angular-sdk/rest-api/scrub-thumb-api.service';
 import { ScrubThumbStream } from '../data-types/scrub-thumb-data';
+import { TimeTagService } from './time-tag.service';
 
 @Injectable({ providedIn: 'root' })
 export class ScrubTimelineService implements OnInit, OnDestroy {
   readonly seekTime$ = new BehaviorSubject<number>(0);
+  readonly nearTimeTagLable$ = new BehaviorSubject<string>('');
   readonly seekTimePct$ = new BehaviorSubject<number>(0);
   readonly scrubVisibile$ = new BehaviorSubject<boolean>(false);
   readonly scrubThumbStream$ = new BehaviorSubject<ScrubThumbStream | null>(
-    null
+    null,
   );
 
   private playerState = inject(PlayerStateService);
   private scrubThumbApiService = inject(ScrubThumbApiService);
+  private timeTag = inject(TimeTagService);
 
   /** Cleanup subject used for unsubscription */
   private readonly destroy$ = new Subject<void>();
@@ -45,6 +48,33 @@ export class ScrubTimelineService implements OnInit, OnDestroy {
     const time = (pct * duration) / 100;
     const clampedTime = Math.max(0, Math.min(time, duration));
     this.seekTime$.next(Number(clampedTime.toFixed(2)));
+
+    const label = this.findNearestTimeTagLabel(this.seekTime$.value);
+    this.nearTimeTagLable$.next(label);
+  }
+
+  findNearestTimeTagLabel(timeSec: number, thresholdSec = 5): string {
+    const timeTags = this.timeTag.timeTags$.value;
+    if (!timeTags?.length) return '';
+
+    // 1. Keep only tags that are *close enough*.
+    const nearbyTags = timeTags.filter(
+      (tag) => Math.abs(timeSec - tag.timeSecond) <= thresholdSec,
+    );
+
+    // 2. If nothing is within the threshold, give up.
+    if (!nearbyTags.length) return '';
+
+    // 3. Find the one with the smallest difference.
+    return nearbyTags.reduce(
+      (nearest, tag) => {
+        const diff = Math.abs(timeSec - tag.timeSecond);
+        return diff < nearest.minDiff
+          ? { label: tag.label, minDiff: diff }
+          : nearest;
+      },
+      { label: '', minDiff: Infinity },
+    ).label;
   }
 
   ngOnInit(): void {}

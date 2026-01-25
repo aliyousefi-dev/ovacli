@@ -72,8 +72,8 @@ export class ProgressTrack implements OnInit, OnDestroy, AfterViewInit {
     this.trackContainerRef.nativeElement.addEventListener(
       'mouseenter',
       (event) => {
-        this.scrubprevewVisibility = true;
         this.setSeekPositionPct(event);
+        this.scrubprevewVisibility = true;
       },
     );
     this.trackContainerRef.nativeElement.addEventListener('mouseleave', () => {
@@ -107,6 +107,7 @@ export class ProgressTrack implements OnInit, OnDestroy, AfterViewInit {
 
     const previewWidth =
       this.scrubPreviewRef.nativeElement.getBoundingClientRect().width;
+
     const trackWidth =
       this.trackContainerRef.nativeElement.getBoundingClientRect().width;
     const halfPreviewWidth = previewWidth / 2;

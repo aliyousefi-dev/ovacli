@@ -7,8 +7,9 @@
 
   <!-- Marker display -->
   <div class="absolute inset-0 w-full h-full flex justify-between items-start p-5 z-50 pointer-events-none">
-    <app-debugger [hidden]="!this.debuggerMenu"></app-debugger>
-    <app-marker-display class="pointer-events-auto"></app-marker-display>
+    <app-debugger [hidden]="!(playerUi.debuggerMenuVisible$ | async)"></app-debugger>
+    <app-marker-display [hidden]="!(playerUi.tagTimeMenuVisible$ | async)"
+      class="pointer-events-auto"></app-marker-display>
   </div>
 
 
