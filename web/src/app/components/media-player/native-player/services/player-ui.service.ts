@@ -15,10 +15,12 @@ export class PlayerUIService implements OnInit, OnDestroy {
   /** Injected settings service for persisting UI options */
   private playerSettings = inject(PlayerSettingsService);
 
+  private playerControlsVisibilityTimeout: any;
+
   readonly debuggerMenuVisible$ = new BehaviorSubject<boolean>(false);
   readonly tagTimeMenuVisible$ = new BehaviorSubject<boolean>(false);
   readonly fullscreenEnabled$ = new BehaviorSubject<boolean>(false);
-  readonly uiControlsVisible$ = new BehaviorSubject<boolean>(false);
+  readonly uiControlsVisibility$ = new BehaviorSubject<boolean>(false);
 
   /** Reference to the video container element */
   private playerContainer: HTMLElement | null = null;
@@ -108,7 +110,11 @@ export class PlayerUIService implements OnInit, OnDestroy {
   }
 
   triggerUIControlsVisibility(): void {
-    this.uiControlsVisible$.next(true);
+    this.uiControlsVisibility$.next(true);
+    clearTimeout(this.playerControlsVisibilityTimeout);
+    this.playerControlsVisibilityTimeout = setTimeout(() => {
+      this.uiControlsVisibility$.next(false);
+    }, 3000);
   }
 
   setTagTimeMenuVisible(v: boolean): void {

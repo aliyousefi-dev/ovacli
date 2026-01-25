@@ -1,11 +1,7 @@
-<div class="relative w-full overflow-hidden bg-black rounded-xl" [class.flex]="isFullscreen"
-  [class.items-center]="isFullscreen" [class.justify-center]="isFullscreen" #playerWrap appPlayerControlsHost
-  (inputEvents)="handleInputs($event)">
+<div class="relative w-full overflow-hidden bg-black rounded-xl" #playerWrap appPlayerControlsHost>
 
   <!-- Video element -->
-  <video #videoRef
-    [ngClass]="{ 'w-full': !isFullscreen, 'w-auto': isFullscreen, 'max-h-screen': isFullscreen, 'aspect-video': true, 'block': true }"
-    [src]="videoUrl" [poster]="thumbnailUrl" (touchstart)="showControls()">
+  <video #videoRef [src]="videoUrl" [poster]="thumbnailUrl">
   </video>
 
 
@@ -16,37 +12,8 @@
   </div>
 
 
-  <!-- Touch controls -->
-  <div class="absolute inset-0 z-30 flex justify-center items-center pointer-events-none">
+  <app-touch-screen class="absolute inset-0 z-31"></app-touch-screen>
 
-    <!-- Rewind -->
-    <div class="w-1/3 h-1/2 pointer-events-auto " (touchstart)="handleTouch($event)">
-      <div class="flex items-center justify-center h-full transition-opacity duration-200"
-        [ngClass]="{ 'opacity-0': !rewindVisible }">
-        <div class="bg-black/40 rounded-full p-6">
-          <i class='bx bx-rewind text-[6rem] text-white'></i>
-        </div>
-      </div>
-    </div>
-
-    <!-- Play/Pause -->
-    <div class="w-1/3 h-1/2 pointer-events-auto flex items-center justify-center" (click)="handleCenterTap($event)">
-      <div class="w-40 h-40 flex items-center justify-center rounded-full transition-all duration-300"
-        [ngClass]="{ 'bg-black/20 opacity-100': overlayVisible, 'opacity-0': !overlayVisible }">
-        <i class='bx text-[8rem] text-white' [ngClass]="isPaused ? 'bx-play' : 'bx-pause'"></i>
-      </div>
-    </div>
-
-    <!-- Forward -->
-    <div class="w-1/3 h-1/2 pointer-events-auto " (touchstart)="handleTouch($event)">
-      <div class="flex items-center justify-center h-full transition-opacity duration-200"
-        [ngClass]="{ 'opacity-0': !forwardVisible }">
-        <div class="bg-black/40 rounded-full p-6">
-          <i class='bx bx-fast-forward text-[6rem] text-white'></i>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- Controls black overlay -->
   <div class="absolute bottom-0 left-0 right-0 h-1/2 pointer-events-none z-40

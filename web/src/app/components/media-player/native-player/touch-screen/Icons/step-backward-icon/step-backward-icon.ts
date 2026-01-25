@@ -17,14 +17,10 @@ import { FormsModule } from '@angular/forms';
   // Assuming the template is full-screen-button.component.html or full-screen-button.html
   templateUrl: './step-backward-icon.html',
 })
-export class ScreenDebugger implements AfterViewInit, OnInit, OnDestroy {
+export class StepBackwardIcon implements AfterViewInit, OnInit, OnDestroy {
   ngOnInit(): void {}
 
-  rewindVisible: boolean = true;
-
-  ngAfterViewInit() {
-    console.log('debugger view init');
-  }
+  ngAfterViewInit() {}
 
   ngOnDestroy() {}
 }

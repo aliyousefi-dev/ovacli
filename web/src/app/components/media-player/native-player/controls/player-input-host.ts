@@ -1,27 +1,6 @@
-import {
-  Directive,
-  EventEmitter,
-  HostListener,
-  Output,
-  inject,
-} from '@angular/core';
+import { Directive, HostListener, inject } from '@angular/core';
 import { PlayerStateService } from '../services/player-state.service';
 import { PlayerUIService } from '../services/player-ui.service';
-
-/**
- * Defines the contract for events emitted by the host directive.
- */
-export interface PlayerHostEvents {
-  playPauseToggle: void;
-  hideControls: void;
-  showControls: void; // Events for seeking
-  stepForward: void; // For seeking forward (e.g., 5 seconds)
-  stepBackward: void; // For seeking backward (e.g., 5 seconds) // New Events for volume control
-  volumeUp: void;
-  shiftVolumeUp: void;
-  volumeDown: void;
-  shiftVolumeDown: void;
-}
 
 @Directive({
   selector: '[appPlayerControlsHost]', // Attribute selector used in the HTML
@@ -30,22 +9,15 @@ export interface PlayerHostEvents {
 export class PlayerInputHostDirective {
   private playerState = inject(PlayerStateService);
   private playerUIService = inject(PlayerUIService);
-
-  // Event emitter to communicate mouse/keyboard events back to the component
-  @Output() inputEvents = new EventEmitter<keyof PlayerHostEvents>(); // --- Activity Listeners (Player Area) --- // When the mouse enters, moves, or a touch occurs, signal the component to show controls. // Note: Touch events like 'touchstart' and 'touchmove' don't require an explicit 'mouseleave' // counterpart; the component handles hiding after a timeout.
+  private volumeDefultStep = 0.01;
+  private volumeDefultShiftStep = 0.05;
 
   @HostListener('mouseenter')
   @HostListener('mousemove')
   @HostListener('touchstart')
   @HostListener('touchmove')
   onUserActivity() {
-    this.inputEvents.emit('showControls');
     this.playerUIService.triggerUIControlsVisibility();
-  }
-
-  @HostListener('mouseleave')
-  onMouseLeave() {
-    this.inputEvents.emit('hideControls');
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -62,38 +34,41 @@ export class PlayerInputHostDirective {
 
     if (event.key === ' ') {
       event.preventDefault(); // Prevent the spacebar from scrolling the page
-      this.inputEvents.emit('playPauseToggle');
+      this.playerState.togglePlay();
       return;
     } // Escape key to hide controls
 
-    if (event.key === 'Escape') {
-      this.inputEvents.emit('hideControls');
-      return;
-    } // Arrow Keys for seeking forward/backward
-
     if (event.key === 'ArrowRight') {
       event.preventDefault();
-      this.inputEvents.emit('stepForward');
+      this.playerState.stepForward();
       return;
     } else if (event.key === 'ArrowLeft') {
       event.preventDefault();
-      this.inputEvents.emit('stepBackward');
+      this.playerState.stepBackward();
       return;
     } // Arrow Keys for Volume Up/Down
 
     if (event.key === 'ArrowUp') {
       event.preventDefault();
       if (event.shiftKey) {
-        this.inputEvents.emit('shiftVolumeUp');
+        this.playerState.setVolume(
+          this.playerState.volume$.value + this.volumeDefultShiftStep,
+        );
       } else {
-        this.inputEvents.emit('volumeUp');
+        this.playerState.setVolume(
+          this.playerState.volume$.value + this.volumeDefultStep,
+        );
       }
     } else if (event.key === 'ArrowDown') {
       event.preventDefault();
       if (event.shiftKey) {
-        this.inputEvents.emit('shiftVolumeDown');
+        this.playerState.setVolume(
+          this.playerState.volume$.value - this.volumeDefultShiftStep,
+        );
       } else {
-        this.inputEvents.emit('volumeDown');
+        this.playerState.setVolume(
+          this.playerState.volume$.value - this.volumeDefultStep,
+        );
       }
     }
   }

@@ -1,0 +1,4 @@
+<div class="w-40 h-40 flex items-center justify-center rounded-full transition-all duration-300"
+    [ngClass]="{ 'bg-black/20 opacity-100': playPauseVisible, 'opacity-0': !playPauseVisible }">
+    <i class='bx text-[8rem] text-white' [ngClass]="!isPlaying ? 'bx-play' : 'bx-pause'"></i>
+</div>

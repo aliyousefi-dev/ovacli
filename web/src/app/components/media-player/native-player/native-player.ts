@@ -6,6 +6,7 @@ import {
   AfterViewInit,
   OnDestroy,
   inject,
+  OnInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VideoApiService } from '../../../../ova-angular-sdk/rest-api/video-api.service';
@@ -24,11 +25,9 @@ import { PlayerStateService } from './services/player-state.service';
 import { PlayerUIService } from './services/player-ui.service';
 import { TimeTagService } from './services/time-tag.service';
 import { ScrubTimelineService } from './services/scrub-timeline.service';
+import { TouchScreen } from './touch-screen/touch-screen';
 
-import {
-  PlayerInputHostDirective,
-  PlayerHostEvents,
-} from './controls/player-input-host';
+import { PlayerInputHostDirective } from './controls/player-input-host';
 
 @Component({
   selector: 'app-native-player',
@@ -47,9 +46,10 @@ import {
     MarkerDisplay,
     SettingsButton,
     TimeTagButton,
+    TouchScreen,
   ],
 })
-export class NativePlayer implements AfterViewInit, OnDestroy {
+export class NativePlayer implements AfterViewInit, OnInit, OnDestroy {
   @Input() videoData!: VideoData;
 
   @ViewChild('videoRef') videoRef!: ElementRef<HTMLVideoElement>;
@@ -58,23 +58,12 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
 
   videoReady = false;
   controlsVisible = false;
-  isFullscreen = false;
   overlayVisible = false;
   isPaused = true;
 
-  rewindVisible = false;
-  forwardVisible = false;
-
   private hideControlsTimeout: any;
   private overlayTimeout: any;
-  private rewindTimeout: any;
-  private forwardTimeout: any;
-  private lastTap = 0;
   private tapTimeout: any;
-
-  private readonly HIDE_DELAY_MS = 3000;
-  private readonly DOUBLE_TAP_DELAY = 300;
-  private readonly ICON_FLASH_MS = 800;
 
   private videoapi = inject(VideoApiService);
   private playerState = inject(PlayerStateService);
@@ -82,8 +71,11 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
   private timeTagService = inject(TimeTagService);
   private scrubTimeline = inject(ScrubTimelineService);
 
-  // Bind handlers so they can be removed correctly on destroy
-  private fullscreenHandler = this.onFullscreenChange.bind(this);
+  ngOnInit(): void {
+    this.playerUi.uiControlsVisibility$.subscribe((visible) => {
+      this.controlsVisible = visible;
+    });
+  }
 
   ngAfterViewInit() {
     const video = this.videoRef.nativeElement;
@@ -100,134 +92,10 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
     } else {
       video.addEventListener('loadedmetadata', () => this.initVideoState());
     }
-
-    video.addEventListener('play', () => {
-      this.isPaused = false;
-      this.showOverlay();
-      this.scheduleHideControls();
-    });
-
-    video.addEventListener('pause', () => {
-      this.isPaused = true;
-      this.showOverlay();
-      this.showControls();
-    });
-
-    document.addEventListener('fullscreenchange', this.fullscreenHandler);
-    this.showControls();
   }
 
   private initVideoState() {
     this.videoReady = true;
-  }
-
-  handleCenterTap(event: MouseEvent) {
-    event.stopPropagation();
-    this.togglePlayPause();
-    this.showControls();
-  }
-
-  handleTouch(event: TouchEvent) {
-    event.stopPropagation();
-    const now = Date.now();
-    const timeSinceLastTap = now - this.lastTap;
-
-    if (timeSinceLastTap < this.DOUBLE_TAP_DELAY) {
-      clearTimeout(this.tapTimeout);
-      this.lastTap = 0;
-
-      const touchX = event.touches[0].clientX;
-      const screenWidth = window.innerWidth;
-
-      if (touchX < screenWidth / 2) this.stepBackward();
-      else this.stepForward();
-    } else {
-      this.lastTap = now;
-      this.tapTimeout = setTimeout(() => {}, this.DOUBLE_TAP_DELAY);
-    }
-  }
-
-  togglePlayPause() {
-    const v = this.videoRef.nativeElement;
-    v.paused ? v.play() : v.pause();
-  }
-
-  showControls() {
-    this.controlsVisible = true;
-    this.scheduleHideControls();
-  }
-
-  private scheduleHideControls() {
-    clearTimeout(this.hideControlsTimeout);
-    if (!this.isPaused) {
-      this.hideControlsTimeout = setTimeout(() => {
-        this.controlsVisible = false;
-      }, this.HIDE_DELAY_MS);
-    }
-  }
-
-  private showOverlay() {
-    this.overlayVisible = true;
-    clearTimeout(this.overlayTimeout);
-    this.overlayTimeout = setTimeout(() => {
-      this.overlayVisible = false;
-    }, 1000);
-  }
-
-  private stepForward() {
-    this.playerState.stepForward();
-    this.forwardVisible = true;
-    clearTimeout(this.forwardTimeout);
-    this.forwardTimeout = setTimeout(() => {
-      this.forwardVisible = false;
-    }, this.ICON_FLASH_MS);
-  }
-
-  private stepBackward() {
-    this.playerState.stepBackward();
-    this.rewindVisible = true;
-    clearTimeout(this.rewindTimeout);
-    this.rewindTimeout = setTimeout(() => {
-      this.rewindVisible = false;
-    }, this.ICON_FLASH_MS);
-  }
-
-  handleInputs(event: keyof PlayerHostEvents) {
-    let volumeDefultStep = 0.01;
-    let volumeDefultShiftStep = 0.05;
-
-    this.showControls();
-    switch (event) {
-      case 'playPauseToggle':
-        this.togglePlayPause();
-        break;
-      case 'stepForward':
-        this.stepForward();
-        break;
-      case 'stepBackward':
-        this.stepBackward();
-        break;
-      case 'volumeUp':
-        this.playerState.setVolume(
-          this.playerState.volume$.value + volumeDefultStep,
-        );
-        break;
-      case 'shiftVolumeUp':
-        this.playerState.setVolume(
-          this.playerState.volume$.value + volumeDefultShiftStep,
-        );
-        break;
-      case 'volumeDown':
-        this.playerState.setVolume(
-          this.playerState.volume$.value - volumeDefultStep,
-        );
-        break;
-      case 'shiftVolumeDown':
-        this.playerState.setVolume(
-          this.playerState.volume$.value - volumeDefultShiftStep,
-        );
-        break;
-    }
   }
 
   get videoUrl() {
@@ -237,16 +105,9 @@ export class NativePlayer implements AfterViewInit, OnDestroy {
     return this.videoapi.getThumbnailUrl(this.videoData.videoId);
   }
 
-  private onFullscreenChange() {
-    this.isFullscreen = !!document.fullscreenElement;
-  }
-
   ngOnDestroy() {
     clearTimeout(this.hideControlsTimeout);
     clearTimeout(this.overlayTimeout);
     clearTimeout(this.tapTimeout);
-    clearTimeout(this.rewindTimeout);
-    clearTimeout(this.forwardTimeout);
-    document.removeEventListener('fullscreenchange', this.fullscreenHandler);
   }
 }

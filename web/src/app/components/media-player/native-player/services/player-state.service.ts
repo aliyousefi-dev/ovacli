@@ -119,6 +119,16 @@ export class PlayerStateService implements OnDestroy {
     this.videoEl.play();
   }
 
+  togglePlay() {
+    if (!this.videoEl) return;
+
+    if (this.videoEl.paused) {
+      this.videoEl.play();
+    } else {
+      this.videoEl.pause();
+    }
+  }
+
   /** Pauses the video. */
   pause(): void {
     if (!this.videoEl) return;
