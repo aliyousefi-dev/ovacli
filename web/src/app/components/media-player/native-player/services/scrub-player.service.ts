@@ -14,9 +14,10 @@ import { ScrubThumbStream } from '../data-types/scrub-thumb-data';
 import { TimeTagService } from './time-tag.service';
 
 @Injectable({ providedIn: 'root' })
-export class ScrubTimelineService implements OnInit, OnDestroy {
+export class ScrubPlayerService implements OnInit, OnDestroy {
   readonly seekTime$ = new BehaviorSubject<number>(0);
-  readonly nearTimeTagLable$ = new BehaviorSubject<string>('');
+  readonly nearTimeTagLableBasedSeekTime$ = new BehaviorSubject<string>('');
+  readonly nearTimeTagLableBasedCurrentTime$ = new BehaviorSubject<string>('');
   readonly seekTimePct$ = new BehaviorSubject<number>(0);
   readonly scrubVisibile$ = new BehaviorSubject<boolean>(false);
   readonly scrubThumbStream$ = new BehaviorSubject<ScrubThumbStream | null>(
@@ -36,6 +37,11 @@ export class ScrubTimelineService implements OnInit, OnDestroy {
       .subscribe((thumbnails) => {
         this.scrubThumbStream$.next(thumbnails);
       });
+
+    this.playerState.currentTime$.subscribe((t) => {
+      const label = this.findNearestTimeTagLabel(t);
+      this.nearTimeTagLableBasedCurrentTime$.next(label);
+    });
   }
 
   setScrubVisibility(b: boolean): void {
@@ -50,7 +56,7 @@ export class ScrubTimelineService implements OnInit, OnDestroy {
     this.seekTime$.next(Number(clampedTime.toFixed(2)));
 
     const label = this.findNearestTimeTagLabel(this.seekTime$.value);
-    this.nearTimeTagLable$.next(label);
+    this.nearTimeTagLableBasedSeekTime$.next(label);
   }
 
   findNearestTimeTagLabel(timeSec: number, thresholdSec = 5): string {

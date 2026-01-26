@@ -12,6 +12,10 @@
       class="pointer-events-auto"></app-marker-display>
   </div>
 
+  <div class="absolute w-full h-full flex justify-center items-center inset-0">
+    <app-display-near-time-tag></app-display-near-time-tag>
+  </div>
+
 
   <app-touch-screen class="absolute inset-0 z-31"></app-touch-screen>
 
@@ -31,11 +35,9 @@
 
 
       <!-- Timeline / Display time -->
-      <div class="flex justify-center items-end px-3 text-sm text-white">
-
+      <div class="flex flex-col justify-center items-start gap-5 px-3 text-sm text-white">
         <app-main-timeline class="w-full" #mainTimelineRef>
         </app-main-timeline>
-
       </div>
 
       <!-- Pause / Sound / Settings / Fullscreen -->

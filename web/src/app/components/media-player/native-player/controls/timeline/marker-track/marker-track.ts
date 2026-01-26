@@ -64,7 +64,7 @@ export class MarkerTrack implements OnInit, OnDestroy, AfterViewInit {
         // Create the marker element as a raw HTML string for efficient rendering
         const markerHTML = `
   <div 
-    class=" absolute h-full w-1 bg-red-600 cursor-pointer transition-transform hover:scale-x-500 "
+    class=" absolute h-full w-1 bg-red-600 cursor-pointer transition-transform"
     style="left: ${pct}%; "
   ></div>
 `;

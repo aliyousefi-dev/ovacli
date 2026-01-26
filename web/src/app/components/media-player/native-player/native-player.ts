@@ -24,8 +24,9 @@ import { TimeTagButton } from './controls/buttons/time-tag-button/time-tag-butto
 import { PlayerStateService } from './services/player-state.service';
 import { PlayerUIService } from './services/player-ui.service';
 import { TimeTagService } from './services/time-tag.service';
-import { ScrubTimelineService } from './services/scrub-timeline.service';
+import { ScrubPlayerService } from './services/scrub-player.service';
 import { TouchScreen } from './touch-screen/touch-screen';
+import { DisplayNearTimeTag } from './controls/display-near-time-tag/display-near-time-tag';
 
 import { PlayerInputHostDirective } from './controls/player-input-host';
 
@@ -47,6 +48,7 @@ import { PlayerInputHostDirective } from './controls/player-input-host';
     SettingsButton,
     TimeTagButton,
     TouchScreen,
+    DisplayNearTimeTag,
   ],
 })
 export class NativePlayer implements AfterViewInit, OnInit, OnDestroy {
@@ -69,7 +71,7 @@ export class NativePlayer implements AfterViewInit, OnInit, OnDestroy {
   private playerState = inject(PlayerStateService);
   playerUi = inject(PlayerUIService);
   private timeTagService = inject(TimeTagService);
-  private scrubTimeline = inject(ScrubTimelineService);
+  private scrubTimeline = inject(ScrubPlayerService);
 
   ngOnInit(): void {
     this.playerUi.uiControlsVisibility$.subscribe((visible) => {

@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ScrubImageComponent } from '../scrub-image/scrub-image';
-import { ScrubTimelineService } from '../../../services/scrub-timeline.service';
+import { ScrubPlayerService } from '../../../services/scrub-player.service';
 import { formatTime } from '../../../utils/time-utils';
 
 @Component({
@@ -11,7 +11,7 @@ import { formatTime } from '../../../utils/time-utils';
   imports: [CommonModule, ScrubImageComponent],
 })
 export class ScrubPreview implements OnInit {
-  scrubTimeline = inject(ScrubTimelineService);
+  scrubTimeline = inject(ScrubPlayerService);
 
   seekTime: string = formatTime(0);
   timeTagLabel: string = '';
@@ -21,7 +21,7 @@ export class ScrubPreview implements OnInit {
       this.seekTime = formatTime(time);
     });
 
-    this.scrubTimeline.nearTimeTagLable$.subscribe((label) => {
+    this.scrubTimeline.nearTimeTagLableBasedSeekTime$.subscribe((label) => {
       this.timeTagLabel = label;
     });
   }

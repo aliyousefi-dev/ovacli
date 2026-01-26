@@ -1,7 +1,7 @@
-<ul tabindex="0" class="menu p-2 shadow bg-base-100/60 w-64 text-xs flex-nowrap" (click)="$event.stopPropagation()">
+<ul tabindex="0" class="menu p-2 shadow bg-base-300/80 w-64 text-xs flex-nowrap " (click)="$event.stopPropagation()">
     <li class="menu-title uppercase text-[10px] select-none">Time Tag Links</li>
     <li class="pb-2 border-b border-base-300">
-        <button class="btn btn-xs btn-primary w-full" (click)="openMarkerCreator()">
+        <button class="btn btn-xs w-full" (click)="openMarkerCreator()">
             <i class='bx bx-plus'></i> New Time Tag
         </button>
     </li>
@@ -12,11 +12,11 @@
 
         @for (marker of this.markers; track $index) {
         <li class="group">
-            <div class="flex items-center justify-between gap-2  hover:bg-base-200 rounded-md cursor-pointer"
+            <div class="flex items-center justify-between gap-2  hover:bg-base-200/10 rounded-md cursor-pointer"
                 (click)="selectMarker(marker)">
                 <a class="flex flex-col justify-center items-start gap-1">
                     <span>{{ marker.label }}</span>
-                    <span class="bg-base-300 px-2 rounded-xl text-[10px]">{{ formatTime(marker.timeSecond) }}</span>
+                    <span class="text-[10px]">{{ formatTime(marker.timeSecond) }}</span>
                 </a>
                 <button class="btn btn-ghost btn-xs px-1 ">
                     <i class='bx bx-dots-vertical-rounded bx-xs'></i>

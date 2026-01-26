@@ -8,7 +8,7 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ScrubTimelineService } from '../../../services/scrub-timeline.service';
+import { ScrubPlayerService } from '../../../services/scrub-player.service';
 import { PlayerStateService } from '../../../services/player-state.service';
 import { ScrubPreview } from '../scrub-preview/scrub-preview';
 import { clamp } from '../../../utils/clamp';
@@ -25,12 +25,10 @@ export class ProgressTrack implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('trackContainer') trackContainerRef!: ElementRef<HTMLDivElement>;
   @ViewChild('scrubPreview') scrubPreviewRef!: ElementRef<HTMLDivElement>;
 
-  debug = 'none';
-
   private isDragging: boolean = false;
   private dragStartedOnTrack: boolean = false;
 
-  private scrubTimeline = inject(ScrubTimelineService);
+  private scrubTimeline = inject(ScrubPlayerService);
   private playerState = inject(PlayerStateService);
 
   scrubprevewVisibility: boolean = false;
@@ -77,7 +75,7 @@ export class ProgressTrack implements OnInit, OnDestroy, AfterViewInit {
       },
     );
     this.trackContainerRef.nativeElement.addEventListener('mouseleave', () => {
-      if (!this.isDragging) this.scrubprevewVisibility = false;
+      this.scrubprevewVisibility = false;
     });
   }
 
@@ -116,7 +114,6 @@ export class ProgressTrack implements OnInit, OnDestroy, AfterViewInit {
     const endClamp = 100 - halfpct;
 
     const clampedPct = clamp(pct, startClamp, endClamp);
-    this.debug = previewWidth.toString();
 
     this.scrubPreviewRef.nativeElement.style.left = `${clampedPct}%`;
   }
@@ -142,7 +139,6 @@ export class ProgressTrack implements OnInit, OnDestroy, AfterViewInit {
     if (this.dragStartedOnTrack) {
       this.playerState.seekToTime(this.scrubTimeline.seekTime$.value);
     }
-    this.scrubprevewVisibility = false;
     this.isDragging = false;
     this.dragStartedOnTrack = false;
   }
