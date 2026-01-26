@@ -11,6 +11,15 @@ It serves as a central video database server within a local network, allowing us
 
 ---
 
+## How to Setup
+
+after installing go the folder that videos exist and run this commands
+
+- ovacli init .
+- ovacli index .
+- ovacli cook .
+- ovacli serve .
+
 ## Features
 
 - Stream Watching
