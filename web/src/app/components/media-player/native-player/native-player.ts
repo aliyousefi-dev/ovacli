@@ -30,7 +30,7 @@ import { DisplayNearTimeTag } from './controls/display-near-time-tag/display-nea
 import { FullScreenService } from './services/fullscreen.service';
 import { InteractionService } from './services/interaction.service';
 
-import { PlayerInputHostDirective } from './controls/player-input-host';
+import { PlayerInputHostDirective } from './input-directive';
 
 @Component({
   selector: 'app-native-player',

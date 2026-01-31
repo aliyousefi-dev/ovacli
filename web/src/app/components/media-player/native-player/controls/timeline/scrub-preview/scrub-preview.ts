@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ScrubImageComponent } from '../scrub-image/scrub-image';
 import { ScrubService } from '../../../services/scrub.service';
-import { formatTime } from '../../../utils/time-utils';
+import { formatTime } from '../../../utils/formatTime';
 
 @Component({
   selector: 'app-scrub-preview',

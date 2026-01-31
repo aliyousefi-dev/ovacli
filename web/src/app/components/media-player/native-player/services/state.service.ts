@@ -3,6 +3,8 @@ import { BehaviorSubject, fromEvent, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Resolution } from '../data-types/resolution';
 import { LocalStorageService } from './local-stroage.service';
+import { InteractionService } from './interaction.service';
+import { GlobalPlayerConfig } from '../config';
 
 @Injectable({ providedIn: 'root' })
 export class StateService implements OnDestroy {
@@ -23,6 +25,8 @@ export class StateService implements OnDestroy {
   });
 
   private playerSettings = inject(LocalStorageService);
+  private interactionService = inject(InteractionService);
+  private configs = inject(GlobalPlayerConfig);
 
   private readonly destroy$ = new Subject<void>();
   /** Holds the actual DOM `<video>` element after `init()` is called. */
@@ -144,14 +148,14 @@ export class StateService implements OnDestroy {
 
   stepForward() {
     if (!this.videoEl) return;
-    const SEEK_STEP = 15;
-    this.seekToTime(this.videoEl.currentTime + SEEK_STEP);
+    this.seekToTime(this.videoEl.currentTime + this.configs.SEEK_STEP);
+    this.interactionService.triggerStepForwardIconVisibility();
   }
 
   stepBackward() {
     if (!this.videoEl) return;
-    const SEEK_STEP = 15;
-    this.seekToTime(this.videoEl.currentTime - SEEK_STEP);
+    this.seekToTime(this.videoEl.currentTime - this.configs.SEEK_STEP);
+    this.interactionService.triggerStepBackwardIconVisibility();
   }
 
   /** Sets the volume (0 – 1). */

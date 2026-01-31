@@ -32,19 +32,11 @@ export class TouchScreen implements AfterViewInit, OnInit, OnDestroy {
 
   private lastTap = 0;
   private readonly DOUBLE_TAP_DELAY = 300;
-  private readonly ICON_FLASH_MS = 800;
   private doubleTimeout: any;
-  private stepForwardTimeout: any;
-  private stepBackwardTimeout: any;
   stepForwardIconVisibility: boolean = false;
   stepBackwardIconVisibility: boolean = false;
-  playPauseIconVisibility: boolean = false;
 
-  ngOnInit(): void {
-    this.interactionService.uiControlsVisibility$.subscribe((visible) => {
-      this.playPauseIconVisibility = visible;
-    });
-  }
+  ngOnInit(): void {}
 
   ngAfterViewInit() {
     console.log('debugger view init');
@@ -56,20 +48,10 @@ export class TouchScreen implements AfterViewInit, OnInit, OnDestroy {
 
   stepForward() {
     this.playerState.stepForward();
-    this.stepForwardIconVisibility = true;
-    clearTimeout(this.stepForwardTimeout);
-    this.stepForwardTimeout = setTimeout(() => {
-      this.stepForwardIconVisibility = false;
-    }, this.ICON_FLASH_MS);
   }
 
   stepBackward() {
     this.playerState.stepBackward();
-    this.stepBackwardIconVisibility = true;
-    clearTimeout(this.stepBackwardTimeout);
-    this.stepBackwardTimeout = setTimeout(() => {
-      this.stepBackwardIconVisibility = false;
-    }, this.ICON_FLASH_MS);
   }
 
   doubleTouch(event: TouchEvent) {

@@ -1,16 +1,16 @@
 <div class="w-full h-full flex justify-center items-center pointer-events-none">
     <div class="w-1/3 h-2/3 pointer-events-auto " (touchstart)="doubleTouch($event)">
         <app-step-backward-icon class="transition-opacity duration-200"
-            [ngClass]="{ 'opacity-0': !this.stepBackwardIconVisibility}"></app-step-backward-icon>
+            [ngClass]="{ 'opacity-0': !(this.interactionService.stepBackwardIconVisibility$ | async)}"></app-step-backward-icon>
     </div>
 
     <div class="w-1/3 h-2/3 pointer-events-auto flex items-center justify-center " (click)="this.togglePlayPause()">
         <app-play-pause-icon class="transition-all duration-300"
-            [ngClass]="{ 'opacity-0': !this.playPauseIconVisibility}"></app-play-pause-icon>
+            [ngClass]="{ 'opacity-0': !(this.interactionService.uiControlsVisibility$ | async)}"></app-play-pause-icon>
     </div>
 
     <div class="w-1/3 h-2/3 pointer-events-auto " (touchstart)="doubleTouch($event)">
         <app-step-forward-icon class="transition-opacity duration-200"
-            [ngClass]="{ 'opacity-0': !this.stepForwardIconVisibility}"></app-step-forward-icon>
+            [ngClass]="{ 'opacity-0': !(this.interactionService.stepForwardIconVisibility$ | async)}"></app-step-forward-icon>
     </div>
 </div>

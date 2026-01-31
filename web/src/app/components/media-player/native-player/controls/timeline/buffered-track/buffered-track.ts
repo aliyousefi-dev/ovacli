@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BufferedRangeData } from '../../../data-types/buffered-range-data';
-import { mergeBufferedRanges } from '../../../utils/buffer-utils';
+import { mergeBufferedRanges } from '../../../utils/mergeBufferedRanges';
 import { StateService } from '../../../services/state.service';
 
 @Component({

@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { formatTime } from '../../utils/time-utils';
+import { formatTime } from '../../utils/formatTime';
 import { MarkerData } from '../../data-types/marker-data';
 import { MarkerCreatorModal } from '../marker-creator-modal/marker-creator-modal';
 import { MenuService } from '../../services/menu.service';

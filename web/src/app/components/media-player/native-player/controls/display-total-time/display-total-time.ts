@@ -1,7 +1,7 @@
 // src/app/components/media-player/native-player/controls/display-total-time/display-total-time.component.ts
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { formatTime } from '../../utils/time-utils';
+import { formatTime } from '../../utils/formatTime';
 import { StateService } from '../../services/state.service';
 
 @Component({

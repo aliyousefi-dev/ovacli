@@ -1,15 +1,13 @@
 import { Directive, HostListener, inject } from '@angular/core';
-import { StateService } from '../services/state.service';
-import { MenuService } from '../services/menu.service';
-import { InteractionService } from '../services/interaction.service';
+import { StateService } from './services/state.service';
+import { InteractionService } from './services/interaction.service';
 
 @Directive({
   selector: '[appPlayerControlsHost]', // Attribute selector used in the HTML
   standalone: true,
 })
 export class PlayerInputHostDirective {
-  private playerState = inject(StateService);
-  private playerUIService = inject(MenuService);
+  private stateService = inject(StateService);
   private interactionService = inject(InteractionService);
   private volumeDefultStep = 0.01;
   private volumeDefultShiftStep = 0.05;
@@ -36,7 +34,7 @@ export class PlayerInputHostDirective {
 
     if (event.key === ' ') {
       event.preventDefault(); // Prevent the spacebar from scrolling the page
-      this.playerState.togglePlay();
+      this.stateService.togglePlay();
       this.interactionService.triggerUIControlsVisibility();
       return;
     } // Escape key to hide controls
@@ -44,11 +42,11 @@ export class PlayerInputHostDirective {
     if (event.key === 'ArrowRight') {
       event.preventDefault();
       this.interactionService.triggerUIControlsVisibility();
-      this.playerState.stepForward();
+      this.stateService.stepForward();
       return;
     } else if (event.key === 'ArrowLeft') {
       event.preventDefault();
-      this.playerState.stepBackward();
+      this.stateService.stepBackward();
       this.interactionService.triggerUIControlsVisibility();
       return;
     } // Arrow Keys for Volume Up/Down
@@ -57,24 +55,24 @@ export class PlayerInputHostDirective {
       event.preventDefault();
       this.interactionService.triggerUIControlsVisibility();
       if (event.shiftKey) {
-        this.playerState.setVolume(
-          this.playerState.volume$.value + this.volumeDefultShiftStep,
+        this.stateService.setVolume(
+          this.stateService.volume$.value + this.volumeDefultShiftStep,
         );
       } else {
-        this.playerState.setVolume(
-          this.playerState.volume$.value + this.volumeDefultStep,
+        this.stateService.setVolume(
+          this.stateService.volume$.value + this.volumeDefultStep,
         );
       }
     } else if (event.key === 'ArrowDown') {
       event.preventDefault();
       this.interactionService.triggerUIControlsVisibility();
       if (event.shiftKey) {
-        this.playerState.setVolume(
-          this.playerState.volume$.value - this.volumeDefultShiftStep,
+        this.stateService.setVolume(
+          this.stateService.volume$.value - this.volumeDefultShiftStep,
         );
       } else {
-        this.playerState.setVolume(
-          this.playerState.volume$.value - this.volumeDefultStep,
+        this.stateService.setVolume(
+          this.stateService.volume$.value - this.volumeDefultStep,
         );
       }
     }

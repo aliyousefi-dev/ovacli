@@ -1,6 +1,7 @@
 // src/app/services/player-ui.service.ts
-import { Injectable, OnInit, OnDestroy, ElementRef } from '@angular/core';
+import { Injectable, OnInit, OnDestroy, inject } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { GlobalPlayerConfig } from '../config';
 
 @Injectable({ providedIn: 'root' })
 export class InteractionService implements OnInit, OnDestroy {
@@ -14,6 +15,8 @@ export class InteractionService implements OnInit, OnDestroy {
 
   /** Cleanup subject used for unsubscription */
   private readonly destroy$ = new Subject<void>();
+
+  private configs = inject(GlobalPlayerConfig);
 
   init(): void {}
 
@@ -30,15 +33,15 @@ export class InteractionService implements OnInit, OnDestroy {
     clearTimeout(this.stepForwardIconVisibilityTimeout);
     this.stepForwardIconVisibilityTimeout = setTimeout(() => {
       this.stepForwardIconVisibility$.next(false);
-    }, 3000);
+    }, this.configs.ICON_FLASH_MS);
   }
 
   triggerStepBackwardIconVisibility(): void {
     this.stepBackwardIconVisibility$.next(true);
     clearTimeout(this.stepBackwardIconVisibilityTimeout);
     this.stepBackwardIconVisibilityTimeout = setTimeout(() => {
-      this.stepBackwardIconVisibility$.next(true);
-    }, 3000);
+      this.stepBackwardIconVisibility$.next(false);
+    }, this.configs.ICON_FLASH_MS);
   }
 
   ngOnInit(): void {}

@@ -1,7 +1,7 @@
 import { BufferedRangeData } from '../data-types/buffered-range-data';
 
 export function mergeBufferedRanges(
-  ranges: BufferedRangeData[]
+  ranges: BufferedRangeData[],
 ): BufferedRangeData[] {
   // Return early if there's nothing to merge
   if (ranges.length === 0) {
@@ -27,7 +27,7 @@ export function mergeBufferedRanges(
       // by extending the end time of the last merged range.
       mergedRanges[mergedRanges.length - 1].end = Math.max(
         mergedRanges[mergedRanges.length - 1].end,
-        range.end
+        range.end,
       );
     }
   }
