@@ -1,6 +1,7 @@
 import { Directive, HostListener, inject } from '@angular/core';
 import { StateService } from './services/state.service';
 import { InteractionService } from './services/interaction.service';
+import { GlobalPlayerConfig } from './config';
 
 @Directive({
   selector: '[appPlayerControlsHost]', // Attribute selector used in the HTML
@@ -9,8 +10,7 @@ import { InteractionService } from './services/interaction.service';
 export class PlayerInputHostDirective {
   private stateService = inject(StateService);
   private interactionService = inject(InteractionService);
-  private volumeDefultStep = 0.01;
-  private volumeDefultShiftStep = 0.05;
+  private configs = inject(GlobalPlayerConfig);
 
   @HostListener('mouseenter')
   @HostListener('mousemove')
@@ -64,11 +64,11 @@ export class PlayerInputHostDirective {
       this.interactionService.triggerUIControlsVisibility();
       if (event.shiftKey) {
         this.stateService.setVolume(
-          this.stateService.volume$.value + this.volumeDefultShiftStep,
+          this.stateService.volume$.value + this.configs.SHIFT_VOLUME_STEP,
         );
       } else {
         this.stateService.setVolume(
-          this.stateService.volume$.value + this.volumeDefultStep,
+          this.stateService.volume$.value + this.configs.VOLUME_STEP,
         );
       }
     } else if (event.key === 'ArrowDown') {
@@ -76,11 +76,11 @@ export class PlayerInputHostDirective {
       this.interactionService.triggerUIControlsVisibility();
       if (event.shiftKey) {
         this.stateService.setVolume(
-          this.stateService.volume$.value - this.volumeDefultShiftStep,
+          this.stateService.volume$.value - this.configs.SHIFT_VOLUME_STEP,
         );
       } else {
         this.stateService.setVolume(
-          this.stateService.volume$.value - this.volumeDefultStep,
+          this.stateService.volume$.value - this.configs.VOLUME_STEP,
         );
       }
     }
