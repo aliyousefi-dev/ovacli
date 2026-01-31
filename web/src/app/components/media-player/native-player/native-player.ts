@@ -21,12 +21,14 @@ import { FullScreenButton } from './controls/buttons/full-screen/full-screen-but
 import { SettingsButton } from './controls/buttons/settings-button/settings-button';
 import { ScreenDebugger } from './menus/debugger/debugger';
 import { TimeTagButton } from './controls/buttons/time-tag-button/time-tag-button';
-import { PlayerStateService } from './services/player-state.service';
-import { PlayerUIService } from './services/player-ui.service';
+import { StateService } from './services/state.service';
+import { MenuService } from './services/menu.service';
 import { TimeTagService } from './services/time-tag.service';
-import { ScrubPlayerService } from './services/scrub-player.service';
+import { ScrubService } from './services/scrub.service';
 import { TouchScreen } from './touch-screen/touch-screen';
 import { DisplayNearTimeTag } from './controls/display-near-time-tag/display-near-time-tag';
+import { FullScreenService } from './services/fullscreen.service';
+import { InteractionService } from './services/interaction.service';
 
 import { PlayerInputHostDirective } from './controls/player-input-host';
 
@@ -68,13 +70,15 @@ export class NativePlayer implements AfterViewInit, OnInit, OnDestroy {
   private tapTimeout: any;
 
   private videoapi = inject(VideoApiService);
-  private playerState = inject(PlayerStateService);
-  playerUi = inject(PlayerUIService);
+  private playerState = inject(StateService);
   private timeTagService = inject(TimeTagService);
-  private scrubTimeline = inject(ScrubPlayerService);
+  private scrubTimeline = inject(ScrubService);
+  playerUi = inject(MenuService);
+  fullscreenService = inject(FullScreenService);
+  interactionService = inject(InteractionService);
 
   ngOnInit(): void {
-    this.playerUi.uiControlsVisibility$.subscribe((visible) => {
+    this.interactionService.uiControlsVisibility$.subscribe((visible) => {
       this.controlsVisible = visible;
     });
   }
@@ -83,7 +87,9 @@ export class NativePlayer implements AfterViewInit, OnInit, OnDestroy {
     const video = this.videoRef.nativeElement;
 
     this.playerState.init(this.videoRef);
-    this.playerUi.init(this.playerWrap);
+    this.playerUi.init();
+    this.interactionService.init();
+    this.fullscreenService.init(this.playerWrap);
     this.timeTagService.init(this.videoData.videoId);
     this.scrubTimeline.init(this.videoData.videoId);
 

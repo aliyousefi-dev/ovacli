@@ -2,7 +2,7 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { ScrubPlayerService } from '../../../services/scrub-player.service';
+import { ScrubService } from '../../../services/scrub.service';
 import { ScrubThumbStream } from '../../../data-types/scrub-thumb-data';
 
 @Component({
@@ -22,7 +22,7 @@ export class ScrubImageComponent implements OnInit, OnDestroy {
   private readonly SCALE_FACTOR = 1.8; // ← change this to whatever you need
 
   /* ---------- 3️⃣ Service injection ---------- */
-  private readonly scrubTimeline = inject(ScrubPlayerService);
+  private readonly scrubTimeline = inject(ScrubService);
 
   /* ---------- 4️⃣ Private helpers ---------- */
   private currentTime = 0;

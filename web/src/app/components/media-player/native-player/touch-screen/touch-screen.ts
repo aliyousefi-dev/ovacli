@@ -1,7 +1,5 @@
 import {
   Component,
-  Input,
-  ElementRef,
   AfterViewInit,
   OnInit,
   OnDestroy,
@@ -12,8 +10,8 @@ import { FormsModule } from '@angular/forms';
 import { PlayPauseIcon } from './Icons/play-pause-icon/play-pause-icon';
 import { StepBackwardIcon } from './Icons/step-backward-icon/step-backward-icon';
 import { StepForwardIcon } from './Icons/step-forward-icon/step-forward-icon';
-import { PlayerStateService } from '../services/player-state.service';
-import { PlayerUIService } from '../services/player-ui.service';
+import { StateService } from '../services/state.service';
+import { InteractionService } from '../services/interaction.service';
 
 @Component({
   selector: 'app-touch-screen',
@@ -29,8 +27,8 @@ import { PlayerUIService } from '../services/player-ui.service';
   templateUrl: './touch-screen.html',
 })
 export class TouchScreen implements AfterViewInit, OnInit, OnDestroy {
-  playerState = inject(PlayerStateService);
-  playerUI = inject(PlayerUIService);
+  playerState = inject(StateService);
+  interactionService = inject(InteractionService);
 
   private lastTap = 0;
   private readonly DOUBLE_TAP_DELAY = 300;
@@ -43,7 +41,7 @@ export class TouchScreen implements AfterViewInit, OnInit, OnDestroy {
   playPauseIconVisibility: boolean = false;
 
   ngOnInit(): void {
-    this.playerUI.uiControlsVisibility$.subscribe((visible) => {
+    this.interactionService.uiControlsVisibility$.subscribe((visible) => {
       this.playPauseIconVisibility = visible;
     });
   }

@@ -12,8 +12,8 @@ import { FormsModule } from '@angular/forms';
 import { formatTime } from '../../utils/time-utils';
 import { MarkerData } from '../../data-types/marker-data';
 import { MarkerCreatorModal } from '../marker-creator-modal/marker-creator-modal';
-import { PlayerUIService } from '../../services/player-ui.service';
-import { PlayerStateService } from '../../services/player-state.service';
+import { MenuService } from '../../services/menu.service';
+import { StateService } from '../../services/state.service';
 import { TimeTagService } from '../../services/time-tag.service';
 
 @Component({
@@ -26,8 +26,8 @@ export class MarkerDisplay implements OnInit {
   markers: MarkerData[] = [];
 
   formatTime = formatTime;
-  private playerUI = inject(PlayerUIService);
-  private playerState = inject(PlayerStateService);
+  private playerUI = inject(MenuService);
+  private playerState = inject(StateService);
   private timeTagService = inject(TimeTagService);
 
   // Toggle state for the dropdown/menu

@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PlayerUIService } from '../../../services/player-ui.service';
+import { FullScreenService } from '../../../services/fullscreen.service';
 
 @Component({
   selector: 'app-full-screen-button',
@@ -19,12 +19,12 @@ import { PlayerUIService } from '../../../services/player-ui.service';
   templateUrl: './full-screen-button.html',
 })
 export class FullScreenButton implements OnInit, OnDestroy {
-  private playerUI = inject(PlayerUIService);
+  private fullscreenService = inject(FullScreenService);
 
   isFullscreen: boolean = false;
 
   ngOnInit() {
-    this.playerUI.fullscreenEnabled$.subscribe((e) => {
+    this.fullscreenService.fullscreenEnabled$.subscribe((e) => {
       this.isFullscreen = e;
     });
   }
@@ -32,6 +32,6 @@ export class FullScreenButton implements OnInit, OnDestroy {
   ngOnDestroy() {}
 
   toggleFullscreen() {
-    this.playerUI.toggleFullscreen();
+    this.fullscreenService.toggleFullscreen();
   }
 }

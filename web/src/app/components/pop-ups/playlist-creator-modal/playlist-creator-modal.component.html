@@ -1,7 +1,10 @@
-<dialog id="playlist_modal" class="modal" (keydown.escape)="onCancel()"
+<dialog #dialog id="playlist_modal" class="modal" (keydown.escape)="onCancel()"
   (keydown.enter)="playlistName.trim() && submit()">
 
-  <div class="modal-box " (click)="$event.stopPropagation()">
+  <form (ngSubmit)="onConfirm()">
+
+  </form>
+  <div class="modal-box bg-base-200" (click)="$event.stopPropagation()">
     <h3 id="playlist_modal_title" class="font-bold text-xl mb-4">
       Create New Playlist
     </h3>

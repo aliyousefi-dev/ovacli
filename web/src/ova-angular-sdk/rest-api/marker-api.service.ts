@@ -15,23 +15,23 @@ export class MarkerApiService {
   private config = inject(OVASDKConfig);
 
   getMarkers(
-    videoId: string
+    videoId: string,
   ): Observable<ApiSuccessResponse<{ markers: VideoMarker[] }>> {
     // The Go API will now send back markers with 'hour', 'minute', 'second' fields.
     return this.http.get<ApiSuccessResponse<{ markers: VideoMarker[] }>>(
       `${this.config.apiBaseUrl}/videos/${videoId}/markers`,
-      { withCredentials: true }
+      { withCredentials: true },
     );
   }
 
   addMarker(
     videoId: string,
-    marker: { timeSecond: number; label: string; description: string }
+    marker: { timeSecond: number; label: string; description: string },
   ): Observable<ApiSuccessResponse<null>> {
     return this.http.post<ApiSuccessResponse<null>>(
       `${this.config.apiBaseUrl}/videos/${videoId}/markers`,
       marker,
-      { withCredentials: true }
+      { withCredentials: true },
     );
   }
 }

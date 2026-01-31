@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PlayerStateService } from '../../../services/player-state.service';
+import { StateService } from '../../../services/state.service';
 
 @Component({
   selector: 'app-play-pause-icon',
@@ -19,7 +19,7 @@ import { PlayerStateService } from '../../../services/player-state.service';
   templateUrl: './play-pause-icon.html',
 })
 export class PlayPauseIcon implements AfterViewInit, OnInit, OnDestroy {
-  playerState = inject(PlayerStateService);
+  playerState = inject(StateService);
   isPlaying: boolean = false;
   playPauseVisible: boolean = true;
 

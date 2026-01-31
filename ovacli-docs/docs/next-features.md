@@ -46,3 +46,4 @@ here we demonstrate what features we want to add to next versions.
 - working on a digital asset db for better management of video registry.
 - (native-player) support reload markers after changes
 - (native-player) change video marker name to time-tag feature.
+- (native-player) ctrl+(left & right) arrow key move cursor to the next or previouse timetag positions

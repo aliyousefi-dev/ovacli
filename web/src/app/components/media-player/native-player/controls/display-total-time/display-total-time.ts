@@ -2,7 +2,7 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { formatTime } from '../../utils/time-utils';
-import { PlayerStateService } from '../../services/player-state.service';
+import { StateService } from '../../services/state.service';
 
 @Component({
   selector: 'app-display-total-time',
@@ -11,7 +11,7 @@ import { PlayerStateService } from '../../services/player-state.service';
   templateUrl: './display-total-time.html',
 })
 export class DisplayTotalTime implements OnInit, OnDestroy {
-  private playerState = inject(PlayerStateService);
+  private playerState = inject(StateService);
 
   videoDuration: string = '00';
   formatTime = formatTime;

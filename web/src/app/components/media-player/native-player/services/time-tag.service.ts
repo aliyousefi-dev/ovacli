@@ -1,13 +1,5 @@
-// src/app/services/player-ui.service.ts
-import {
-  Injectable,
-  OnInit,
-  OnDestroy,
-  inject,
-  ElementRef,
-} from '@angular/core';
-import { BehaviorSubject, fromEvent, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Injectable, OnInit, OnDestroy, inject } from '@angular/core';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { MarkerData } from '../data-types/marker-data';
 import { MarkerApiService } from '../../../../../ova-angular-sdk/rest-api/marker-api.service';
 
@@ -34,7 +26,7 @@ export class TimeTagService implements OnInit, OnDestroy {
           : [];
 
         this.timeTags$.next(
-          markers.sort((a, b) => a.timeSecond - b.timeSecond)
+          markers.sort((a, b) => a.timeSecond - b.timeSecond),
         );
       }
     });

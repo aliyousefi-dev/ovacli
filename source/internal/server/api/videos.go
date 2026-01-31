@@ -32,7 +32,7 @@ func getVideoByID(repoMgr *repo.RepoManager) gin.HandlerFunc {
 		}
 
 		// Retrieve user data by OwnerAccountId
-		userdata, err := repoMgr.GetUserByAccountID(video.OwnerAccountId)
+		userdata, err := repoMgr.GetUserByAccountID(video.UploaderID)
 		if err != nil {
 			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to retrieve user data")
 			return

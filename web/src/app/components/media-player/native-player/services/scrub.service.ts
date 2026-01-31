@@ -1,20 +1,12 @@
-// src/app/services/player-ui.service.ts
-import {
-  Injectable,
-  OnInit,
-  OnDestroy,
-  inject,
-  ElementRef,
-} from '@angular/core';
-import { BehaviorSubject, fromEvent, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { PlayerStateService } from './player-state.service';
+import { Injectable, OnInit, OnDestroy, inject } from '@angular/core';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { StateService } from './state.service';
 import { ScrubThumbApiService } from '../../../../../ova-angular-sdk/rest-api/scrub-thumb-api.service';
 import { ScrubThumbStream } from '../data-types/scrub-thumb-data';
 import { TimeTagService } from './time-tag.service';
 
 @Injectable({ providedIn: 'root' })
-export class ScrubPlayerService implements OnInit, OnDestroy {
+export class ScrubService implements OnInit, OnDestroy {
   readonly seekTime$ = new BehaviorSubject<number>(0);
   readonly nearTimeTagLableBasedSeekTime$ = new BehaviorSubject<string>('');
   readonly nearTimeTagLableBasedCurrentTime$ = new BehaviorSubject<string>('');
@@ -24,7 +16,7 @@ export class ScrubPlayerService implements OnInit, OnDestroy {
     null,
   );
 
-  private playerState = inject(PlayerStateService);
+  private playerState = inject(StateService);
   private scrubThumbApiService = inject(ScrubThumbApiService);
   private timeTag = inject(TimeTagService);
 

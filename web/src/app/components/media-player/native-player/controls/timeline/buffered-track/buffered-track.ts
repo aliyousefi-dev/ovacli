@@ -13,7 +13,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { BufferedRangeData } from '../../../data-types/buffered-range-data';
 import { mergeBufferedRanges } from '../../../utils/buffer-utils';
-import { PlayerStateService } from '../../../services/player-state.service';
+import { StateService } from '../../../services/state.service';
 
 @Component({
   selector: 'app-buffered-track',
@@ -29,7 +29,7 @@ export class BufferedTrack implements OnInit, OnDestroy {
    */
   @ViewChild('buffered') bufferedRef!: ElementRef<HTMLDivElement>;
 
-  private playerState = inject(PlayerStateService);
+  private playerState = inject(StateService);
 
   ngOnInit() {
     this.playerState.bufferedRanges$.subscribe(() => {

@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PlayerStateService } from '../../services/player-state.service';
+import { StateService } from '../../services/state.service';
 
 @Component({
   selector: 'app-debugger',
@@ -28,7 +28,7 @@ export class ScreenDebugger implements AfterViewInit, OnInit, OnDestroy {
   resolution: string = '';
   buffered: number = 0;
 
-  playerState = inject(PlayerStateService);
+  playerState = inject(StateService);
 
   ngOnInit(): void {}
 

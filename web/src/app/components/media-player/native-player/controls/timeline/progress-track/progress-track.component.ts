@@ -8,8 +8,8 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ScrubPlayerService } from '../../../services/scrub-player.service';
-import { PlayerStateService } from '../../../services/player-state.service';
+import { ScrubService } from '../../../services/scrub.service';
+import { StateService } from '../../../services/state.service';
 import { ScrubPreview } from '../scrub-preview/scrub-preview';
 import { clamp } from '../../../utils/clamp';
 
@@ -28,8 +28,8 @@ export class ProgressTrack implements OnInit, OnDestroy, AfterViewInit {
   private isDragging: boolean = false;
   private dragStartedOnTrack: boolean = false;
 
-  private scrubTimeline = inject(ScrubPlayerService);
-  private playerState = inject(PlayerStateService);
+  private scrubTimeline = inject(ScrubService);
+  private playerState = inject(StateService);
 
   scrubprevewVisibility: boolean = false;
 

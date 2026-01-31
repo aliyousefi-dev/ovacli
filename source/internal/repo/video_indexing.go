@@ -64,7 +64,7 @@ func (r *RepoManager) IndexVideo(absolutePath, accountId string) (datatypes.Vide
 
 	videoData := datatypes.NewVideoData(title, videoID)
 	videoData.Codecs = codec
-	videoData.OwnerAccountId = accountId
+	videoData.UploaderID = accountId
 
 	// 8. Store metadata
 	if err := r.diskDataStorage.AddVideo(videoData); err != nil {

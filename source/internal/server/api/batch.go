@@ -46,7 +46,7 @@ func getVideosByIds(repoMgr *repo.RepoManager) gin.HandlerFunc {
 			}
 
 			// Get user data for the video owner
-			userdata, err := repoMgr.GetUserByAccountID(video.OwnerAccountId)
+			userdata, err := repoMgr.GetUserByAccountID(video.UploaderID)
 			if err != nil || userdata == nil {
 				// Skip if user data is not found
 				continue

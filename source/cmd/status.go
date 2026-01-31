@@ -17,6 +17,7 @@ var statusCmd = &cobra.Command{
 		totalVideos := 0
 		indexedVideos := 0
 		cookedVideos := 0
+		unindexedVideos := 0
 		issueVideos := 0
 		storageUsed := ""
 
@@ -40,6 +41,7 @@ var statusCmd = &cobra.Command{
 		indexedVideos, _ = repository.GetTotalIndexedVideoCount()
 		cookedVideos = repository.GetTotalVideoCooked()
 		repoSize, _ := repository.GetRepoSize()
+		unindexedVideos = totalVideos - indexedVideos
 
 		storageUsed = formatSize(repoSize)
 
@@ -47,8 +49,17 @@ var statusCmd = &cobra.Command{
 		fmt.Printf("total videos founded: %d\n", totalVideos)
 		fmt.Printf("total indexed videos: %d\n", indexedVideos)
 		fmt.Printf("total cooked videos: %d\n", cookedVideos)
+		fmt.Printf("total unindexed videos: %d\n", unindexedVideos)
 		fmt.Printf("total issue videos: %d\n", issueVideos)
 		fmt.Printf("disk usage: %s\n", storageUsed)
+
+		unindexedVideosPath, err := repository.GetUnindexedVideos()
+		if err != nil {
+			fmt.Printf("Error getting unindexed videos: %v\n", err)
+		}
+		for _, path := range unindexedVideosPath {
+			fmt.Printf("Unindexed video: %s\n", path)
+		}
 
 	},
 }

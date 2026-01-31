@@ -7,9 +7,13 @@
 
   <!-- Marker display -->
   <div class="absolute inset-0 w-full h-full flex justify-between items-start p-5 z-50 pointer-events-none">
-    <app-debugger [hidden]="!(playerUi.debuggerMenuVisible$ | async)"></app-debugger>
-    <app-marker-display [hidden]="!(playerUi.tagTimeMenuVisible$ | async)"
-      class="pointer-events-auto"></app-marker-display>
+    <div>
+      <app-debugger [hidden]="!(playerUi.debuggerMenuVisible$ | async)"></app-debugger>
+    </div>
+    <div>
+      <app-marker-display [hidden]="!(playerUi.tagTimeMenuVisible$ | async)"
+        class="pointer-events-auto"></app-marker-display>
+    </div>
   </div>
 
   <div class="absolute w-full h-full flex justify-center items-center inset-0">
@@ -44,7 +48,7 @@
       <div class="flex items-center justify-between gap-2 mt-2 text-white">
         <div class="flex items-center gap-2 ">
           <app-play-pause-button></app-play-pause-button>
-          <app-mute-button></app-mute-button>
+          <app-mute-button class="hidden md:block"></app-mute-button>
           <div class="flex justify-center items-center gap-1">
             <app-display-current-time></app-display-current-time>
             <span class="select-none">/</span>

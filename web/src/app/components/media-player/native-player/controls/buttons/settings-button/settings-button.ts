@@ -2,8 +2,8 @@
 
 import { Component, Input, ElementRef, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PlayerStateService } from '../../../services/player-state.service';
-import { PlayerUIService } from '../../../services/player-ui.service';
+import { StateService } from '../../../services/state.service';
+import { MenuService } from '../../../services/menu.service';
 
 // Define a type for your menu states for clarity
 type MenuViews = 'main' | 'playback';
@@ -28,8 +28,8 @@ export class SettingsButton implements OnInit {
 
   constructor(private el: ElementRef) {}
 
-  playerState = inject(PlayerStateService);
-  playerUI = inject(PlayerUIService);
+  playerState = inject(StateService);
+  playerUI = inject(MenuService);
 
   debuggerEnabled: boolean = false;
   tagtimeEnabled: boolean = false;
@@ -55,13 +55,13 @@ export class SettingsButton implements OnInit {
 
   toggleDebuggerVisibility() {
     this.playerUI.setDebuggerMenuVisible(
-      !this.playerUI.debuggerMenuVisible$.value
+      !this.playerUI.debuggerMenuVisible$.value,
     );
   }
 
   toggleTagTimeVisibility() {
     this.playerUI.setTagTimeMenuVisible(
-      !this.playerUI.tagTimeMenuVisible$.value
+      !this.playerUI.tagTimeMenuVisible$.value,
     );
   }
 

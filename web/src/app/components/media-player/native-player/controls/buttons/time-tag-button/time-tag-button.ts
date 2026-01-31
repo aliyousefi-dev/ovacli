@@ -3,7 +3,7 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PlayerUIService } from '../../../services/player-ui.service';
+import { MenuService } from '../../../services/menu.service';
 
 @Component({
   selector: 'app-time-tag-button',
@@ -12,7 +12,7 @@ import { PlayerUIService } from '../../../services/player-ui.service';
   templateUrl: './time-tag-button.html',
 })
 export class TimeTagButton implements OnInit, OnDestroy {
-  private playerUI = inject(PlayerUIService);
+  private playerUI = inject(MenuService);
 
   timeTagEnabled: boolean = false;
 

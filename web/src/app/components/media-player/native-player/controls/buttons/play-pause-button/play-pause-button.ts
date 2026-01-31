@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PlayerStateService } from '../../../services/player-state.service';
+import { StateService } from '../../../services/state.service';
 
 @Component({
   selector: 'app-play-pause-button',
@@ -11,7 +11,7 @@ import { PlayerStateService } from '../../../services/player-state.service';
 export class PlayPauseButton implements OnInit {
   // Local state to track if the video is currently playing/paused
   public isPlaying: boolean = false;
-  private playerState = inject(PlayerStateService);
+  private playerState = inject(StateService);
 
   ngOnInit() {
     this.playerState.isPlaying$.subscribe((p) => {

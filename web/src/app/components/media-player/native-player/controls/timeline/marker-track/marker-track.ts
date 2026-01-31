@@ -11,7 +11,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { MarkerData } from '../../../data-types/marker-data';
 import { TimeTagService } from '../../../services/time-tag.service';
-import { PlayerStateService } from '../../../services/player-state.service';
+import { StateService } from '../../../services/state.service';
 
 @Component({
   selector: 'app-marker-track',
@@ -25,7 +25,7 @@ export class MarkerTrack implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('markers') markersRef!: ElementRef<HTMLDivElement>;
 
   private timeTagService = inject(TimeTagService);
-  private playerState = inject(PlayerStateService);
+  private playerState = inject(StateService);
 
   ngOnInit() {
     this.timeTagService.timeTags$.subscribe((data) => {

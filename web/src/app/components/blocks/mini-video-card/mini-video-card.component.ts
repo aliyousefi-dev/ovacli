@@ -22,7 +22,7 @@ import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
 })
 export class MiniVideoCardComponent implements OnInit, AfterViewInit {
   @Input() video!: VideoData;
-  @Input() isHovered : boolean = false;
+  @Input() isHovered: boolean = false;
   @ViewChild('preview') videoElement!: ElementRef<HTMLVideoElement>;
 
   isSaved: boolean = false;
@@ -32,28 +32,22 @@ export class MiniVideoCardComponent implements OnInit, AfterViewInit {
   private videoApiService = inject(VideoApiService);
   private router = inject(Router);
 
-
   ngOnInit() {
     this.isSaved = this.video.userVideoStatus.isSaved;
     this.isWatched = this.video.userVideoStatus.isWatched;
   }
 
-    ngAfterViewInit(): void {
-      this.videoElement.nativeElement.addEventListener('loadedmetadata', () => {
-        console.log("video loaded")
+  ngAfterViewInit(): void {
+    this.videoElement.nativeElement.addEventListener('loadedmetadata', () => {
+      setTimeout(() => {
+        this.isLoading = false;
+      }, 500);
 
-        setTimeout(() => {
-          console.log("newsdklfsj")
-          this.isLoading = false;
-        }, 500);
-        
-        this.videoElement.nativeElement.play()
-      });
-
-    }
+      this.videoElement.nativeElement.play();
+    });
+  }
 
   onMouseEnter() {
-    console.log("mouse enter")
     this.isHovered = true;
     this.isLoading = true;
     this.videoElement.nativeElement.load();
@@ -65,7 +59,7 @@ export class MiniVideoCardComponent implements OnInit, AfterViewInit {
     this.videoElement.nativeElement.pause();
     this.videoElement.nativeElement.currentTime = 0;
   }
-  
+
   getThumbnailUrl(): string {
     return this.videoApiService.getThumbnailUrl(this.video.videoId);
   }

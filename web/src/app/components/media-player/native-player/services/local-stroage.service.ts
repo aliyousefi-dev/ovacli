@@ -3,7 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import { PlayerSettings } from '../data-types/player-settings';
 
 @Injectable({ providedIn: 'root' })
-export class PlayerSettingsService {
+export class LocalStorageService {
   private readonly SETTINGS_KEY = 'ova_player_settings';
 
   private defaultSettings: PlayerSettings = {
@@ -16,7 +16,7 @@ export class PlayerSettingsService {
 
   // 1. Create the BehaviorSubject with default values
   private settingsSubject = new BehaviorSubject<PlayerSettings>(
-    this.defaultSettings
+    this.defaultSettings,
   );
 
   // 2. Expose as an Observable so components can subscribe
@@ -45,7 +45,7 @@ export class PlayerSettingsService {
 
   updateSetting<K extends keyof PlayerSettings>(
     key: K,
-    value: PlayerSettings[K]
+    value: PlayerSettings[K],
   ): void {
     // 4. Get current state, modify it, and push to the subject
     const updatedSettings = { ...this.settingsSubject.value, [key]: value };

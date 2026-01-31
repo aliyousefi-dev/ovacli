@@ -1,14 +1,16 @@
 import { Directive, HostListener, inject } from '@angular/core';
-import { PlayerStateService } from '../services/player-state.service';
-import { PlayerUIService } from '../services/player-ui.service';
+import { StateService } from '../services/state.service';
+import { MenuService } from '../services/menu.service';
+import { InteractionService } from '../services/interaction.service';
 
 @Directive({
   selector: '[appPlayerControlsHost]', // Attribute selector used in the HTML
   standalone: true,
 })
 export class PlayerInputHostDirective {
-  private playerState = inject(PlayerStateService);
-  private playerUIService = inject(PlayerUIService);
+  private playerState = inject(StateService);
+  private playerUIService = inject(MenuService);
+  private interactionService = inject(InteractionService);
   private volumeDefultStep = 0.01;
   private volumeDefultShiftStep = 0.05;
 
@@ -17,7 +19,7 @@ export class PlayerInputHostDirective {
   @HostListener('touchstart')
   @HostListener('touchmove')
   onUserActivity() {
-    this.playerUIService.triggerUIControlsVisibility();
+    this.interactionService.triggerUIControlsVisibility();
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -35,21 +37,25 @@ export class PlayerInputHostDirective {
     if (event.key === ' ') {
       event.preventDefault(); // Prevent the spacebar from scrolling the page
       this.playerState.togglePlay();
+      this.interactionService.triggerUIControlsVisibility();
       return;
     } // Escape key to hide controls
 
     if (event.key === 'ArrowRight') {
       event.preventDefault();
+      this.interactionService.triggerUIControlsVisibility();
       this.playerState.stepForward();
       return;
     } else if (event.key === 'ArrowLeft') {
       event.preventDefault();
       this.playerState.stepBackward();
+      this.interactionService.triggerUIControlsVisibility();
       return;
     } // Arrow Keys for Volume Up/Down
 
     if (event.key === 'ArrowUp') {
       event.preventDefault();
+      this.interactionService.triggerUIControlsVisibility();
       if (event.shiftKey) {
         this.playerState.setVolume(
           this.playerState.volume$.value + this.volumeDefultShiftStep,
@@ -61,6 +67,7 @@ export class PlayerInputHostDirective {
       }
     } else if (event.key === 'ArrowDown') {
       event.preventDefault();
+      this.interactionService.triggerUIControlsVisibility();
       if (event.shiftKey) {
         this.playerState.setVolume(
           this.playerState.volume$.value - this.volumeDefultShiftStep,

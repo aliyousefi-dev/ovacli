@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
-import { ScrubPlayerService } from '../../services/scrub-player.service';
+import { ScrubService } from '../../services/scrub.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 })
 export class DisplayNearTimeTag implements OnInit, OnDestroy {
   /** Service that emits the current time‑tag */
-  private readonly scrubPlayer = inject(ScrubPlayerService);
+  private readonly scrubPlayer = inject(ScrubService);
 
   /** The text that will be shown */
   public timeTagLabel = '';

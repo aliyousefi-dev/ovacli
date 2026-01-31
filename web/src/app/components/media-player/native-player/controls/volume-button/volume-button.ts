@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PlayerStateService } from '../../services/player-state.service';
+import { StateService } from '../../services/state.service';
 
 @Component({
   selector: 'app-mute-button',
@@ -10,7 +10,7 @@ import { PlayerStateService } from '../../services/player-state.service';
   templateUrl: './volume-button.html',
 })
 export class VolumeButton implements OnInit, OnDestroy {
-  playerState = inject(PlayerStateService);
+  playerState = inject(StateService);
 
   public isMuted: boolean = false;
   public volumeLevel: number = 1;

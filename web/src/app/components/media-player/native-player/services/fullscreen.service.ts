@@ -1,42 +1,17 @@
 // src/app/services/player-ui.service.ts
-import {
-  Injectable,
-  OnInit,
-  OnDestroy,
-  inject,
-  ElementRef,
-} from '@angular/core';
+import { Injectable, OnInit, OnDestroy, ElementRef } from '@angular/core';
 import { BehaviorSubject, fromEvent, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { PlayerSettingsService } from './player-settings.service';
 
 @Injectable({ providedIn: 'root' })
-export class PlayerUIService implements OnInit, OnDestroy {
-  /** Injected settings service for persisting UI options */
-  private playerSettings = inject(PlayerSettingsService);
-
-  private playerControlsVisibilityTimeout: any;
-
-  readonly debuggerMenuVisible$ = new BehaviorSubject<boolean>(false);
-  readonly tagTimeMenuVisible$ = new BehaviorSubject<boolean>(false);
+export class FullScreenService implements OnInit, OnDestroy {
   readonly fullscreenEnabled$ = new BehaviorSubject<boolean>(false);
-  readonly uiControlsVisibility$ = new BehaviorSubject<boolean>(false);
 
   /** Reference to the video container element */
   private playerContainer: HTMLElement | null = null;
 
   /** Cleanup subject used for unsubscription */
   private readonly destroy$ = new Subject<void>();
-
-  preload() {
-    this.debuggerMenuVisible$.next(
-      this.playerSettings.currentSettings.enableDebugger,
-    );
-
-    this.tagTimeMenuVisible$.next(
-      this.playerSettings.currentSettings.timeTagEnabled,
-    );
-  }
 
   init(videoRef: ElementRef<HTMLElement>): void {
     const containerEl = videoRef?.nativeElement;
@@ -47,8 +22,6 @@ export class PlayerUIService implements OnInit, OnDestroy {
     }
 
     this.playerContainer = containerEl;
-
-    this.preload();
 
     // Subscribe to the native fullscreenchange event
     // and forward it to the fullscreenEnabled$ subject.
@@ -104,31 +77,12 @@ export class PlayerUIService implements OnInit, OnDestroy {
     }
   }
 
-  setDebuggerMenuVisible(v: boolean): void {
-    this.debuggerMenuVisible$.next(v);
-    this.playerSettings.updateSetting('enableDebugger', v);
-  }
-
-  triggerUIControlsVisibility(): void {
-    this.uiControlsVisibility$.next(true);
-    clearTimeout(this.playerControlsVisibilityTimeout);
-    this.playerControlsVisibilityTimeout = setTimeout(() => {
-      this.uiControlsVisibility$.next(false);
-    }, 3000);
-  }
-
-  setTagTimeMenuVisible(v: boolean): void {
-    this.tagTimeMenuVisible$.next(v);
-    this.playerSettings.updateSetting('timeTagEnabled', v);
-  }
-
   ngOnInit(): void {}
 
   /** Clean up subscriptions when the service is destroyed */
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    this.debuggerMenuVisible$.complete();
     this.fullscreenEnabled$.complete();
   }
 }

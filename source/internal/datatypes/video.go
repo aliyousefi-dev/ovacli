@@ -28,7 +28,7 @@ type VideoData struct {
 	Tags           []string    `json:"tags"`           // Tags for categorization and search
 	Codecs         VideoCodecs `json:"codecs"`         // Codec information
 	IsCooked       bool        `json:"isCooked"`       // Indicates if the video is processed (cooked)
-	OwnerAccountId string      `json:"ownerAccountId"` // ID of the owner account
+	UploaderID     string      `json:"uploaderId"`     // ID of the owner account
 	TotalViews     int         `json:"totalViews"`     // Total number of views
 	TotalDownloads int         `json:"totalDownloads"` // Total number of downloads
 	IsPublic       bool        `json:"isPublic"`       // Indicates if the video is public
@@ -43,7 +43,7 @@ func NewVideoData(title string, videoID string) VideoData {
 		VideoID:        videoID,
 		IsCooked:       true,
 		Tags:           []string{},
-		OwnerAccountId: "",
+		UploaderID:     "",
 		TotalViews:     0,
 		TotalDownloads: 0,
 		IsPublic:       true,

@@ -2,10 +2,10 @@ import { Injectable, ElementRef, OnDestroy, inject } from '@angular/core';
 import { BehaviorSubject, fromEvent, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Resolution } from '../data-types/resolution';
-import { PlayerSettingsService } from './player-settings.service';
+import { LocalStorageService } from './local-stroage.service';
 
 @Injectable({ providedIn: 'root' })
-export class PlayerStateService implements OnDestroy {
+export class StateService implements OnDestroy {
   readonly currentTime$ = new BehaviorSubject<number>(0);
   readonly currentTimepct$ = new BehaviorSubject<number>(0);
   readonly remainingTime$ = new BehaviorSubject<number>(0);
@@ -22,7 +22,7 @@ export class PlayerStateService implements OnDestroy {
     height: 0,
   });
 
-  private playerSettings = inject(PlayerSettingsService);
+  private playerSettings = inject(LocalStorageService);
 
   private readonly destroy$ = new Subject<void>();
   /** Holds the actual DOM `<video>` element after `init()` is called. */

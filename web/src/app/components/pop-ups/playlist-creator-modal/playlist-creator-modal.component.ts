@@ -11,9 +11,9 @@ import { AfterViewInit } from '@angular/core';
   imports: [CommonModule, FormsModule],
   templateUrl: './playlist-creator-modal.component.html',
 })
-export class PlaylistCreatorModal implements AfterViewInit {
+export class PlaylistCreatorModal {
   @ViewChild('playlistInput') playlistInput!: HTMLInputElement;
-  isVisible = false;
+  @ViewChild('dialog') dialog!: HTMLDialogElement;
   playlistName = '';
   creationError: string | null = null;
 
@@ -21,12 +21,6 @@ export class PlaylistCreatorModal implements AfterViewInit {
   @Output() cancelled = new EventEmitter<void>();
 
   constructor(private playlistApi: PlaylistAPIService) {}
-
-  ngAfterViewInit(): void {
-    if (this.isVisible) {
-      this.playlistInput?.focus();
-    }
-  }
 
   submit(): void {
     const trimmed = this.playlistName.trim();
@@ -40,7 +34,6 @@ export class PlaylistCreatorModal implements AfterViewInit {
           next: (res) => {
             if (res.status === 'success' && res.data) {
               this.created.emit(trimmed);
-              this.closeModal();
             } else {
               this.creationError = res.message;
             }
@@ -61,18 +54,12 @@ export class PlaylistCreatorModal implements AfterViewInit {
     }
   }
 
+  onConfirm() {}
+
   onCancel(): void {
     console.log('cancel');
     this.playlistName = '';
-    this.closeModal();
+    this.dialog.close();
     this.cancelled.emit();
-  }
-
-  openModal() {
-    this.isVisible = true;
-    console.log('open');
-  }
-  closeModal() {
-    this.isVisible = false;
   }
 }
