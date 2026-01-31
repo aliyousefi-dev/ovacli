@@ -158,6 +158,18 @@ export class StateService implements OnDestroy {
     this.interactionService.triggerStepBackwardIconVisibility();
   }
 
+  shiftStepForward() {
+    if (!this.videoEl) return;
+    this.seekToTime(this.videoEl.currentTime + this.configs.SHIFT_SEEK_STEP);
+    this.interactionService.triggerStepForwardIconVisibility();
+  }
+
+  shiftStepBackward() {
+    if (!this.videoEl) return;
+    this.seekToTime(this.videoEl.currentTime - this.configs.SHIFT_SEEK_STEP);
+    this.interactionService.triggerStepBackwardIconVisibility();
+  }
+
   /** Sets the volume (0 – 1). */
   setVolume(v: number): void {
     if (!this.videoEl) return;

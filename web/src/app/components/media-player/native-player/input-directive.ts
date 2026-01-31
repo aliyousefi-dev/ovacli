@@ -42,12 +42,20 @@ export class PlayerInputHostDirective {
     if (event.key === 'ArrowRight') {
       event.preventDefault();
       this.interactionService.triggerUIControlsVisibility();
-      this.stateService.stepForward();
+      if (event.shiftKey) {
+        this.stateService.shiftStepForward();
+      } else {
+        this.stateService.stepForward();
+      }
       return;
     } else if (event.key === 'ArrowLeft') {
       event.preventDefault();
-      this.stateService.stepBackward();
       this.interactionService.triggerUIControlsVisibility();
+      if (event.shiftKey) {
+        this.stateService.shiftStepBackward();
+      } else {
+        this.stateService.stepBackward();
+      }
       return;
     } // Arrow Keys for Volume Up/Down
 
