@@ -1,6 +1,6 @@
 // src/app/components/default-video-player/controls/play-pause-button/settings-button.component.ts
 
-import { Component, Input, ElementRef, OnInit, inject } from '@angular/core';
+import { Component, ElementRef, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StateService } from '../../../services/state.service';
 import { MenuService } from '../../../services/menu.service';

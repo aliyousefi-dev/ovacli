@@ -9,10 +9,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { VideoData } from '../../../ova-angular-sdk/core-types/video-data';
-import { VideoApiService } from '../../../ova-angular-sdk/rest-api/video-api.service';
-import { SavedApiService } from '../../../ova-angular-sdk/rest-api/saved-api.service';
-import { PlaylistAPIService } from '../../../ova-angular-sdk/rest-api/playlist-api.service';
-import { WatchedApiService } from '../../../ova-angular-sdk/rest-api/recent-api.service';
+
 import { VidstackPlayerComponent } from '../../components/media-player/vidstack-player/vidstack-player.component';
 import { NativePlayer } from '../../components/media-player/native-player/native-player';
 import { AppSettingsService } from '../../../app-settings/app-settings.service';
@@ -27,7 +24,7 @@ import { PlaylistContentAPIService } from '../../../ova-angular-sdk/rest-api/pla
 
 import { ViewChild } from '@angular/core';
 
-import { AssetMap } from '../../../ova-angular-sdk/rest-api/api-assets';
+import { OVASDK } from '../../../ova-angular-sdk/ova-sdk';
 
 @Component({
   selector: 'app-watch',
@@ -51,13 +48,10 @@ export class WatchPage implements AfterViewInit, OnInit {
 
   private appSettings = inject(AppSettingsService);
   private activatedRoute = inject(ActivatedRoute);
-  private savedApiService = inject(SavedApiService);
-  private videoApiService = inject(VideoApiService);
-  private playlistApiService = inject(PlaylistAPIService);
-  private watchedApiService = inject(WatchedApiService);
+  private ovaSdk = inject(OVASDK);
+
   private playlistContentApiService = inject(PlaylistContentAPIService);
   private cd = inject(ChangeDetectorRef);
-  private assetMap = inject(AssetMap);
 
   // true -> use vidstack player; false -> use native player
   useVidstack = true;
@@ -105,7 +99,7 @@ export class WatchPage implements AfterViewInit, OnInit {
   fetchVideo(videoId: string) {
     this.loading = true;
     this.error = false;
-    this.videoApiService.getVideoById(videoId).subscribe({
+    this.ovaSdk.videos.getVideoById(videoId).subscribe({
       next: (response) => {
         this.video = response.data;
         (window as any).video = this.video; // Consider removing this if not debugging
@@ -113,7 +107,7 @@ export class WatchPage implements AfterViewInit, OnInit {
         this.username = localStorage.getItem('username') ?? '';
 
         if (this.username && this.videoId) {
-          this.watchedApiService
+          this.ovaSdk.history
             .addUserWatched(this.username, this.videoId)
             .subscribe({
               next: () => {
@@ -137,15 +131,15 @@ export class WatchPage implements AfterViewInit, OnInit {
   }
 
   get videoUrl(): string {
-    return this.assetMap.stream(this.video.videoId);
+    return this.ovaSdk.assets.stream(this.video.videoId);
   }
 
   get thumbnailUrl(): string {
-    return this.assetMap.thumbnail(this.video.videoId);
+    return this.ovaSdk.assets.thumbnail(this.video.videoId);
   }
 
   get storyboardVttUrl(): string {
-    return this.assetMap.previewVtt(this.video.videoId);
+    return this.ovaSdk.assets.previewVtt(this.video.videoId);
   }
 
   toggleSaved() {
@@ -156,7 +150,7 @@ export class WatchPage implements AfterViewInit, OnInit {
     const done = () => (this.loadingSavedVideo = false);
 
     if (this.isSaved) {
-      this.savedApiService.removeUserSaved(this.videoId).subscribe({
+      this.ovaSdk.saved.removeUserSaved(this.videoId).subscribe({
         next: () => {
           this.isSaved = false;
           done();
@@ -164,7 +158,7 @@ export class WatchPage implements AfterViewInit, OnInit {
         error: () => done(),
       });
     } else {
-      this.savedApiService.addUserSaved(this.videoId).subscribe({
+      this.ovaSdk.saved.addUserSaved(this.videoId).subscribe({
         next: () => {
           this.isSaved = true;
           done();
@@ -178,7 +172,7 @@ export class WatchPage implements AfterViewInit, OnInit {
     event.stopPropagation();
     if (!this.username || !this.video) return;
 
-    this.playlistApiService.getUserPlaylists().subscribe((response) => {
+    this.ovaSdk.playlists.getUserPlaylists().subscribe((response) => {
       const pls = response.data.playlists;
       const checkList = pls.map((p) => ({ ...p, checked: false }));
 

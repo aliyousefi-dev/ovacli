@@ -14,11 +14,10 @@ import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SendtoModalComponent } from '../../pop-ups/sendto-modal/sendto-modal.component';
 
-import { VideoApiService } from '../../../../ova-angular-sdk/rest-api/video-api.service';
-import { SavedApiService } from '../../../../ova-angular-sdk/rest-api/saved-api.service';
 import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
 import { TagLinkComponent } from '../../utility/tag-link/tag-link.component';
-import { AssetMap } from '../../../../ova-angular-sdk/rest-api/api-assets';
+
+import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
 @Component({
   selector: 'app-video-card',
@@ -50,14 +49,9 @@ export class VideoCardComponent implements OnChanges, OnInit {
 
   playlistModalVisible = false;
 
-  private assetMap = inject(AssetMap);
-
-  constructor(
-    private savedapi: SavedApiService,
-    private videoapi: VideoApiService,
-    private router: Router,
-    private cd: ChangeDetectorRef,
-  ) {}
+  private ovaSdk = inject(OVASDK);
+  private router = inject(Router);
+  private cd = inject(ChangeDetectorRef);
 
   ngOnInit() {
     this.isSaved = this.video.userVideoStatus.isSaved;
@@ -133,7 +127,7 @@ export class VideoCardComponent implements OnChanges, OnInit {
     event.stopPropagation();
 
     if (this.isSaved) {
-      this.savedapi.removeUserSaved(this.video.videoId).subscribe({
+      this.ovaSdk.saved.removeUserSaved(this.video.videoId).subscribe({
         next: () => {
           this.isSaved = false;
           this.cd.detectChanges();
@@ -143,7 +137,7 @@ export class VideoCardComponent implements OnChanges, OnInit {
         },
       });
     } else {
-      this.savedapi.addUserSaved(this.video.videoId).subscribe({
+      this.ovaSdk.saved.addUserSaved(this.video.videoId).subscribe({
         next: () => {
           this.isSaved = true;
           this.cd.detectChanges();
@@ -157,7 +151,7 @@ export class VideoCardComponent implements OnChanges, OnInit {
 
   download(event: MouseEvent): void {
     event.stopPropagation();
-    const streamUrl = this.assetMap.download.full(this.video.videoId);
+    const streamUrl = this.ovaSdk.assets.download.full(this.video.videoId);
     const anchor = document.createElement('a');
     anchor.href = streamUrl;
     anchor.download = `${this.video.fileName}.mp4`;
@@ -167,11 +161,11 @@ export class VideoCardComponent implements OnChanges, OnInit {
   }
 
   getThumbnailUrl(): string {
-    return this.assetMap.thumbnail(this.video.videoId);
+    return this.ovaSdk.assets.thumbnail(this.video.videoId);
   }
 
   getPreviewUrl(): string {
-    return this.assetMap.preview(this.video.videoId);
+    return this.ovaSdk.assets.preview(this.video.videoId);
   }
 
   get videoQuality(): string {

@@ -1,12 +1,13 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
-import { PlaylistAPIService } from '../../../../ova-angular-sdk/rest-api/playlist-api.service';
 import { PlaylistGridComponent } from '../../containers/playlists-view/playlists-view.component';
 import { PlaylistCreatorModal } from '../../pop-ups/playlist-creator-modal/playlist-creator-modal.component';
 import { ConfirmModalComponent } from '../../pop-ups/confirm-modal/confirm-modal.component';
 import { PlaylistSummary } from '../../../../ova-angular-sdk/rest-api/api-types/playlist-response';
+
+import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
 @Component({
   selector: 'app-playlist-manager',
@@ -31,14 +32,14 @@ export class PlaylistManagerComponent implements OnInit {
   selectedPlaylists = new Set<string>();
   selectedPlaylistTitle: string | null = null;
 
-  constructor(private playlistApi: PlaylistAPIService) {}
+  private ovaSdk = inject(OVASDK);
 
   ngOnInit(): void {
     this.FetchPlaylists();
   }
 
   private FetchPlaylists(): void {
-    this.playlistApi.getUserPlaylists().subscribe({
+    this.ovaSdk.playlists.getUserPlaylists().subscribe({
       next: (response) => {
         this.playlists = response.data.playlists ?? [];
         this.sortPlaylists();
@@ -70,13 +71,13 @@ export class PlaylistManagerComponent implements OnInit {
 
   onDeleteButton() {
     this.confirmModal.open(
-      `Are you sure you want to delete all selected playlists? This action cannot be undone.`
+      `Are you sure you want to delete all selected playlists? This action cannot be undone.`,
     );
   }
 
   confirmDelete() {
     this.selectedPlaylists.forEach((playlist_slug) => {
-      this.playlistApi.deleteUserPlaylistBySlug(playlist_slug).subscribe({
+      this.ovaSdk.playlists.deleteUserPlaylistBySlug(playlist_slug).subscribe({
         next: () => {
           this.handlePlaylistDeleted(playlist_slug);
         },
@@ -92,7 +93,7 @@ export class PlaylistManagerComponent implements OnInit {
     this.selectedPlaylists.delete(deletedSlug);
     if (this.selectedPlaylistTitle) {
       const deletedPlaylist = this.playlists.find(
-        (pl) => pl.title === this.selectedPlaylistTitle
+        (pl) => pl.title === this.selectedPlaylistTitle,
       );
       if (!deletedPlaylist) {
         this.selectedPlaylistTitle = null;

@@ -1,7 +1,7 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { VideoApiService } from '../../../../ova-angular-sdk/rest-api/video-api.service';
+import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 import { TagChipComponent } from '../../../components/utility/tag-chip/tag-chip.component'; // Keep existing path for TagChipComponent
 
 @Component({
@@ -21,7 +21,7 @@ export class TagManagementPanelComponent {
   updatingTags = false;
   tagUpdateError = false;
 
-  constructor(private videoapi: VideoApiService) {}
+  private ovaSdk = inject(OVASDK);
 
   addTag() {
     const tag = this.newTag.trim();
@@ -35,7 +35,7 @@ export class TagManagementPanelComponent {
     this.updatingTags = true;
     this.tagUpdateError = false;
 
-    this.videoapi.addVideoTag(this.videoId, tag).subscribe({
+    this.ovaSdk.videos.addVideoTag(this.videoId, tag).subscribe({
       next: (res) => {
         this.tagsUpdated.emit(res.data.tags);
         this.newTag = '';
@@ -54,7 +54,7 @@ export class TagManagementPanelComponent {
     this.updatingTags = true;
     this.tagUpdateError = false;
 
-    this.videoapi.removeVideoTag(this.videoId, removedTag).subscribe({
+    this.ovaSdk.videos.removeVideoTag(this.videoId, removedTag).subscribe({
       next: (res) => {
         this.tagsUpdated.emit(res.data.tags);
         this.updatingTags = false;

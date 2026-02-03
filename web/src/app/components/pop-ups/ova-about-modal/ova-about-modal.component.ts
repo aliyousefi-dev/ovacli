@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common'; // <-- add this
 import { OvaLogoComponent } from '../../utility/ova-logo/ova-logo.component';
 

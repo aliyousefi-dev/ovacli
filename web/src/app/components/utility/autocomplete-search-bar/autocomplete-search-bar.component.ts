@@ -5,6 +5,7 @@ import {
   Output,
   OnInit,
   OnDestroy,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -19,8 +20,7 @@ import {
   catchError,
 } from 'rxjs';
 
-import { SearchApiService } from '../../../../ova-angular-sdk/rest-api/search-api.service';
-import { SuggestionApiService } from '../../../../ova-angular-sdk/rest-api/search-suggestion-api.service';
+import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
 @Component({
   selector: 'app-autocomplete-search-bar',
@@ -46,10 +46,7 @@ export class AutoCompleteSearchBarComponent implements OnInit, OnDestroy {
   private suggestionTermStream = new Subject<string>(); // Stream for suggestions (debounced)
   private suggestionSubscription!: Subscription;
 
-  constructor(
-    private searchApiService: SearchApiService,
-    private suggestionApiService: SuggestionApiService
-  ) {}
+  private ovaSdk = inject(OVASDK);
 
   ngOnInit() {
     this.currentValue = this.initialValue;
@@ -69,15 +66,15 @@ export class AutoCompleteSearchBarComponent implements OnInit, OnDestroy {
           this.loading = true;
           this.activeSuggestionIndex = -1;
 
-          return this.suggestionApiService.getSearchSuggestions(term).pipe(
+          return this.ovaSdk.searchSuggestion.getSearchSuggestions(term).pipe(
             map((response) => response.data.suggestions || []),
             catchError((error) => {
               console.error('Error fetching search suggestions:', error);
               this.loading = false;
               return of([]);
-            })
+            }),
           );
-        })
+        }),
       )
       .subscribe((results) => {
         this.suggestions = results;
@@ -106,7 +103,7 @@ export class AutoCompleteSearchBarComponent implements OnInit, OnDestroy {
     }
     const lowerCaseValue = this.currentValue.toLowerCase();
     this.filteredSuggestions = this.suggestions.filter((s) =>
-      s.toLowerCase().includes(lowerCaseValue)
+      s.toLowerCase().includes(lowerCaseValue),
     );
     // Hide suggestions if the input exactly matches one
     if (
@@ -145,7 +142,7 @@ export class AutoCompleteSearchBarComponent implements OnInit, OnDestroy {
       this.filteredSuggestions.length > 0
     ) {
       this.selectSuggestion(
-        this.filteredSuggestions[this.activeSuggestionIndex]
+        this.filteredSuggestions[this.activeSuggestionIndex],
       );
     } else {
       // If no suggestion is active, submit the current input value as a search

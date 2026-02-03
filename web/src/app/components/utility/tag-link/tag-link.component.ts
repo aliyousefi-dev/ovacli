@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 
@@ -11,7 +11,7 @@ import { RouterModule, Router } from '@angular/router';
 export class TagLinkComponent {
   @Input() tag!: string;
 
-  constructor(private router: Router) {}
+  private router = inject(Router);
 
   onClick() {
     this.router.navigate(['/search'], { queryParams: { tags: this.tag } });

@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UploadApiService } from '../../../ova-angular-sdk/rest-api/upload-api.service';
 import { HttpEventType } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
+
+import { OVASDK } from '../../../ova-angular-sdk/ova-sdk';
 
 // Define a structure to hold file and its upload status/progress
 interface UploadFile {
@@ -27,7 +28,7 @@ export class UploadPage {
   // This flag now only manages the sequential *upload* queue, not the processing queue.
   private isUploading = false;
 
-  constructor(private uploadApi: UploadApiService) {}
+  private ovaSdk = inject(OVASDK);
 
   // Helper to format file size
   formatSize(bytes: number, decimals: number = 2): string {
@@ -45,7 +46,7 @@ export class UploadPage {
 
     // Count completed or processing files as "done" for the overall progress bar
     const completedCount = this.selectedFiles.filter(
-      (f) => f.status === 'COMPLETED' || f.status === 'PROCESSING'
+      (f) => f.status === 'COMPLETED' || f.status === 'PROCESSING',
     ).length;
     const totalCount = this.selectedFiles.length;
 
@@ -58,7 +59,7 @@ export class UploadPage {
       (f) =>
         f.status === 'PENDING' ||
         f.status === 'UPLOADING' ||
-        f.status === 'FAILED'
+        f.status === 'FAILED',
     );
   }
 
@@ -126,7 +127,7 @@ export class UploadPage {
     }
 
     const fileToUpload = this.selectedFiles.find(
-      (f) => f.status === 'PENDING' || f.status === 'FAILED'
+      (f) => f.status === 'PENDING' || f.status === 'FAILED',
     );
 
     if (fileToUpload) {
@@ -140,7 +141,7 @@ export class UploadPage {
    */
   private startNextUpload(): void {
     const nextFile = this.selectedFiles.find(
-      (f) => f.status === 'PENDING' || f.status === 'FAILED'
+      (f) => f.status === 'PENDING' || f.status === 'FAILED',
     );
 
     if (nextFile) {
@@ -159,18 +160,18 @@ export class UploadPage {
     uploadFile.status = 'UPLOADING';
     uploadFile.progress = 0;
 
-    const subscription = this.uploadApi
+    const subscription = this.ovaSdk.upload
       .uploadVideo(uploadFile.file)
       .pipe(
         finalize(() => {
           uploadFile.uploadSub = null;
-        })
+        }),
       )
       .subscribe({
         next: (event) => {
           if (event.type === HttpEventType.UploadProgress && event.total) {
             uploadFile.progress = Math.round(
-              (event.loaded / event.total) * 100
+              (event.loaded / event.total) * 100,
             );
           } else if (event.type === HttpEventType.Response) {
             // 1. Upload complete, move to PROCESSING stage
@@ -181,7 +182,7 @@ export class UploadPage {
             this.startNextUpload();
 
             console.log(
-              `Upload complete, starting processing: ${uploadFile.file.name}`
+              `Upload complete, starting processing: ${uploadFile.file.name}`,
             );
             // 2. Start the processing timer (independent of the upload sequence)
             this.simulateProcessing(uploadFile);

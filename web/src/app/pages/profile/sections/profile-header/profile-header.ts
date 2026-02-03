@@ -1,8 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ClipboardModule } from '@angular/cdk/clipboard';
-import { ProfileApiService } from '../../../../../ova-angular-sdk/rest-api/profile-api.service';
 import { UserProfile } from '../../../../../ova-angular-sdk/core-types/user-profile';
+
+import { OVASDK } from '../../../../../ova-angular-sdk/ova-sdk';
 
 @Component({
   selector: 'app-space-header',
@@ -11,7 +12,7 @@ import { UserProfile } from '../../../../../ova-angular-sdk/core-types/user-prof
   templateUrl: './profile-header.html',
 })
 export class ProfileHeaderSection implements OnInit {
-  private profileApiService = inject(ProfileApiService);
+  private ovaSdk = inject(OVASDK);
   profile!: UserProfile;
   copied = false;
 
@@ -28,7 +29,7 @@ export class ProfileHeaderSection implements OnInit {
   }
 
   ngOnInit() {
-    this.profileApiService.getProfile().subscribe({
+    this.ovaSdk.profile.getProfile().subscribe({
       next: (profile) => {
         this.profile = profile;
       },

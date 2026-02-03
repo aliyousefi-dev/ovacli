@@ -1,13 +1,13 @@
 import { Injectable, OnInit, OnDestroy, inject } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { MarkerData } from '../data-types/marker-data';
-import { MarkerApiService } from '../../../../../ova-angular-sdk/rest-api/marker-api.service';
+import { OVASDK } from '../../../../../ova-angular-sdk/ova-sdk';
 
 @Injectable({ providedIn: 'root' })
 export class TimeTagService implements OnInit, OnDestroy {
   readonly timeTags$ = new BehaviorSubject<MarkerData[]>([]);
   private videoId: string = '';
-  private markerApi = inject(MarkerApiService);
+  private ovaSdk = inject(OVASDK);
 
   /** Cleanup subject used for unsubscription */
   private readonly destroy$ = new Subject<void>();
@@ -19,7 +19,7 @@ export class TimeTagService implements OnInit, OnDestroy {
 
   fetch() {
     if (this.videoId == '') return;
-    this.markerApi.getMarkers(this.videoId).subscribe((response) => {
+    this.ovaSdk.marker.getMarkers(this.videoId).subscribe((response) => {
       if (response.status === 'success') {
         const markers: MarkerData[] = Array.isArray(response.data?.markers)
           ? response.data.markers
@@ -37,7 +37,7 @@ export class TimeTagService implements OnInit, OnDestroy {
       label && label.trim().length > 0 ? label.trim() : `TimeTag at ${time}`;
     const finalDescription = 'No description';
 
-    this.markerApi
+    this.ovaSdk.marker
       .addMarker(this.videoId, {
         timeSecond: Math.trunc(time),
         label: finalLabel,

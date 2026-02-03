@@ -2,8 +2,8 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
-import { SuggestionApiService } from '../../../../ova-angular-sdk/rest-api/search-suggestion-api.service';
 import { SearchSuggestionsResponse } from '../../../../ova-angular-sdk/rest-api/api-types/searchsuggestions-response';
+import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
 @Component({
   selector: 'app-search-modal',
@@ -16,8 +16,7 @@ export class SearchModalComponent {
   query: string = '';
   private loadingTimeout: any;
   private router = inject(Router);
-
-  constructor(private suggestionService: SuggestionApiService) {}
+  private ovaSdk = inject(OVASDK);
 
   // This method will be called when the input changes
   onInput(): void {
@@ -34,7 +33,7 @@ export class SearchModalComponent {
   // Perform the search using SuggestionApiService
   search(): void {
     if (this.query.trim().length > 0) {
-      this.suggestionService.getSearchSuggestions(this.query).subscribe({
+      this.ovaSdk.searchSuggestion.getSearchSuggestions(this.query).subscribe({
         next: (response) => {
           this.searchResults = response.data;
         },
@@ -58,7 +57,7 @@ export class SearchModalComponent {
   // Close modal and clear the input after a short delay
   CloseModal(): void {
     const modal: HTMLDialogElement | null = document.getElementById(
-      'my_modal_2'
+      'my_modal_2',
     ) as HTMLDialogElement;
     if (modal && typeof modal.showModal === 'function') {
       modal.close(); // Close the modal

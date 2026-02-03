@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { VideoCardComponent } from '../../blocks/video-card/video-card.component';
 import { MiniVideoCardComponent } from '../../blocks/mini-video-card/mini-video-card.component';
 import { CommonModule } from '@angular/common';

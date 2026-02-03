@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 
 import { ConfirmModalComponent } from '../../components/pop-ups/confirm-modal/confirm-modal.component';
 
-import { WatchedApiService } from '../../../ova-angular-sdk/rest-api/recent-api.service';
 import { UserProfile } from '../../../ova-angular-sdk/core-types/user-profile';
-import { ProfileApiService } from '../../../ova-angular-sdk/rest-api/profile-api.service';
+
+import { OVASDK } from '../../../ova-angular-sdk/ova-sdk';
 
 // Define session type
 interface SessionEntry {
@@ -25,8 +25,7 @@ export class ProfileSettingsPage implements OnInit {
   @ViewChild('confirmClearHistoryModal')
   confirmClearHistoryModal!: ConfirmModalComponent;
 
-  private watchedApi = inject(WatchedApiService);
-  private profileApi = inject(ProfileApiService);
+  private ovaSdk = inject(OVASDK);
 
   activeTab: string = 'overview';
   username = '';
@@ -44,7 +43,7 @@ export class ProfileSettingsPage implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.profileApi.getProfile().subscribe({
+    this.ovaSdk.profile.getProfile().subscribe({
       next: (profile: UserProfile) => {
         this.username = profile.username;
       },
@@ -58,14 +57,14 @@ export class ProfileSettingsPage implements OnInit {
     if (!this.username) return;
 
     this.confirmClearHistoryModal.open(
-      'Are you sure you want to clear your entire watch history? This action cannot be undone.'
+      'Are you sure you want to clear your entire watch history? This action cannot be undone.',
     );
   }
 
   clearWatchHistory(): void {
     if (!this.username) return;
 
-    this.watchedApi.clearUserWatched(this.username).subscribe({
+    this.ovaSdk.history.clearUserWatched(this.username).subscribe({
       next: (response) => {
         console.log('Watch history cleared:', response.message);
         alert('Watch history cleared successfully!');

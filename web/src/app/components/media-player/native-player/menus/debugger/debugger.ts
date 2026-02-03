@@ -16,7 +16,6 @@ import { TimeTagService } from '../../services/time-tag.service';
   selector: 'app-debugger',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  // Assuming the template is full-screen-button.component.html or full-screen-button.html
   templateUrl: './debugger.html',
 })
 export class ScreenDebugger implements AfterViewInit, OnInit, OnDestroy {

@@ -10,11 +10,10 @@ import {
   map,
 } from 'rxjs';
 import { ActivatedRoute, Params } from '@angular/router';
-
 import { GalleryViewComponent } from '../../components/containers/gallery-view/gallery-view.component';
-import { SearchApiService } from '../../../ova-angular-sdk/rest-api/search-api.service';
 import { VideoData } from '../../../ova-angular-sdk/core-types/video-data';
-import { VideoApiService } from '../../../ova-angular-sdk/rest-api/video-api.service';
+
+import { OVASDK } from '../../../ova-angular-sdk/ova-sdk';
 
 @Component({
   selector: 'app-search',
@@ -23,8 +22,7 @@ import { VideoApiService } from '../../../ova-angular-sdk/rest-api/video-api.ser
   templateUrl: './search.page.html',
 })
 export class SearchPage implements OnInit, OnDestroy {
-  private videoApi = inject(VideoApiService);
-  private searchapi = inject(SearchApiService);
+  private ovaSdk = inject(OVASDK);
   private route = inject(ActivatedRoute);
 
   query: string = '';
@@ -58,7 +56,7 @@ export class SearchPage implements OnInit, OnDestroy {
           };
         }),
         distinctUntilChanged(
-          (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)
+          (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr),
         ),
         // Trigger the actual API search here based on URL query params
         switchMap((apiSearchState) => {
@@ -89,8 +87,8 @@ export class SearchPage implements OnInit, OnDestroy {
           }
 
           this.loading = true;
-          return this.searchapi.searchVideos(searchParams);
-        })
+          return this.ovaSdk.search.searchVideos(searchParams);
+        }),
       )
       .subscribe({
         next: (response) => {
@@ -98,7 +96,7 @@ export class SearchPage implements OnInit, OnDestroy {
             this.totalCount = response.data.result.totalVideos;
             this.totalPages = response.data.result.totalBuckets;
             // Fetch video data based on video IDs
-            this.videoApi
+            this.ovaSdk.videos
               .getVideosByIds(response.data.result.videoIds)
               .subscribe({
                 next: (videoDataResponse) => {

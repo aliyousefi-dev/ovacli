@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { SuggestionApiService } from '../../../../ova-angular-sdk/rest-api/search-suggestion-api.service';
 import { ApiSuccessResponse } from '../../../../ova-angular-sdk/rest-api/api-types/core-response';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ViewChild, ElementRef, HostListener } from '@angular/core';
+import { ViewChild, ElementRef } from '@angular/core';
+
+import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
 @Component({
   selector: 'app-search-bar',
@@ -18,10 +19,8 @@ export class SearchBarComponent {
   searchTerm: string = '';
   showSuggestions: boolean = false; // This will control the visibility of the suggestions dropdown and the overlay
 
-  constructor(
-    private suggestionApiService: SuggestionApiService,
-    private router: Router
-  ) {}
+  private ovaSdk = inject(OVASDK);
+  private router = inject(Router);
 
   focusSearch() {
     if (this.searchInput) {
@@ -34,7 +33,7 @@ export class SearchBarComponent {
     const query = (event.target as HTMLInputElement).value;
     if (query.length > 2) {
       // Trigger suggestions when user types 3 or more characters
-      this.suggestionApiService.getSearchSuggestions(query).subscribe(
+      this.ovaSdk.searchSuggestion.getSearchSuggestions(query).subscribe(
         (response: ApiSuccessResponse<{ suggestions: string[] }>) => {
           this.searchSuggestions = response.data.suggestions;
           this.showSuggestions = true; // Show suggestions and overlay
@@ -43,7 +42,7 @@ export class SearchBarComponent {
           console.error('Error fetching suggestions:', error);
           this.searchSuggestions = [];
           this.showSuggestions = false; // Hide suggestions if there's an error
-        }
+        },
       );
     } else {
       this.searchSuggestions = [];

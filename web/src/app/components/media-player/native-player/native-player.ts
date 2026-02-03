@@ -9,7 +9,6 @@ import {
   OnInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { VideoApiService } from '../../../../ova-angular-sdk/rest-api/video-api.service';
 import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
 import { PlayPauseButton } from './controls/buttons/play-pause-button/play-pause-button';
 import { VolumeButton } from './controls/volume-button/volume-button';
@@ -30,7 +29,7 @@ import { DisplayNearTimeTag } from './controls/display-near-time-tag/display-nea
 import { FullScreenService } from './services/fullscreen.service';
 import { InteractionService } from './services/interaction.service';
 
-import { AssetMap } from '../../../../ova-angular-sdk/rest-api/api-assets';
+import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
 import { PlayerInputHostDirective } from './input-directive';
 
@@ -71,14 +70,13 @@ export class NativePlayer implements AfterViewInit, OnInit, OnDestroy {
   private overlayTimeout: any;
   private tapTimeout: any;
 
-  private videoapi = inject(VideoApiService);
   private playerState = inject(StateService);
   private timeTagService = inject(TimeTagService);
   private scrubTimeline = inject(ScrubService);
   playerUi = inject(MenuService);
   fullscreenService = inject(FullScreenService);
   interactionService = inject(InteractionService);
-  private assetMap = inject(AssetMap);
+  private ovaSdk = inject(OVASDK);
 
   ngOnInit(): void {
     this.interactionService.uiControlsVisibility$.subscribe((visible) => {
@@ -110,10 +108,10 @@ export class NativePlayer implements AfterViewInit, OnInit, OnDestroy {
   }
 
   get videoUrl() {
-    return this.assetMap.stream(this.videoData.videoId);
+    return this.ovaSdk.assets.stream(this.videoData.videoId);
   }
   get thumbnailUrl() {
-    return this.assetMap.thumbnail(this.videoData.videoId);
+    return this.ovaSdk.assets.thumbnail(this.videoData.videoId);
   }
 
   ngOnDestroy() {

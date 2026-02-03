@@ -1,12 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { ApiSuccessResponse } from './api-types/core-response';
 
 import { VideoBucketContainer } from './api-types/video-bucket';
-
-import { OVASDKConfig } from '../global-config';
 
 import { ApiMap } from './api-map';
 
@@ -15,7 +12,6 @@ import { ApiMap } from './api-map';
 })
 export class WatchedApiService {
   private http = inject(HttpClient);
-  private config = inject(OVASDKConfig);
   private apiMap = inject(ApiMap);
 
   getUserWatched(

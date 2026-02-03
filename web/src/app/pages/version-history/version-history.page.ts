@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { VideoApiService } from '../../../ova-angular-sdk/rest-api/video-api.service';
 import { VideoData } from '../../../ova-angular-sdk/core-types/video-data';
 import { VidstackPlayerComponent } from '../../components/media-player/vidstack-player/vidstack-player.component';
+import { OVASDK } from '../../../ova-angular-sdk/ova-sdk';
 
 @Component({
   selector: 'app-version-history',
@@ -16,10 +16,9 @@ export class VersionHistoryPage implements OnInit {
   videoId: string | null = null; // Declare the videoId variable
   videodata!: VideoData;
 
-  constructor(
-    private route: ActivatedRoute,
-    private videoapi: VideoApiService
-  ) {}
+  private ovaSdk = inject(OVASDK);
+
+  constructor(private route: ActivatedRoute) {}
 
   ngOnInit(): void {
     // Access the videoId from the route parameter
@@ -31,7 +30,7 @@ export class VersionHistoryPage implements OnInit {
   }
 
   fetchVideo(videoId: string) {
-    this.videoapi.getVideoById(videoId).subscribe({
+    this.ovaSdk.videos.getVideoById(videoId).subscribe({
       next: (response) => {
         this.videodata = response.data;
       },

@@ -8,14 +8,12 @@ import {
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { VideoApiService } from '../../../../ova-angular-sdk/rest-api/video-api.service';
-import { PlaylistAPIService } from '../../../../ova-angular-sdk/rest-api/playlist-api.service';
 import { ConfirmModalComponent } from '../../pop-ups/confirm-modal/confirm-modal.component';
 import { EditPlaylistModalComponent } from '../../pop-ups/edit-playlist-modal/edit-playlist-modal.component';
 import { Router } from '@angular/router';
 import { PlaylistSummary } from '../../../../ova-angular-sdk/rest-api/api-types/playlist-response';
 
-import { AssetMap } from '../../../../ova-angular-sdk/rest-api/api-assets';
+import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
 @Component({
   selector: 'app-playlist-card',
@@ -36,13 +34,10 @@ export class PlaylistCardComponent implements OnInit {
   editTitle = '';
   editDescription = '';
 
-  private assetMap = inject(AssetMap);
+  private ovaSdk = inject(OVASDK);
+  private router = inject(Router);
 
-  constructor(
-    private videoapi: VideoApiService,
-    private playlistapi: PlaylistAPIService,
-    private router: Router,
-  ) {
+  constructor() {
     this.username = localStorage.getItem('username');
     if (!this.username) {
       console.warn('Username not found in localStorage');
@@ -57,7 +52,7 @@ export class PlaylistCardComponent implements OnInit {
       ? this.playlist.headVideoId
       : null;
 
-    return videoId ? this.assetMap.thumbnail(videoId) : '';
+    return videoId ? this.ovaSdk.assets.thumbnail(videoId) : '';
   }
 
   goToPlaylistContent() {
@@ -75,14 +70,16 @@ export class PlaylistCardComponent implements OnInit {
   }
 
   confirmDelete() {
-    this.playlistapi.deleteUserPlaylistBySlug(this.playlist.slug).subscribe({
-      next: () => {
-        this.playlistDeleted.emit(this.playlist.slug);
-      },
-      error: (err) => {
-        alert('Failed to delete playlist: ' + err.message);
-      },
-    });
+    this.ovaSdk.playlists
+      .deleteUserPlaylistBySlug(this.playlist.slug)
+      .subscribe({
+        next: () => {
+          this.playlistDeleted.emit(this.playlist.slug);
+        },
+        error: (err) => {
+          alert('Failed to delete playlist: ' + err.message);
+        },
+      });
   }
 
   onEdit() {
@@ -100,7 +97,7 @@ export class PlaylistCardComponent implements OnInit {
       alert('No user logged in.');
       return;
     }
-    this.playlistapi
+    this.ovaSdk.playlists
       .updateUserPlaylistInfo(this.playlist.slug, update)
       .subscribe({
         next: (res) => {

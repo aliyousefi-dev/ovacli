@@ -15,7 +15,7 @@ import 'vidstack/player/layouts/default';
 import 'vidstack/player/layouts/plyr';
 import 'vidstack/icons';
 
-import { AssetMap } from '../../../../ova-angular-sdk/rest-api/api-assets';
+import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
 import {
   defineCustomElement,
@@ -25,7 +25,6 @@ import {
 defineCustomElement(MediaSliderThumbnailElement);
 
 import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
-import { VideoApiService } from '../../../../ova-angular-sdk/rest-api/video-api.service';
 
 @Component({
   selector: 'app-vidstack-player',
@@ -42,8 +41,7 @@ export class VidstackPlayerComponent implements AfterViewInit {
 
   isFullscreenOverlay = false;
 
-  private videoapi = inject(VideoApiService);
-  private assetMap = inject(AssetMap);
+  private ovaSdk = inject(OVASDK);
 
   ngAfterViewInit(): void {
     const updateOverlay = () => {
@@ -61,14 +59,14 @@ export class VidstackPlayerComponent implements AfterViewInit {
   }
 
   get videoUrl(): string {
-    return this.assetMap.stream(this.videoData.videoId);
+    return this.ovaSdk.assets.stream(this.videoData.videoId);
   }
 
   get thumbnailUrl(): string {
-    return this.assetMap.thumbnail(this.videoData.videoId);
+    return this.ovaSdk.assets.thumbnail(this.videoData.videoId);
   }
 
   get ScrubThumbsUrl(): string {
-    return this.assetMap.previewVtt(this.videoData.videoId);
+    return this.ovaSdk.assets.previewVtt(this.videoData.videoId);
   }
 }

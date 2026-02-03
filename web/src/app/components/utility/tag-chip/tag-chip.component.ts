@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { VideoApiService } from '../../../../ova-angular-sdk/rest-api/video-api.service';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
+import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
 @Component({
   selector: 'app-tag-chip',
@@ -14,7 +14,7 @@ export class TagChipComponent {
   removing = false;
   removeError = false;
 
-  constructor(private videoApi: VideoApiService) {}
+  private ovaSdk = inject(OVASDK);
 
   removeTag() {
     if (!this.videoId) return;
@@ -22,7 +22,7 @@ export class TagChipComponent {
     this.removing = true;
     this.removeError = false;
 
-    this.videoApi.removeVideoTag(this.videoId, this.tag).subscribe({
+    this.ovaSdk.videos.removeVideoTag(this.videoId, this.tag).subscribe({
       next: (res) => {
         this.removing = false;
         this.removed.emit(this.tag); // notify parent that removal succeeded

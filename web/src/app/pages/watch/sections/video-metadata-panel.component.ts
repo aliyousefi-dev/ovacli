@@ -1,7 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { VideoApiService } from '../../../../ova-angular-sdk/rest-api/video-api.service';
 
 @Component({
   selector: 'app-video-metadata-panel',
@@ -15,8 +13,6 @@ export class VideoMetadataPanelComponent {
   @Input() videoDurationSeconds?: number;
   @Input() videoUploadedAt?: string;
   @Input() videoResolution?: { width: number; height: number };
-
-  constructor(private videoApi: VideoApiService) {}
 
   formatDuration(seconds: number): string {
     const h = Math.floor(seconds / 3600);

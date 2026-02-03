@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { GraphPage } from './pages/graph/graph.page';
-import { AuthGuard } from '../ova-angular-sdk/middleware/auth.guard';
 import { GlobalPage } from './pages/global/global.page';
 import { HistoryPage } from './pages/history/history.page';
 import { ProfilePage } from './pages/profile/profile.page';

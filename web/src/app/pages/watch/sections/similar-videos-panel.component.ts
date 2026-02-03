@@ -8,7 +8,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
 import { Router } from '@angular/router';
-import { SearchApiService } from '../../../../ova-angular-sdk/rest-api/search-api.service';
+import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
 @Component({
   selector: 'app-similar-videos-panel', // Changed selector
@@ -25,7 +25,7 @@ export class SimilarVideosPanelComponent implements OnChanges {
   similarVideosLoading = false;
   similarVideosError = false;
 
-  private searchApi = inject(SearchApiService);
+  private ovaSdk = inject(OVASDK);
   private router = inject(Router);
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -39,7 +39,7 @@ export class SimilarVideosPanelComponent implements OnChanges {
     this.similarVideosError = false;
     this.similarVideos = []; // Clear previous similar videos
 
-    this.searchApi.getSimilarVideos(videoId).subscribe({
+    this.ovaSdk.search.getSimilarVideos(videoId).subscribe({
       next: (res) => {
         this.similarVideos = res.data.similarVideos || [];
         this.similarVideosLoading = false;

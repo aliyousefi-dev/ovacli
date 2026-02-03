@@ -5,13 +5,15 @@ import {
   EventEmitter,
   OnChanges,
   SimpleChanges,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { PlaylistContentAPIService } from '../../../../ova-angular-sdk/rest-api/playlist-content-api.service';
-import { PlaylistAPIService } from '../../../../ova-angular-sdk/rest-api/playlist-api.service';
+
 import { PlaylistSummary } from '../../../../ova-angular-sdk/rest-api/api-types/playlist-response';
+
+import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
 // Define PlaylistWrapper interface outside the component class
 export interface PlaylistWrapper extends PlaylistSummary {
@@ -38,11 +40,8 @@ export class SendtoModalComponent implements OnChanges {
 
   private username: string | null = null; // Internal property to store the fetched username
 
-  constructor(
-    private router: Router,
-    private playlistapi: PlaylistAPIService,
-    private playlistContentAPI: PlaylistContentAPIService
-  ) {}
+  private ovaSdk = inject(OVASDK);
+  private router = inject(Router);
 
   // ngOnChanges will detect changes to input properties
   ngOnChanges(changes: SimpleChanges): void {
@@ -70,7 +69,7 @@ export class SendtoModalComponent implements OnChanges {
     if (!this.username || !this.selectedVideoId) return;
 
     this.loading = true; // start loading
-    this.playlistapi.getUserPlaylists().subscribe({
+    this.ovaSdk.playlists.getUserPlaylists().subscribe({
       next: (response) => {
         const pls = response.data.playlists;
 
@@ -83,12 +82,12 @@ export class SendtoModalComponent implements OnChanges {
           checkList.map(
             (playlist) =>
               new Promise<void>((resolve) => {
-                this.playlistContentAPI
+                this.ovaSdk.playlistContent
                   .fetchPlaylistContent(playlist.slug)
                   .subscribe({
                     next: (plData) => {
                       playlist.checked = plData.data.videoIds.includes(
-                        this.selectedVideoId
+                        this.selectedVideoId,
                       );
                       resolve();
                     },
@@ -97,8 +96,8 @@ export class SendtoModalComponent implements OnChanges {
                       resolve();
                     },
                   });
-              })
-          )
+              }),
+          ),
         ).then(() => {
           this.playlists = checkList;
           this.originalPlaylists = checkList.map((p) => ({ ...p }));
@@ -125,7 +124,7 @@ export class SendtoModalComponent implements OnChanges {
   save(): void {
     if (!this.username || !this.selectedVideoId) {
       console.error(
-        'Username or selectedVideoId is missing for saving playlists.'
+        'Username or selectedVideoId is missing for saving playlists.',
       );
       this.close.emit(); // Close modal even if data is missing
       return;
@@ -133,7 +132,7 @@ export class SendtoModalComponent implements OnChanges {
 
     this.playlists.forEach((playlist) => {
       const original = this.originalPlaylists.find(
-        (p) => p.slug === playlist.slug
+        (p) => p.slug === playlist.slug,
       );
 
       if (!original) {
@@ -143,33 +142,33 @@ export class SendtoModalComponent implements OnChanges {
 
       // If playlist is now checked but was not originally, add the video
       if (playlist.checked && !original.checked) {
-        this.playlistContentAPI
+        this.ovaSdk.playlistContent
           .addVideoToPlaylist(playlist.slug, this.selectedVideoId) // Cast to string
           .subscribe({
             next: () =>
               console.log(
-                `Added video ${this.selectedVideoId} to playlist ${playlist.slug}`
+                `Added video ${this.selectedVideoId} to playlist ${playlist.slug}`,
               ),
             error: (err) =>
               console.error(
                 `Error adding video to playlist ${playlist.slug}:`,
-                err
+                err,
               ),
           });
       }
       // If playlist is now unchecked but was originally checked, remove the video
       else if (!playlist.checked && original.checked) {
-        this.playlistContentAPI
+        this.ovaSdk.playlistContent
           .deleteVideoFromPlaylist(playlist.slug, this.selectedVideoId)
           .subscribe({
             next: () =>
               console.log(
-                `Removed video ${this.selectedVideoId} from playlist ${playlist.slug}`
+                `Removed video ${this.selectedVideoId} from playlist ${playlist.slug}`,
               ),
             error: (err) =>
               console.error(
                 `Error removing video from playlist ${playlist.slug}:`,
-                err
+                err,
               ),
           });
       }

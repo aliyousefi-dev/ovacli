@@ -1,13 +1,6 @@
 // src/app/components/default-video-player/controls/full-screen-button/full-screen-button.component.ts
 
-import {
-  Component,
-  Input,
-  ElementRef,
-  OnInit,
-  OnDestroy,
-  inject,
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FullScreenService } from '../../../services/fullscreen.service';

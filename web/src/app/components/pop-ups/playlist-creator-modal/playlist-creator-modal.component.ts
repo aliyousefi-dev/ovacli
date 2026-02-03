@@ -1,7 +1,9 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PlaylistAPIService } from '../../../../ova-angular-sdk/rest-api/playlist-api.service';
+
+import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
+
 import { ViewChild } from '@angular/core';
 
 @Component({
@@ -19,12 +21,12 @@ export class PlaylistCreatorModal {
   @Output() created = new EventEmitter<string>();
   @Output() cancelled = new EventEmitter<void>();
 
-  constructor(private playlistApi: PlaylistAPIService) {}
+  private ovaSdk = inject(OVASDK);
 
   submit(): void {
     const trimmed = this.playlistName.trim();
     if (trimmed) {
-      this.playlistApi
+      this.ovaSdk.playlists
         .createUserPlaylist({
           title: trimmed,
           videoIds: [],

@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { GlobalFiltersApiService } from '../../../../ova-angular-sdk/rest-api/global-filters-api.service';
+import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 import { GlobalFilter } from '../../../../ova-angular-sdk/rest-api/api-types/global-filter';
 
 @Component({
@@ -11,11 +11,11 @@ import { GlobalFilter } from '../../../../ova-angular-sdk/rest-api/api-types/glo
   templateUrl: './global-filters.html',
 })
 export class GlobalFilters implements OnInit {
-  private filterapi = inject(GlobalFiltersApiService);
+  private ovaSdk = inject(OVASDK);
   filters: GlobalFilter[] = [];
 
   ngOnInit() {
-    this.filterapi.getGlobalFilters().subscribe({
+    this.ovaSdk.globalFilters.getGlobalFilters().subscribe({
       next: (response) => {
         this.filters = response.data;
       },

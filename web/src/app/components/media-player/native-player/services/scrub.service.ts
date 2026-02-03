@@ -1,9 +1,9 @@
 import { Injectable, OnInit, OnDestroy, inject } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { StateService } from './state.service';
-import { ScrubThumbApiService } from '../../../../../ova-angular-sdk/rest-api/scrub-thumb-api.service';
 import { ScrubThumbStream } from '../data-types/scrub-thumb-data';
 import { TimeTagService } from './time-tag.service';
+import { OVASDK } from '../../../../../ova-angular-sdk/ova-sdk';
 
 @Injectable({ providedIn: 'root' })
 export class ScrubService implements OnInit, OnDestroy {
@@ -17,18 +17,16 @@ export class ScrubService implements OnInit, OnDestroy {
   );
 
   private playerState = inject(StateService);
-  private scrubThumbApiService = inject(ScrubThumbApiService);
+  private ovaSdk = inject(OVASDK);
   private timeTag = inject(TimeTagService);
 
   /** Cleanup subject used for unsubscription */
   private readonly destroy$ = new Subject<void>();
 
   init(videoId: string): void {
-    this.scrubThumbApiService
-      .loadScrubThumbnails(videoId)
-      .subscribe((thumbnails) => {
-        this.scrubThumbStream$.next(thumbnails);
-      });
+    this.ovaSdk.scrub.loadScrubThumbnails(videoId).subscribe((thumbnails) => {
+      this.scrubThumbStream$.next(thumbnails);
+    });
 
     this.playerState.currentTime$.subscribe((t) => {
       const label = this.findNearestTimeTagLabel(t);

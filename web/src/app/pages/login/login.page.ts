@@ -2,7 +2,9 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router'; // Import Router for navigation
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AuthApiService } from '../../../ova-angular-sdk/rest-api/auth-api.service';
+
+import { OVASDK } from '../../../ova-angular-sdk/ova-sdk';
+
 import { ApiErrorResponse } from '../../../ova-angular-sdk/rest-api/api-types/core-response';
 
 @Component({
@@ -13,7 +15,7 @@ import { ApiErrorResponse } from '../../../ova-angular-sdk/rest-api/api-types/co
   styleUrl: 'login.page.css',
 })
 export class LoginPage {
-  private authApiService = inject(AuthApiService);
+  private ovaSdk = inject(OVASDK);
   private router = inject(Router);
 
   loading: boolean = false;
@@ -31,7 +33,7 @@ export class LoginPage {
 
     this.loading = true;
 
-    this.authApiService.login(this.username, this.password).subscribe({
+    this.ovaSdk.auth.login(this.username, this.password).subscribe({
       next: (res) => {
         if (res.status === 'success') {
           // Navigate to /home after successful login
