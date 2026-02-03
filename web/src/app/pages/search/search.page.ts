@@ -10,7 +10,7 @@ import {
   map,
 } from 'rxjs';
 import { ActivatedRoute, Params } from '@angular/router';
-import { GalleryViewComponent } from '../../components/containers/gallery-view/gallery-view.component';
+import { GalleryViewComponent } from '../../components/gallery/gallery-view/gallery-view.component';
 import { VideoData } from '../../../ova-angular-sdk/core-types/video-data';
 
 import { OVASDK } from '../../../ova-angular-sdk/ova-sdk';

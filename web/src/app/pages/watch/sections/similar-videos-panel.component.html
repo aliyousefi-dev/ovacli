@@ -30,7 +30,7 @@
     <div class="group cursor-pointer transition-transform hover:scale-[1.02] rounded overflow-hidden"
       (click)="navigateToVideo(sv.videoId)">
       <div class="aspect-video w-full bg-base-300 rounded overflow-hidden">
-        <img [src]="videoapi.getThumbnailUrl(sv.videoId)" [alt]="sv.fileName"
+        <img [src]="ovaSdk.assets.thumbnail(sv.videoId)" [alt]="sv.fileName"
           class="w-full h-full object-cover group-hover:brightness-90 transition" />
       </div>
       <div class="mt-2 text-[0.7rem] sm:text-xs font-medium truncate" [title]="sv.fileName">

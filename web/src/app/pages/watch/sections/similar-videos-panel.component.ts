@@ -25,7 +25,7 @@ export class SimilarVideosPanelComponent implements OnChanges {
   similarVideosLoading = false;
   similarVideosError = false;
 
-  private ovaSdk = inject(OVASDK);
+  ovaSdk = inject(OVASDK);
   private router = inject(Router);
 
   ngOnChanges(changes: SimpleChanges): void {

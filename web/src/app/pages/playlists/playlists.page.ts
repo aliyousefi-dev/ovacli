@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { PlaylistManagerComponent } from '../../components/manager/playlist-manager/playlist-manager.component';
+import { PlaylistManagerComponent } from '../../components/playlist/playlist-manager/playlist-manager.component';
 
 @Component({
   selector: 'app-playlists',

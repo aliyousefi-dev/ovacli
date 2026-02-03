@@ -1,7 +1,7 @@
 import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { SendtoModalComponent } from '../../../components/pop-ups/sendto-modal/sendto-modal.component';
+import { SendtoModalComponent } from '../../../components/etc/sendto-modal/sendto-modal.component';
 import { RouterModule } from '@angular/router';
 
 import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';

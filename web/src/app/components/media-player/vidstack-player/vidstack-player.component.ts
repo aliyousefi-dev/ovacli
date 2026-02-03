@@ -16,6 +16,7 @@ import 'vidstack/player/layouts/plyr';
 import 'vidstack/icons';
 
 import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
+import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
 
 import {
   defineCustomElement,
@@ -23,8 +24,6 @@ import {
 } from 'vidstack/elements';
 
 defineCustomElement(MediaSliderThumbnailElement);
-
-import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
 
 @Component({
   selector: 'app-vidstack-player',

@@ -7,9 +7,9 @@ import { MobileDockComponent } from '../panels/mobile-dock/mobile-dock.component
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { SearchModalComponent } from '../components/pop-ups/search-modal/search-modal';
-import { PlaylistCreatorModal } from '../components/pop-ups/playlist-creator-modal/playlist-creator-modal.component';
-import { SettingsModalComponent } from '../components/pop-ups/setting-modal/settings-modal.component';
+import { SearchModalComponent } from '../components/etc/search-modal/search-modal';
+import { PlaylistCreatorModal } from '../components/playlist/playlist-creator-modal/playlist-creator-modal.component';
+import { SettingsModalComponent } from '../components/settings/setting-modal/settings-modal.component';
 
 @Component({
   selector: 'app-root',

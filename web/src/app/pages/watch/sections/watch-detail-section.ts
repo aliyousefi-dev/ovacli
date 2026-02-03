@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { TagLinkComponent } from '../../../components/utility/tag-link/tag-link.component';
+import { TagLinkComponent } from '../../../components/etc/tag-link/tag-link.component';
 import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
 
 @Component({

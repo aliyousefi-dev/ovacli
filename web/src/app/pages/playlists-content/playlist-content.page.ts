@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { GalleryFetcherComponent } from '../../components/manager/gallery-fetcher/gallery-fetcher.component';
+import { GalleryFetcherComponent } from '../../components/gallery/gallery-fetcher/gallery-fetcher.component';
 
 @Component({
   selector: 'app-playlist-detail',
@@ -11,7 +11,10 @@ import { GalleryFetcherComponent } from '../../components/manager/gallery-fetche
   templateUrl: './playlist-content.page.html',
 })
 export class PlaylistContentPage implements OnInit {
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+  ) {}
   playlistTitle = '';
 
   ngOnInit() {

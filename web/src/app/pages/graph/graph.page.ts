@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GraphCanvas } from '../../node-editor/graph-canvas';
+import { GraphCanvas } from '../../components/node-editor/graph-canvas';
 
 @Component({
   selector: 'app-graph-page',

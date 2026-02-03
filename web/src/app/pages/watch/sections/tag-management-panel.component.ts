@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
-import { TagChipComponent } from '../../../components/utility/tag-chip/tag-chip.component'; // Keep existing path for TagChipComponent
+import { TagChipComponent } from '../../../components/etc/tag-chip/tag-chip.component';
 
 @Component({
   selector: 'app-tag-management-panel', // Changed selector

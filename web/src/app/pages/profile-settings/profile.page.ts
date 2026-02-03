@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { ConfirmModalComponent } from '../../components/pop-ups/confirm-modal/confirm-modal.component';
+import { ConfirmModalComponent } from '../../components/etc/confirm-modal/confirm-modal.component';
 
 import { UserProfile } from '../../../ova-angular-sdk/core-types/user-profile';
 

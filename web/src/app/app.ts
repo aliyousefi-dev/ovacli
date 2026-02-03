@@ -10,7 +10,7 @@ import {
 } from '@angular/router';
 import { LoadingService } from '../services/loading.service';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { DeleteAlert } from './components/pop-ups/delete-alert/delete-alert';
+import { DeleteAlert } from './components/etc/delete-alert/delete-alert';
 
 @Component({
   selector: 'app-root',
