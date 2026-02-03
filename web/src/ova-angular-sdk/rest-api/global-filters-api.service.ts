@@ -5,21 +5,17 @@ import { GlobalFilter } from './api-types/global-filter';
 
 import { ApiSuccessResponse } from './api-types/core-response';
 
-import { OVASDKConfig } from '../global-config';
+import { ApiMap } from './api-map';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GlobalFiltersApiService {
   private http = inject(HttpClient);
-  private config = inject(OVASDKConfig);
+  private apiMap = inject(ApiMap);
 
   getGlobalFilters(): Observable<ApiSuccessResponse<GlobalFilter[]>> {
-    const url = this.getGlobalFiltersUrl();
+    const url = this.apiMap.videos.filters();
     return this.http.get<ApiSuccessResponse<GlobalFilter[]>>(url);
-  }
-
-  getGlobalFiltersUrl(): string {
-    return `${this.config.apiBaseUrl}/videos/global/filters`;
   }
 }

@@ -27,6 +27,8 @@ import { PlaylistContentAPIService } from '../../../ova-angular-sdk/rest-api/pla
 
 import { ViewChild } from '@angular/core';
 
+import { AssetMap } from '../../../ova-angular-sdk/rest-api/api-assets';
+
 @Component({
   selector: 'app-watch',
   standalone: true,
@@ -55,6 +57,7 @@ export class WatchPage implements AfterViewInit, OnInit {
   private watchedApiService = inject(WatchedApiService);
   private playlistContentApiService = inject(PlaylistContentAPIService);
   private cd = inject(ChangeDetectorRef);
+  private assetMap = inject(AssetMap);
 
   // true -> use vidstack player; false -> use native player
   useVidstack = true;
@@ -134,15 +137,15 @@ export class WatchPage implements AfterViewInit, OnInit {
   }
 
   get videoUrl(): string {
-    return this.videoApiService.getStreamUrl(this.video.videoId);
+    return this.assetMap.stream(this.video.videoId);
   }
 
   get thumbnailUrl(): string {
-    return this.videoApiService.getThumbnailUrl(this.video.videoId);
+    return this.assetMap.thumbnail(this.video.videoId);
   }
 
   get storyboardVttUrl(): string {
-    return this.videoApiService.getPreviewThumbsUrl(this.video.videoId);
+    return this.assetMap.previewVtt(this.video.videoId);
   }
 
   toggleSaved() {
@@ -187,12 +190,12 @@ export class WatchPage implements AfterViewInit, OnInit {
                 .fetchPlaylistContent(playlist.slug)
                 .subscribe((plData) => {
                   playlist.checked = plData.data.videoIds.includes(
-                    this.video.videoId
+                    this.video.videoId,
                   );
                   resolve();
                 });
-            })
-        )
+            }),
+        ),
       ).then(() => {
         this.playlists = checkList;
         this.originalPlaylists = checkList.map((p) => ({ ...p }));
@@ -203,14 +206,14 @@ export class WatchPage implements AfterViewInit, OnInit {
   }
 
   closePlaylistModal(
-    updatedPlaylists: { title: string; slug: string; checked: boolean }[]
+    updatedPlaylists: { title: string; slug: string; checked: boolean }[],
   ) {
     this.playlistModalVisible = false;
     if (!this.username || !this.video) return;
 
     updatedPlaylists.forEach((playlist) => {
       const original = this.originalPlaylists.find(
-        (p) => p.slug === playlist.slug
+        (p) => p.slug === playlist.slug,
       );
       if (!original) return;
 

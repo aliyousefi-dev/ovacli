@@ -12,19 +12,13 @@ import { VideoData } from '../../../ova-angular-sdk/core-types/video-data';
 import { VideoApiService } from '../../../ova-angular-sdk/rest-api/video-api.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MiniVideoCardComponent } from '../../components/blocks/mini-video-card/mini-video-card.component';
 
 import { ProfileHeaderSection } from './sections/profile-header/profile-header';
 
 @Component({
   selector: 'app-profile-page',
   standalone: true,
-  imports: [
-    ProfileHeaderSection,
-    FormsModule,
-    CommonModule,
-    MiniVideoCardComponent,
-  ],
+  imports: [ProfileHeaderSection, FormsModule, CommonModule],
   templateUrl: './profile.page.html',
 })
 export class ProfilePage implements OnInit, AfterViewInit, OnDestroy {
@@ -49,7 +43,7 @@ export class ProfilePage implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private videoapi: VideoApiService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit() {

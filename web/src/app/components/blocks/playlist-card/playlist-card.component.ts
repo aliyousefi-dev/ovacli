@@ -4,7 +4,7 @@ import {
   Output,
   EventEmitter,
   OnInit,
-  ElementRef,
+  inject,
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -14,6 +14,8 @@ import { ConfirmModalComponent } from '../../pop-ups/confirm-modal/confirm-modal
 import { EditPlaylistModalComponent } from '../../pop-ups/edit-playlist-modal/edit-playlist-modal.component';
 import { Router } from '@angular/router';
 import { PlaylistSummary } from '../../../../ova-angular-sdk/rest-api/api-types/playlist-response';
+
+import { AssetMap } from '../../../../ova-angular-sdk/rest-api/api-assets';
 
 @Component({
   selector: 'app-playlist-card',
@@ -34,10 +36,12 @@ export class PlaylistCardComponent implements OnInit {
   editTitle = '';
   editDescription = '';
 
+  private assetMap = inject(AssetMap);
+
   constructor(
     private videoapi: VideoApiService,
     private playlistapi: PlaylistAPIService,
-    private router: Router
+    private router: Router,
   ) {
     this.username = localStorage.getItem('username');
     if (!this.username) {
@@ -53,7 +57,7 @@ export class PlaylistCardComponent implements OnInit {
       ? this.playlist.headVideoId
       : null;
 
-    return videoId ? this.videoapi.getThumbnailUrl(videoId) : '';
+    return videoId ? this.assetMap.thumbnail(videoId) : '';
   }
 
   goToPlaylistContent() {
@@ -66,7 +70,7 @@ export class PlaylistCardComponent implements OnInit {
       return;
     }
     this.confirmModal.open(
-      `Are you sure you want to delete the playlist "${this.playlist.title}"? This action cannot be undone.`
+      `Are you sure you want to delete the playlist "${this.playlist.title}"? This action cannot be undone.`,
     );
   }
 

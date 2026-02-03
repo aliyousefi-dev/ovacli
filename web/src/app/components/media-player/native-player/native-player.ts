@@ -30,6 +30,8 @@ import { DisplayNearTimeTag } from './controls/display-near-time-tag/display-nea
 import { FullScreenService } from './services/fullscreen.service';
 import { InteractionService } from './services/interaction.service';
 
+import { AssetMap } from '../../../../ova-angular-sdk/rest-api/api-assets';
+
 import { PlayerInputHostDirective } from './input-directive';
 
 @Component({
@@ -76,6 +78,7 @@ export class NativePlayer implements AfterViewInit, OnInit, OnDestroy {
   playerUi = inject(MenuService);
   fullscreenService = inject(FullScreenService);
   interactionService = inject(InteractionService);
+  private assetMap = inject(AssetMap);
 
   ngOnInit(): void {
     this.interactionService.uiControlsVisibility$.subscribe((visible) => {
@@ -107,10 +110,10 @@ export class NativePlayer implements AfterViewInit, OnInit, OnDestroy {
   }
 
   get videoUrl() {
-    return this.videoapi.getStreamUrl(this.videoData.videoId);
+    return this.assetMap.stream(this.videoData.videoId);
   }
   get thumbnailUrl() {
-    return this.videoapi.getThumbnailUrl(this.videoData.videoId);
+    return this.assetMap.thumbnail(this.videoData.videoId);
   }
 
   ngOnDestroy() {

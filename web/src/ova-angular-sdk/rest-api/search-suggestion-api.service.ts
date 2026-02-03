@@ -5,23 +5,26 @@ import { Observable } from 'rxjs';
 import { ApiSuccessResponse } from './api-types/core-response';
 
 import { SearchSuggestionsResponse } from './api-types/searchsuggestions-response';
-import { OVASDKConfig } from '../global-config';
+
+import { ApiMap } from './api-map';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SuggestionApiService {
   private http = inject(HttpClient);
-  private config = inject(OVASDKConfig);
+
+  private apiMap = inject(ApiMap);
 
   getSearchSuggestions(
-    query: string
+    query: string,
   ): Observable<ApiSuccessResponse<SearchSuggestionsResponse>> {
-    const params = { query }; // The query parameter to send in the request body
+    const url = this.apiMap.search.suggestions();
+    const body = { query };
 
     return this.http.post<ApiSuccessResponse<SearchSuggestionsResponse>>(
-      `${this.config.apiBaseUrl}/search/suggestions`,
-      params
+      url,
+      body,
     );
   }
 }

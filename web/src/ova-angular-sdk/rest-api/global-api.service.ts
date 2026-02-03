@@ -5,25 +5,21 @@ import { VideoBucketContainer } from './api-types/video-bucket';
 
 import { ApiSuccessResponse } from './api-types/core-response';
 
-import { OVASDKConfig } from '../global-config';
+import { ApiMap } from './api-map';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GlobalVideosService {
   private http = inject(HttpClient);
-  private config = inject(OVASDKConfig);
+  private apiMap = inject(ApiMap);
 
   // Fetch the latest videos based on the specified bucket
   fetchGlobalVideos(
-    bucket: number = 1
+    bucket: number = 1,
   ): Observable<ApiSuccessResponse<VideoBucketContainer>> {
     // Construct the URL with bucket query parameter
-    const url = this.getGlobalVideosUrl(bucket);
+    const url = this.apiMap.videos.global(bucket);
     return this.http.get<ApiSuccessResponse<VideoBucketContainer>>(url);
-  }
-
-  getGlobalVideosUrl(bucket: number): string {
-    return `${this.config.apiBaseUrl}/videos/global?bucket=${bucket}`;
   }
 }

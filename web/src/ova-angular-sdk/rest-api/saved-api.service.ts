@@ -1,67 +1,55 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ApiSuccessResponse } from './api-types/core-response';
 
 import { VideoBucketContainer } from './api-types/video-bucket';
 
-import { OVASDKConfig } from '../global-config';
+import { ApiMap } from './api-map';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SavedApiService {
-  private config = inject(OVASDKConfig);
-
   private httpOptions = { withCredentials: true };
+  private http = inject(HttpClient);
 
-  constructor(private http: HttpClient) {}
+  private apiMap = inject(ApiMap);
 
   getUserSaved(
-    bucket: number = 1
+    bucket: number = 1,
   ): Observable<ApiSuccessResponse<VideoBucketContainer>> {
-    return this.http
-      .get<ApiSuccessResponse<VideoBucketContainer>>(
-        `${this.config.apiBaseUrl}/me/saved?bucket=${bucket}`,
-        this.httpOptions
-      )
-      .pipe(catchError(this.handleError)); // Error handling remains unchanged
+    const url = this.apiMap.me.saved.list(bucket);
+
+    return this.http.get<ApiSuccessResponse<VideoBucketContainer>>(
+      url,
+      this.httpOptions,
+    );
   }
 
   addUserSaved(
-    videoId: string
+    videoId: string,
   ): Observable<{ username: string; videoId: string }> {
+    const url = this.apiMap.me.saved.video(videoId);
+    const body = {};
+
     return this.http
-      .post<{ data: { username: string; videoId: string } }>(
-        `${this.config.apiBaseUrl}/me/saved/${videoId}`,
-        {}, // empty body
-        { withCredentials: true }
-      )
-      .pipe(
-        map((response) => response.data),
-        catchError(this.handleError)
-      );
+      .post<{
+        data: { username: string; videoId: string };
+      }>(url, body)
+      .pipe(map((response) => response.data));
   }
 
   removeUserSaved(
-    videoId: string
+    videoId: string,
   ): Observable<{ username: string; videoId: string }> {
-    return this.http
-      .delete<{ data: { username: string; videoId: string } }>(
-        `${this.config.apiBaseUrl}/me/saved/${videoId}`,
-        { withCredentials: true }
-      )
-      .pipe(
-        map((response) => response.data),
-        catchError(this.handleError)
-      );
-  }
+    const url = this.apiMap.me.saved.video(videoId);
 
-  private handleError(error: HttpErrorResponse) {
-    console.error('Saved API error:', error);
-    return throwError(
-      () => new Error(error.error?.message || 'Saved API error')
-    );
+    return this.http
+      .delete<{
+        data: { username: string; videoId: string };
+      }>(url)
+      .pipe(map((response) => response.data));
   }
 }

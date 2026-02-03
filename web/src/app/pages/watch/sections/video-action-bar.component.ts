@@ -1,9 +1,11 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { VideoApiService } from '../../../../ova-angular-sdk/rest-api/video-api.service';
 import { SendtoModalComponent } from '../../../components/pop-ups/sendto-modal/sendto-modal.component';
 import { RouterModule } from '@angular/router';
+
+import { AssetMap } from '../../../../ova-angular-sdk/rest-api/api-assets';
 
 @Component({
   selector: 'app-video-action-bar',
@@ -19,6 +21,8 @@ export class VideoActionBarComponent {
   @Input() isSaved = false;
   @Input() loadingSavedVideo = false;
 
+  private assetMap = inject(AssetMap);
+
   trimMode = false;
   trimStart: number | null = null;
   trimEnd: number | null = null;
@@ -29,7 +33,7 @@ export class VideoActionBarComponent {
 
   downloadVideo(): void {
     if (!this.videoId) return;
-    const url = this.videoApi.getDownloadUrl(this.videoId);
+    const url = this.assetMap.download.full(this.videoId);
     const a = document.createElement('a');
     a.href = url;
     a.download = '';
@@ -52,10 +56,10 @@ export class VideoActionBarComponent {
 
   downloadTrimmed(): void {
     if (!this.videoId || this.trimStart == null) return;
-    const url = this.videoApi.getTrimmedDownloadUrl(
+    const url = this.assetMap.download.trim(
       this.videoId,
       this.trimStart,
-      this.trimEnd ?? undefined
+      this.trimEnd ?? undefined,
     );
     const a = document.createElement('a');
     a.href = url;

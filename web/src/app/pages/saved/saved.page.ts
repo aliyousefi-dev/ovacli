@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GalleryFetcherComponent } from '../../components/manager/gallery-fetcher/gallery-fetcher.component';
+import { GalleryStateService } from '../../services/gallery-state.service';
 
 @Component({
   selector: 'app-saved-page',

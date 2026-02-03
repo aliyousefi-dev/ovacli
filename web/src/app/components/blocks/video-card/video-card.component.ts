@@ -7,6 +7,7 @@ import {
   ViewChild,
   ElementRef,
   OnInit,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
@@ -17,15 +18,18 @@ import { VideoApiService } from '../../../../ova-angular-sdk/rest-api/video-api.
 import { SavedApiService } from '../../../../ova-angular-sdk/rest-api/saved-api.service';
 import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
 import { TagLinkComponent } from '../../utility/tag-link/tag-link.component';
+import { AssetMap } from '../../../../ova-angular-sdk/rest-api/api-assets';
 
 @Component({
   selector: 'app-video-card',
   templateUrl: './video-card.component.html',
   standalone: true,
-  styles: `.filled-icon {
-    fill: #fff !important;
-    stroke: none !important;
-  }`,
+  styles: `
+    .filled-icon {
+      fill: #fff !important;
+      stroke: none !important;
+    }
+  `,
   imports: [
     CommonModule,
     RouterModule,
@@ -46,11 +50,13 @@ export class VideoCardComponent implements OnChanges, OnInit {
 
   playlistModalVisible = false;
 
+  private assetMap = inject(AssetMap);
+
   constructor(
     private savedapi: SavedApiService,
     private videoapi: VideoApiService,
     private router: Router,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -70,7 +76,7 @@ export class VideoCardComponent implements OnChanges, OnInit {
             }
           });
         },
-        { threshold: 1 }
+        { threshold: 1 },
       );
 
       this.observer.observe(video_preview);
@@ -151,7 +157,7 @@ export class VideoCardComponent implements OnChanges, OnInit {
 
   download(event: MouseEvent): void {
     event.stopPropagation();
-    const streamUrl = this.videoapi.getDownloadUrl(this.video.videoId);
+    const streamUrl = this.assetMap.download.full(this.video.videoId);
     const anchor = document.createElement('a');
     anchor.href = streamUrl;
     anchor.download = `${this.video.fileName}.mp4`;
@@ -161,11 +167,11 @@ export class VideoCardComponent implements OnChanges, OnInit {
   }
 
   getThumbnailUrl(): string {
-    return this.videoapi.getThumbnailUrl(this.video.videoId);
+    return this.assetMap.thumbnail(this.video.videoId);
   }
 
   getPreviewUrl(): string {
-    return this.videoapi.getPreviewUrl(this.video.videoId);
+    return this.assetMap.preview(this.video.videoId);
   }
 
   get videoQuality(): string {

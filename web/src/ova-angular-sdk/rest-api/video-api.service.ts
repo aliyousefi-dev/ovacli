@@ -5,7 +5,8 @@ import { OVASDKConfig } from '../global-config';
 
 import { VideoData } from '../core-types/video-data';
 import { ApiSuccessResponse } from './api-types/core-response';
-import { SimilarVideosResponse } from './api-types/similar-videos-response';
+
+import { ApiMap } from './api-map';
 
 @Injectable({
   providedIn: 'root',
@@ -13,81 +14,38 @@ import { SimilarVideosResponse } from './api-types/similar-videos-response';
 export class VideoApiService {
   private http = inject(HttpClient);
   private config = inject(OVASDKConfig);
+  private apiMap = inject(ApiMap);
 
   getVideoById(videoId: string): Observable<ApiSuccessResponse<VideoData>> {
-    return this.http.get<ApiSuccessResponse<VideoData>>(
-      `${this.config.apiBaseUrl}/videos/${videoId}`,
-      { withCredentials: true }
-    );
+    const url = this.apiMap.videos.byId(videoId);
+
+    return this.http.get<ApiSuccessResponse<VideoData>>(url);
   }
 
   getVideosByIds(ids: string[]): Observable<ApiSuccessResponse<VideoData[]>> {
-    return this.http.post<ApiSuccessResponse<VideoData[]>>(
-      `${this.config.apiBaseUrl}/videos/batch`,
-      { IDs: ids },
-      { withCredentials: true }
-    );
-  }
+    const url = this.apiMap.videos.batch();
+    const body = { IDs: ids };
 
-  getSimilarVideos(
-    videoId: string
-  ): Observable<ApiSuccessResponse<SimilarVideosResponse>> {
-    return this.http.get<ApiSuccessResponse<SimilarVideosResponse>>(
-      `${this.config.apiBaseUrl}/videos/${videoId}/similar`,
-      { withCredentials: true }
-    );
-  }
-
-  getStreamUrl(videoId: string): string {
-    return `${this.config.apiBaseUrl}/stream/${videoId}`;
-  }
-
-  getDownloadUrl(videoId: string): string {
-    return `${this.config.apiBaseUrl}/download/${videoId}`;
-  }
-
-  getThumbnailUrl(videoId: string): string {
-    return `${this.config.apiBaseUrl}/thumbnail/${videoId}`;
-  }
-
-  getPreviewUrl(videoId: string): string {
-    return `${this.config.apiBaseUrl}/preview/${videoId}`;
-  }
-
-  getPreviewThumbsUrl(videoId: string): string {
-    return `${this.config.apiBaseUrl}/preview-thumbnails/${videoId}/thumbnails.vtt`;
-  }
-
-  getTrimmedDownloadUrl(videoId: string, start: number, end?: number): string {
-    const params = new URLSearchParams();
-    params.set('start', start.toString());
-    if (end !== undefined) {
-      params.set('end', end.toString());
-    }
-    return `${
-      this.config.apiBaseUrl
-    }/download/${videoId}/trim?${params.toString()}`;
+    return this.http.post<ApiSuccessResponse<VideoData[]>>(url, body);
   }
 
   addVideoTag(
     videoId: string,
-    tag: string
+    tag: string,
   ): Observable<ApiSuccessResponse<{ tags: string[] }>> {
-    return this.http.post<ApiSuccessResponse<{ tags: string[] }>>(
-      `${this.config.apiBaseUrl}/videos/tags/${videoId}/add`,
-      { tag },
-      { withCredentials: true }
-    );
+    const url = this.apiMap.videos.tags.add(videoId);
+    const body = { tag };
+
+    return this.http.post<ApiSuccessResponse<{ tags: string[] }>>(url, body);
   }
 
   removeVideoTag(
     videoId: string,
-    tag: string
+    tag: string,
   ): Observable<ApiSuccessResponse<{ tags: string[] }>> {
-    return this.http.post<ApiSuccessResponse<{ tags: string[] }>>(
-      `${this.config.apiBaseUrl}/videos/tags/${videoId}/remove`,
-      { tag },
-      { withCredentials: true }
-    );
+    const url = this.apiMap.videos.tags.remove(videoId);
+    const body = { tag };
+
+    return this.http.post<ApiSuccessResponse<{ tags: string[] }>>(url, body);
   }
 }

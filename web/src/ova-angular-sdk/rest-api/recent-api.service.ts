@@ -8,61 +8,38 @@ import { VideoBucketContainer } from './api-types/video-bucket';
 
 import { OVASDKConfig } from '../global-config';
 
+import { ApiMap } from './api-map';
+
 @Injectable({
   providedIn: 'root',
 })
 export class WatchedApiService {
   private http = inject(HttpClient);
   private config = inject(OVASDKConfig);
+  private apiMap = inject(ApiMap);
 
   getUserWatched(
-    bucket: number = 1
+    bucket: number = 1,
   ): Observable<ApiSuccessResponse<VideoBucketContainer>> {
-    // Use ApiResponse wrapper
-    return this.http
-      .get<ApiSuccessResponse<VideoBucketContainer>>(
-        `${this.config.apiBaseUrl}/me/recent?bucket=${bucket}`,
-        { withCredentials: true }
-      )
-      .pipe(catchError(this.handleError)); // Handle errors as before
+    const url = this.apiMap.me.recent(bucket);
+    return this.http.get<ApiSuccessResponse<VideoBucketContainer>>(url);
   }
-  /**
-   * Mark a video as watched for a specific user.
-   * @param username The username for whom to mark the video as watched.
-   * @param videoId The ID of the video to mark as watched.
-   * @returns An Observable with a success message.
-   */
+
   addUserWatched(
     username: string,
-    videoId: string
+    videoId: string,
   ): Observable<{ message: string }> {
-    return this.http
-      .post<{ message: string }>(
-        `${this.config.apiBaseUrl}/users/${username}/recent`,
-        { videoId },
-        { withCredentials: true }
-      )
-      .pipe(catchError(this.handleError));
+    const url = this.apiMap.users.recent(username);
+    const body = videoId;
+
+    return this.http.post<{
+      message: string;
+    }>(url, body);
   }
 
-  /**
-   * Clears the entire watched history for a specific user.
-   * @param username The username whose watched history is to be cleared.
-   * @returns An Observable with a success message.
-   */
   clearUserWatched(username: string): Observable<{ message: string }> {
-    return this.http
-      .delete<{ message: string }>(
-        `${this.config.apiBaseUrl}/users/${username}/recent`, // This maps to your DELETE /users/:username/watched endpoint
-        { withCredentials: true }
-      )
-      .pipe(catchError(this.handleError));
-  }
+    const url = this.apiMap.users.recent(username);
 
-  private handleError(error: HttpErrorResponse) {
-    console.error('Watched API error:', error);
-    return throwError(
-      () => new Error(error.error?.message || 'Watched API error')
-    );
+    return this.http.delete<{ message: string }>(url);
   }
 }

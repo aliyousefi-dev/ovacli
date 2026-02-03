@@ -14,6 +14,8 @@ import { FormsModule } from '@angular/forms';
 import { VideoApiService } from '../../../../ova-angular-sdk/rest-api/video-api.service';
 import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
 
+import { AssetMap } from '../../../../ova-angular-sdk/rest-api/api-assets';
+
 @Component({
   selector: 'app-mini-video-card',
   templateUrl: './mini-video-card.component.html',
@@ -31,6 +33,7 @@ export class MiniVideoCardComponent implements OnInit, AfterViewInit {
 
   private videoApiService = inject(VideoApiService);
   private router = inject(Router);
+  private assetMap = inject(AssetMap);
 
   ngOnInit() {
     this.isSaved = this.video.userVideoStatus.isSaved;
@@ -61,11 +64,11 @@ export class MiniVideoCardComponent implements OnInit, AfterViewInit {
   }
 
   getThumbnailUrl(): string {
-    return this.videoApiService.getThumbnailUrl(this.video.videoId);
+    return this.assetMap.thumbnail(this.video.videoId);
   }
 
   getPreviewUrl(): string {
-    return this.videoApiService.getPreviewUrl(this.video.videoId);
+    return this.assetMap.preview(this.video.videoId);
   }
 
   get videoQuality(): string {

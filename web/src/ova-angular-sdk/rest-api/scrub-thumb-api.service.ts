@@ -6,14 +6,15 @@ import {
   ScrubThumbStat,
   ScrubThumbStream,
 } from '../core-types/scrub-thumb-data';
-import { OVASDKConfig } from '../global-config';
+
+import { ApiMap } from './api-map';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ScrubThumbApiService {
   private http = inject(HttpClient);
-  private config = inject(OVASDKConfig);
+  private apiMap = inject(ApiMap);
 
   /** Convert "HH:MM:SS" → seconds */
   private timeToSeconds(time: string): number {
@@ -21,74 +22,68 @@ export class ScrubThumbApiService {
     return h * 3600 + m * 60 + s;
   }
 
-  getScrubThumbsUrl(videoId: string): string {
-    return `${this.config.apiBaseUrl}/preview-thumbnails/${videoId}/thumbnails.vtt`;
-  }
-
   /** Load scrub‑thumbnails and wrap them in a `ScrubThumbStream`. */
   loadScrubThumbnails(videoId: string): Observable<ScrubThumbStream> {
-    return this.http
-      .get(this.getScrubThumbsUrl(videoId), { responseType: 'text' })
-      .pipe(
-        map((vtt: string) => {
-          const blocks = vtt.split('\n\n').filter((b) => b.trim() !== '');
+    const url = this.apiMap.previews.scrubVtt(videoId);
 
-          const thumbStats: ScrubThumbStat[] = [];
-          let cropedWidth = 0;
-          let cropedHeight = 0;
+    return this.http.get(url, { responseType: 'text' }).pipe(
+      map((vtt: string) => {
+        const blocks = vtt.split('\n\n').filter((b) => b.trim() !== '');
 
-          /* ---------- 1️⃣  Find sprite boundaries ---------------- */
-          let maxRight = 0; // max(x + w)
-          let maxBottom = 0; // max(y + h)
-          let spriteImgSrc = '';
+        const thumbStats: ScrubThumbStat[] = [];
+        let cropedWidth = 0;
+        let cropedHeight = 0;
 
-          for (const block of blocks) {
-            const lines = block.split('\n');
-            if (lines.length < 2) continue;
+        /* ---------- 1️⃣  Find sprite boundaries ---------------- */
+        let maxRight = 0; // max(x + w)
+        let maxBottom = 0; // max(y + h)
+        let spriteImgSrc = '';
 
-            // ---------- 1a. Parse the timing ----------
-            const [start, end] = lines[0]
-              .split(' --> ')
-              .map(this.timeToSeconds);
+        for (const block of blocks) {
+          const lines = block.split('\n');
+          if (lines.length < 2) continue;
 
-            // ---------- 1b. Parse the URL & coordinates ----------
-            const [urlBase, coords] = lines[1].split('#xywh=');
-            const [x, y, w, h] = coords.split(',').map(Number);
+          // ---------- 1a. Parse the timing ----------
+          const [start, end] = lines[0].split(' --> ').map(this.timeToSeconds);
 
-            // Crop size is the *same* for every block, so we just keep the last one.
-            cropedWidth = w;
-            cropedHeight = h;
+          // ---------- 1b. Parse the URL & coordinates ----------
+          const [urlBase, coords] = lines[1].split('#xywh=');
+          const [x, y, w, h] = coords.split(',').map(Number);
 
-            // Update the “sprite” envelope.
-            const right = x + w;
-            const bottom = y + h;
-            if (right > maxRight) maxRight = right;
-            if (bottom > maxBottom) maxBottom = bottom;
+          // Crop size is the *same* for every block, so we just keep the last one.
+          cropedWidth = w;
+          cropedHeight = h;
 
-            // Collect the stat that the preview component needs.
-            thumbStats.push({
-              baseImgUrl: urlBase,
-              startTime: start,
-              endTime: end,
-              xPos: x,
-              yPos: y,
-            });
+          // Update the “sprite” envelope.
+          const right = x + w;
+          const bottom = y + h;
+          if (right > maxRight) maxRight = right;
+          if (bottom > maxBottom) maxBottom = bottom;
 
-            // Keep the first image source – we’ll load it only once.
-            if (!spriteImgSrc) spriteImgSrc = urlBase;
-          }
+          // Collect the stat that the preview component needs.
+          thumbStats.push({
+            baseImgUrl: urlBase,
+            startTime: start,
+            endTime: end,
+            xPos: x,
+            yPos: y,
+          });
 
-          // ---- 2️⃣  The *expected* sprite size from coordinates  ----
-          const stream: ScrubThumbStream = {
-            cropedWidth,
-            cropedHeight,
-            spriteWidth: maxRight, // x + w  of the furthest tile
-            spriteHeight: maxBottom, // y + h  of the furthest tile
-            thumbStats,
-          };
+          // Keep the first image source – we’ll load it only once.
+          if (!spriteImgSrc) spriteImgSrc = urlBase;
+        }
 
-          return stream; // ← return right away if you’re happy with the coords
-        }),
-      );
+        // ---- 2️⃣  The *expected* sprite size from coordinates  ----
+        const stream: ScrubThumbStream = {
+          cropedWidth,
+          cropedHeight,
+          spriteWidth: maxRight, // x + w  of the furthest tile
+          spriteHeight: maxBottom, // y + h  of the furthest tile
+          thumbStats,
+        };
+
+        return stream; // ← return right away if you’re happy with the coords
+      }),
+    );
   }
 }

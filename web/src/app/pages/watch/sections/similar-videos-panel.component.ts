@@ -1,8 +1,14 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
-import { VideoApiService } from '../../../../ova-angular-sdk/rest-api/video-api.service';
 import { Router } from '@angular/router';
+import { SearchApiService } from '../../../../ova-angular-sdk/rest-api/search-api.service';
 
 @Component({
   selector: 'app-similar-videos-panel', // Changed selector
@@ -19,7 +25,8 @@ export class SimilarVideosPanelComponent implements OnChanges {
   similarVideosLoading = false;
   similarVideosError = false;
 
-  constructor(public videoapi: VideoApiService, private router: Router) {}
+  private searchApi = inject(SearchApiService);
+  private router = inject(Router);
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['currentVideoId'] && this.currentVideoId) {
@@ -32,7 +39,7 @@ export class SimilarVideosPanelComponent implements OnChanges {
     this.similarVideosError = false;
     this.similarVideos = []; // Clear previous similar videos
 
-    this.videoapi.getSimilarVideos(videoId).subscribe({
+    this.searchApi.getSimilarVideos(videoId).subscribe({
       next: (res) => {
         this.similarVideos = res.data.similarVideos || [];
         this.similarVideosLoading = false;
