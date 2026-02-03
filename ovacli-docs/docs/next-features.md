@@ -8,16 +8,15 @@
 
 here we demonstrate what features we want to add to next versions.
 
-- (user) support status (Online/Offline)
+- (user) support status (Online/Offline) (do this based user activity)
 - (user) support premission for user on platform (Read/Upload)
 - (user) support active sessions and session management
-- (user) keep history of watched videos
 - (cli) linux support
 - (cli) show elapsed time for indexing and cooking
-- (api) enable rate limit for login user/pass
+- (security/api) enable rate limit for login user/pass
 - (global) random video
-- (global) most liked videos
-- (global) most viewed videos
+- (global) most liked videos (optional/enable that on config)
+- (global) most viewed videos (optional/enable that on config)
 - (global) private public access definition
 - (gallery) support multi select and send to collection
 - (api) support protobuf api
@@ -33,17 +32,19 @@ here we demonstrate what features we want to add to next versions.
 - (gallery) support open video in new tab
 - (sidebar) can create collection for my self on sidebar like telegram channels
 - (sidebar) send videos to collection
-- (appreaceance) transfer mini view to settings (card view settings)
 - (native-player) VR video support
-- (native-player) play pause when click on the video area
 - (natvie-player) support playlist button on ui and next previous video
-- (native-player) group markers with colors
 - (native-player) adding playlist label on vidoe player for when playing playlist
 - (native-player) i think its good the video version history just be visible for the owner user
-- fix(search-api): when give the search bucket 0 .. server panic happen.
-- support minio db for digital assets (like previews and thumbnail and ...)
-- what is the project? in project we can find some videos and then it have multiple video lists (playlists) and give them to the user.
-- working on a digital asset db for better management of video registry.
-- (native-player) support reload markers after changes
+- (database) support a unique digital asset db for better management of video registry.
+
 - (native-player) change video marker name to time-tag feature.
 - (native-player) ctrl+(left & right) arrow key move cursor to the next or previouse timetag positions
+- (native-player) support for compare two video frames.
+
+i thinking about a feature that we can create timeing
+for example we need a specifig time video like 30 min and it give us that video
+i think its a part of advance searching .
+
+
+the similar videos feature have a 

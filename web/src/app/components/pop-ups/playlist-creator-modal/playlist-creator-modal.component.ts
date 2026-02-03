@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PlaylistAPIService } from '../../../../ova-angular-sdk/rest-api/playlist-api.service';
 import { ViewChild } from '@angular/core';
-import { AfterViewInit } from '@angular/core';
 
 @Component({
   selector: 'app-playlist-creator-modal',
@@ -56,10 +55,19 @@ export class PlaylistCreatorModal {
 
   onConfirm() {}
 
+  close() {
+    const dialog = document.getElementById(
+      'playlist_modal',
+    ) as HTMLDialogElement | null;
+    if (dialog && typeof dialog.close === 'function') {
+      dialog.close();
+    }
+  }
+
   onCancel(): void {
     console.log('cancel');
     this.playlistName = '';
-    this.dialog.close();
+    this.close();
     this.cancelled.emit();
   }
 }

@@ -4,10 +4,13 @@ import {
   OnInit,
   OnDestroy,
   inject,
+  Input,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { StateService } from '../../services/state.service';
+import { VideoData } from '../../../../../../ova-angular-sdk/core-types/video-data';
+import { TimeTagService } from '../../services/time-tag.service';
 
 @Component({
   selector: 'app-debugger',
@@ -17,20 +20,19 @@ import { StateService } from '../../services/state.service';
   templateUrl: './debugger.html',
 })
 export class ScreenDebugger implements AfterViewInit, OnInit, OnDestroy {
-  enableDebugger: boolean = false;
+  @Input() videoData!: VideoData;
 
-  currentTime: number = 0;
-  volume: number = 0;
-  isMuted: boolean = false;
-  speed: number = 1;
-  duration: number = 0;
-  isPlaying: boolean = false;
-  resolution: string = '';
-  buffered: number = 0;
+  enableDebugger: boolean = false;
+  timeTagsCount: number = 0;
 
   playerState = inject(StateService);
+  timeTagService = inject(TimeTagService);
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.timeTagService.timeTags$.subscribe((data) => {
+      this.timeTagsCount = data.length;
+    });
+  }
 
   ngAfterViewInit() {}
 

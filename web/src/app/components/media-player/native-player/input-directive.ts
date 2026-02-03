@@ -39,11 +39,20 @@ export class PlayerInputHostDirective {
       return;
     } // Escape key to hide controls
 
+    if (event.key === 'm' || event.key === 'M') {
+      event.preventDefault();
+      this.interactionService.triggerUIControlsVisibility();
+      this.stateService.toggleMute();
+      return;
+    }
+
     if (event.key === 'ArrowRight') {
       event.preventDefault();
       this.interactionService.triggerUIControlsVisibility();
       if (event.shiftKey) {
         this.stateService.shiftStepForward();
+      } else if (event.ctrlKey) {
+        this.stateService.stepForwardTimeTag();
       } else {
         this.stateService.stepForward();
       }
@@ -53,6 +62,8 @@ export class PlayerInputHostDirective {
       this.interactionService.triggerUIControlsVisibility();
       if (event.shiftKey) {
         this.stateService.shiftStepBackward();
+      } else if (event.ctrlKey) {
+        this.stateService.stepBackwardTimeTag();
       } else {
         this.stateService.stepBackward();
       }

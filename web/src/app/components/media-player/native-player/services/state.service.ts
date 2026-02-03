@@ -5,6 +5,7 @@ import { Resolution } from '../data-types/resolution';
 import { LocalStorageService } from './local-stroage.service';
 import { InteractionService } from './interaction.service';
 import { GlobalPlayerConfig } from '../config';
+import { TimeTagService } from './time-tag.service';
 
 @Injectable({ providedIn: 'root' })
 export class StateService implements OnDestroy {
@@ -27,10 +28,24 @@ export class StateService implements OnDestroy {
   private playerSettings = inject(LocalStorageService);
   private interactionService = inject(InteractionService);
   private configs = inject(GlobalPlayerConfig);
+  private timeTagService = inject(TimeTagService);
 
   private readonly destroy$ = new Subject<void>();
-  /** Holds the actual DOM `<video>` element after `init()` is called. */
+
   private videoEl: HTMLVideoElement | null = null;
+
+  loadLocalStorage() {
+    if (!this.videoEl) return;
+
+    // set default settings
+    this.videoEl.muted = this.playerSettings.currentSettings.isMuted;
+    this.videoEl.volume = Math.max(
+      0,
+      Math.min(this.playerSettings.currentSettings.soundLevel, 1),
+    );
+    this.videoEl.playbackRate =
+      this.playerSettings.currentSettings.playbackSpeed;
+  }
 
   init(videoRef: ElementRef<HTMLVideoElement>): void {
     const videoEl = videoRef?.nativeElement;
@@ -44,21 +59,13 @@ export class StateService implements OnDestroy {
 
     this.videoEl = videoEl; // keep a reference for the helper methods
 
-    // set default settings
-    this.videoEl.muted = this.playerSettings.currentSettings.isMuted;
-    this.videoEl.volume = Math.max(
-      0,
-      Math.min(this.playerSettings.currentSettings.soundLevel, 1),
-    );
-    this.videoEl.playbackRate =
-      this.playerSettings.currentSettings.playbackSpeed;
+    this.loadLocalStorage();
 
     /* ---------- Raw event streams ---------- */
     const timeUpdate$ = fromEvent(videoEl, 'timeupdate');
     const speedRate$ = fromEvent(videoEl, 'ratechange');
     const metadata$ = fromEvent(videoEl, 'loadedmetadata');
     const volume$ = fromEvent(videoEl, 'volumechange');
-    const mute$ = fromEvent(videoEl, 'muted');
     const play$ = fromEvent(videoEl, 'play');
     const pause$ = fromEvent(videoEl, 'pause');
     const ended$ = fromEvent(videoEl, 'ended');
@@ -84,12 +91,8 @@ export class StateService implements OnDestroy {
       });
     });
 
-    mute$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      console.log('muted called');
-      this.muted$.next(videoEl.muted);
-    });
-
     volume$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.muted$.next(videoEl.muted);
       this.volume$.next(videoEl.volume);
     });
 
@@ -170,6 +173,36 @@ export class StateService implements OnDestroy {
     this.interactionService.triggerStepBackwardIconVisibility();
   }
 
+  stepForwardTimeTag() {
+    if (!this.videoEl) return;
+
+    const currentTime = this.videoEl.currentTime;
+    const timeTags = this.timeTagService.timeTags$.value;
+
+    const nextTag = timeTags.find((tag) => tag.timeSecond > currentTime + 0.5);
+
+    if (nextTag) {
+      this.seekToTime(nextTag.timeSecond);
+      this.interactionService.triggerStepForwardIconVisibility();
+    }
+  }
+
+  stepBackwardTimeTag() {
+    if (!this.videoEl) return;
+
+    const currentTime = this.videoEl.currentTime;
+    const timeTags = this.timeTagService.timeTags$.value;
+
+    const previousTag = [...timeTags]
+      .reverse()
+      .find((tag) => tag.timeSecond < currentTime - 0.5);
+
+    if (previousTag) {
+      this.seekToTime(previousTag.timeSecond);
+      this.interactionService.triggerStepBackwardIconVisibility();
+    }
+  }
+
   /** Sets the volume (0 – 1). */
   setVolume(v: number): void {
     if (!this.videoEl) return;
@@ -184,6 +217,11 @@ export class StateService implements OnDestroy {
     this.videoEl.muted = muted;
     this.muted$.next(muted);
     this.playerSettings.updateSetting('isMuted', muted);
+  }
+
+  toggleMute(): void {
+    if (!this.videoEl) return;
+    this.setMuted(!this.videoEl.muted);
   }
 
   setPlayRate(speedValue: number): void {

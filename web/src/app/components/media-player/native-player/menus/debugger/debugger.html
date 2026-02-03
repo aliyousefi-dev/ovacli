@@ -47,11 +47,19 @@
         </div>
     </div>
     <div class="text-xs flex flex-col gap-1">
-        <span class="font-bold">Markers</span>
+        <span class="font-bold">Others</span>
         <div class=" flex flex-col">
             <div class="flex flex-row justify-between gap-3">
-                <span>counts</span>
-                <span>5</span>
+                <span>isCooked</span>
+                <span>{{this.videoData.isCooked}}</span>
+            </div>
+            <div class="flex flex-row justify-between gap-3">
+                <span>markersCount</span>
+                <span>{{ this.timeTagsCount }}</span>
+            </div>
+            <div class="flex flex-row justify-between gap-3">
+                <span>tagsCount</span>
+                <span>{{this.videoData.tags.length}}</span>
             </div>
         </div>
     </div>

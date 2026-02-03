@@ -8,7 +8,7 @@
   <!-- Marker display -->
   <div class="absolute inset-0 w-full h-full flex justify-between items-start p-5 z-50 pointer-events-none">
     <div>
-      <app-debugger [hidden]="!(playerUi.debuggerMenuVisible$ | async)"></app-debugger>
+      <app-debugger [videoData]="this.videoData" [hidden]="!(playerUi.debuggerMenuVisible$ | async)"></app-debugger>
     </div>
     <div>
       <app-marker-display [hidden]="!(playerUi.tagTimeMenuVisible$ | async)"
