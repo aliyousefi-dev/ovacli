@@ -17,7 +17,10 @@ export class TopNavbarComponent implements OnInit {
   showSettingsModal = false;
   searchBarVisible = false;
 
-  constructor(private router: Router, private location: Location) {}
+  constructor(
+    private router: Router,
+    private location: Location,
+  ) {}
 
   ngOnInit(): void {
     // Subscribe to router events to detect route changes

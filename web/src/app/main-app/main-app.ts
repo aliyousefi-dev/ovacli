@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { DesktopSidebarComponent } from '../panels/desktop-sidebar/desktop-sidebar.component';
-import { TopNavbarComponent } from '../panels/top-navbar/top-navbar.component';
-import { MobileDockComponent } from '../panels/mobile-dock/mobile-dock.component';
+import { DesktopSidebarComponent } from './panels/desktop-sidebar/desktop-sidebar.component';
+import { TopNavbarComponent } from './panels/top-navbar/top-navbar.component';
+import { MobileDockComponent } from './panels/mobile-dock/mobile-dock.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatPaginatorModule } from '@angular/material/paginator';

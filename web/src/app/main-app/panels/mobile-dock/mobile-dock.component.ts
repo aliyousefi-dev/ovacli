@@ -12,7 +12,10 @@ import { MatRippleModule } from '@angular/material/core';
   styleUrls: ['./mobile-dock.component.css'],
 })
 export class MobileDockComponent {
-  constructor(private router: Router, private activatedRoute: ActivatedRoute) {}
+  constructor(
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+  ) {}
 
   OpenSearchModal(): void {
     const modal: any = document.getElementById('my_modal_2');

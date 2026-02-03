@@ -1,11 +1,11 @@
 import { Component, inject, HostListener } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { OvaAboutModalComponent } from '../../components/etc/ova-about-modal/ova-about-modal.component';
+import { OvaAboutModalComponent } from '../../../components/etc/ova-about-modal/ova-about-modal.component';
 import { ViewChild } from '@angular/core';
-import { AuthApiService } from '../../../ova-angular-sdk/rest-api/auth-api.service';
 import { Router } from '@angular/router';
-import { GlobalOVAConfig } from '../../../app-settings/global-config';
+import { GlobalOVAConfig } from '../../../../app-settings/global-config';
+import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
 @Component({
   selector: 'app-desktop-sidebar',
@@ -17,7 +17,7 @@ export class DesktopSidebarComponent {
   @ViewChild(OvaAboutModalComponent) aboutModal!: OvaAboutModalComponent;
 
   sidebarOpen = true; // Initial state: sidebar is open
-  private authapi = inject(AuthApiService);
+  private ovaSdk = inject(OVASDK);
   private router = inject(Router);
   public config = inject(GlobalOVAConfig);
 
@@ -53,7 +53,7 @@ export class DesktopSidebarComponent {
   }
 
   onLogout(): void {
-    this.authapi.logout().subscribe({
+    this.ovaSdk.auth.logout().subscribe({
       next: () => {
         this.router.navigate(['/login']);
       },
