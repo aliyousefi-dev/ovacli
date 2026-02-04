@@ -21,7 +21,7 @@ import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
 @Component({
   selector: 'app-video-card',
-  templateUrl: './video-card.component.html',
+  templateUrl: './video-card.html',
   standalone: true,
   styles: `
     .filled-icon {

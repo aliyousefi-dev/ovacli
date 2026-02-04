@@ -6,11 +6,8 @@
   <div class="w-full xl:w-[70%] flex flex-col">
 
     <div class="xl:p-10">
-      @if (this.useVidstack) {
-      <app-vidstack-player #vidstackPlayer [videoData]="video"></app-vidstack-player>
-      }@else {
-      <app-native-player [videoData]="video"></app-native-player>
-      }
+
+      <app-player-manager [videoData]="video"></app-player-manager>
 
       <div class="flex justify-between items-center w-full py-2">
         <div class="text-xl truncate pr-5 font-semibold">
@@ -22,7 +19,7 @@
         <app-video-title-bar class="break-all" [videoData]="video"></app-video-title-bar>
 
         <app-video-action-bar [videoId]="video.videoId" [isSaved]="isSaved" [loadingSavedVideo]="loadingSavedVideo"
-          (toggleSaved)="toggleSaved()" [getCurrentTimeFn]="getCurrentTimeFromPlayer"></app-video-action-bar>
+          (toggleSaved)="toggleSaved()"></app-video-action-bar>
       </div>
 
 

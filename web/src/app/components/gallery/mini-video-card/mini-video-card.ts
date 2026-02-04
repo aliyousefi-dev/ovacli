@@ -17,7 +17,7 @@ import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
 @Component({
   selector: 'app-mini-video-card',
-  templateUrl: './mini-video-card.component.html',
+  templateUrl: './mini-video-card.html',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
 })

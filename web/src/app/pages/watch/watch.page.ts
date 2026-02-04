@@ -10,8 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { VideoData } from '../../../ova-angular-sdk/core-types/video-data';
 
-import { VidstackPlayerComponent } from '../../components/media-player/vidstack-player/vidstack-player.component';
-import { NativePlayer } from '../../components/media-player/native-player/native-player';
+import { PlayerManager } from '../../components/media-player/player-manager/player-manager';
 import { AppSettingsService } from '../../../app-settings/app-settings.service';
 
 // Updated: Import new child components
@@ -32,8 +31,7 @@ import { OVASDK } from '../../../ova-angular-sdk/ova-sdk';
   imports: [
     CommonModule,
     FormsModule,
-    VidstackPlayerComponent,
-    NativePlayer,
+    PlayerManager,
     VideoTitleBarComponent,
     SimilarVideosPanelComponent,
     VideoAdminTabsComponent,
@@ -43,7 +41,6 @@ import { OVASDK } from '../../../ova-angular-sdk/ova-sdk';
   templateUrl: './watch.page.html',
 })
 export class WatchPage implements AfterViewInit, OnInit {
-  @ViewChild('vidstackPlayer') vidstackPlayer!: VidstackPlayerComponent;
   @ViewChild('adminTabs') adminTabs!: VideoAdminTabsComponent;
 
   private appSettings = inject(AppSettingsService);
@@ -83,8 +80,6 @@ export class WatchPage implements AfterViewInit, OnInit {
       this.useVidstack = !settings.useNativePlayer;
     });
   }
-
-  getCurrentTimeFromPlayer = () => this.vidstackPlayer.getCurrentTime();
 
   ngAfterViewInit(): void {
     window.scrollTo(0, 0);

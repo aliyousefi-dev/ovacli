@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { VideoCardComponent } from '../video-card/video-card.component';
-import { MiniVideoCardComponent } from '../mini-video-card/mini-video-card.component';
+import { VideoCardComponent } from '../video-card/video-card';
+import { MiniVideoCardComponent } from '../mini-video-card/mini-video-card';
 import { CommonModule } from '@angular/common';
 import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
 
