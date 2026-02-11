@@ -46,13 +46,12 @@ var configServerCmd = &cobra.Command{
 			pterm.Error.Println("Failed to resolve path:", err)
 			os.Exit(1)
 		}
-		
+
 		repoManager, err := repo.NewRepoManager(repoPath)
 		if err != nil {
 			fmt.Println("Failed to initialize repository:", err)
 			return
 		}
-
 
 		// Load config from disk (or create default if not exists)
 		if err := repoManager.LoadRepoConfig(); err != nil {

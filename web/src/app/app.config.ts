@@ -21,8 +21,10 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptorsFromDi()),
     provideRouter(routes, withViewTransitions()),
     {
-      provide: RouteReuseStrategy, // Provide your custom strategy here
+      provide: RouteReuseStrategy, 
       useClass: CustomRouteReuseStrategy,
     },
   ],
 };
+
+

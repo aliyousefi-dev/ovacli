@@ -2,7 +2,6 @@ import { Injectable, inject } from '@angular/core';
 
 import { BehaviorSubject } from 'rxjs';
 import { VideoData } from '../../../ova-angular-sdk/core-types/video-data';
-import { Observable } from 'rxjs';
 
 export type GalleryFetchFn = (bucket: number) => number;
 
@@ -26,6 +25,8 @@ export class GalleryStateService {
       console.error('No fetch strategy provided to GalleryStateService');
       return;
     }
+
+    
   }
 
   clear() {
