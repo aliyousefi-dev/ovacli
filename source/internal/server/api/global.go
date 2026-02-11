@@ -14,7 +14,6 @@ import (
 func RegisterLatestVideoRoute(rg *gin.RouterGroup, repoMgr *repo.RepoManager) {
 	videos := rg.Group("/videos")
 	{
-		// GET /api/v1/videos/latest?bucket=1
 		videos.GET("/global", getLatestVideos(repoMgr))
 	}
 }

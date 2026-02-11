@@ -52,7 +52,7 @@ export class ApiMap {
   };
 
   readonly me = {
-    recent: (bucket: number) => `${this.base}/me/recent?bucket=${bucket}`,
+    recent: (page: number) => `${this.base}/me/recent?page=${page}`,
     saved: {
       list: (page: number) => `${this.base}/me/saved?page=${page}`,
       video: (videoId: string) => `${this.base}/me/saved/${videoId}`,

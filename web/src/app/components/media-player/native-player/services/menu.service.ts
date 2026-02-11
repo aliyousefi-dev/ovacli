@@ -2,7 +2,7 @@ import { Injectable, OnInit, OnDestroy, inject } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { LocalStorageService } from './local-stroage.service';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class MenuService implements OnInit, OnDestroy {
   /** Injected settings service for persisting UI options */
   private playerSettings = inject(LocalStorageService);

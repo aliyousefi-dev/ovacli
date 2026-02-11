@@ -3,7 +3,7 @@ import { Injectable, OnInit, OnDestroy, inject } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { GlobalPlayerConfig } from '../config';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class InteractionService implements OnInit, OnDestroy {
   private playerControlsVisibilityTimeout: any;
   private stepForwardIconVisibilityTimeout: any;

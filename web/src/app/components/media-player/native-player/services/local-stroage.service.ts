@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { PlayerSettings } from '../data-types/player-settings';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class LocalStorageService {
   private readonly SETTINGS_KEY = 'ova_player_settings';
 

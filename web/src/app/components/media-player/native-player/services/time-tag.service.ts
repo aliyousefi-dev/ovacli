@@ -3,7 +3,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { MarkerData } from '../data-types/marker-data';
 import { OVASDK } from '../../../../../ova-angular-sdk/ova-sdk';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class TimeTagService implements OnInit, OnDestroy {
   readonly timeTags$ = new BehaviorSubject<MarkerData[]>([]);
   private videoId: string = '';

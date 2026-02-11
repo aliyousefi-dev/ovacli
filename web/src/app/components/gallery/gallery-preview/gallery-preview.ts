@@ -18,6 +18,10 @@ export class GalleryPreview implements OnInit {
   videos: VideoData[] = [];
   viewMode: GalleryViewMode = 'infinite-scroll';
 
+  currentPage: number = 1;
+  totalPages: number = 0;
+  totalVideos: number = 0;
+
   ngOnInit(): void {
     this.galleryService.viewMode$.subscribe((mode) => {
       this.viewMode = mode;
@@ -27,6 +31,31 @@ export class GalleryPreview implements OnInit {
       this.videos = videos;
     });
 
-    this.galleryService.loadPage(1);
+    this.galleryService.totalPages$.subscribe((t) => {
+      this.totalPages = t;
+    });
+
+    this.galleryService.totalVideos$.subscribe((t) => {
+      this.totalVideos = t;
+    });
+
+    this.galleryService.loadPage(this.currentPage);
+  }
+
+  clear() {
+    this.galleryService.clear();
+  }
+
+  goToPage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.galleryService.loadPage(this.currentPage);
+    }
+  }
+
+  nextPage() {
+    console.log('click');
+    this.currentPage++;
+    this.galleryService.loadPage(this.currentPage);
   }
 }

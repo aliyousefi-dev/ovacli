@@ -19,33 +19,6 @@ func RegisterUserWatchedRoutes(rg *gin.RouterGroup, repoMgr *repo.RepoManager) {
 	}
 }
 
-func addVideoToWatched(r *repo.RepoManager) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		// Retrieve accountId set by the AuthMiddleware
-		accountID, exists := c.Get("accountId")
-		if !exists {
-			apitypes.RespondError(c, http.StatusUnauthorized, ErrAccountIDNotFound)
-			return
-		}
-
-		var req struct {
-			VideoID string `json:"videoId"`
-		}
-		if err := c.ShouldBindJSON(&req); err != nil || req.VideoID == "" {
-			apitypes.RespondError(c, http.StatusBadRequest, "Invalid videoId in request")
-			return
-		}
-
-		err := r.AddVideoToWatched(accountID.(string), req.VideoID)
-		if err != nil {
-			apitypes.RespondError(c, http.StatusBadRequest, err.Error())
-			return
-		}
-
-		apitypes.RespondSuccess(c, http.StatusOK, nil, "Video marked as watched")
-	}
-}
-
 func getUserWatchedVideos(r *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Retrieve accountId set by the AuthMiddleware
@@ -56,7 +29,7 @@ func getUserWatchedVideos(r *repo.RepoManager) gin.HandlerFunc {
 		}
 
 		// Parse the bucket from query parameters (default to 1 if not provided)
-		bucketStr := c.DefaultQuery("bucket", "1")
+		bucketStr := c.DefaultQuery("page", "1")
 		bucket, err := strconv.Atoi(bucketStr)
 		if err != nil || bucket <= 0 {
 			apitypes.RespondError(c, http.StatusBadRequest, "Invalid bucket parameter")
@@ -107,16 +80,51 @@ func getUserWatchedVideos(r *repo.RepoManager) gin.HandlerFunc {
 			videosInRange = []string{}
 		}
 
+		videos, err := r.GetVideosByIDs(videosInRange)
+		if err != nil || videos == nil {
+			// Handle error retrieving video
+			apitypes.RespondError(c, http.StatusNotFound, ErrVideoNotFound)
+			return
+		}
+
 		// Prepare the response with the videos in the current bucket, total count, and number of buckets
-		response := apitypes.VideoBucketResponse{
-			VideoIDs:          videosInRange,
-			TotalVideos:       totalVideos,
-			CurrentBucket:     bucket,
-			BucketContentSize: bucketContentSize,
-			TotalBuckets:      (totalVideos + bucketContentSize - 1) / bucketContentSize,
+		response := gin.H{
+			"videos":       videos,
+			"currentPage ": bucket,
+			"pageSize":     bucketContentSize,
+			"totalItems":   totalVideos,
+			"totalPages":   (totalVideos + bucketContentSize - 1) / bucketContentSize,
+			"hasNextPage":  end < totalVideos,
 		}
 
 		apitypes.RespondSuccess(c, http.StatusOK, response, "Fetched watched videos")
+	}
+}
+
+func addVideoToWatched(r *repo.RepoManager) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Retrieve accountId set by the AuthMiddleware
+		accountID, exists := c.Get("accountId")
+		if !exists {
+			apitypes.RespondError(c, http.StatusUnauthorized, ErrAccountIDNotFound)
+			return
+		}
+
+		var req struct {
+			VideoID string `json:"videoId"`
+		}
+		if err := c.ShouldBindJSON(&req); err != nil || req.VideoID == "" {
+			apitypes.RespondError(c, http.StatusBadRequest, "Invalid videoId in request")
+			return
+		}
+
+		err := r.AddVideoToWatched(accountID.(string), req.VideoID)
+		if err != nil {
+			apitypes.RespondError(c, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		apitypes.RespondSuccess(c, http.StatusOK, nil, "Video marked as watched")
 	}
 }
 

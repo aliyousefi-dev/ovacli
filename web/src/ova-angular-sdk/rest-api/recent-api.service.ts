@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { ApiSuccessResponse } from './api-types/core-response';
 
 import { VideoBucketContainer } from './api-types/video-bucket';
+import { PageContainer } from '../core-types/page-container';
 
 import { ApiMap } from './api-map';
 
@@ -15,10 +16,10 @@ export class WatchedApiService {
   private apiMap = inject(ApiMap);
 
   getUserWatched(
-    bucket: number = 1,
-  ): Observable<ApiSuccessResponse<VideoBucketContainer>> {
-    const url = this.apiMap.me.recent(bucket);
-    return this.http.get<ApiSuccessResponse<VideoBucketContainer>>(url);
+    page: number = 1,
+  ): Observable<ApiSuccessResponse<PageContainer>> {
+    const url = this.apiMap.me.recent(page);
+    return this.http.get<ApiSuccessResponse<PageContainer>>(url);
   }
 
   addUserWatched(

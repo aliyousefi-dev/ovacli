@@ -32,6 +32,7 @@ import { InteractionService } from './services/interaction.service';
 import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
 import { PlayerInputHostDirective } from './input-directive';
+import { LocalStorageService } from './services/local-stroage.service';
 
 @Component({
   selector: 'app-native-player',
@@ -52,6 +53,15 @@ import { PlayerInputHostDirective } from './input-directive';
     TimeTagButton,
     TouchScreen,
     DisplayNearTimeTag,
+  ],
+  providers: [
+    FullScreenService,
+    InteractionService,
+    LocalStorageService,
+    MenuService,
+    ScrubService,
+    StateService,
+    TimeTagService,
   ],
 })
 export class NativePlayer implements AfterViewInit, OnInit, OnDestroy {

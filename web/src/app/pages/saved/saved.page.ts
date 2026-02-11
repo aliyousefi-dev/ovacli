@@ -13,6 +13,7 @@ import { GalleryPreview } from '../../components/gallery/gallery-preview/gallery
   selector: 'app-saved-page',
   standalone: true,
   imports: [CommonModule, FormsModule, GalleryPreview],
+  providers: [GalleryStateService],
   templateUrl: './saved.page.html',
 })
 export class SavedPage implements OnInit {

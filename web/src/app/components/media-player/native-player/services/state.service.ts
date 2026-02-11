@@ -7,7 +7,7 @@ import { InteractionService } from './interaction.service';
 import { GlobalPlayerConfig } from '../config';
 import { TimeTagService } from './time-tag.service';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class StateService implements OnDestroy {
   readonly currentTime$ = new BehaviorSubject<number>(0);
   readonly currentTimepct$ = new BehaviorSubject<number>(0);

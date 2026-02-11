@@ -5,7 +5,7 @@ import { ScrubThumbStream } from '../data-types/scrub-thumb-data';
 import { TimeTagService } from './time-tag.service';
 import { OVASDK } from '../../../../../ova-angular-sdk/ova-sdk';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class ScrubService implements OnInit, OnDestroy {
   readonly seekTime$ = new BehaviorSubject<number>(0);
   readonly nearTimeTagLableBasedSeekTime$ = new BehaviorSubject<string>('');

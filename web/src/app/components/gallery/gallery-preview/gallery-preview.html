@@ -1,9 +1,39 @@
-@if (this.videos.length == 0) {
-<div class="text-center">
-    No videos found.
-</div>
-}
+<div class="flex flex-col items-center justify-center h-full w-full">
 
-@if (this.videos.length > 0) {
-<app-gallery-view [videos]="this.videos"></app-gallery-view>
-}
+    @if (this.videos.length == 0) {
+    <div class="text-center">
+        No videos found.
+    </div>
+    }
+
+    @if (this.videos.length > 0) {
+
+    <div class="flex flex-col items-center justify-between w-full h-full">
+
+
+
+        <!-- Scrollable Gallery Container -->
+        <div class="flex-1 w-full  overflow-y-auto ">
+            <app-gallery-view class="w-full h-full" [videos]="this.videos"></app-gallery-view>
+        </div>
+
+        <!-- Pagination controls fixed at the top -->
+        <div class="w-full flex justify-between items-center py-1 px-5 sticky bottom-0 z-10 bg-base-100">
+
+            <div class="text-xs">
+
+                total videos: {{this.totalVideos}}
+
+            </div>
+            <div class="flex justify-center items-center">
+                @for (page of [].constructor(totalPages); track $index) {
+                <button class="btn btn-sm " [class.btn-primary]="$index + 1 === currentPage"
+                    [class.btn-active]="$index + 1 === currentPage" (click)="goToPage($index + 1)">
+                    {{ $index + 1 }}
+                </button>
+                }
+            </div>
+        </div>
+    </div>
+    }
+</div>

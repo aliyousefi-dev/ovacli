@@ -3,7 +3,7 @@ import { Injectable, OnInit, OnDestroy, ElementRef } from '@angular/core';
 import { BehaviorSubject, fromEvent, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class FullScreenService implements OnInit, OnDestroy {
   readonly fullscreenEnabled$ = new BehaviorSubject<boolean>(false);
 
