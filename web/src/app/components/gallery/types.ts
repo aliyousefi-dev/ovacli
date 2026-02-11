@@ -4,3 +4,5 @@ import { PageContainer } from '../../../ova-angular-sdk/core-types/page-containe
 export type GalleryFetchFn = (page: number) => Observable<PageContainer>;
 
 export type GalleryViewMode = 'page' | 'infinite-scroll';
+
+export type VideoCardType = 'default' | 'mini';

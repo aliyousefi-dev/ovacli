@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { VideoBucketContainer } from './api-types/video-bucket';
+
+import { PageContainer } from '../core-types/page-container';
 
 import { ApiSuccessResponse } from './api-types/core-response';
 
@@ -16,10 +17,9 @@ export class GlobalVideosService {
 
   // Fetch the latest videos based on the specified bucket
   fetchGlobalVideos(
-    bucket: number = 1,
-  ): Observable<ApiSuccessResponse<VideoBucketContainer>> {
-    // Construct the URL with bucket query parameter
-    const url = this.apiMap.videos.global(bucket);
-    return this.http.get<ApiSuccessResponse<VideoBucketContainer>>(url);
+    page: number = 1,
+  ): Observable<ApiSuccessResponse<PageContainer>> {
+    const url = this.apiMap.videos.global(page);
+    return this.http.get<ApiSuccessResponse<PageContainer>>(url);
   }
 }

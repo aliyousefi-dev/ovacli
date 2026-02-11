@@ -11,7 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 import { VideoData } from '../../../ova-angular-sdk/core-types/video-data';
 
 import { PlayerManager } from '../../components/media-player/player-manager/player-manager';
-import { AppSettingsService } from '../../../app-settings/app-settings.service';
+import { AppSettingsService } from '../../global/app-settings.service';
 
 // Updated: Import new child components
 import { VideoTitleBarComponent } from './sections/video-title-bar.component'; // Path assuming it's in the same directory as watch.page.ts

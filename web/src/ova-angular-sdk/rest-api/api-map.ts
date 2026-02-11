@@ -16,7 +16,7 @@ export class ApiMap {
   };
 
   readonly videos = {
-    global: (bucket: number) => `${this.base}/videos/global?bucket=${bucket}`,
+    global: (page: number) => `${this.base}/videos/global?bucket=${page}`,
     byId: (id: string) => `${this.base}/videos/${id}`,
     batch: () => `${this.base}/videos/batch`,
     filters: () => `${this.base}/videos/global/filters`,

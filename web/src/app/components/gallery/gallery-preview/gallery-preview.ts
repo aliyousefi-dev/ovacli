@@ -5,11 +5,17 @@ import { GalleryViewMode } from '../types';
 import { GalleryStateService } from '../gallery-state.service';
 import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
 import { GalleryViewComponent } from '../gallery-view/gallery-view.component';
+import { PaginationComponent } from '../pagination/pagination';
 
 @Component({
   selector: 'gallery-preview',
   standalone: true,
-  imports: [CommonModule, RouterModule, GalleryViewComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    GalleryViewComponent,
+    PaginationComponent,
+  ],
   templateUrl: './gallery-preview.html',
 })
 export class GalleryPreview implements OnInit {
@@ -21,6 +27,24 @@ export class GalleryPreview implements OnInit {
   currentPage: number = 1;
   totalPages: number = 0;
   totalVideos: number = 0;
+
+  handleNext() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.galleryService.loadPage(this.currentPage);
+    }
+  }
+
+  handlePrev() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.galleryService.loadPage(this.currentPage);
+    }
+  }
+
+  handlegoToPage(num: number) {
+    this.goToPage(num);
+  }
 
   ngOnInit(): void {
     this.galleryService.viewMode$.subscribe((mode) => {

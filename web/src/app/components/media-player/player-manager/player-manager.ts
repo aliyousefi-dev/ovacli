@@ -5,7 +5,7 @@ import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
 import { NativePlayer } from '../native-player/native-player';
 import { VidstackPlayerComponent } from '../vidstack-player/vidstack-player.component';
 
-import { AppSettingsService } from '../../../../app-settings/app-settings.service';
+import { AppSettingsService } from '../../../global/app-settings.service';
 
 @Component({
   selector: 'app-player-manager',

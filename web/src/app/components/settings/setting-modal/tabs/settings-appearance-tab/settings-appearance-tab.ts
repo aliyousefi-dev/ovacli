@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AppSettingsService } from '../../../../../../app-settings/app-settings.service';
-import { AppTheme, APP_THEMES } from '../../../../../../app-settings/themes';
+import { AppSettingsService } from '../../../../../global/app-settings.service';
+import { AppTheme, APP_THEMES } from '../../../../../global/themes';
 
 @Component({
   selector: 'app-settings-appearance-tab',

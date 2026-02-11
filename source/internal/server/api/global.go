@@ -58,13 +58,21 @@ func getLatestVideos(repoMgr *repo.RepoManager) gin.HandlerFunc {
 			return
 		}
 
+		videos, err := repoMgr.GetVideosByIDs(videoIDsInRange)
+		if err != nil || videos == nil {
+			// Handle error retrieving video
+			apitypes.RespondError(c, http.StatusNotFound, ErrVideoNotFound)
+			return
+		}
+
 		// Prepare the response with video IDs and total video count
-		response := apitypes.VideoBucketResponse{
-			VideoIDs:          videoIDsInRange,
-			TotalVideos:       totalVideos,
-			CurrentBucket:     bucketBlockNumber,
-			BucketContentSize: maxBucketSize,
-			TotalBuckets:      (totalVideos + maxBucketSize - 1) / maxBucketSize,
+		response := gin.H{
+			"videos":       videos,
+			"currentPage ": bucketBlockNumber,
+			"pageSize":     maxBucketSize,
+			"totalItems":   totalVideos,
+			"totalPages":   (totalVideos + maxBucketSize - 1) / maxBucketSize,
+			"hasNextPage":  end < totalVideos,
 		}
 
 		apitypes.RespondSuccess(c, http.StatusOK, response, "Latest videos retrieved successfully")

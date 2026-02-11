@@ -1,12 +1,31 @@
-import { Component } from '@angular/core';
-import { GalleryFetcherComponent } from '../../../../components/gallery/gallery-fetcher/gallery-fetcher.component';
+import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { OVASDK } from '../../../../../ova-angular-sdk/ova-sdk';
+import { GalleryPreview } from '../../../../components/gallery/gallery-preview/gallery-preview';
+import { GalleryStateService } from '../../../../components/gallery/gallery-state.service';
+import { GalleryFetchFn } from '../../../../components/gallery/types';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-global-videos',
   templateUrl: './global-videos.component.html',
   standalone: true,
-  imports: [GalleryFetcherComponent],
+  providers: [GalleryStateService],
+  imports: [CommonModule, GalleryPreview],
 })
-export class GlobalVideosComponent {
+export class GlobalVideosComponent implements OnInit {
+  private ovaSdk = inject(OVASDK);
+  private galleryState = inject(GalleryStateService);
+
+  ngOnInit(): void {
+    const fetchProxy: GalleryFetchFn = (page: number) => {
+      return this.ovaSdk.global
+        .fetchGlobalVideos(page)
+        .pipe(map((response) => response.data));
+    };
+
+    this.galleryState.setFetchStrategy(fetchProxy);
+  }
+
   constructor() {}
 }

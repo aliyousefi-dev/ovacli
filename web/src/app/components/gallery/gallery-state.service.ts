@@ -1,12 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 
+import { OnInit } from '@angular/core';
+
 import { BehaviorSubject } from 'rxjs';
 import { VideoData } from '../../../ova-angular-sdk/core-types/video-data';
 import { GalleryFetchFn, GalleryViewMode } from './types';
 import { take } from 'rxjs';
 
 @Injectable()
-export class GalleryStateService {
+export class GalleryStateService implements OnInit {
   private videosSubject = new BehaviorSubject<VideoData[]>([]);
   public videos$ = this.videosSubject.asObservable();
 
@@ -23,6 +25,8 @@ export class GalleryStateService {
   public totalVideos$ = this.totalVideosSubject.asObservable();
 
   private activeFetchFn?: GalleryFetchFn;
+
+  ngOnInit(): void {}
 
   setFetchStrategy(fn: GalleryFetchFn) {
     this.activeFetchFn = fn;

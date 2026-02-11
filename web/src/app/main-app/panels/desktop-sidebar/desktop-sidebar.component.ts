@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { OvaAboutModalComponent } from '../../../components/etc/ova-about-modal/ova-about-modal.component';
 import { ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { GlobalOVAConfig } from '../../../../app-settings/global-config';
+import { GlobalOVAConfig } from '../../../global/global-config';
 import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
 @Component({

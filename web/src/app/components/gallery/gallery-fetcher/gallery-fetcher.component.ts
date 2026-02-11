@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GalleryInfiniteFetcher } from '../gallery-infinite-fetcher/gallery-infinite-fetcher.component';
 import { GalleryPageFetcher } from '../gallery-page-fetcher/gallery-page-fetcher.component';
-import { AppSettingsService } from '../../../../app-settings/app-settings.service';
+import { AppSettingsService } from '../../../global/app-settings.service';
 import { Input } from '@angular/core';
 
 @Component({

@@ -16,7 +16,7 @@ export class AppSettingsService {
 
   // 1. Create the BehaviorSubject with default values
   private settingsSubject = new BehaviorSubject<AppSettings>(
-    this.defaultSettings
+    this.defaultSettings,
   );
 
   // 2. Expose as an Observable so components can subscribe
@@ -47,7 +47,7 @@ export class AppSettingsService {
 
   updateSetting<K extends keyof AppSettings>(
     key: K,
-    value: AppSettings[K]
+    value: AppSettings[K],
   ): void {
     // 4. Get current state, modify it, and push to the subject
     const updatedSettings = { ...this.settingsSubject.value, [key]: value };

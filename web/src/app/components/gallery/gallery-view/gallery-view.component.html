@@ -9,7 +9,7 @@
   @if (ViewMode === 'full') {
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-6 w-full">
     @for (video of videos; track $index) {
-    <app-video-card [video]="video" [PreviewPlayback]="PreviewPlayback"></app-video-card>
+    <app-video-card [video]="video"></app-video-card>
     }
   </div>
   }
