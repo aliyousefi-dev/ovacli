@@ -30,7 +30,7 @@ func getUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 		}
 
 		// Parse bucket from query parameters (default to 1 if not provided)
-		bucketStr := c.DefaultQuery("bucket", "1")
+		bucketStr := c.DefaultQuery("page", "1")
 
 		// Convert bucket to integer
 		bucket, err := strconv.Atoi(bucketStr)
@@ -77,13 +77,21 @@ func getUserSaved(repoManager *repo.RepoManager) gin.HandlerFunc {
 			return
 		}
 
+		videos, err := repoManager.GetVideosByIDs(savedVideos)
+		if err != nil || videos == nil {
+			// Handle error retrieving video
+			apitypes.RespondError(c, http.StatusNotFound, ErrVideoNotFound)
+			return
+		}
+
 		// Prepare the response with saved video IDs, total video count, and bucket details
 		response := gin.H{
-			"videoIds":          savedVideos,
-			"totalVideos":       totalVideos,
-			"currentBucket":     bucket,
-			"bucketContentSize": bucketContentSize,
-			"totalBuckets":      (totalVideos + bucketContentSize - 1) / bucketContentSize, // Calculate total number of buckets
+			"videos":       videos,
+			"currentPage ": bucket,
+			"pageSize":     bucketContentSize,
+			"totalItems":   totalVideos,
+			"totalPages":   (totalVideos + bucketContentSize - 1) / bucketContentSize,
+			"hasNextPage":  end < totalVideos,
 		}
 
 		apitypes.RespondSuccess(c, http.StatusOK, response, "Saved videos retrieved successfully")

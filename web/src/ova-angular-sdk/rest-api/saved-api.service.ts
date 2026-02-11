@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { ApiSuccessResponse } from './api-types/core-response';
 
 import { VideoBucketContainer } from './api-types/video-bucket';
+import { PageContainer } from '../core-types/page-container';
 
 import { ApiMap } from './api-map';
 
@@ -19,10 +20,10 @@ export class SavedApiService {
 
   getUserSaved(
     bucket: number = 1,
-  ): Observable<ApiSuccessResponse<VideoBucketContainer>> {
+  ): Observable<ApiSuccessResponse<PageContainer>> {
     const url = this.apiMap.me.saved.list(bucket);
 
-    return this.http.get<ApiSuccessResponse<VideoBucketContainer>>(
+    return this.http.get<ApiSuccessResponse<PageContainer>>(
       url,
       this.httpOptions,
     );

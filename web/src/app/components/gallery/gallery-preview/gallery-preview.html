@@ -1,0 +1,9 @@
+@if (this.videos.length == 0) {
+<div class="text-center">
+    No videos found.
+</div>
+}
+
+@if (this.videos.length > 0) {
+<app-gallery-view [videos]="this.videos"></app-gallery-view>
+}

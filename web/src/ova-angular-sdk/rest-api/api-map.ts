@@ -54,7 +54,7 @@ export class ApiMap {
   readonly me = {
     recent: (bucket: number) => `${this.base}/me/recent?bucket=${bucket}`,
     saved: {
-      list: (bucket: number) => `${this.base}/me/saved?bucket=${bucket}`,
+      list: (page: number) => `${this.base}/me/saved?page=${page}`,
       video: (videoId: string) => `${this.base}/me/saved/${videoId}`,
     },
     playlists: {

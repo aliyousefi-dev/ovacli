@@ -33,10 +33,7 @@ export class MiniVideoCardComponent implements OnInit, AfterViewInit {
   private router = inject(Router);
   private ovaSdk = inject(OVASDK);
 
-  ngOnInit() {
-    this.isSaved = this.video.userVideoStatus.isSaved;
-    this.isWatched = this.video.userVideoStatus.isWatched;
-  }
+  ngOnInit() {}
 
   ngAfterViewInit(): void {
     this.videoElement.nativeElement.addEventListener('loadedmetadata', () => {

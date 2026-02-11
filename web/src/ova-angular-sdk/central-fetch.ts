@@ -21,14 +21,14 @@ export class CentralFetchService {
     private videoApiService: VideoApiService,
     private watchedApiService: WatchedApiService,
     private savedApiService: SavedApiService,
-    private playlistContentAPIService: PlaylistContentAPIService
+    private playlistContentAPIService: PlaylistContentAPIService,
   ) {}
 
   // Fetch the gallery data using LatestVideosService and switch based on route
   fetchGallery(
     route: string = 'global', // Default route is 'recent'
     bucket: number = 1, // Default bucket is 1
-    slug?: string // Optional slug for playlists
+    slug?: string, // Optional slug for playlists
   ): Observable<GalleryContainer> {
     switch (route) {
       case 'global': {
@@ -54,9 +54,9 @@ export class CentralFetchService {
                     bucketContentSize: bucketContentSize,
                     totalBuckets: totalBuckets,
                   };
-                })
+                }),
               );
-          })
+          }),
         );
       }
 
@@ -83,38 +83,9 @@ export class CentralFetchService {
                     bucketContentSize: bucketContentSize,
                     totalBuckets: totalBuckets,
                   };
-                })
+                }),
               );
-          })
-        );
-      }
-
-      case 'saved': {
-        // Use SavedApiService to fetch the saved videos for the given bucket
-        return this.savedApiService.getUserSaved(bucket).pipe(
-          switchMap((response) => {
-            const totalVideos = response.data.totalVideos;
-            const currentBucket = response.data.currentBucket;
-            const bucketContentSize = response.data.bucketContentSize;
-            const totalBuckets = response.data.totalBuckets;
-
-            // Fetch video details using VideoApiService
-            return this.videoApiService
-              .getVideosByIds(response.data.videoIds)
-              .pipe(
-                map((videoDetails) => {
-                  const videos: VideoData[] = videoDetails.data;
-                  // Construct and return the final GalleryResponse
-                  return {
-                    videos: videos,
-                    totalVideos: totalVideos,
-                    currentBucket: currentBucket,
-                    bucketContentSize: bucketContentSize,
-                    totalBuckets: totalBuckets,
-                  };
-                })
-              );
-          })
+          }),
         );
       }
 
@@ -148,9 +119,9 @@ export class CentralFetchService {
                       bucketContentSize: bucketContentSize,
                       totalBuckets: totalBuckets,
                     };
-                  })
+                  }),
                 );
-            })
+            }),
           );
       }
 
