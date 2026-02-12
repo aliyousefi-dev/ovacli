@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-edit-playlist-modal',
-  templateUrl: './edit-playlist-modal.component.html',
+  selector: 'playlist-edit-modal',
+  templateUrl: './playlist-edit-modal.html',
   standalone: true,
   imports: [CommonModule, FormsModule],
 })
-export class EditPlaylistModalComponent {
+export class PlaylistEditModal {
   @Input() visible = false;
   @Input() title = '';
   @Input() description = '';

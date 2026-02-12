@@ -42,7 +42,14 @@ export class ApiMap {
   };
 
   readonly search = {
-    videos: (bucket: number = 1) => `${this.base}/search?bucket=${bucket}`,
+    videos: (q: string, tags: string[], page: number = 1) => {
+      let url = `${this.base}/search?q=${encodeURIComponent(q)}`;
+      if (tags && tags.length > 0) {
+        url += `&tags=${tags.map((t) => encodeURIComponent(t)).join(',')}`;
+      }
+      url += `&page=${page}`;
+      return url;
+    },
     suggestions: () => `${this.base}/search/suggestions`,
     similar: (id: string) => `${this.base}/videos/${id}/similar`,
   };

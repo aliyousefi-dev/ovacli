@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 import { PlaylistGridComponent } from '../playlists-view/playlists-view.component';
-import { PlaylistCreatorModal } from '../playlist-creator-modal/playlist-creator-modal.component';
+import { PlaylistCreateModal } from '../playlist-create-modal/playlist-create-modal';
 import { ConfirmModalComponent } from '../../etc/confirm-modal/confirm-modal.component';
 import { PlaylistSummary } from '../../../../ova-angular-sdk/rest-api/api-types/playlist-response';
 
@@ -22,8 +22,8 @@ import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 })
 export class PlaylistManagerComponent implements OnInit {
   @ViewChild(ConfirmModalComponent) confirmModal!: ConfirmModalComponent;
-  @ViewChild(PlaylistCreatorModal)
-  createPlaylistModal!: PlaylistCreatorModal;
+  @ViewChild(PlaylistCreateModal)
+  createPlaylistModal!: PlaylistCreateModal;
 
   manageMode = false;
   username: string | null = null;

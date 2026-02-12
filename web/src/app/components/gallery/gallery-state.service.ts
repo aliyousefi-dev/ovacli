@@ -24,12 +24,16 @@ export class GalleryStateService implements OnInit {
   private totalVideosSubject = new BehaviorSubject<number>(0);
   public totalVideos$ = this.totalVideosSubject.asObservable();
 
+  private fetchStrategyChanged = new BehaviorSubject<void>(undefined);
+  public fetchStrategyChanged$ = this.fetchStrategyChanged.asObservable();
+
   private activeFetchFn?: GalleryFetchFn;
 
   ngOnInit(): void {}
 
   setFetchStrategy(fn: GalleryFetchFn) {
     this.activeFetchFn = fn;
+    this.fetchStrategyChanged.next();
   }
 
   setViewMode(mode: GalleryViewMode) {

@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { AppSettings } from './app-settings';
 
 @Injectable({ providedIn: 'root' })
-export class AppSettingsService {
+export class GlobalSettingsService {
   private readonly SETTINGS_KEY = 'app_user_settings';
 
   private defaultSettings: AppSettings = {

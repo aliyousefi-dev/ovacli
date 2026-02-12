@@ -11,7 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 import { VideoData } from '../../../ova-angular-sdk/core-types/video-data';
 
 import { PlayerManager } from '../../components/media-player/player-manager/player-manager';
-import { AppSettingsService } from '../../global/app-settings.service';
+import { GlobalSettingsService } from '../../global/global-settings.service';
 
 // Updated: Import new child components
 import { VideoTitleBarComponent } from './sections/video-title-bar.component'; // Path assuming it's in the same directory as watch.page.ts
@@ -43,7 +43,7 @@ import { OVASDK } from '../../../ova-angular-sdk/ova-sdk';
 export class WatchPage implements AfterViewInit, OnInit {
   @ViewChild('adminTabs') adminTabs!: VideoAdminTabsComponent;
 
-  private appSettings = inject(AppSettingsService);
+  private appSettings = inject(GlobalSettingsService);
   private activatedRoute = inject(ActivatedRoute);
   private ovaSdk = inject(OVASDK);
 

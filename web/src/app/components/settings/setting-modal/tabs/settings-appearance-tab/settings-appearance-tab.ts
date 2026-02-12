@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AppSettingsService } from '../../../../../global/app-settings.service';
+import { GlobalSettingsService } from '../../../../../global/global-settings.service';
 import { AppTheme, APP_THEMES } from '../../../../../global/themes';
 
 @Component({
@@ -11,7 +11,7 @@ import { AppTheme, APP_THEMES } from '../../../../../global/themes';
   imports: [CommonModule, FormsModule],
 })
 export class SettingsAppearanceTab implements OnInit {
-  private appSettings = inject(AppSettingsService);
+  private appSettings = inject(GlobalSettingsService);
 
   // UI State
   infiniteMode = true;

@@ -7,12 +7,12 @@ import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 import { ViewChild } from '@angular/core';
 
 @Component({
-  selector: 'app-playlist-creator-modal',
+  selector: 'playlist-create-modal',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './playlist-creator-modal.component.html',
+  templateUrl: './playlist-create-modal.html',
 })
-export class PlaylistCreatorModal {
+export class PlaylistCreateModal {
   @ViewChild('playlistInput') playlistInput!: HTMLInputElement;
   @ViewChild('dialog') dialog!: HTMLDialogElement;
   playlistName = '';
@@ -26,30 +26,24 @@ export class PlaylistCreatorModal {
   submit(): void {
     const trimmed = this.playlistName.trim();
     if (trimmed) {
-      this.ovaSdk.playlists
-        .createUserPlaylist({
-          title: trimmed,
-          videoIds: [],
-        })
-        .subscribe({
-          next: (res) => {
-            if (res.status === 'success' && res.data) {
-              this.created.emit(trimmed);
-            } else {
-              this.creationError = res.message;
-            }
-          },
-          error: (err) => {
-            if (err.error?.error?.message) {
-              this.creationError = err.error.error.message;
-            } else if (err.message) {
-              this.creationError = err.message;
-            } else {
-              this.creationError =
-                'Failed to create playlist. Please try again.';
-            }
-          },
-        });
+      this.ovaSdk.playlists.createUserPlaylist(trimmed, '', []).subscribe({
+        next: (res) => {
+          if (res.status === 'success' && res.data) {
+            this.created.emit(trimmed);
+          } else {
+            this.creationError = res.message;
+          }
+        },
+        error: (err) => {
+          if (err.error?.error?.message) {
+            this.creationError = err.error.error.message;
+          } else if (err.message) {
+            this.creationError = err.message;
+          } else {
+            this.creationError = 'Failed to create playlist. Please try again.';
+          }
+        },
+      });
 
       this.playlistName = '';
     }

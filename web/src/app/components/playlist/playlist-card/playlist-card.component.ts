@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConfirmModalComponent } from '../../etc/confirm-modal/confirm-modal.component';
-import { EditPlaylistModalComponent } from '../edit-playlist-modal/edit-playlist-modal.component';
+import { PlaylistEditModal } from '../playlist-edit-modal/playlist-edit-modal';
 import { Router } from '@angular/router';
 import { PlaylistSummary } from '../../../../ova-angular-sdk/rest-api/api-types/playlist-response';
 
@@ -17,7 +17,7 @@ import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
 @Component({
   selector: 'app-playlist-card',
-  imports: [CommonModule, ConfirmModalComponent, EditPlaylistModalComponent],
+  imports: [CommonModule, ConfirmModalComponent, PlaylistEditModal],
   standalone: true,
   templateUrl: './playlist-card.component.html',
 })

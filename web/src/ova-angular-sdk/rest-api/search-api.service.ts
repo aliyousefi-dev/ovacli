@@ -5,9 +5,10 @@ import { Observable } from 'rxjs';
 import { ApiSuccessResponse } from './api-types/core-response';
 import { SimilarVideosResponse } from './api-types/similar-videos-response';
 
-import { SearchResult } from './api-types/search-response';
+import { SearchCriteria, SearchResult } from './api-types/search-response';
 
 import { ApiMap } from './api-map';
+import { PageContainer } from '../core-types/page-container';
 
 @Injectable({
   providedIn: 'root',
@@ -17,15 +18,13 @@ export class SearchApiService {
   private apiMap = inject(ApiMap);
 
   // search-api.service.ts
-  searchVideos(params: {
-    query?: string;
-    tags?: string[];
-    bucketnumber?: number;
-  }): Observable<ApiSuccessResponse<SearchResult>> {
-    const url = this.apiMap.search.videos(params.bucketnumber);
-    const body = params;
+  searchVideos(
+    request: SearchCriteria,
+    page: number,
+  ): Observable<ApiSuccessResponse<PageContainer>> {
+    const url = this.apiMap.search.videos(request.query, request.tags, page);
 
-    return this.http.post<ApiSuccessResponse<SearchResult>>(url, body);
+    return this.http.get<ApiSuccessResponse<PageContainer>>(url);
   }
 
   getSimilarVideos(

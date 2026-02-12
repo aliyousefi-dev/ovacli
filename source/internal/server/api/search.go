@@ -14,66 +14,68 @@ import (
 
 // RegisterSearchRoutes adds the /search endpoint to the router group.
 func RegisterSearchRoutes(rg *gin.RouterGroup, repoManager *repo.RepoManager) {
-	rg.POST("/search", searchVideos(repoManager))
+	rg.GET("/search", searchVideos(repoManager))
 }
 
-// searchVideos handles POST /search with a JSON body containing search criteria.
+// searchVideos handles GET /search with query parameters: q, tags, and optional bucket.
 func searchVideos(repoManager *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var req apitypes.SearchRequest
-		if err := c.ShouldBindJSON(&req); err != nil {
-			apitypes.RespondError(c, http.StatusBadRequest, "Invalid JSON payload")
-			return
-		}
-
-		criteria := datatypes.VideoSearchCriteria{
-			Query:       strings.TrimSpace(req.Query),
-			Tags:        req.Tags,
-			MinRating:   req.MinRating,
-			MaxDuration: req.MaxDuration,
+		// Parse query parameters
+		query := strings.TrimSpace(c.DefaultQuery("q", ""))
+		tagsParam := c.DefaultQuery("tags", "")
+		var tags []string
+		if tagsParam != "" {
+			// Comma-separated tags
+			tags = strings.Split(tagsParam, ",")
+			for i := range tags {
+				tags[i] = strings.TrimSpace(tags[i])
+			}
 		}
 
 		// Validate that at least one filter is provided
-		if criteria.Query == "" && len(criteria.Tags) == 0 && criteria.MinRating == 0 && criteria.MaxDuration == 0 {
-			apitypes.RespondError(c, http.StatusBadRequest, "At least one search criteria must be provided (query, tags, minRating, or maxDuration)")
+		if query == "" && len(tags) == 0 {
+			apitypes.RespondError(c, http.StatusBadRequest, "At least one search criteria must be provided (q, tags)")
 			return
 		}
 
 		// Get pagination params
-		currentBucket := 0
-		bucketSize := repoManager.GetConfigs().MaxBucketSize
-		if bucket, ok := c.GetQuery("bucket"); ok {
+		currentPage := 0
+		pageSize := repoManager.GetConfigs().MaxBucketSize
+		if bucket, ok := c.GetQuery("page"); ok {
 			currentBucketParam, err := strconv.Atoi(bucket)
 			if err != nil {
 				apitypes.RespondError(c, http.StatusBadRequest, "Invalid bucket parameter")
 				return
 			}
-			currentBucket = currentBucketParam
+			currentPage = currentBucketParam
 		}
 
-		// Search with pagination (bucket logic)
-		// result is now the BucketSearchResult struct we defined
-		result, err := repoManager.SearchVideosWithBuckets(criteria, currentBucket, bucketSize)
+		criteria := datatypes.VideoSearchCriteria{
+			Query: query,
+			Tags:  tags,
+		}
+
+		result, err := repoManager.SearchVideosWithBuckets(criteria, currentPage, pageSize)
 		if err != nil {
-			// Handle the "out of range" error specifically if you want a 400 instead of 500
 			apitypes.RespondError(c, http.StatusInternalServerError, err.Error())
 			return
 		}
 
-		// Create the response
-		// Note: We use the result struct directly or map its fields.
-		response := apitypes.SearchResponse{
-			Criteria: apitypes.SearchCriteria{
-				Query: req.Query,
-				Tags:  req.Tags,
-			},
-			Result: apitypes.VideoBucketResponse{
-				VideoIDs:          result.VideoIDs,
-				TotalVideos:       result.TotalVideos,
-				CurrentBucket:     result.CurrentBucket,
-				BucketContentSize: bucketSize,
-				TotalBuckets:      result.TotalBuckets,
-			},
+		videos, err := repoManager.GetVideosByIDs(result.VideoIDs)
+		if err != nil || videos == nil {
+			// Handle error retrieving video
+			apitypes.RespondError(c, http.StatusNotFound, ErrVideoNotFound)
+			return
+		}
+
+		// Construct response (matches SearchResponse as before)
+		response := gin.H{
+			"videos":       videos,
+			"currentPage ": currentPage,
+			"pageSize":     pageSize,
+			"totalItems":   result.TotalVideos,
+			"totalPages":   (result.TotalVideos + pageSize - 1) / pageSize,
+			"hasNextPage":  (currentPage+1)*pageSize < result.TotalVideos,
 		}
 
 		apitypes.RespondSuccess(c, http.StatusOK, response, "Search completed successfully")

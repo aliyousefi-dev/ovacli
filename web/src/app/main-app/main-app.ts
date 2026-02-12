@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { SearchModalComponent } from '../components/etc/search-modal/search-modal';
-import { PlaylistCreatorModal } from '../components/playlist/playlist-creator-modal/playlist-creator-modal.component';
+import { PlaylistCreateModal } from '../components/playlist/playlist-create-modal/playlist-create-modal';
 import { SettingsModalComponent } from '../components/settings/setting-modal/settings-modal.component';
 
 @Component({
@@ -24,7 +24,7 @@ import { SettingsModalComponent } from '../components/settings/setting-modal/set
     MatSidenavModule,
     MatPaginatorModule,
     SearchModalComponent,
-    PlaylistCreatorModal,
+    PlaylistCreateModal,
     SettingsModalComponent,
   ],
   templateUrl: './main-app.html',

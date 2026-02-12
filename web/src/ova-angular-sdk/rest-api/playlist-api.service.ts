@@ -29,13 +29,17 @@ export class PlaylistAPIService {
     );
   }
 
-  createUserPlaylist(playlist: {
-    title: string;
-    description?: string;
-    videoIds: string[];
-  }): Observable<ApiSuccessResponse<PlaylistData>> {
+  createUserPlaylist(
+    label: string,
+    des: string,
+    videoIds: string[],
+  ): Observable<ApiSuccessResponse<PlaylistData>> {
     const url = this.apiMap.me.playlists.base();
-    const body = playlist;
+    const body = {
+      title: label,
+      description: des,
+      videoIds: videoIds,
+    };
 
     return this.http.post<ApiSuccessResponse<PlaylistData>>(url, body).pipe(
       catchError((error: HttpErrorResponse) => {

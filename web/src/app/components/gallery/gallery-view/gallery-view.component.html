@@ -9,7 +9,7 @@
   @if (ViewMode === 'full') {
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-6 w-full">
     @for (video of videos; track $index) {
-    <app-video-card [video]="video"></app-video-card>
+    <default-video-card [video]="video"></default-video-card>
     }
   </div>
   }
@@ -17,7 +17,7 @@
   @if (ViewMode === 'mini') {
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-0.5 w-full">
     @for (video of videos; track $index) {
-    <app-mini-video-card [video]="video"></app-mini-video-card>
+    <mini-video-card [video]="video"></mini-video-card>
     }
   </div>
   }

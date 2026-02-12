@@ -5,7 +5,7 @@ import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
 import { NativePlayer } from '../native-player/native-player';
 import { VidstackPlayerComponent } from '../vidstack-player/vidstack-player.component';
 
-import { AppSettingsService } from '../../../global/app-settings.service';
+import { GlobalSettingsService } from '../../../global/global-settings.service';
 
 @Component({
   selector: 'app-player-manager',
@@ -18,7 +18,7 @@ export class PlayerManager implements OnInit {
 
   useNativePlayer: boolean = false;
 
-  private appSetting = inject(AppSettingsService);
+  private appSetting = inject(GlobalSettingsService);
 
   ngOnInit(): void {
     this.appSetting.settings$.subscribe((s) => {

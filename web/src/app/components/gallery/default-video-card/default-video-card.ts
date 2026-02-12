@@ -20,8 +20,8 @@ import { TagLinkComponent } from '../../etc/tag-link/tag-link.component';
 import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
 @Component({
-  selector: 'app-video-card',
-  templateUrl: './video-card.html',
+  selector: 'default-video-card',
+  templateUrl: './default-video-card.html',
   standalone: true,
   styles: `
     .filled-icon {

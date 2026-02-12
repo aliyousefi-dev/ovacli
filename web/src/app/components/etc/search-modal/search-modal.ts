@@ -49,7 +49,12 @@ export class SearchModalComponent {
   // This method will be called when the Enter key is pressed
   onEnter(): void {
     if (this.query.trim().length > 0) {
-      this.router.navigate(['/search'], { queryParams: { q: this.query } });
+      const trimmedQuery = this.query.trim();
+      const tags = trimmedQuery;
+
+      this.router.navigate(['/search'], {
+        queryParams: { q: trimmedQuery, tags },
+      });
       this.CloseModal(); // Close the modal after navigating
     }
   }

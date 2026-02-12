@@ -13,8 +13,10 @@
         <!-- Pagination controls fixed at the top -->
         <div class="w-full flex justify-between items-center py-1 px-5  bg-base-100">
 
-            <div class="text-xs flex-1/2">
-                total videos: {{this.totalVideos}}
+            <div class="flex gap-2">
+                <div class="text-xs ">
+                    total results: {{this.totalVideos}}
+                </div>
             </div>
             <div class="flex">
                 <app-custom-pagination (goTo)="handlegoToPage($event)" [current]="this.currentPage"

@@ -9,132 +9,47 @@ import {
   of,
   map,
 } from 'rxjs';
-import { ActivatedRoute, Params } from '@angular/router';
-import { GalleryViewComponent } from '../../components/gallery/gallery-view/gallery-view.component';
-import { VideoData } from '../../../ova-angular-sdk/core-types/video-data';
-
+import { ActivatedRoute } from '@angular/router';
 import { OVASDK } from '../../../ova-angular-sdk/ova-sdk';
+
+import { GalleryPreview } from '../../components/gallery/gallery-preview/gallery-preview';
+import { GalleryStateService } from '../../components/gallery/gallery-state.service';
+import { GalleryFetchFn } from '../../components/gallery/types';
+import { SearchCriteria } from '../../../ova-angular-sdk/rest-api/api-types/search-response';
 
 @Component({
   selector: 'app-search',
   standalone: true,
-  imports: [CommonModule, FormsModule, GalleryViewComponent],
+  imports: [CommonModule, FormsModule, GalleryPreview],
   templateUrl: './search.page.html',
+  providers: [GalleryStateService],
 })
-export class SearchPage implements OnInit, OnDestroy {
+export class SearchPage implements OnInit {
   private ovaSdk = inject(OVASDK);
   private route = inject(ActivatedRoute);
+  private galleryState = inject(GalleryStateService);
 
-  query: string = '';
-  tagsQuery: string[] = [];
+  ngOnInit(): void {
+    this.route.queryParams.subscribe((param) => {
+      const q: string | undefined = param['q'];
+      const tags: string[] | undefined = this.normalizeTags(param['tags']);
 
-  loading: boolean = false;
-  videos: VideoData[] = [];
+      const fetchProxy: GalleryFetchFn = (page: number) => {
+        const searchCriteria: SearchCriteria = { query: q ?? '', tags: tags };
+        return this.ovaSdk.search
+          .searchVideos(searchCriteria, page)
+          .pipe(map((response) => response.data));
+      };
 
-  currentBucket: number = 1;
-
-  totalCount: number = 0;
-  totalPages: number = 0;
-
-  // Change this subscription to listen to the URL query params for the main search
-  // and remove the direct API call in ngOnInit to avoid double-fetching.
-  private queryParamsSubscription!: Subscription;
-
-  ngOnInit() {
-    this.queryParamsSubscription = this.route.queryParams
-      .pipe(
-        debounceTime(100), // Small debounce for URL changes
-        map((params: Params) => {
-          // Update component state first from URL params
-          this.query = params['q'] || '';
-          this.tagsQuery = params['tags'] ? params['tags'].split(',') : [];
-          this.currentBucket = params['bucket'] ? +params['bucket'] : 1;
-
-          // Return the full set of parameters relevant to the API search
-          return {
-            query: this.query,
-          };
-        }),
-        distinctUntilChanged(
-          (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr),
-        ),
-        // Trigger the actual API search here based on URL query params
-        switchMap((apiSearchState) => {
-          const { query } = apiSearchState;
-
-          const searchParams: {
-            query?: string;
-            tags?: string[];
-            bucketnumber?: number;
-          } = {};
-          const tags = this.extractTagsFromQuery(query);
-          const shouldPerformApiSearch =
-            query.trim() !== '' || this.tagsQuery.length > 0;
-
-          if (!shouldPerformApiSearch) {
-            this.videos = [];
-            this.totalCount = 0;
-            this.loading = false;
-            return of(null);
-          } else {
-            if (this.tagsQuery.length > 0) {
-              searchParams.tags = this.tagsQuery;
-            } else {
-              searchParams.query = query;
-              searchParams.tags = tags;
-            }
-            searchParams.bucketnumber = this.currentBucket;
-          }
-
-          this.loading = true;
-          return this.ovaSdk.search.searchVideos(searchParams);
-        }),
-      )
-      .subscribe({
-        next: (response) => {
-          if (response?.data?.result?.videoIds) {
-            this.totalCount = response.data.result.totalVideos;
-            this.totalPages = response.data.result.totalBuckets;
-            // Fetch video data based on video IDs
-            this.ovaSdk.videos
-              .getVideosByIds(response.data.result.videoIds)
-              .subscribe({
-                next: (videoDataResponse) => {
-                  this.videos = videoDataResponse.data || []; // Assign video data to the component
-                  this.loading = false;
-                },
-                error: (err) => {
-                  console.error('Error fetching video data:', err);
-                  this.videos = [];
-                  this.totalCount = 0;
-                  this.loading = false;
-                },
-              });
-          } else {
-            this.videos = [];
-            this.totalCount = 0;
-            this.loading = false;
-          }
-        },
-        error: (err) => {
-          console.error('Error during video search:', err);
-          this.videos = [];
-          this.totalCount = 0;
-          this.loading = false;
-        },
-      });
+      this.galleryState.setFetchStrategy(fetchProxy);
+    });
   }
 
-  extractTagsFromQuery(query: string): string[] {
-    return query
+  normalizeTags(input: string | undefined): string[] {
+    if (!input) return [];
+    return input
       .split(',')
-      .map((t) => t.trim())
-      .filter((t) => t.length > 0);
-  }
-
-  ngOnDestroy() {
-    if (this.queryParamsSubscription) {
-      this.queryParamsSubscription.unsubscribe();
-    }
+      .map((tag) => tag.trim())
+      .filter((tag) => tag.length > 0);
   }
 }

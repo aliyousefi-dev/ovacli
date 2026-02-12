@@ -63,7 +63,9 @@ export class GalleryPreview implements OnInit {
       this.totalVideos = t;
     });
 
-    this.galleryService.loadPage(this.currentPage);
+    this.galleryService.fetchStrategyChanged$.subscribe(() => {
+      this.galleryService.loadPage(this.currentPage);
+    });
   }
 
   clear() {
