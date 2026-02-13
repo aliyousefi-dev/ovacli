@@ -25,3 +25,7 @@ func (s *JsonDB) getGlobalFiltersDataFilePath() string {
 func (s *JsonDB) getLookupCollectionFilePath() string {
 	return filepath.Join(s.storageDir, "lookup.json")
 }
+
+func (s *JsonDB) getPlaylistCollectionFilePath() string {
+	return filepath.Join(s.storageDir, "playlists.json")
+}

@@ -22,7 +22,7 @@ func RegisterLatestVideoRoute(rg *gin.RouterGroup, repoMgr *repo.RepoManager) {
 func getLatestVideos(repoMgr *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Parse bucket from query parameters (default to 1 if not provided)
-		bucketStr := c.DefaultQuery("bucket", "1")
+		bucketStr := c.DefaultQuery("page", "1")
 
 		// Convert bucketBlockNumber to integer
 		bucketBlockNumber, err := strconv.Atoi(bucketStr)

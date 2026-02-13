@@ -41,13 +41,13 @@ func searchVideos(repoManager *repo.RepoManager) gin.HandlerFunc {
 		// Get pagination params
 		currentPage := 0
 		pageSize := repoManager.GetConfigs().MaxBucketSize
-		if bucket, ok := c.GetQuery("page"); ok {
-			currentBucketParam, err := strconv.Atoi(bucket)
+		if page, ok := c.GetQuery("page"); ok {
+			currentPageParam, err := strconv.Atoi(page)
 			if err != nil {
-				apitypes.RespondError(c, http.StatusBadRequest, "Invalid bucket parameter")
+				apitypes.RespondError(c, http.StatusBadRequest, "Invalid page parameter")
 				return
 			}
-			currentPage = currentBucketParam
+			currentPage = currentPageParam
 		}
 
 		criteria := datatypes.VideoSearchCriteria{

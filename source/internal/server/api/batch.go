@@ -59,13 +59,11 @@ func getVideosByIds(repoMgr *repo.RepoManager) gin.HandlerFunc {
 				continue
 			}
 
-			// Check if the video ID is in the Watched or Favorites arrays
-			isWatched := contains(currentuser.Watched, video.VideoID)
 			isSaved := contains(currentuser.Favorites, video.VideoID)
 
 			// Define the video user status based on user data
 			video_user_status := apitypes.UserVideoStatus{
-				IsWatched: isWatched,
+				IsWatched: false,
 				IsSaved:   isSaved,
 			}
 

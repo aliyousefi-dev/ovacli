@@ -1,10 +1,7 @@
-import { Component, Output, EventEmitter, inject } from '@angular/core';
+import { Component, inject, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
-
-import { ViewChild } from '@angular/core';
+import { PlaylistManagerService } from '../playlist-manager';
 
 @Component({
   selector: 'playlist-create-modal',
@@ -13,57 +10,46 @@ import { ViewChild } from '@angular/core';
   templateUrl: './playlist-create-modal.html',
 })
 export class PlaylistCreateModal {
-  @ViewChild('playlistInput') playlistInput!: HTMLInputElement;
-  @ViewChild('dialog') dialog!: HTMLDialogElement;
+  // Use ElementRef for the dialog to avoid document.getElementById
+  @ViewChild('dialog') dialog!: ElementRef<HTMLDialogElement>;
+  @ViewChild('playlistInput') playlistInput!: ElementRef<HTMLInputElement>;
+
   playlistName = '';
   creationError: string | null = null;
+  isLoading = false;
 
-  @Output() created = new EventEmitter<string>();
-  @Output() cancelled = new EventEmitter<void>();
-
-  private ovaSdk = inject(OVASDK);
+  private playlistManager = inject(PlaylistManagerService);
 
   submit(): void {
     const trimmed = this.playlistName.trim();
-    if (trimmed) {
-      this.ovaSdk.playlists.createUserPlaylist(trimmed, '', []).subscribe({
-        next: (res) => {
-          if (res.status === 'success' && res.data) {
-            this.created.emit(trimmed);
-          } else {
-            this.creationError = res.message;
-          }
-        },
-        error: (err) => {
-          if (err.error?.error?.message) {
-            this.creationError = err.error.error.message;
-          } else if (err.message) {
-            this.creationError = err.message;
-          } else {
-            this.creationError = 'Failed to create playlist. Please try again.';
-          }
-        },
-      });
+    if (!trimmed || this.isLoading) return;
 
-      this.playlistName = '';
-    }
+    this.isLoading = true;
+    this.creationError = null;
+
+    this.playlistManager.createPlaylist(trimmed, '').subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.playlistName = '';
+        this.close(); // Close only on success
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.creationError =
+          err.error?.message || err.message || 'Failed to create playlist';
+      },
+    });
   }
 
-  onConfirm() {}
+  open() {
+    this.dialog.nativeElement.showModal();
+    // Focus the input automatically when opened
+    setTimeout(() => this.playlistInput.nativeElement.focus(), 10);
+  }
 
   close() {
-    const dialog = document.getElementById(
-      'playlist_modal',
-    ) as HTMLDialogElement | null;
-    if (dialog && typeof dialog.close === 'function') {
-      dialog.close();
-    }
-  }
-
-  onCancel(): void {
-    console.log('cancel');
+    this.dialog.nativeElement.close();
     this.playlistName = '';
-    this.close();
-    this.cancelled.emit();
+    this.creationError = null;
   }
 }

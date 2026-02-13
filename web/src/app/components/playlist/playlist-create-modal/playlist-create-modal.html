@@ -1,33 +1,34 @@
-<dialog #dialog id="playlist_modal" class="modal" (keydown.escape)="onCancel()"
-  (keydown.enter)="playlistName.trim() && submit()">
+<dialog #dialog id="playlistCreateModal" class="modal">
+  <form (ngSubmit)="submit()" class="modal-box bg-base-200" (click)="$event.stopPropagation()">
 
-  <form (ngSubmit)="onConfirm()">
-
-  </form>
-  <div class="modal-box bg-base-200" (click)="$event.stopPropagation()">
-    <h3 id="playlist_modal_title" class="font-bold text-xl mb-4">
+    <h3 class="font-bold text-xl mb-4">
       Create New Playlist
     </h3>
 
-    <label for="playlistNameInput" class="sr-only">Playlist Name</label>
-    <input #playlistInput id="playlistNameInput" type="text" [(ngModel)]="playlistName"
-      placeholder="Enter playlist name" class="input input-bordered w-full" aria-required="true" autocomplete="off" />
+    <div class="form-control w-full">
+      <label for="playlistNameInput" class="sr-only">Playlist Name</label>
+      <input #playlistInput name="playlistName" id="playlistNameInput" type="text" [(ngModel)]="playlistName"
+        placeholder="Enter playlist name" class="input input-bordered w-full" aria-required="true"
+        [disabled]="isLoading" autocomplete="off" />
+
+      <p *ngIf="creationError" class="text-error text-sm mt-2">
+        {{ creationError }}
+      </p>
+    </div>
 
     <div class="modal-action mt-6 flex justify-end space-x-3">
-      <!-- Close Button -->
-      <button type="button" class="btn btn-ghost" (click)="onCancel()" aria-label="Cancel creating playlist">
+      <button type="button" class="btn btn-ghost" (click)="close()" [disabled]="isLoading">
         Cancel
       </button>
 
-      <!-- Create Button -->
-      <button type="button" class="btn btn-primary" (click)="submit()" [disabled]="!playlistName.trim()"
-        [attr.aria-disabled]="!playlistName.trim()">
-        Create
+      <button type="submit" class="btn btn-primary" [disabled]="!playlistName.trim() || isLoading">
+        <span *ngIf="isLoading" class="loading loading-spinner loading-xs"></span>
+        {{ isLoading ? 'Creating...' : 'Create' }}
       </button>
     </div>
-  </div>
+  </form>
 
   <form method="dialog" class="modal-backdrop">
-    <button>close</button>
+    <button (click)="close()">close</button>
   </form>
 </dialog>

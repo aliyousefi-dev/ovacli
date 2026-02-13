@@ -2,11 +2,9 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
-import { PlaylistData } from '../core-types/playlist-data';
+import { PageContainer } from '../core-types/page-container';
 
 import { ApiSuccessResponse } from './api-types/core-response';
-
-import { PlaylistContentResponse } from './api-types/playlist-response';
 
 import { ApiMap } from './api-map';
 
@@ -18,30 +16,30 @@ export class PlaylistContentAPIService {
   private apiMap = inject(ApiMap);
 
   fetchPlaylistContent(
-    slug: string,
-    bucket: number = 1,
-  ): Observable<ApiSuccessResponse<PlaylistContentResponse>> {
-    const url = this.apiMap.me.playlists.content.fetch(slug, bucket);
+    playlistId: string,
+    page: number = 1,
+  ): Observable<ApiSuccessResponse<PageContainer>> {
+    const url = this.apiMap.me.playlists.content.fetch(playlistId, page);
 
-    return this.http.get<ApiSuccessResponse<PlaylistContentResponse>>(url);
+    return this.http.get<ApiSuccessResponse<PageContainer>>(url);
   }
 
   addVideoToPlaylist(
     slug: string,
     videoId: string,
-  ): Observable<ApiSuccessResponse<PlaylistData>> {
+  ): Observable<ApiSuccessResponse<PageContainer>> {
     const url = this.apiMap.me.playlists.content.addVideo(slug);
     const body = videoId;
 
-    return this.http.post<ApiSuccessResponse<PlaylistData>>(url, body);
+    return this.http.post<ApiSuccessResponse<PageContainer>>(url, body);
   }
 
   deleteVideoFromPlaylist(
     slug: string,
     videoId: string,
-  ): Observable<ApiSuccessResponse<PlaylistData>> {
+  ): Observable<ApiSuccessResponse<PageContainer>> {
     const url = this.apiMap.me.playlists.content.removeVideo(slug, videoId);
 
-    return this.http.delete<ApiSuccessResponse<PlaylistData>>(url);
+    return this.http.delete<ApiSuccessResponse<PageContainer>>(url);
   }
 }

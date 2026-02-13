@@ -260,18 +260,6 @@ var userInfoCmd = &cobra.Command{
 			pterm.DefaultSection.Println("Favorites: (none)")
 		}
 
-		if len(user.Playlists) > 0 {
-			pterm.DefaultSection.Println("Playlists:")
-			for i, pl := range user.Playlists {
-				pterm.Println("  -", pl.Title, "(Slug:", pl.Slug+", Videos:", len(pl.VideoIDs), ")")
-				if i >= 4 && len(user.Playlists) > 5 {
-					pterm.Println("  ...and", len(user.Playlists)-5, "more")
-					break
-				}
-			}
-		} else {
-			pterm.DefaultSection.Println("Playlists: (none)")
-		}
 	},
 }
 

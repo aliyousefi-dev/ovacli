@@ -1,6 +1,6 @@
 <!-- Actions -->
 <div class="my-8 flex flex-wrap justify-center gap-4 px-4">
-  <button class="btn btn-primary text-sm px-6 py-2 " (click)="OnCreatePlaylistButton()">
+  <button class="btn btn-primary text-sm px-6 py-2 " (click)="openCreatePlaylistModal()">
     <i class='bx  bx-folder-plus bx-sm'></i>
     Create New Playlist
   </button>
@@ -50,3 +50,5 @@
 
 <!-- Confirm Delete Selected Playlist Modal -->
 <app-confirm-modal #confirmModal (confirmed)="confirmDelete()" (cancelled)="(null)"></app-confirm-modal>
+<playlist-create-modal></playlist-create-modal>
+<playlist-edit-modal></playlist-edit-modal>

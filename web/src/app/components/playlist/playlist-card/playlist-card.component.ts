@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
 import { ConfirmModalComponent } from '../../etc/confirm-modal/confirm-modal.component';
 import { PlaylistEditModal } from '../playlist-edit-modal/playlist-edit-modal';
 import { Router } from '@angular/router';
-import { PlaylistSummary } from '../../../../ova-angular-sdk/rest-api/api-types/playlist-response';
+import { PlaylistSummary } from '../../../../ova-angular-sdk/core-types/playlist-summary';
 
 import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
@@ -27,8 +27,6 @@ export class PlaylistCardComponent implements OnInit {
 
   @ViewChild(ConfirmModalComponent) confirmModal!: ConfirmModalComponent;
 
-  username: string | null = null;
-
   // State for edit modal visibility and form values
   editModalVisible = false;
   editTitle = '';
@@ -37,49 +35,37 @@ export class PlaylistCardComponent implements OnInit {
   private ovaSdk = inject(OVASDK);
   private router = inject(Router);
 
-  constructor() {
-    this.username = localStorage.getItem('username');
-    if (!this.username) {
-      console.warn('Username not found in localStorage');
-      this.username = ''; // fallback to empty string to avoid null issues
-    }
-  }
+  constructor() {}
 
   ngOnInit(): void {}
 
   getThumbnailUrl(): string {
-    const videoId = this.playlist.headVideoId
-      ? this.playlist.headVideoId
+    const videoId = this.playlist.coverImageUrl
+      ? this.playlist.coverImageUrl
       : null;
 
     return videoId ? this.ovaSdk.assets.thumbnail(videoId) : '';
   }
 
   goToPlaylistContent() {
-    this.router.navigate(['/playlists', this.playlist.slug]);
+    this.router.navigate(['/playlists', this.playlist.id]);
   }
 
   onDelete() {
-    if (!this.username) {
-      alert('No user logged in.');
-      return;
-    }
     this.confirmModal.open(
       `Are you sure you want to delete the playlist "${this.playlist.title}"? This action cannot be undone.`,
     );
   }
 
   confirmDelete() {
-    this.ovaSdk.playlists
-      .deleteUserPlaylistBySlug(this.playlist.slug)
-      .subscribe({
-        next: () => {
-          this.playlistDeleted.emit(this.playlist.slug);
-        },
-        error: (err) => {
-          alert('Failed to delete playlist: ' + err.message);
-        },
-      });
+    this.ovaSdk.playlists.deletePlaylist(this.playlist.id).subscribe({
+      next: () => {
+        this.playlistDeleted.emit(this.playlist.id);
+      },
+      error: (err) => {
+        alert('Failed to delete playlist: ' + err.message);
+      },
+    });
   }
 
   onEdit() {
@@ -93,12 +79,8 @@ export class PlaylistCardComponent implements OnInit {
   }
 
   onEditSaved(update: { title: string; description: string }) {
-    if (!this.username) {
-      alert('No user logged in.');
-      return;
-    }
     this.ovaSdk.playlists
-      .updateUserPlaylistInfo(this.playlist.slug, update)
+      .editPlaylist(this.playlist.id, update.title, update.description)
       .subscribe({
         next: (res) => {
           if (res.status === 'success' && res.data) {

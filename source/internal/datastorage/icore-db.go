@@ -19,16 +19,16 @@ type DiskDataStorage interface {
 	RemoveVideoFromSaved(username, videoID string) error
 
 	// User playlists management
-	AddPlaylistToUser(username string, playlist *datatypes.PlaylistData) error
-	GetUserPlaylist(username, playlistSlug string) (*datatypes.PlaylistData, error)
-	DeleteUserPlaylist(username, playlistSlug string) error
+	AddPlaylist(playlist *datatypes.PlaylistData) (*datatypes.PlaylistData, error)
+	GetPlaylistByID(username, playlistSlug string) (*datatypes.PlaylistData, error)
+	DeletePlaylistByID(username, playlistSlug string) error
 	AddVideoToPlaylist(username, playlistSlug, videoID string) error
 	RemoveVideoFromPlaylist(username, playlistSlug, videoID string) error
-	SetPlaylistsOrder(username string, newOrderSlugs []string) error
+	ReorderPlaylists(username string, newOrderSlugs []string) error
 	UpdatePlaylistInfo(username, playlistSlug, newTitle, newDescription string) error
 	UpdateUserPassword(username, newHashedPassword string) error
-	GetUserPlaylistContentVideosCount(username, playlistSlug string) (int, error)
-	GetUserPlaylistContentVideosInRange(username, playlistSlug string, start, end int) ([]string, error)
+	GetPlaylistVideoIDsPaginated(userId, playlistId string, page, limit int) ([]string, int, error)
+	GetPlaylistsByUser(userId string) ([]datatypes.PlaylistData, error)
 
 	// New method to get total video count
 	GetTotalVideoCount() (int, error)

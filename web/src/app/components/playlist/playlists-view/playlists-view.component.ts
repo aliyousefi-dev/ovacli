@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { PlaylistCardComponent } from '../playlist-card/playlist-card.component';
 import { CommonModule } from '@angular/common';
-import { PlaylistSummary } from '../../../../ova-angular-sdk/rest-api/api-types/playlist-response';
+import { PlaylistSummary } from '../../../../ova-angular-sdk/core-types/playlist-summary';
 
 import {
   DragDropModule,
@@ -38,36 +38,20 @@ export class PlaylistGridComponent implements OnInit {
 
   selectedPlaylistTitle: string | null = null;
 
-  username: string | null = null;
-
   private ovaSdk = inject(OVASDK);
 
-  ngOnInit() {
-    this.username = localStorage.getItem('username');
-    if (!this.username) {
-      console.warn(
-        'No username found in localStorage. Playlist order updates will be disabled.',
-      );
-    }
-  }
+  ngOnInit() {}
 
   drop(event: CdkDragDrop<PlaylistSummary[]>): void {
-    if (!this.username) {
-      console.error(
-        'Cannot update playlist order: username not found in localStorage.',
-      );
-      return;
-    }
-
     // Reorder the local playlists array based on drag-drop
     moveItemInArray(this.playlists, event.previousIndex, event.currentIndex);
 
     // Prepare an array of slugs in the new order
-    const newOrderSlugs = this.playlists.map((pl) => pl.slug);
+    const newOrderSlugs = this.playlists.map((pl) => pl.id);
 
     // Send one API request with the new slug order array
     this.ovaSdk.playlists
-      .savePlaylistsOrder(newOrderSlugs)
+      .reorderPlaylists(newOrderSlugs)
       .pipe(
         catchError((err) => {
           console.error('Failed to update playlist order:', err);
@@ -85,7 +69,7 @@ export class PlaylistGridComponent implements OnInit {
     const checked = (event.target as HTMLInputElement).checked;
     this.selectedPlaylists.clear();
     if (checked) {
-      this.playlists.forEach((p) => this.selectedPlaylists.add(p.slug));
+      this.playlists.forEach((p) => this.selectedPlaylists.add(p.id));
     }
 
     console.log(this.selectedPlaylists);
@@ -126,7 +110,7 @@ export class PlaylistGridComponent implements OnInit {
 
   OnPlaylistDeleted(deletedSlug: string) {
     // Remove playlist with matching slug from the array
-    this.playlists = this.playlists.filter((pl) => pl.slug !== deletedSlug);
+    this.playlists = this.playlists.filter((pl) => pl.id !== deletedSlug);
 
     // Also remove from selected set if present
     this.selectedPlaylists.delete(deletedSlug);

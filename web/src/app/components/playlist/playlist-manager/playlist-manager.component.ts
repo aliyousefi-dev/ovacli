@@ -5,7 +5,8 @@ import { RouterModule } from '@angular/router';
 import { PlaylistGridComponent } from '../playlists-view/playlists-view.component';
 import { PlaylistCreateModal } from '../playlist-create-modal/playlist-create-modal';
 import { ConfirmModalComponent } from '../../etc/confirm-modal/confirm-modal.component';
-import { PlaylistSummary } from '../../../../ova-angular-sdk/rest-api/api-types/playlist-response';
+import { PlaylistEditModal } from '../playlist-edit-modal/playlist-edit-modal';
+import { PlaylistSummary } from '../../../../ova-angular-sdk/core-types/playlist-summary';
 
 import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
@@ -17,16 +18,17 @@ import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
     RouterModule,
     PlaylistGridComponent,
     ConfirmModalComponent,
+    PlaylistCreateModal,
+    PlaylistEditModal,
   ],
   templateUrl: './playlist-manager.component.html',
 })
 export class PlaylistManagerComponent implements OnInit {
   @ViewChild(ConfirmModalComponent) confirmModal!: ConfirmModalComponent;
-  @ViewChild(PlaylistCreateModal)
-  createPlaylistModal!: PlaylistCreateModal;
+  @ViewChild(PlaylistCreateModal) playlistCreateModal!: PlaylistCreateModal;
 
   manageMode = false;
-  username: string | null = null;
+
   loading = true;
   playlists: PlaylistSummary[] = [];
   selectedPlaylists = new Set<string>();
@@ -53,14 +55,16 @@ export class PlaylistManagerComponent implements OnInit {
   }
 
   private sortPlaylists(): void {
-    this.playlists.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    this.playlists.sort(
+      (a, b) => (a.orderPosition ?? 0) - (b.orderPosition ?? 0),
+    );
   }
 
   toggleSelectAll(event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
     this.selectedPlaylists.clear();
     if (checked) {
-      this.playlists.forEach((p) => this.selectedPlaylists.add(p.slug));
+      this.playlists.forEach((p) => this.selectedPlaylists.add(p.id));
     }
     console.log(this.selectedPlaylists);
   }
@@ -77,7 +81,7 @@ export class PlaylistManagerComponent implements OnInit {
 
   confirmDelete() {
     this.selectedPlaylists.forEach((playlist_slug) => {
-      this.ovaSdk.playlists.deleteUserPlaylistBySlug(playlist_slug).subscribe({
+      this.ovaSdk.playlists.deletePlaylist(playlist_slug).subscribe({
         next: () => {
           this.handlePlaylistDeleted(playlist_slug);
         },
@@ -89,7 +93,7 @@ export class PlaylistManagerComponent implements OnInit {
   }
 
   handlePlaylistDeleted(deletedSlug: string) {
-    this.playlists = this.playlists.filter((pl) => pl.slug !== deletedSlug);
+    this.playlists = this.playlists.filter((pl) => pl.id !== deletedSlug);
     this.selectedPlaylists.delete(deletedSlug);
     if (this.selectedPlaylistTitle) {
       const deletedPlaylist = this.playlists.find(
@@ -101,11 +105,8 @@ export class PlaylistManagerComponent implements OnInit {
     }
   }
 
-  OnCreatePlaylistButton(): void {
-    const modal: any = document.getElementById('playlist_modal');
-    if (modal && typeof modal.showModal === 'function') {
-      modal.showModal();
-    }
+  openCreatePlaylistModal(): void {
+    this.playlistCreateModal.open();
   }
 
   onPlaylistCreated(title: string): void {

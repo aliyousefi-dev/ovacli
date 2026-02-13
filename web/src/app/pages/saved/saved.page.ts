@@ -6,7 +6,6 @@ import { OVASDK } from '../../../ova-angular-sdk/ova-sdk';
 
 import { GalleryStateService } from '../../components/gallery/gallery-state.service';
 import { GalleryFetchFn } from '../../components/gallery/types';
-
 import { GalleryPreview } from '../../components/gallery/gallery-preview/gallery-preview';
 
 @Component({

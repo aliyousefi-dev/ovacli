@@ -3,9 +3,8 @@ import { Observable, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map } from 'rxjs/operators';
 
-import { PlaylistData } from '../core-types/playlist-data';
 import { ApiSuccessResponse } from './api-types/core-response';
-import { PlaylistDataResponse } from './api-types/playlist-response';
+import { PlaylistSummary } from '../core-types/playlist-summary';
 
 import { ApiMap } from './api-map';
 
@@ -16,32 +15,34 @@ export class PlaylistAPIService {
   private http = inject(HttpClient);
   private apiMap = inject(ApiMap);
 
-  getUserPlaylists(): Observable<ApiSuccessResponse<PlaylistDataResponse>> {
+  getUserPlaylists(): Observable<
+    ApiSuccessResponse<{ playlists: PlaylistSummary[] }>
+  > {
     const url = this.apiMap.me.playlists.base();
 
-    return this.http.get<ApiSuccessResponse<PlaylistDataResponse>>(url).pipe(
-      map((response) => {
-        response.data.playlists = [...response.data.playlists].sort(
-          (a, b) => (a.order ?? 0) - (b.order ?? 0),
-        );
-        return response;
-      }),
-    );
+    return this.http
+      .get<ApiSuccessResponse<{ playlists: PlaylistSummary[] }>>(url)
+      .pipe(
+        map((response) => {
+          response.data.playlists = [...response.data.playlists].sort(
+            (a, b) => (a.orderPosition ?? 0) - (b.orderPosition ?? 0),
+          );
+          return response;
+        }),
+      );
   }
 
-  createUserPlaylist(
-    label: string,
+  createPlaylist(
+    title: string,
     des: string,
-    videoIds: string[],
-  ): Observable<ApiSuccessResponse<PlaylistData>> {
+  ): Observable<ApiSuccessResponse<PlaylistSummary>> {
     const url = this.apiMap.me.playlists.base();
     const body = {
-      title: label,
+      title: title,
       description: des,
-      videoIds: videoIds,
     };
 
-    return this.http.post<ApiSuccessResponse<PlaylistData>>(url, body).pipe(
+    return this.http.post<ApiSuccessResponse<PlaylistSummary>>(url, body).pipe(
       catchError((error: HttpErrorResponse) => {
         let userFriendlyError = 'An unknown error occurred';
         if (
@@ -56,13 +57,13 @@ export class PlaylistAPIService {
     );
   }
 
-  deleteUserPlaylistBySlug(slug: string): Observable<ApiSuccessResponse<null>> {
-    const url = this.apiMap.me.playlists.bySlug(slug);
+  deletePlaylist(playlistId: string): Observable<ApiSuccessResponse<null>> {
+    const url = this.apiMap.me.playlists.bySlug(playlistId);
 
     return this.http.delete<ApiSuccessResponse<null>>(url);
   }
 
-  savePlaylistsOrder(order: string[]): Observable<ApiSuccessResponse<null>> {
+  reorderPlaylists(order: string[]): Observable<ApiSuccessResponse<null>> {
     const url = this.apiMap.me.playlists.order();
     const body = order;
 
@@ -81,14 +82,15 @@ export class PlaylistAPIService {
     );
   }
 
-  updateUserPlaylistInfo(
-    slug: string,
-    update: { title?: string; description?: string },
-  ): Observable<ApiSuccessResponse<PlaylistData>> {
-    const url = this.apiMap.me.playlists.bySlug(slug);
-    const body = update;
+  editPlaylist(
+    playlistId: string,
+    newTitle: string,
+    newDesc: string,
+  ): Observable<ApiSuccessResponse<PlaylistSummary>> {
+    const url = this.apiMap.me.playlists.bySlug(playlistId);
+    const body = { title: newTitle, description: newDesc };
 
-    return this.http.put<ApiSuccessResponse<PlaylistData>>(url, body).pipe(
+    return this.http.put<ApiSuccessResponse<PlaylistSummary>>(url, body).pipe(
       catchError((error: HttpErrorResponse) => {
         let userFriendlyError = 'An unknown error occurred';
         if (

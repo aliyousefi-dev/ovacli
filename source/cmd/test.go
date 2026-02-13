@@ -1,10 +1,12 @@
 package cmd
 
 import (
-	"fmt"
-	"ova-cli/source/internal/thirdparty"
-
 	// Assuming you have the GetVideoDetails function in this package
+
+	"fmt"
+	"os"
+	"ova-cli/source/internal/repo"
+
 	"github.com/spf13/cobra"
 	// Assuming the datatypes package contains VideoResolution struct
 )
@@ -16,15 +18,23 @@ var testCmd = &cobra.Command{
 }
 
 var ovaxcmd = &cobra.Command{
-	Use:   "ovax",
+	Use:   "playlist",
 	Short: "test",
 	Run: func(cmd *cobra.Command, args []string) {
-		version, err := thirdparty.ScanOvax("e:\\PP")
+
+		currentPath, err := os.Getwd()
 		if err != nil {
-			fmt.Println("Error:", err)
+			fmt.Println("Failed to get working directory:", err)
 			return
 		}
-		fmt.Println(version)
+
+		repManager, err := repo.NewRepoManager(currentPath)
+		if err != nil {
+			fmt.Println("Failed to initialize repository:", err)
+			return
+		}
+
+		repManager.AddVideoToPlaylist("new", "NpSQovGz3h0", "new")
 	},
 }
 

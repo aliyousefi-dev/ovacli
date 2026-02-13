@@ -7,325 +7,317 @@ import (
 
 // --- User Playlist Management ---
 
-// AddPlaylistToUser adds a new playlist to a user's collection.
-// Returns an error if the user is not found or a playlist with the same slug already exists for the user.
-func (s *JsonDB) AddPlaylistToUser(username string, pl *datatypes.PlaylistData) error {
+func (s *JsonDB) AddPlaylist(pl *datatypes.PlaylistData) (*datatypes.PlaylistData, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	users, err := s.loadUsers()
+	// 1. Load the existing collection
+	playlists, err := s.LoadPlaylistCollection()
 	if err != nil {
-		return fmt.Errorf("failed to load users: %w", err)
+		return nil, fmt.Errorf("failed to load playlist collection: %w", err)
 	}
 
-	user, exists := users[username]
-	if !exists {
-		return fmt.Errorf("user %q not found", username)
+	// 2. Safety: Ensure we don't overwrite an existing ID
+	if _, exists := playlists[pl.ID]; exists {
+		return nil, fmt.Errorf("playlist with ID %s already exists", pl.ID)
 	}
 
-	for _, existing := range user.Playlists {
-		if existing.Slug == pl.Slug {
-			return fmt.Errorf("playlist with slug %q already exists for user %q", pl.Slug, username)
-		}
-	}
-
-	// If order is 0 (unordered), assign it max existing order + 1
-	if pl.Order == 0 {
-		maxOrder := 0
-		for _, existing := range user.Playlists {
-			if existing.Order > maxOrder {
-				maxOrder = existing.Order
+	// 3. Calculate Order Position
+	// We only care about the max order of playlists owned by this specific user
+	maxOrder := 0
+	for _, p := range playlists {
+		if p.OwnerUserId == pl.OwnerUserId {
+			if p.Order > maxOrder {
+				maxOrder = p.Order
 			}
 		}
+	}
+
+	// 4. Assign the next position if it's a new playlist (Order == 0)
+	if pl.Order == 0 {
 		pl.Order = maxOrder + 1
 	}
 
-	user.Playlists = append(user.Playlists, *pl) // Append a copy of the playlist
-	users[username] = user                       // Update the map with the modified user struct
-	return s.saveUsers(users)
+	// 5. Add to the map
+	playlists[pl.ID] = *pl
+
+	// 6. Save the updated map to playlists.json
+	if err := s.SavePlaylistCollection(playlists); err != nil {
+		return nil, fmt.Errorf("failed to save playlist: %w", err)
+	}
+
+	return pl, nil
 }
 
 // GetUserPlaylist finds a specific playlist for a user by its slug.
 // Returns a pointer to a copy of PlaylistData if found, or an error if the user or playlist is not found.
-func (s *JsonDB) GetUserPlaylist(username, slug string) (*datatypes.PlaylistData, error) {
+func (s *JsonDB) GetPlaylistByID(userId, playlistId string) (*datatypes.PlaylistData, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	users, err := s.loadUsers()
+	// Load the existing collections
+	playlists, err := s.LoadPlaylistCollection()
 	if err != nil {
-		return nil, fmt.Errorf("failed to load users: %w", err)
+		return nil, fmt.Errorf("failed to load playlist collection: %w", err)
 	}
 
-	user, exists := users[username]
-	if !exists {
-		return nil, fmt.Errorf("user %q not found", username)
-	}
-
-	for _, pl := range user.Playlists {
-		if pl.Slug == slug {
-			return &pl, nil // Return a pointer to a copy
+	for _, p := range playlists {
+		if p.OwnerUserId == userId && p.ID == playlistId {
+			// Return a copy to ensure callers cannot mutate internal state
+			plCopy := p
+			return &plCopy, nil
 		}
 	}
-	return nil, fmt.Errorf("playlist with slug %q not found for user %q", slug, username)
+
+	return nil, fmt.Errorf("playlist with id %q not found for user %q", playlistId, userId)
 }
 
-// DeleteUserPlaylist removes a playlist from a user's collection by its slug.
+// DeleteUserPlaylist removes a playlist from a user's collection by its id.
 // Returns an error if the user or playlist is not found.
-func (s *JsonDB) DeleteUserPlaylist(username, slug string) error {
+func (s *JsonDB) DeletePlaylistByID(userId, playlistId string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	users, err := s.loadUsers()
+	// Load the existing collection
+	playlists, err := s.LoadPlaylistCollection()
 	if err != nil {
-		return fmt.Errorf("failed to load users: %w", err)
+		return fmt.Errorf("failed to load playlist collection: %w", err)
 	}
 
-	user, exists := users[username]
+	playlist, exists := playlists[playlistId]
 	if !exists {
-		return fmt.Errorf("user %q not found", username)
+		return fmt.Errorf("playlist with id %q not found", playlistId)
+	}
+	if playlist.OwnerUserId != userId {
+		return fmt.Errorf("playlist with id %q does not belong to user %q", playlistId, userId)
 	}
 
-	found := false
-	filtered := make([]datatypes.PlaylistData, 0, len(user.Playlists))
-	for _, pl := range user.Playlists {
-		if pl.Slug == slug {
-			found = true
-		} else {
-			filtered = append(filtered, pl)
-		}
+	delete(playlists, playlistId)
+
+	if err := s.SavePlaylistCollection(playlists); err != nil {
+		return fmt.Errorf("failed to save playlist collection after deleting: %w", err)
 	}
 
-	if !found {
-		return fmt.Errorf("playlist with slug %q not found for user %q", slug, username)
-	}
-
-	user.Playlists = filtered
-	users[username] = user // Update the map with the modified user struct
-	return s.saveUsers(users)
+	return nil
 }
 
-// AddVideoToPlaylist adds a video ID to a specific playlist of a user.
-// Returns an error if the user, playlist, or video (in global storage) is not found.
-// Returns nil if the video is already in the playlist.
-func (s *JsonDB) AddVideoToPlaylist(username, slug, videoID string) error {
+func (s *JsonDB) AddVideoToPlaylist(userId, playlistId, videoId string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	users, err := s.loadUsers()
+	// Load the existing playlist collection
+	playlists, err := s.LoadPlaylistCollection()
 	if err != nil {
-		return fmt.Errorf("failed to load users: %w", err)
+		return fmt.Errorf("failed to load playlist collection: %w", err)
 	}
 
-	user, exists := users[username]
+	playlist, exists := playlists[playlistId]
 	if !exists {
-		return fmt.Errorf("user %q not found", username)
+		return fmt.Errorf("playlist with id %q not found", playlistId)
 	}
 
-	// Check if video exists in main video storage before adding to playlist
-	videos, err := s.loadVideos()
-	if err != nil {
-		return fmt.Errorf("failed to load videos to check existence: %w", err)
-	}
-	if _, videoExists := videos[videoID]; !videoExists {
-		return fmt.Errorf("video %q not found in video storage", videoID)
+	if playlist.OwnerUserId != userId {
+		return fmt.Errorf("playlist with id %q does not belong to user %q", playlistId, userId)
 	}
 
-	foundPlaylistIndex := -1
-	for i := range user.Playlists {
-		if user.Playlists[i].Slug == slug {
-			foundPlaylistIndex = i
-			break
+	// Check if videoId already exists
+	for _, vid := range playlist.VideoIDs {
+		if vid == videoId {
+			return fmt.Errorf("video %q already exists in playlist %q", videoId, playlistId)
 		}
 	}
 
-	if foundPlaylistIndex == -1 {
-		return fmt.Errorf("playlist with slug %q not found for user %q", slug, username)
+	// Add the video to the playlist
+	playlist.VideoIDs = append(playlist.VideoIDs, videoId)
+	playlist.VideoCount = len(playlist.VideoIDs)
+	playlists[playlistId] = playlist
+
+	if err := s.SavePlaylistCollection(playlists); err != nil {
+		return fmt.Errorf("failed to save updated playlist collection: %w", err)
 	}
 
-	// Check if video already exists in the playlist
-	for _, vid := range user.Playlists[foundPlaylistIndex].VideoIDs {
-		if vid == videoID {
-			return nil // Video already exists in playlist, no need to add
-		}
-	}
-
-	user.Playlists[foundPlaylistIndex].VideoIDs = append(user.Playlists[foundPlaylistIndex].VideoIDs, videoID)
-	users[username] = user // Update the map with the modified user struct
-	return s.saveUsers(users)
+	return nil
 }
 
 // RemoveVideoFromPlaylist removes a video ID from a specific playlist of a user.
 // Returns an error if the user, playlist, or video (within the playlist) is not found.
-func (s *JsonDB) RemoveVideoFromPlaylist(username, slug, videoID string) error {
+func (s *JsonDB) RemoveVideoFromPlaylist(userId, playlistId, videoId string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	users, err := s.loadUsers()
+	// Load the existing playlist collection
+	playlists, err := s.LoadPlaylistCollection()
 	if err != nil {
-		return fmt.Errorf("failed to load users: %w", err)
+		return fmt.Errorf("failed to load playlist collection: %w", err)
 	}
 
-	user, exists := users[username]
+	playlist, exists := playlists[playlistId]
 	if !exists {
-		return fmt.Errorf("user %q not found", username)
+		return fmt.Errorf("playlist with id %q not found", playlistId)
 	}
 
-	foundPlaylistIndex := -1
-	for i := range user.Playlists {
-		if user.Playlists[i].Slug == slug {
-			foundPlaylistIndex = i
+	if playlist.OwnerUserId != userId {
+		return fmt.Errorf("playlist with id %q does not belong to user %q", playlistId, userId)
+	}
+
+	// Find the index of the video to remove
+	indexToRemove := -1
+	for i, vid := range playlist.VideoIDs {
+		if vid == videoId {
+			indexToRemove = i
 			break
 		}
 	}
 
-	if foundPlaylistIndex == -1 {
-		return fmt.Errorf("playlist with slug %q not found for user %q", slug, username)
+	if indexToRemove == -1 {
+		return fmt.Errorf("video %q not found in playlist %q", videoId, playlistId)
 	}
 
-	foundVideo := false
-	newVideos := make([]string, 0, len(user.Playlists[foundPlaylistIndex].VideoIDs))
-	for _, vid := range user.Playlists[foundPlaylistIndex].VideoIDs {
-		if vid == videoID {
-			foundVideo = true
-			continue // Skip this video ID
-		}
-		newVideos = append(newVideos, vid)
+	playlist.VideoIDs = append(playlist.VideoIDs[:indexToRemove], playlist.VideoIDs[indexToRemove+1:]...)
+	playlist.VideoCount = len(playlist.VideoIDs)
+	playlists[playlistId] = playlist
+
+	if err := s.SavePlaylistCollection(playlists); err != nil {
+		return fmt.Errorf("failed to save updated playlist collection after removing video: %w", err)
 	}
 
-	if !foundVideo {
-		return fmt.Errorf("video %q not found in playlist %q for user %q", videoID, slug, username)
-	}
-
-	user.Playlists[foundPlaylistIndex].VideoIDs = newVideos
-	users[username] = user // Update the map with the modified user struct
-	return s.saveUsers(users)
+	return nil
 }
 
-func (s *JsonDB) SetPlaylistsOrder(username string, newOrderSlugs []string) error {
+func (s *JsonDB) ReorderPlaylists(userId string, newOrderPlaylistIds []string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	users, err := s.loadUsers()
+	// Load the existing playlist collection
+	playlists, err := s.LoadPlaylistCollection()
 	if err != nil {
-		return fmt.Errorf("failed to load users: %w", err)
+		return fmt.Errorf("failed to load playlist collection: %w", err)
 	}
 
-	user, exists := users[username]
-	if !exists {
-		return fmt.Errorf("user %q not found", username)
-	}
-
-	// Build a map from slug to playlist for quick lookup
-	playlistMap := make(map[string]datatypes.PlaylistData)
-	for _, pl := range user.Playlists {
-		playlistMap[pl.Slug] = pl
-	}
-
-	// Validate that all slugs in newOrderSlugs exist in user's playlists
-	for _, slug := range newOrderSlugs {
-		if _, ok := playlistMap[slug]; !ok {
-			return fmt.Errorf("playlist %q not found for user %q", slug, username)
+	// Create a map for quick lookup of playlist IDs that belong to the user
+	userPlaylistIds := make(map[string]struct{})
+	for _, p := range playlists {
+		if p.OwnerUserId == userId {
+			userPlaylistIds[p.ID] = struct{}{}
 		}
 	}
 
-	// Rebuild the playlists slice in the new order given by newOrderSlugs
-	reordered := make([]datatypes.PlaylistData, 0, len(newOrderSlugs))
-	for i, slug := range newOrderSlugs {
-		pl := playlistMap[slug]
-		pl.Order = i + 1 // assign order starting from 1
-		reordered = append(reordered, pl)
+	// Validation: Make sure all playlistIds in newOrderPlaylistIds actually belong to the user
+	for _, pid := range newOrderPlaylistIds {
+		if _, ok := userPlaylistIds[pid]; !ok {
+			return fmt.Errorf("playlist id %q does not belong to user %q", pid, userId)
+		}
 	}
 
-	// Replace user's playlists with reordered slice
-	user.Playlists = reordered
-	users[username] = user
+	// Set new order: The first id in the slice gets order 1, etc.
+	for order, pid := range newOrderPlaylistIds {
+		playlist := playlists[pid]
+		playlist.Order = order + 1
+		playlists[pid] = playlist
+	}
 
-	return s.saveUsers(users)
+	// Save updated playlists collection
+	if err := s.SavePlaylistCollection(playlists); err != nil {
+		return fmt.Errorf("failed to save reordered playlists: %w", err)
+	}
+
+	return nil
 }
 
-// UpdatePlaylistInfo updates the title and description of a user's playlist.
-// Returns an error if the user or playlist is not found.
-func (s *JsonDB) UpdatePlaylistInfo(username, playlistSlug, newTitle, newDescription string) error {
+func (s *JsonDB) UpdatePlaylistInfo(userId, playlistId, newTitle, newDescription string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	// Load the existing playlist collection
+	playlists, err := s.LoadPlaylistCollection()
+	if err != nil {
+		return fmt.Errorf("failed to load playlist collection: %w", err)
+	}
+
+	playlist, exists := playlists[playlistId]
+	if !exists {
+		return fmt.Errorf("playlist with id %q not found", playlistId)
+	}
+
+	// Check if the playlist belongs to the given user
+	if playlist.OwnerUserId != userId {
+		return fmt.Errorf("playlist with id %q does not belong to user %q", playlistId, userId)
+	}
+
+	playlist.Title = newTitle
+	playlist.Description = newDescription
+
+	playlists[playlistId] = playlist
+
+	if err := s.SavePlaylistCollection(playlists); err != nil {
+		return fmt.Errorf("failed to save playlist updates: %w", err)
+	}
+
+	return nil
+}
+
+func (s *JsonDB) GetPlaylistVideoIDsPaginated(userId, playlistId string, page, limit int) ([]string, int, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	users, err := s.loadUsers()
+	// 1. Load the existing collection
+	playlists, err := s.LoadPlaylistCollection()
 	if err != nil {
-		return fmt.Errorf("failed to load users: %w", err)
+		return nil, 0, fmt.Errorf("failed to load playlist collection: %w", err)
 	}
 
-	user, exists := users[username]
+	playlist, exists := playlists[playlistId]
 	if !exists {
-		return fmt.Errorf("user %q not found", username)
+		return nil, 0, fmt.Errorf("playlist not found")
 	}
 
-	foundPlaylistIndex := -1
-	for i := range user.Playlists {
-		if user.Playlists[i].Slug == playlistSlug {
-			foundPlaylistIndex = i
-			break
-		}
+	// 2. Ownership Check
+	if playlist.OwnerUserId != userId {
+		return nil, 0, fmt.Errorf("access denied")
 	}
 
-	if foundPlaylistIndex == -1 {
-		return fmt.Errorf("playlist with slug %q not found for user %q", playlistSlug, username)
+	totalVideos := len(playlist.VideoIDs)
+
+	// 3. Calculate Slicing Logic (Page 1 starts at index 0)
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 {
+		limit = 10
+	} // Default limit
+
+	startIndex := (page - 1) * limit
+	endIndex := startIndex + limit
+
+	// 4. Boundary Safety Checks
+	if startIndex >= totalVideos {
+		return []string{}, totalVideos, nil // Return empty slice if page is out of range
 	}
 
-	// Update the playlist title and description
-	user.Playlists[foundPlaylistIndex].Title = newTitle
-	user.Playlists[foundPlaylistIndex].Description = newDescription
+	if endIndex > totalVideos {
+		endIndex = totalVideos
+	}
 
-	// Update the user in the map
-	users[username] = user
-
-	return s.saveUsers(users)
+	// 5. Return the slice and the total count
+	// Returning the total count allows the frontend to calculate how many pages exist
+	return playlist.VideoIDs[startIndex:endIndex], totalVideos, nil
 }
 
-func (s *JsonDB) GetUserPlaylistContentVideosCount(username, playlistSlug string) (int, error) {
+// GetAllUserPlaylists returns a slice of all playlists belonging to a given user.
+func (s *JsonDB) GetPlaylistsByUser(userId string) ([]datatypes.PlaylistData, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	users, err := s.loadUsers()
+	playlists, err := s.LoadPlaylistCollection()
 	if err != nil {
-		return 0, fmt.Errorf("failed to load users: %w", err)
+		return nil, fmt.Errorf("failed to load playlist collection: %w", err)
 	}
 
-	user, exists := users[username]
-	if !exists {
-		return 0, fmt.Errorf("user %q not found", username)
-	}
-
-	for _, pl := range user.Playlists {
-		if pl.Slug == playlistSlug {
-			return len(pl.VideoIDs), nil
+	var userPlaylists []datatypes.PlaylistData
+	for _, p := range playlists {
+		if p.OwnerUserId == userId {
+			userPlaylists = append(userPlaylists, p)
 		}
 	}
 
-	return 0, fmt.Errorf("playlist %q not found for user %q", playlistSlug, username)
-}
-
-func (s *JsonDB) GetUserPlaylistContentVideosInRange(username, playlistSlug string, start, end int) ([]string, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	users, err := s.loadUsers()
-	if err != nil {
-		return nil, fmt.Errorf("failed to load users: %w", err)
-	}
-
-	user, exists := users[username]
-	if !exists {
-		return nil, fmt.Errorf("user %q not found", username)
-	}
-
-	for _, pl := range user.Playlists {
-		if pl.Slug == playlistSlug {
-			if start < 0 || end > len(pl.VideoIDs) || start >= end {
-				return nil, fmt.Errorf("invalid range [%d, %d)", start, end)
-			}
-			return pl.VideoIDs[start:end], nil
-		}
-	}
-
-	return nil, fmt.Errorf("playlist %q not found for user %q", playlistSlug, username)
+	return userPlaylists, nil
 }

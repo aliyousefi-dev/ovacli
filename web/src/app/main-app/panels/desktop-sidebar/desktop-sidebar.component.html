@@ -23,8 +23,6 @@
         <a routerLink="/global" [queryParams]="{ bucket: 1 }" routerLinkActive="menu-active">
           <i class='bx bx-globe bx-xs'></i>
           <span>Global</span>
-
-          <span class="badge badge-xs badge-neutral">2</span>
         </a>
       </li>
 
@@ -58,6 +56,14 @@
       <li> <a routerLink="/saved" routerLinkActive="menu-active">
           <i class='bx bxs-bookmark bx-xs'></i>
           <span>Saved</span>
+          <span class="badge badge-xs badge-neutral">10</span>
+        </a>
+      </li>
+
+      <li><a routerLink="/playlists" routerLinkActive="menu-active">
+          <i class='bx bxs-videos bx-xs'></i>
+          <span>Playlists</span>
+          <span class="badge badge-xs badge-neutral">3</span>
         </a>
       </li>
       <li><a routerLink="/history" routerLinkActive="menu-active">
@@ -65,12 +71,6 @@
           <span>History</span>
         </a>
       </li>
-      <li><a routerLink="/playlists" routerLinkActive="menu-active">
-          <i class='bx bxs-videos bx-xs'></i>
-          <span>Playlists</span>
-        </a>
-      </li>
-
       <li></li>
       <li class="menu-title">Admin</li>
       <li>

@@ -7,13 +7,12 @@
   </li>
   }
 
-  @for (playlist of playlists; track playlist.slug ; let idx = $index) {
+  @for (playlist of playlists; track playlist.id ; let idx = $index) {
   @if (manageMode) {
-  <li cdkDrag class="flex items-center gap-5 hover:bg-base-200 px-4 py-2"
-    (click)="onSelect(playlist.title);$event.stopPropagation()">
+  <li cdkDrag class="flex items-center gap-5  px-4 py-2" (click)="onSelect(playlist.title);$event.stopPropagation()">
     <div class="flex-shrink-0">
-      <input type="checkbox" class="checkbox checkbox-neutral checkbox-sm" [checked]="isChecked(playlist.slug)"
-        (click)="togglePlaylistSelection(playlist.slug, $event)" />
+      <input type="checkbox" class="checkbox checkbox-neutral checkbox-sm" [checked]="isChecked(playlist.id)"
+        (click)="togglePlaylistSelection(playlist.id, $event)" />
     </div>
 
     <div class="flex-1 min-w-0">
@@ -26,7 +25,7 @@
     </div>
   </li>
   } @else {
-  <li class="flex items-center gap-2 hover:bg-base-200  px-2 py-2 ">
+  <li class="flex items-center gap-2 hover:bg-base-200/60  px-2 py-2 ">
     <div class="text-4xl  opacity-20 w-12 text-center">
       {{ idx + 1 | number : "2.0" }}
     </div>

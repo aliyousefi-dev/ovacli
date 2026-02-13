@@ -26,7 +26,6 @@ export class App implements OnInit {
   isNotFoundRoute: boolean = false;
 
   ngOnInit() {
-    // Listen to router navigation events to toggle loading spinner
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.loadingService.show();

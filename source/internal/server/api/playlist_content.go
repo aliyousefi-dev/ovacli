@@ -12,136 +12,101 @@ import (
 
 // RegisterUserPlaylistContentRoutes registers playlist routes under the user scope.
 func RegisterUserPlaylistContentRoutes(rg *gin.RouterGroup, rm *repo.RepoManager) {
-	me := rg.Group("/me") // Change route to /me
+	me := rg.Group("/me")
 	{
-		me.GET("/playlists/:slug", getUserPlaylistContents(rm))                    // GET /api/v1/me/playlists/:slug
-		me.POST("/playlists/:slug/videos", addVideoToPlaylist(rm))                 // POST /api/v1/me/playlists/:slug/videos
-		me.DELETE("/playlists/:slug/videos/:videoId", deleteVideoFromPlaylist(rm)) // DELETE /api/v1/me/playlists/:slug/videos/:videoId
+		me.GET("/playlists/:playlistId", GetPlaylistVideos(rm))
+		me.POST("/playlists/:playlistId/videos", AddVideoToPlaylist(rm))
 	}
 }
 
-// GET /me/playlists/:slug/contents
-func getUserPlaylistContents(rm *repo.RepoManager) gin.HandlerFunc {
+// GET /me/playlists/:playlistId/videos
+func GetPlaylistVideos(rm *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Retrieve accountId set by the AuthMiddleware
 		accountID, exists := c.Get("accountId")
 		if !exists {
 			apitypes.RespondError(c, http.StatusUnauthorized, "Account ID not found")
 			return
 		}
 
-		slug := c.Param("slug")
+		playlistId := c.Param("playlistId")
 
-		// Parse bucket from query parameters (default: 1)
-		bucketStr := c.DefaultQuery("bucket", "1")
-		bucket, err := strconv.Atoi(bucketStr)
-		if err != nil || bucket <= 0 {
-			apitypes.RespondError(c, http.StatusBadRequest, "Invalid bucket parameter")
-			return
+		// 1. Setup Pagination Defaults
+		currentPage := 1
+		pageSize := rm.GetConfigs().MaxBucketSize
+
+		// 2. Parse Query Params
+		if pageStr := c.Query("page"); pageStr != "" {
+			if val, err := strconv.Atoi(pageStr); err == nil && val > 0 {
+				currentPage = val
+			}
 		}
 
-		// Fixed bucket size
-		bucketContentSize := 20
-
-		// Get total number of videos in playlist
-		totalVideos, err := rm.GetUserPlaylistContentVideosCount(accountID.(string), slug)
-		if err != nil {
-			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to get playlist videos count")
-			return
+		// Optional: Let user define limit, but cap it at MaxBucketSize
+		if limitStr := c.Query("limit"); limitStr != "" {
+			if val, err := strconv.Atoi(limitStr); err == nil && val > 0 && val <= pageSize {
+				pageSize = val
+			}
 		}
 
-		// If playlist is empty
-		if totalVideos == 0 {
-			apitypes.RespondSuccess(c, http.StatusOK, gin.H{
-				"slug":              slug,
-				"videoIds":          []string{},
-				"totalVideos":       0,
-				"currentBucket":     bucket,
-				"bucketContentSize": bucketContentSize,
-				"totalBuckets":      0,
-			}, "No videos found in playlist")
-			return
-		}
-
-		// Calculate start/end based on bucket
-		start := (bucket - 1) * bucketContentSize
-		end := start + bucketContentSize
-		if end > totalVideos {
-			end = totalVideos
-		}
-
-		// Fetch playlist videos for the given bucket
-		videos, err := rm.GetUserPlaylistContentVideosInRange(accountID.(string), slug, start, end)
+		// 3. Fetch data (Notice we pass currentPage and pageSize now!)
+		videos, total, err := rm.GetPlaylistVideoIDsPaginated(accountID.(string), playlistId, currentPage, pageSize)
 		if err != nil {
 			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to retrieve playlist videos")
 			return
 		}
 
-		// Response payload
+		// 4. Construct response
 		response := gin.H{
-			"slug":              slug,
-			"videoIds":          videos,
-			"totalVideos":       totalVideos,
-			"currentBucket":     bucket,
-			"bucketContentSize": bucketContentSize,
-			"totalBuckets":      (totalVideos + bucketContentSize - 1) / bucketContentSize,
+			"videos":      videos,
+			"currentPage": currentPage, // Fixed trailing space
+			"pageSize":    pageSize,
+			"totalItems":  total,
+			"totalPages":  (total + pageSize - 1) / pageSize,
+			"hasNextPage": (currentPage*pageSize < total),
 		}
 
-		apitypes.RespondSuccess(c, http.StatusOK, response, "Playlist contents retrieved successfully")
+		apitypes.RespondSuccess(c, http.StatusOK, response, "Playlist videos retrieved successfully")
 	}
 }
 
-// POST /me/playlists/:slug/videos
-func addVideoToPlaylist(rm *repo.RepoManager) gin.HandlerFunc {
+// POST /me/playlists/:playlistId/videos
+func AddVideoToPlaylist(rm *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		slug := c.Param("slug")
+		// 1. Get User Context
+		accountID, exists := c.Get("accountId")
+		if !exists {
+			apitypes.RespondError(c, http.StatusUnauthorized, "Account ID not found")
+			return
+		}
 
+		playlistId := c.Param("playlistId")
+
+		// 2. Parse Request Body
 		var body struct {
-			VideoID string `json:"videoId"`
+			VideoID string `json:"videoId" binding:"required"`
 		}
-		if err := c.ShouldBindJSON(&body); err != nil || body.VideoID == "" {
-			apitypes.RespondError(c, http.StatusBadRequest, "Invalid or missing videoId")
+		if err := c.ShouldBindJSON(&body); err != nil {
+			apitypes.RespondError(c, http.StatusBadRequest, "A valid videoId is required")
 			return
 		}
 
-		// Retrieve accountId set by the AuthMiddleware
-		accountID, exists := c.Get("accountId")
-		if !exists {
-			apitypes.RespondError(c, http.StatusUnauthorized, "Account ID not found")
-			return
-		}
-
-		err := rm.AddVideoToPlaylist(accountID.(string), slug, body.VideoID)
+		// 3. Perform the Action
+		// We use the ID from context to ensure the user owns the target playlist
+		err := rm.AddVideoToPlaylist(accountID.(string), playlistId, body.VideoID)
 		if err != nil {
-			apitypes.RespondError(c, http.StatusInternalServerError, err.Error())
+			// It's good practice to log the actual error and return a friendlier message
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to add video to playlist")
 			return
 		}
 
-		pl, _ := rm.GetUserPlaylist(accountID.(string), slug)
-		apitypes.RespondSuccess(c, http.StatusOK, pl, "Video added to playlist")
-	}
-}
-
-// DELETE /me/playlists/:slug/videos/:videoId
-func deleteVideoFromPlaylist(rm *repo.RepoManager) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		slug := c.Param("slug")
-		videoId := c.Param("videoId")
-
-		// Retrieve accountId set by the AuthMiddleware
-		accountID, exists := c.Get("accountId")
-		if !exists {
-			apitypes.RespondError(c, http.StatusUnauthorized, "Account ID not found")
-			return
-		}
-
-		err := rm.RemoveVideoFromPlaylist(accountID.(string), slug, videoId)
+		// 4. Return the updated Playlist object
+		// This is helpful for the frontend to update the VideoCount and CoverImage immediately
+		updatedPl, err := rm.GetPlaylistByID(accountID.(string), playlistId)
 		if err != nil {
-			apitypes.RespondError(c, http.StatusInternalServerError, err.Error())
+			apitypes.RespondSuccess(c, http.StatusOK, nil, "Video added successfully")
 			return
 		}
 
-		pl, _ := rm.GetUserPlaylist(accountID.(string), slug)
-		apitypes.RespondSuccess(c, http.StatusOK, pl, "Video removed from playlist")
+		apitypes.RespondSuccess(c, http.StatusOK, updatedPl, "Video added to playlist")
 	}
 }
