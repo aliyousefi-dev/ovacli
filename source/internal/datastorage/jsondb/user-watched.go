@@ -5,7 +5,7 @@ import (
 )
 
 // AddVideoToWatched adds a video to the watched list for a given user.
-func (s *JsonDB) AddVideoToWatched(accountid, videoID string) error {
+func (s *JsonDB) AddVideoToWatched(accountId, videoID string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -16,7 +16,7 @@ func (s *JsonDB) AddVideoToWatched(accountid, videoID string) error {
 	}
 
 	// Check if the user exists in the watched videos map
-	userVideos, exists := videos[accountid]
+	userVideos, exists := videos[accountId]
 	if !exists {
 		// If the user does not exist, initialize their watched list
 		userVideos = []string{}
@@ -42,7 +42,7 @@ func (s *JsonDB) AddVideoToWatched(accountid, videoID string) error {
 	userVideos = append(userVideos, videoID)
 
 	// Update the map with the new watched videos list for the user
-	videos[accountid] = userVideos
+	videos[accountId] = userVideos
 
 	// Save the updated watched videos data
 	if err := s.saveWatched(videos); err != nil {
@@ -52,7 +52,7 @@ func (s *JsonDB) AddVideoToWatched(accountid, videoID string) error {
 	return nil
 }
 
-func (s *JsonDB) GetUserWatchedVideos(accountid string) ([]string, error) {
+func (s *JsonDB) GetUserWatchedVideos(accountId string) ([]string, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -63,16 +63,16 @@ func (s *JsonDB) GetUserWatchedVideos(accountid string) ([]string, error) {
 	}
 
 	// Find the user by account ID
-	watchedVideos, exists := videos[accountid]
+	watchedVideos, exists := videos[accountId]
 	if !exists {
-		return nil, fmt.Errorf("user %q not found", accountid)
+		return nil, fmt.Errorf("user %q not found", accountId)
 	}
 
 	return watchedVideos, nil
 }
 
 // ClearUserWatchedHistory clears all watched videos for a given user.
-func (s *JsonDB) ClearUserWatchedHistory(accountid string) error {
+func (s *JsonDB) ClearUserWatchedHistory(accountId string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -83,10 +83,10 @@ func (s *JsonDB) ClearUserWatchedHistory(accountid string) error {
 	}
 
 	// Find the user by account ID and clear their watched videos
-	if _, exists := videos[accountid]; exists {
-		delete(videos, accountid) // Remove the user's entry from the map
+	if _, exists := videos[accountId]; exists {
+		delete(videos, accountId) // Remove the user's entry from the map
 	} else {
-		return fmt.Errorf("user %q not found", accountid)
+		return fmt.Errorf("user %q not found", accountId)
 	}
 
 	// Save the updated videos data back to storage

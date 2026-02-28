@@ -11,8 +11,6 @@ type PlaylistData struct {
 	ID          string   `json:"id"`
 	Title       string   `json:"title"`
 	Description string   `json:"description"`
-	CoverImage  string   `json:"coverImageUrl"` // Adapted from coverImageUrl in ts interface
-	VideoCount  int      `json:"videoCount"`
 	Order       int      `json:"orderPosition"`
 	VideoIDs    []string `json:"videoIds"`    // Additional: necessary for backend
 	OwnerUserId string   `json:"ownerUserId"` // The owner/user who created this playlist
@@ -31,20 +29,11 @@ func NewPlaylistData(userId string, title string, desc string, videoIds []string
 		videoIds = []string{}
 	}
 
-	// 3. Dynamic Cover Image
-	// If there are videos, use the first one as the cover
-	var coverImage string
-	if len(videoIds) > 0 {
-		coverImage = "/api/v1/thumbnail/" + videoIds[0]
-	}
-
 	return &PlaylistData{
 		ID:          id,
 		Title:       title,
 		Description: desc, // Pass the actual desc, or "" if empty
-		CoverImage:  coverImage,
-		VideoCount:  len(videoIds),
-		Order:       0, // DB logic will overwrite this based on MaxOrder
+		Order:       0,    // DB logic will overwrite this based on MaxOrder
 		VideoIDs:    videoIds,
 		OwnerUserId: userId,
 	}, nil

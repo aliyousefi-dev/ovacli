@@ -26,6 +26,10 @@ func (s *JsonDB) getLookupCollectionFilePath() string {
 	return filepath.Join(s.storageDir, "lookup.json")
 }
 
+func (s *JsonDB) getSavedCollectionFilePath() string {
+	return filepath.Join(s.storageDir, "saved.json")
+}
+
 func (s *JsonDB) getPlaylistCollectionFilePath() string {
 	return filepath.Join(s.storageDir, "playlists.json")
 }

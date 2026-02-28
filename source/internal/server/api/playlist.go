@@ -26,16 +26,45 @@ func GetPlaylistsByUser(rm *repo.RepoManager) gin.HandlerFunc {
 			return
 		}
 
-		// Use the clean Repo name
 		playlists, err := rm.GetPlaylistsByUser(accountID.(string))
 		if err != nil {
 			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to retrieve playlists")
 			return
 		}
 
+		type PlaylistResponse struct {
+			ID          string `json:"id"`
+			Title       string `json:"title"`
+			Description string `json:"description"`
+			CoverImage  string `json:"coverImageUrl"`
+			Order       int    `json:"order"`
+			VideoCount  int    `json:"videoCount"`
+		}
+
+		resp := make([]PlaylistResponse, 0, len(playlists))
+		for _, pl := range playlists {
+
+			count := len(pl.VideoIDs)
+			var coverImage string
+			if count > 0 {
+				coverImage = pl.VideoIDs[0]
+			} else {
+				coverImage = ""
+			}
+
+			resp = append(resp, PlaylistResponse{
+				ID:          pl.ID,
+				Title:       pl.Title,
+				CoverImage:  coverImage,
+				Description: pl.Description,
+				Order:       pl.Order,
+				VideoCount:  count,
+			})
+		}
+
 		apitypes.RespondSuccess(c, http.StatusOK, gin.H{
-			"playlists":      playlists,
-			"totalPlaylists": len(playlists),
+			"playlists":      resp,
+			"totalPlaylists": len(resp),
 		}, "Playlists retrieved successfully")
 	}
 }
@@ -49,7 +78,6 @@ func CreatePlaylist(rm *repo.RepoManager) gin.HandlerFunc {
 			return
 		}
 
-		// Use a simple binding struct for input
 		var body struct {
 			Title       string `json:"title" binding:"required"`
 			Description string `json:"description"`

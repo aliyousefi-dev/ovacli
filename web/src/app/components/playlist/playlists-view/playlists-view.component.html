@@ -16,8 +16,7 @@
     </div>
 
     <div class="flex-1 min-w-0">
-      <app-playlist-card [playlist]="playlist" (select)="onSelect(playlist.title)"
-        (playlistDeleted)="OnPlaylistDeleted($event)"></app-playlist-card>
+      <app-playlist-card [playlist]="playlist" (select)="onSelect(playlist.title)"></app-playlist-card>
     </div>
 
     <div class="w-8 text-xl cursor-grab flex-shrink-0" cdkDragHandle>
@@ -31,8 +30,7 @@
     </div>
 
     <div class="flex-1 min-w-0">
-      <app-playlist-card (click)="$event.stopPropagation()" [playlist]="playlist"
-        (playlistDeleted)="OnPlaylistDeleted($event)"></app-playlist-card>
+      <app-playlist-card (click)="$event.stopPropagation()" [playlist]="playlist"></app-playlist-card>
     </div>
   </li>
   }

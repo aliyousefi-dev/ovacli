@@ -30,9 +30,9 @@ func (s *JsonDB) loadWatched() (map[string][]string, error) {
 }
 
 // Save all videos (assuming videos stored in a map with userID as key)
-func (s *JsonDB) saveWatched(videos map[string][]string) error {
+func (s *JsonDB) saveWatched(videoIds map[string][]string) error {
 	// Marshal the data with indentation for readability
-	data, err := json.MarshalIndent(videos, "", "  ")
+	data, err := json.MarshalIndent(videoIds, "", "  ")
 	if err != nil {
 		return err
 	}

@@ -32,8 +32,8 @@ func (jsdb *JsonDB) loadMarkers() (map[string][]datatypes.MarkerData, error) {
 }
 
 // Save video marker data (assuming the data is a map with videoID as the key and array of markers as value)
-func (jsdb *JsonDB) saveMarkers(markers map[string][]datatypes.MarkerData) error {
-	data, err := json.MarshalIndent(markers, "", "  ")
+func (jsdb *JsonDB) saveMarkers(markersData map[string][]datatypes.MarkerData) error {
+	data, err := json.MarshalIndent(markersData, "", "  ")
 	if err != nil {
 		return err
 	}

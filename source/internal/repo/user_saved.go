@@ -17,7 +17,7 @@ func (r *RepoManager) GetUserSavedVideos(username string) ([]string, error) {
 	if !r.IsDataStorageInitialized() {
 		return nil, fmt.Errorf("data storage is not initialized")
 	}
-	return r.diskDataStorage.GetUserSavedVideos(username)
+	return r.diskDataStorage.GetSavedVideosByUser(username)
 }
 
 // GetUserSavedVideosInRange returns a range of saved videos for a user.
@@ -27,7 +27,7 @@ func (r *RepoManager) GetUserSavedVideosInRange(username string, start, end int)
 	}
 
 	// Retrieve the full list of saved videoIds first
-	videoIds, err := r.diskDataStorage.GetUserSavedVideos(username)
+	videoIds, err := r.diskDataStorage.GetSavedVideosByUser(username)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get saved videos: %v", err)
 	}
@@ -48,7 +48,7 @@ func (r *RepoManager) GetUserSavedVideosCount(username string) (int, error) {
 	}
 
 	// Retrieve the full list of saved videos
-	videos, err := r.diskDataStorage.GetUserSavedVideos(username)
+	videos, err := r.diskDataStorage.GetSavedVideosByUser(username)
 	if err != nil {
 		return 0, fmt.Errorf("failed to get saved videos: %v", err)
 	}

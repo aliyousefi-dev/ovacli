@@ -1,6 +1,6 @@
 export interface UserProfile {
-  displayName: string;
   username: string;
+  displayName: string;
   accountId: string;
   createdAt: string;
 }

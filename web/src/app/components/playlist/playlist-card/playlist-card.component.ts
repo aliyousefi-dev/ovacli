@@ -1,8 +1,6 @@
 import {
   Component,
   Input,
-  Output,
-  EventEmitter,
   OnInit,
   inject,
   ViewChild,
@@ -12,8 +10,8 @@ import { ConfirmModalComponent } from '../../etc/confirm-modal/confirm-modal.com
 import { PlaylistEditModal } from '../playlist-edit-modal/playlist-edit-modal';
 import { Router } from '@angular/router';
 import { PlaylistSummary } from '../../../../ova-angular-sdk/core-types/playlist-summary';
-
 import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
+import { PlaylistManagerService } from '../playlist-manager';
 
 @Component({
   selector: 'app-playlist-card',
@@ -23,19 +21,16 @@ import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 })
 export class PlaylistCardComponent implements OnInit {
   @Input() playlist!: PlaylistSummary;
-  @Output() playlistDeleted = new EventEmitter<string>();
 
   @ViewChild(ConfirmModalComponent) confirmModal!: ConfirmModalComponent;
 
-  // State for edit modal visibility and form values
   editModalVisible = false;
   editTitle = '';
   editDescription = '';
 
   private ovaSdk = inject(OVASDK);
   private router = inject(Router);
-
-  constructor() {}
+  private playlistManager = inject(PlaylistManagerService);
 
   ngOnInit(): void {}
 
@@ -43,7 +38,6 @@ export class PlaylistCardComponent implements OnInit {
     const videoId = this.playlist.coverImageUrl
       ? this.playlist.coverImageUrl
       : null;
-
     return videoId ? this.ovaSdk.assets.thumbnail(videoId) : '';
   }
 
@@ -51,24 +45,13 @@ export class PlaylistCardComponent implements OnInit {
     this.router.navigate(['/playlists', this.playlist.id]);
   }
 
-  onDelete() {
+  openDeletePlaylistModal() {
     this.confirmModal.open(
       `Are you sure you want to delete the playlist "${this.playlist.title}"? This action cannot be undone.`,
     );
   }
 
-  confirmDelete() {
-    this.ovaSdk.playlists.deletePlaylist(this.playlist.id).subscribe({
-      next: () => {
-        this.playlistDeleted.emit(this.playlist.id);
-      },
-      error: (err) => {
-        alert('Failed to delete playlist: ' + err.message);
-      },
-    });
-  }
-
-  onEdit() {
+  openEditPlaylistModal() {
     this.editTitle = this.playlist.title;
     this.editDescription = this.playlist.description || '';
     this.editModalVisible = true;
@@ -79,7 +62,7 @@ export class PlaylistCardComponent implements OnInit {
   }
 
   onEditSaved(update: { title: string; description: string }) {
-    this.ovaSdk.playlists
+    this.playlistManager
       .editPlaylist(this.playlist.id, update.title, update.description)
       .subscribe({
         next: (res) => {
@@ -91,9 +74,7 @@ export class PlaylistCardComponent implements OnInit {
             alert('Failed to update playlist info');
           }
         },
-        error: (err) => {
-          alert('Failed to update playlist info: ' + err.message);
-        },
+        error: (err) => alert('Failed to update playlist info: ' + err.message),
       });
   }
 }

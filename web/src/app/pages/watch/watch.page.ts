@@ -43,15 +43,9 @@ import { OVASDK } from '../../../ova-angular-sdk/ova-sdk';
 export class WatchPage implements AfterViewInit, OnInit {
   @ViewChild('adminTabs') adminTabs!: VideoAdminTabsComponent;
 
-  private appSettings = inject(GlobalSettingsService);
   private activatedRoute = inject(ActivatedRoute);
   private ovaSdk = inject(OVASDK);
 
-  private playlistContentApiService = inject(PlaylistContentAPIService);
-  private cd = inject(ChangeDetectorRef);
-
-  // true -> use vidstack player; false -> use native player
-  useVidstack = true;
   loading = true;
   error = false;
   videoId: string | null = null;
@@ -59,8 +53,6 @@ export class WatchPage implements AfterViewInit, OnInit {
   isSaved = false;
   loadingSavedVideo = false;
   username = '';
-
-  selectedTab: 'tag' | 'marker' = 'tag'; // default
 
   playlistModalVisible = false;
   playlists: { title: string; slug: string; checked: boolean }[] = [];
@@ -75,20 +67,10 @@ export class WatchPage implements AfterViewInit, OnInit {
         this.fetchVideo(newId);
       }
     });
-
-    this.appSettings.settings$.subscribe((settings) => {
-      this.useVidstack = !settings.useNativePlayer;
-    });
   }
 
   ngAfterViewInit(): void {
     window.scrollTo(0, 0);
-
-    // Load tab from localStorage
-    const savedTab = localStorage.getItem('watch-selected-tab');
-    if (savedTab === 'marker' || savedTab === 'tag') {
-      this.selectedTab = savedTab;
-    }
   }
 
   fetchVideo(videoId: string) {
@@ -99,9 +81,8 @@ export class WatchPage implements AfterViewInit, OnInit {
         this.video = response.data;
         (window as any).video = this.video; // Consider removing this if not debugging
         this.loading = false;
-        this.username = localStorage.getItem('username') ?? '';
 
-        if (this.username && this.videoId) {
+        if (this.videoId) {
           this.ovaSdk.history
             .addUserWatched(this.username, this.videoId)
             .subscribe({

@@ -13,7 +13,6 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
   },
 
-  // Public routes outside the layout shell
   {
     path: 'login',
     component: LoginPage,

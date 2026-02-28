@@ -1,25 +1,16 @@
-import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  OnInit,
-  inject,
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { PlaylistCardComponent } from '../playlist-card/playlist-card.component';
 import { CommonModule } from '@angular/common';
 import { PlaylistSummary } from '../../../../ova-angular-sdk/core-types/playlist-summary';
-
 import {
   DragDropModule,
   CdkDragDrop,
   moveItemInArray,
 } from '@angular/cdk/drag-drop';
-
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 
-import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
+import { PlaylistManagerService } from '../playlist-manager';
 
 @Component({
   selector: 'app-playlists-view',
@@ -27,30 +18,23 @@ import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
   imports: [PlaylistCardComponent, CommonModule, DragDropModule],
   styleUrls: ['./playlists-view.component.css'],
 })
-export class PlaylistGridComponent implements OnInit {
+export class PlaylistGridComponent {
   @Input() playlists: PlaylistSummary[] = [];
   @Input() manageMode = false;
+  @Input() selectedIds = new Set<string>();
 
-  @Output() select = new EventEmitter<string>();
-  @Output() delete = new EventEmitter<string[]>();
+  @Output() selectionChange = new EventEmitter<{
+    id: string;
+    selected: boolean;
+  }>();
+  @Output() playlistDeleted = new EventEmitter<string>();
 
-  selectedPlaylists = new Set<string>();
-
-  selectedPlaylistTitle: string | null = null;
-
-  private ovaSdk = inject(OVASDK);
-
-  ngOnInit() {}
+  private playlistManager = inject(PlaylistManagerService);
 
   drop(event: CdkDragDrop<PlaylistSummary[]>): void {
-    // Reorder the local playlists array based on drag-drop
     moveItemInArray(this.playlists, event.previousIndex, event.currentIndex);
-
-    // Prepare an array of slugs in the new order
     const newOrderSlugs = this.playlists.map((pl) => pl.id);
-
-    // Send one API request with the new slug order array
-    this.ovaSdk.playlists
+    this.playlistManager
       .reorderPlaylists(newOrderSlugs)
       .pipe(
         catchError((err) => {
@@ -58,71 +42,23 @@ export class PlaylistGridComponent implements OnInit {
           return of(null);
         }),
       )
-      .subscribe((res) => {
-        if (res && res.status === 'success') {
-          // Order updated successfully
-        }
-      });
-  }
-
-  toggleSelectAll(event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
-    this.selectedPlaylists.clear();
-    if (checked) {
-      this.playlists.forEach((p) => this.selectedPlaylists.add(p.id));
-    }
-
-    console.log(this.selectedPlaylists);
+      .subscribe();
   }
 
   togglePlaylistSelection(slug: string, event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
-    if (checked) {
-      this.selectedPlaylists.add(slug);
-    } else {
-      this.selectedPlaylists.delete(slug);
-    }
+    this.selectionChange.emit({ id: slug, selected: checked });
   }
 
-  onSelect(title: string): void {
-    if (!this.manageMode) {
-      this.selectedPlaylistTitle = title;
-      this.select.emit(title);
-    }
-  }
-
-  deleteSelected(): void {
-    this.delete.emit(Array.from(this.selectedPlaylists));
-    this.selectedPlaylists.clear();
+  onSelect(_title: string): void {
+    // Selection state is managed by parent when manageMode is on
   }
 
   isChecked(slug: string): boolean {
-    return this.selectedPlaylists.has(slug);
+    return this.selectedIds.has(slug);
   }
 
-  toggleSelectionManual(slug: string): void {
-    if (this.selectedPlaylists.has(slug)) {
-      this.selectedPlaylists.delete(slug);
-    } else {
-      this.selectedPlaylists.add(slug);
-    }
-  }
-
-  OnPlaylistDeleted(deletedSlug: string) {
-    // Remove playlist with matching slug from the array
-    this.playlists = this.playlists.filter((pl) => pl.id !== deletedSlug);
-
-    // Also remove from selected set if present
-    this.selectedPlaylists.delete(deletedSlug);
-
-    // If the deleted playlist was selected, clear selection
-    if (this.selectedPlaylistTitle) {
-      const deletedPlaylist = this.playlists.find(
-        (pl) => pl.title === this.selectedPlaylistTitle,
-      );
-      if (!deletedPlaylist) {
-        this.selectedPlaylistTitle = null;
-      }
-    }
+  OnPlaylistDeleted(deletedSlug: string): void {
+    this.playlistDeleted.emit(deletedSlug);
   }
 }

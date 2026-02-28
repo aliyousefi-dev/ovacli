@@ -2,7 +2,7 @@ package jsondb
 
 import "fmt"
 
-func (s *JsonDB) UpdateUserPassword(username, newHashedPassword string) error {
+func (s *JsonDB) UpdateUserPassword(accountId, newHashedPassword string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -11,14 +11,14 @@ func (s *JsonDB) UpdateUserPassword(username, newHashedPassword string) error {
 		return fmt.Errorf("failed to load users: %w", err)
 	}
 
-	user, exists := users[username]
+	user, exists := users[accountId]
 	if !exists {
-		return fmt.Errorf("user %q not found", username)
+		return fmt.Errorf("user %q not found", accountId)
 	}
 
 	user.PasswordHash = newHashedPassword
 
-	users[username] = user
+	users[accountId] = user
 
 	return s.saveUsers(users)
 

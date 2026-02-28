@@ -7,8 +7,8 @@ import (
 
 // LoadLookupCollection reads the video-to-path mapping.
 // Now returns map[string]string for the flat format: {"hash": "path"}
-func (jsdb *JsonDB) LoadLookupCollection() (map[string]string, error) {
-	path := jsdb.getLookupCollectionFilePath()
+func (jsdb *JsonDB) LoadSavedCollection() (map[string]string, error) {
+	path := jsdb.getSavedCollectionFilePath()
 
 	// Ensure the file exists with "{}" if missing to avoid EOF errors
 	if err := jsdb.createEmptyJSONFileIfMissing(path); err != nil {
@@ -33,11 +33,11 @@ func (jsdb *JsonDB) LoadLookupCollection() (map[string]string, error) {
 }
 
 // SaveLookupCollection writes the flat mapping to lookup.json
-func (jsdb *JsonDB) SaveLookupCollection(videosPath map[string]string) error {
-	path := jsdb.getLookupCollectionFilePath()
+func (jsdb *JsonDB) SaveSavedCollection(videoIds map[string]string) error {
+	path := jsdb.getSavedCollectionFilePath()
 
 	// Marshal the map[string]string into the flat JSON structure
-	data, err := json.MarshalIndent(videosPath, "", "  ")
+	data, err := json.MarshalIndent(videoIds, "", "  ")
 	if err != nil {
 		return err
 	}

@@ -8,7 +8,7 @@ import (
 
 // AddVideo adds a new video if it does not already exist.
 // Returns an error if a video with the same ID already exists.
-func (s *JsonDB) AddVideo(video datatypes.VideoData) error {
+func (s *JsonDB) InsertVideo(videoData datatypes.VideoData) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -17,17 +17,17 @@ func (s *JsonDB) AddVideo(video datatypes.VideoData) error {
 		return fmt.Errorf("failed to load videos: %w", err)
 	}
 
-	if _, exists := videos[video.VideoID]; exists {
-		return fmt.Errorf("video with ID %q already exists", video.VideoID)
+	if _, exists := videos[videoData.VideoID]; exists {
+		return fmt.Errorf("video with ID %q already exists", videoData.VideoID)
 	}
 
-	videos[video.VideoID] = video
+	videos[videoData.VideoID] = videoData
 	return s.saveVideos(videos)
 }
 
 // DeleteVideo removes a video by its ID.
 // If the video does not exist, it's considered a no-op (no error is returned).
-func (s *JsonDB) DeleteVideoByID(id string) error {
+func (s *JsonDB) DeleteVideoByID(videoId string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -37,13 +37,13 @@ func (s *JsonDB) DeleteVideoByID(id string) error {
 	}
 
 	// The delete operation is safe even if the key doesn't exist.
-	delete(videos, id)
+	delete(videos, videoId)
 	return s.saveVideos(videos)
 }
 
 // GetVideoByID finds a video by its ID.
 // Returns a pointer to VideoData if found, or an error if the video does not exist.
-func (s *JsonDB) GetVideoByID(id string) (*datatypes.VideoData, error) {
+func (s *JsonDB) GetVideoByID(videoId string) (*datatypes.VideoData, error) {
 	s.mu.Lock() // Added lock for read operation, consistency with other methods
 	defer s.mu.Unlock()
 
@@ -52,9 +52,9 @@ func (s *JsonDB) GetVideoByID(id string) (*datatypes.VideoData, error) {
 		return nil, fmt.Errorf("failed to load videos: %w", err)
 	}
 
-	video, found := videos[id]
+	video, found := videos[videoId]
 	if !found {
-		return nil, fmt.Errorf("video %q not found", id)
+		return nil, fmt.Errorf("video %q not found", videoId)
 	}
 	// Return a pointer to a copy of the video data from the map.
 	// This prevents external modification of the map's internal data without going through the setter.
@@ -63,7 +63,7 @@ func (s *JsonDB) GetVideoByID(id string) (*datatypes.VideoData, error) {
 
 // UpdateVideo replaces an existing video with the provided new video data.
 // Returns an error if the video to be updated does not exist.
-func (s *JsonDB) UpdateVideo(newVideo datatypes.VideoData) error {
+func (s *JsonDB) UpdateVideo(videoData datatypes.VideoData) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -72,11 +72,11 @@ func (s *JsonDB) UpdateVideo(newVideo datatypes.VideoData) error {
 		return fmt.Errorf("failed to load videos: %w", err)
 	}
 
-	if _, exists := videos[newVideo.VideoID]; !exists {
-		return fmt.Errorf("video %q not found for update", newVideo.VideoID)
+	if _, exists := videos[videoData.VideoID]; !exists {
+		return fmt.Errorf("video %q not found for update", videoData.VideoID)
 	}
 
-	videos[newVideo.VideoID] = newVideo
+	videos[videoData.VideoID] = videoData
 	return s.saveVideos(videos)
 }
 

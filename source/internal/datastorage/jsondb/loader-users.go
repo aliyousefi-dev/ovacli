@@ -26,8 +26,8 @@ func (s *JsonDB) loadUsers() (map[string]datatypes.UserData, error) {
 	return users, nil
 }
 
-func (s *JsonDB) saveUsers(users map[string]datatypes.UserData) error {
-	data, err := json.MarshalIndent(users, "", "  ")
+func (s *JsonDB) saveUsers(usersData map[string]datatypes.UserData) error {
+	data, err := json.MarshalIndent(usersData, "", "  ")
 	if err != nil {
 		return err
 	}

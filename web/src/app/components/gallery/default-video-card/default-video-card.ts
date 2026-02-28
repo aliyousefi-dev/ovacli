@@ -12,7 +12,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { SendtoModalComponent } from '../../etc/sendto-modal/sendto-modal.component';
+import { SendtoModalComponent } from '../../etc/saveto-modal/saveto-modal.component';
 
 import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
 import { TagLinkComponent } from '../../etc/tag-link/tag-link.component';

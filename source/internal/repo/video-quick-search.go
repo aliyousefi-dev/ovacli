@@ -11,5 +11,5 @@ func (r *RepoManager) GetSearchSuggestions(query string) ([]string, error) {
 	}
 
 	// Delegate the suggestion fetching to the appropriate data storage
-	return r.diskDataStorage.GetSearchSuggestions(query)
+	return r.diskDataStorage.QuickSearch(query)
 }

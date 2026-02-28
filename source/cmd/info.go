@@ -9,8 +9,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var statusCmd = &cobra.Command{
-	Use:   "status",
+var infoCmd = &cobra.Command{
+	Use:   "info",
 	Short: "Show repository status",
 	Run: func(cmd *cobra.Command, args []string) {
 
@@ -53,19 +53,11 @@ var statusCmd = &cobra.Command{
 		fmt.Printf("total issue videos: %d\n", issueVideos)
 		fmt.Printf("disk usage: %s\n", storageUsed)
 
-		unindexedVideosPath, err := repository.GetUnindexedVideos()
-		if err != nil {
-			fmt.Printf("Error getting unindexed videos: %v\n", err)
-		}
-		for _, path := range unindexedVideosPath {
-			fmt.Printf("Unindexed video: %s\n", path)
-		}
-
 	},
 }
 
 func InitCommandStatus(rootCmd *cobra.Command) {
-	rootCmd.AddCommand(statusCmd)
+	rootCmd.AddCommand(infoCmd)
 }
 
 // formatSize formats the size in bytes to a human-readable string (e.g., 50 MB, 1 GB)

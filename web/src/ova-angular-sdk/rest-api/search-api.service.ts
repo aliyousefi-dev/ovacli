@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { ApiSuccessResponse } from './api-types/core-response';
 import { SimilarVideosResponse } from './api-types/similar-videos-response';
 
-import { SearchCriteria, SearchResult } from './api-types/search-response';
+import { SearchCriteria } from './api-types/search-response';
 
 import { ApiMap } from './api-map';
 import { PageContainer } from '../core-types/page-container';

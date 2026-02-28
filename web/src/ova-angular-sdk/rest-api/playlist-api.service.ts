@@ -24,9 +24,11 @@ export class PlaylistAPIService {
       .get<ApiSuccessResponse<{ playlists: PlaylistSummary[] }>>(url)
       .pipe(
         map((response) => {
-          response.data.playlists = [...response.data.playlists].sort(
-            (a, b) => (a.orderPosition ?? 0) - (b.orderPosition ?? 0),
-          );
+          if (response.data.playlists && response.data.playlists.length > 0) {
+            response.data.playlists = [...response.data.playlists].sort(
+              (a, b) => (a.order ?? 0) - (b.order ?? 0),
+            );
+          }
           return response;
         }),
       );

@@ -70,8 +70,8 @@ export class ApiMap {
       order: () => `${this.base}/me/playlists/order`,
 
       content: {
-        fetch: (slug: string, bucket: number) =>
-          `${this.base}/me/playlists/${slug}?bucket=${bucket}`,
+        fetch: (playlistId: string, page: number) =>
+          `${this.base}/me/playlists/${playlistId}?page=${page}`,
         addVideo: (slug: string) => `${this.base}/me/playlists/${slug}/videos`,
         removeVideo: (slug: string, videoId: string) =>
           `${this.base}/me/playlists/${slug}/videos/${videoId}`,

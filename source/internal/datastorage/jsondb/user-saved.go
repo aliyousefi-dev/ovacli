@@ -6,7 +6,7 @@ import (
 
 // GetUserSavedVideos retrieves the full VideoData for a user's favorite videos.
 // Returns an error if the user is not found or loading videos fails.
-func (s *JsonDB) GetUserSavedVideos(username string) ([]string, error) {
+func (s *JsonDB) GetSavedVideosByUser(accountId string) ([]string, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -15,9 +15,9 @@ func (s *JsonDB) GetUserSavedVideos(username string) ([]string, error) {
 		return nil, fmt.Errorf("failed to load users: %w", err)
 	}
 
-	user, exists := users[username]
+	user, exists := users[accountId]
 	if !exists {
-		return nil, fmt.Errorf("user %q not found", username)
+		return nil, fmt.Errorf("user %q not found", accountId)
 	}
 
 	return user.Favorites, nil
@@ -25,7 +25,7 @@ func (s *JsonDB) GetUserSavedVideos(username string) ([]string, error) {
 
 // AddVideoToSaved adds a video ID to a user's favorites list.
 // Returns an error if the user or video is not found, or if the video is already favorited.
-func (s *JsonDB) AddVideoToSaved(username, videoID string) error {
+func (s *JsonDB) AddVideoToSaved(accountId, videoID string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -34,9 +34,9 @@ func (s *JsonDB) AddVideoToSaved(username, videoID string) error {
 		return fmt.Errorf("failed to load users: %w", err)
 	}
 
-	user, exists := users[username]
+	user, exists := users[accountId]
 	if !exists {
-		return fmt.Errorf("user %q not found", username)
+		return fmt.Errorf("user %q not found", accountId)
 	}
 
 	// Check if video exists in main video storage before adding to favorites
@@ -51,18 +51,18 @@ func (s *JsonDB) AddVideoToSaved(username, videoID string) error {
 	// Check if video is already in favorites
 	for _, favID := range user.Favorites {
 		if favID == videoID { // VideoID is a hash, so exact match is appropriate.
-			return fmt.Errorf("video %q is already in %q's favorites", videoID, username)
+			return fmt.Errorf("video %q is already in %q's favorites", videoID, accountId)
 		}
 	}
 
 	user.Favorites = append(user.Favorites, videoID)
-	users[username] = user // Update the map with the modified user struct
+	users[accountId] = user // Update the map with the modified user struct
 	return s.saveUsers(users)
 }
 
 // RemoveVideoFromSaved removes a video ID from a user's favorites list.
 // Returns an error if the user is not found, or if the video is not in their favorites.
-func (s *JsonDB) RemoveVideoFromSaved(username, videoID string) error {
+func (s *JsonDB) RemoveVideoFromSaved(accountId, videoID string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -71,9 +71,9 @@ func (s *JsonDB) RemoveVideoFromSaved(username, videoID string) error {
 		return fmt.Errorf("failed to load users: %w", err)
 	}
 
-	user, exists := users[username]
+	user, exists := users[accountId]
 	if !exists {
-		return fmt.Errorf("user %q not found", username)
+		return fmt.Errorf("user %q not found", accountId)
 	}
 
 	foundAndRemoved := false
@@ -87,10 +87,10 @@ func (s *JsonDB) RemoveVideoFromSaved(username, videoID string) error {
 	}
 
 	if !foundAndRemoved {
-		return fmt.Errorf("video %q not found in %q's favorites", videoID, username)
+		return fmt.Errorf("video %q not found in %q's favorites", videoID, accountId)
 	}
 
 	user.Favorites = newFavorites
-	users[username] = user // Update the map with the modified user struct
+	users[accountId] = user // Update the map with the modified user struct
 	return s.saveUsers(users)
 }

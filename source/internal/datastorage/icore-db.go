@@ -7,16 +7,16 @@ type DiskDataStorage interface {
 	GetGlobalFilters() ([]datatypes.GlobalFilter, error)
 
 	// User management
-	CreateUser(user *datatypes.UserData) error
+	InsertUser(user *datatypes.UserData) error
 	DeleteUser(username string) (*datatypes.UserData, error)
 	GetUserByUsername(username string) (*datatypes.UserData, error)
 	GetUserByAccountID(accountID string) (*datatypes.UserData, error)
 	GetAllUsers() ([]datatypes.UserData, error)
 
 	// User favorites management
-	GetUserSavedVideos(username string) ([]string, error)
-	AddVideoToSaved(username, videoID string) error
-	RemoveVideoFromSaved(username, videoID string) error
+	GetSavedVideosByUser(accountId string) ([]string, error)
+	AddVideoToSaved(accountId, videoID string) error
+	RemoveVideoFromSaved(accountId, videoID string) error
 
 	// User playlists management
 	AddPlaylist(playlist *datatypes.PlaylistData) (*datatypes.PlaylistData, error)
@@ -34,30 +34,30 @@ type DiskDataStorage interface {
 	GetTotalVideoCount() (int, error)
 
 	// marker management
-	InsertMarker(videoID string, markerData datatypes.MarkerData) error
+	InsertMarker(videoId string, markerData datatypes.MarkerData) error
 	GetMarkersForVideo(videoID string) ([]datatypes.MarkerData, error)
 	DeleteMarkersForVideo(videoID string) error
 
-	InsertVideoLookup(videoID string, filePath string) error
-	GetVideoLookup(videoID string) (string, error)
+	InsertVideoLookup(videoId string, vidoePath string) error
+	GetVideoLookup(videoId string) (string, error)
 
 	// New method to add video to user's watched list
-	AddVideoToWatched(username, videoID string) error
-	GetUserWatchedVideos(username string) ([]string, error)
-	ClearUserWatchedHistory(username string) error
+	GetUserWatchedVideos(accountId string) ([]string, error)
+	AddVideoToWatched(accountId, videoID string) error
+	ClearUserWatchedHistory(accountId string) error
 
-	GetSearchSuggestions(query string) ([]string, error)
 	// Video tags management
 	AddTagToVideo(videoID, tag string) error
 	RemoveTagFromVideo(videoID, tag string) error
 
 	// Video management
-	AddVideo(video datatypes.VideoData) error
-	DeleteVideoByID(id string) error
+	InsertVideo(video datatypes.VideoData) error
+	GetAllVideos() ([]datatypes.VideoData, error)
+	GetVideoByID(videoId string) (*datatypes.VideoData, error)
+	DeleteVideoByID(videoId string) error
 	DeleteAllVideos() error
-	GetVideoByID(id string) (*datatypes.VideoData, error)
 
 	SearchVideos(criteria datatypes.VideoSearchCriteria) ([]string, error)
-	GetAllVideos() ([]datatypes.VideoData, error)
-	GetSimilarVideos(videoID string) ([]datatypes.VideoData, error)
+	SimilarSearch(videoId string) ([]datatypes.VideoData, error)
+	QuickSearch(query string) ([]string, error)
 }

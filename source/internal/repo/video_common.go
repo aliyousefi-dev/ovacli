@@ -17,7 +17,7 @@ func (r *RepoManager) AddVideo(video datatypes.VideoData) error {
 	}
 
 	// Add video to database
-	return r.diskDataStorage.AddVideo(video)
+	return r.diskDataStorage.InsertVideo(video)
 }
 
 // AddVideo adds a new video if it does not already exist.

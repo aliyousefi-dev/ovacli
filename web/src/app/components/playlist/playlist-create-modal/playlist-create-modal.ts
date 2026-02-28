@@ -43,7 +43,6 @@ export class PlaylistCreateModal {
 
   open() {
     this.dialog.nativeElement.showModal();
-    // Focus the input automatically when opened
     setTimeout(() => this.playlistInput.nativeElement.focus(), 10);
   }
 

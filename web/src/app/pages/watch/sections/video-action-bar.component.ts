@@ -1,7 +1,7 @@
 import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { SendtoModalComponent } from '../../../components/etc/sendto-modal/sendto-modal.component';
+import { SendtoModalComponent } from '../../../components/etc/saveto-modal/saveto-modal.component';
 import { RouterModule } from '@angular/router';
 
 import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
@@ -94,16 +94,10 @@ export class VideoActionBarComponent {
     }
   }
 
-  /**
-   * Opens the playlist modal.
-   */
   openPlaylistModal(): void {
     this.playlistModalVisible = true;
   }
 
-  /**
-   * Closes the playlist modal.
-   */
   closePlaylistModal(): void {
     this.playlistModalVisible = false;
   }

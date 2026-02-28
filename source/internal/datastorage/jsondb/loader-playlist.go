@@ -29,10 +29,10 @@ func (jsdb *JsonDB) LoadPlaylistCollection() (map[string]datatypes.PlaylistData,
 	return data, nil
 }
 
-func (jsdb *JsonDB) SavePlaylistCollection(playlists map[string]datatypes.PlaylistData) error {
+func (jsdb *JsonDB) SavePlaylistCollection(playlistsData map[string]datatypes.PlaylistData) error {
 	path := jsdb.getPlaylistCollectionFilePath()
 
-	data, err := json.MarshalIndent(playlists, "", "  ")
+	data, err := json.MarshalIndent(playlistsData, "", "  ")
 	if err != nil {
 		return err
 	}

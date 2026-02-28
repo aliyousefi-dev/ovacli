@@ -10,5 +10,5 @@ func (r *RepoManager) GetSimilarVideos(videoID string) ([]datatypes.VideoData, e
 	if !r.IsDataStorageInitialized() {
 		return nil, fmt.Errorf("data storage is not initialized")
 	}
-	return r.diskDataStorage.GetSimilarVideos(videoID)
+	return r.diskDataStorage.SimilarSearch(videoID)
 }

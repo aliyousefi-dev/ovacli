@@ -11,7 +11,7 @@ import (
 
 // GetSimilarVideos returns videos that share at least one tag with the given videoID.
 // The target video itself is excluded from the results.
-func (s *JsonDB) GetSimilarVideos(videoID string) ([]datatypes.VideoData, error) {
+func (s *JsonDB) SimilarSearch(videoId string) ([]datatypes.VideoData, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -20,9 +20,9 @@ func (s *JsonDB) GetSimilarVideos(videoID string) ([]datatypes.VideoData, error)
 		return nil, fmt.Errorf("failed to load videos: %w", err)
 	}
 
-	targetVideo, exists := videos[videoID]
+	targetVideo, exists := videos[videoId]
 	if !exists {
-		return nil, fmt.Errorf("video %q not found", videoID)
+		return nil, fmt.Errorf("video %q not found", videoId)
 	}
 
 	type scoredVideo struct {
@@ -33,7 +33,7 @@ func (s *JsonDB) GetSimilarVideos(videoID string) ([]datatypes.VideoData, error)
 	var results []scoredVideo
 
 	for id, video := range videos {
-		if id == videoID {
+		if id == videoId {
 			continue
 		}
 
@@ -100,7 +100,7 @@ func (s *JsonDB) GetSimilarVideos(videoID string) ([]datatypes.VideoData, error)
 	// Fallback: if no results, return top-viewed or random
 	if len(similar) == 0 {
 		for _, v := range videos {
-			if v.VideoID != videoID {
+			if v.VideoID != videoId {
 				similar = append(similar, v)
 			}
 		}
@@ -207,7 +207,7 @@ func abs(n int) int {
 }
 
 // GetSearchSuggestions returns a list of video titles that partially match the search query.
-func (s *JsonDB) GetSearchSuggestions(query string) ([]string, error) {
+func (s *JsonDB) QuickSearch(query string) ([]string, error) {
 	// Lock the JSONDB to ensure thread-safety
 	s.mu.Lock()
 	defer s.mu.Unlock()

@@ -69,7 +69,6 @@ func GetPlaylistVideos(rm *repo.RepoManager) gin.HandlerFunc {
 	}
 }
 
-// POST /me/playlists/:playlistId/videos
 func AddVideoToPlaylist(rm *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 1. Get User Context
@@ -90,17 +89,12 @@ func AddVideoToPlaylist(rm *repo.RepoManager) gin.HandlerFunc {
 			return
 		}
 
-		// 3. Perform the Action
-		// We use the ID from context to ensure the user owns the target playlist
 		err := rm.AddVideoToPlaylist(accountID.(string), playlistId, body.VideoID)
 		if err != nil {
-			// It's good practice to log the actual error and return a friendlier message
 			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to add video to playlist")
 			return
 		}
 
-		// 4. Return the updated Playlist object
-		// This is helpful for the frontend to update the VideoCount and CoverImage immediately
 		updatedPl, err := rm.GetPlaylistByID(accountID.(string), playlistId)
 		if err != nil {
 			apitypes.RespondSuccess(c, http.StatusOK, nil, "Video added successfully")

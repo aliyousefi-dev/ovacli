@@ -7,7 +7,7 @@ import (
 
 // CreateUser adds a new user if a user with the same username does not already exist.
 // Returns an error if a user with the provided username already exists.
-func (s *JsonDB) CreateUser(user *datatypes.UserData) error {
+func (s *JsonDB) InsertUser(userData *datatypes.UserData) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -16,17 +16,17 @@ func (s *JsonDB) CreateUser(user *datatypes.UserData) error {
 		return fmt.Errorf("failed to load users: %w", err)
 	}
 
-	if _, exists := users[user.AccountID]; exists {
-		return fmt.Errorf("user with account ID %q already exists", user.AccountID)
+	if _, exists := users[userData.AccountID]; exists {
+		return fmt.Errorf("user with account ID %q already exists", userData.AccountID)
 	}
 
-	users[user.AccountID] = *user // Store a copy of the UserData
+	users[userData.AccountID] = *userData // Store a copy of the UserData
 	return s.saveUsers(users)
 }
 
 // DeleteUser removes a user by their username and returns the deleted user data.
 // Returns an error if the user is not found or if there is a problem loading or saving users.
-func (s *JsonDB) DeleteUser(username string) (*datatypes.UserData, error) {
+func (s *JsonDB) DeleteUser(accountId string) (*datatypes.UserData, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -37,13 +37,13 @@ func (s *JsonDB) DeleteUser(username string) (*datatypes.UserData, error) {
 	}
 
 	// Check if the user exists in the map
-	user, exists := users[username]
+	user, exists := users[accountId]
 	if !exists {
-		return nil, fmt.Errorf("user %q not found", username)
+		return nil, fmt.Errorf("user %q not found", accountId)
 	}
 
 	// Delete the user from the map
-	delete(users, username)
+	delete(users, accountId)
 
 	// Save the updated user list
 	if err := s.saveUsers(users); err != nil {
@@ -54,7 +54,7 @@ func (s *JsonDB) DeleteUser(username string) (*datatypes.UserData, error) {
 	return &user, nil
 }
 
-func (s *JsonDB) UpdateUser(updatedUser datatypes.UserData) error { // Takes value, not pointer
+func (s *JsonDB) UpdateUser(userData datatypes.UserData) error { // Takes value, not pointer
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -63,11 +63,11 @@ func (s *JsonDB) UpdateUser(updatedUser datatypes.UserData) error { // Takes val
 		return fmt.Errorf("failed to load users: %w", err)
 	}
 
-	if _, exists := users[updatedUser.Username]; !exists {
-		return fmt.Errorf("user %q not found for update", updatedUser.Username)
+	if _, exists := users[userData.Username]; !exists {
+		return fmt.Errorf("user %q not found for update", userData.Username)
 	}
 
-	users[updatedUser.Username] = updatedUser // Store the updated value
+	users[userData.Username] = userData // Store the updated value
 	return s.saveUsers(users)
 }
 

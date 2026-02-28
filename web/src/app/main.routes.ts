@@ -67,6 +67,7 @@ export const MainRoutes: Routes = [
   {
     path: 'search',
     component: SearchPage,
+    data: { reuse: true },
   },
   {
     path: 'playlists',
@@ -81,7 +82,7 @@ export const MainRoutes: Routes = [
     component: VersionHistoryPage,
   },
   {
-    path: 'playlists/:title',
+    path: 'playlists/:playlistId',
     component: PlaylistContentPage,
   },
 ];

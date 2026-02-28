@@ -11,6 +11,7 @@ import {
 import { LoadingService } from '../services/loading.service';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { DeleteAlert } from './components/etc/delete-alert/delete-alert';
+import { GlobalSettingsService } from './global/global-settings.service';
 
 @Component({
   selector: 'app-root',
@@ -21,6 +22,7 @@ import { DeleteAlert } from './components/etc/delete-alert/delete-alert';
 export class App implements OnInit {
   private router = inject(Router);
   private loadingService = inject(LoadingService);
+  globalService = inject(GlobalSettingsService);
 
   loading$ = this.loadingService.loading$;
   isNotFoundRoute: boolean = false;
@@ -37,7 +39,6 @@ export class App implements OnInit {
         this.loadingService.hide();
       }
 
-      // Check if the current route is NotFoundPage (wildcard route)
       if (
         event instanceof NavigationError ||
         event instanceof NavigationCancel

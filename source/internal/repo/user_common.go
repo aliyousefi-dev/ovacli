@@ -11,7 +11,7 @@ func (r *RepoManager) CreateUser(userdata *datatypes.UserData) error {
 		return fmt.Errorf("data storage is not initialized")
 	}
 	// Store user
-	if err := r.diskDataStorage.CreateUser(userdata); err != nil {
+	if err := r.diskDataStorage.InsertUser(userdata); err != nil {
 		return fmt.Errorf("failed to create user in data storage: %w", err)
 	}
 	return nil

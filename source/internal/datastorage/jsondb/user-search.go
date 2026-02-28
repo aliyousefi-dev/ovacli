@@ -35,7 +35,7 @@ func (s *JsonDB) GetUserByUsername(username string) (*datatypes.UserData, error)
 
 // GetUserByUsername finds a user by their username.
 // Returns a pointer to a copy of UserData if found, or an error if the user does not exist.
-func (s *JsonDB) GetUserByAccountID(accountID string) (*datatypes.UserData, error) {
+func (s *JsonDB) GetUserByAccountID(accountId string) (*datatypes.UserData, error) {
 	s.mu.Lock() // Ensure concurrent reads are safe
 	defer s.mu.Unlock()
 
@@ -44,9 +44,9 @@ func (s *JsonDB) GetUserByAccountID(accountID string) (*datatypes.UserData, erro
 		return nil, fmt.Errorf("failed to load users: %w", err)
 	}
 
-	user, exists := users[accountID]
+	user, exists := users[accountId]
 	if !exists {
-		return nil, fmt.Errorf("user with account ID %q not found", accountID)
+		return nil, fmt.Errorf("user with account ID %q not found", accountId)
 	}
 	// Return a pointer to a copy to prevent external modification of the map's stored value
 	return &user, nil

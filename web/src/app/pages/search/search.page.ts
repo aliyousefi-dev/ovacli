@@ -1,14 +1,7 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  switchMap,
-  Subscription,
-  of,
-  map,
-} from 'rxjs';
+import { map } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { OVASDK } from '../../../ova-angular-sdk/ova-sdk';
 
@@ -37,7 +30,7 @@ export class SearchPage implements OnInit {
       const fetchProxy: GalleryFetchFn = (page: number) => {
         const searchCriteria: SearchCriteria = { query: q ?? '', tags: tags };
         return this.ovaSdk.search
-          .searchVideos(searchCriteria, page)
+          .searchVideos(searchCriteria, page) 
           .pipe(map((response) => response.data));
       };
 

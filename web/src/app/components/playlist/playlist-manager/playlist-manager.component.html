@@ -1,7 +1,7 @@
 <!-- Actions -->
 <div class="my-8 flex flex-wrap justify-center gap-4 px-4">
   <button class="btn btn-primary text-sm px-6 py-2 " (click)="openCreatePlaylistModal()">
-    <i class='bx  bx-folder-plus bx-sm'></i>
+    <i class='bx  bx-plus bx-xs'></i>
     Create New Playlist
   </button>
 
@@ -10,9 +10,15 @@
   </button>
 </div>
 
+<div class="flex justify-center mb-4">
+  <input type="text" class="input input-bordered w-full max-w-md" placeholder="Filter playlists..." />
+</div>
+
+
 <!-- Manager -->
+@if (manageMode) {
 <div class="w-full h-15">
-  <div *ngIf="manageMode" class="flex flex-wrap justify-around gap-4">
+  <div class="flex flex-wrap justify-around gap-4">
     <div class="flex flex-row justify-center items-center gap-4">
       <input type="checkbox" class="checkbox checkbox-sm" (change)="toggleSelectAll($event)" />
       <span class="label-text text-base select-none">Select All</span>
@@ -25,15 +31,15 @@
     </div>
   </div>
 </div>
+}
 
 <!-- Playlist Grid -->
 @if (!loading && playlists.length > 0) {
 <section class="px-6 py-2 max-w-7xl mx-auto">
-  <app-playlists-view [playlists]="playlists" [manageMode]="manageMode"></app-playlists-view>
+  <app-playlists-view [playlists]="playlists" [manageMode]="manageMode" [selectedIds]="selectedPlaylists"
+    (selectionChange)="onSelectionChange($event)" (playlistDeleted)="onPlaylistDeleted($event)"></app-playlists-view>
 </section>
-}
-
-@if (!loading && playlists.length === 0) {
+} @else {
 <!-- Empty State -->
 <section class="flex flex-col items-center justify-center text-center px-6 py-12 max-w-md mx-auto text-base-content/70">
   <h2 class="text-xl font-semibold text-base-content/80 mb-2">
@@ -45,6 +51,7 @@
   </p>
 </section>
 }
+
 
 
 

@@ -67,7 +67,7 @@ func (r *RepoManager) IndexVideo(absolutePath, accountId string) (datatypes.Vide
 	videoData.UploaderID = accountId
 
 	// 8. Store metadata
-	if err := r.diskDataStorage.AddVideo(videoData); err != nil {
+	if err := r.diskDataStorage.InsertVideo(videoData); err != nil {
 		return datatypes.VideoData{}, fmt.Errorf("failed to save video metadata: %w", err)
 	}
 

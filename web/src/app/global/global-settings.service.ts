@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AppSettings } from './app-settings';
 
 @Injectable({ providedIn: 'root' })
-export class GlobalSettingsService {
+export class GlobalSettingsService implements OnInit {
   private readonly SETTINGS_KEY = 'app_user_settings';
 
   private defaultSettings: AppSettings = {
@@ -19,12 +19,15 @@ export class GlobalSettingsService {
     this.defaultSettings,
   );
 
-  // 2. Expose as an Observable so components can subscribe
-  // The '$' suffix is a naming convention for Observables
   settings$ = this.settingsSubject.asObservable();
 
   constructor() {
+    console.log('construct');
     this.loadSettings();
+  }
+
+  ngOnInit(): void {
+    console.log('init');
   }
 
   private loadSettings(): void {
@@ -49,7 +52,6 @@ export class GlobalSettingsService {
     key: K,
     value: AppSettings[K],
   ): void {
-    // 4. Get current state, modify it, and push to the subject
     const updatedSettings = { ...this.settingsSubject.value, [key]: value };
 
     this.settingsSubject.next(updatedSettings);
@@ -61,6 +63,10 @@ export class GlobalSettingsService {
     this.saveToStorage(updatedSettings);
   }
 
+  private applyTheme(theme: string): void {
+    document.documentElement.setAttribute('data-theme', theme);
+  }
+
   private saveToStorage(settings: AppSettings): void {
     try {
       localStorage.setItem(this.SETTINGS_KEY, JSON.stringify(settings));
@@ -69,11 +75,6 @@ export class GlobalSettingsService {
     }
   }
 
-  private applyTheme(theme: string): void {
-    document.documentElement.setAttribute('data-theme', theme);
-  }
-
-  // Helper to get raw value without subscribing (useful for one-off checks)
   get currentSettings(): AppSettings {
     return this.settingsSubject.value;
   }

@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ApiSuccessResponse } from './api-types/core-response';
 
-import { VideoBucketContainer } from './api-types/video-bucket';
 import { PageContainer } from '../core-types/page-container';
 
 import { ApiMap } from './api-map';

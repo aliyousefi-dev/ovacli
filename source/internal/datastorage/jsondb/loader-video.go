@@ -30,8 +30,8 @@ func (s *JsonDB) loadVideos() (map[string]datatypes.VideoData, error) {
 }
 
 // Save all videos
-func (s *JsonDB) saveVideos(videos map[string]datatypes.VideoData) error {
-	data, err := json.MarshalIndent(videos, "", "  ")
+func (s *JsonDB) saveVideos(videosData map[string]datatypes.VideoData) error {
+	data, err := json.MarshalIndent(videosData, "", "  ")
 	if err != nil {
 		return err
 	}

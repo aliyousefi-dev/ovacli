@@ -20,8 +20,6 @@
             <span class="text-xs select-none">Grid Columns</span>
             <input type="number" min="1" max="10" class="input input-xs w-12 text-center">
         </div>
-
-
     </div>
 </div>
 
@@ -40,7 +38,7 @@
 <div class="px-6 mb-2">
     <label class="input border-0 outline-0 input-sm flex items-center gap-2 w-full">
         <i class='bx bx-search bx-xs opacity-70'></i>
-        <input type="search" class="grow text-xs" placeholder="Search themes..." [(ngModel)]="searchQuery" />
+        <input type="search" class="grow text-xs" placeholder="Search themes..." [(ngModel)]="themeSearchQuery" />
     </label>
 </div>
 
@@ -52,7 +50,7 @@
     </div>
     } @empty {
     <div class="px-6 py-4 text-xs italic opacity-50">
-        No themes match "{{searchQuery}}"
+        No themes match "{{themeSearchQuery}}"
     </div>
     }
 </div>

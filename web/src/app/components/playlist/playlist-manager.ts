@@ -1,38 +1,25 @@
 import { Injectable, inject } from '@angular/core';
-
-import { OnInit } from '@angular/core';
-
-import { OVASDK } from '../../../ova-angular-sdk/ova-sdk';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { map, shareReplay, switchMap, tap } from 'rxjs';
+import { OVASDK } from '../../../ova-angular-sdk/ova-sdk';
+import { PlaylistSummary } from '../../../ova-angular-sdk/core-types/playlist-summary';
 
 @Injectable({ providedIn: 'root' })
 export class PlaylistManagerService {
   private ovaSdk = inject(OVASDK);
 
-  // 1. A trigger to signal when we need to reload data
   private refreshTrigger$ = new BehaviorSubject<void>(undefined);
 
-  // 2. A clean, declarative data stream
-  // This pipe runs every time refreshTrigger emits.
-  public playlists$ = this.refreshTrigger$.pipe(
+  public playlists$: Observable<PlaylistSummary[]> = this.refreshTrigger$.pipe(
     switchMap(() => this.ovaSdk.playlists.getUserPlaylists()),
-    map((response) => response.data.playlists),
-    shareReplay(1), // Keeps the data in memory for multiple components
+    map((response) => response.data.playlists ?? []),
+    shareReplay(1),
   );
 
-  /**
-   * We use the constructor for initialization, not ngOnInit
-   */
-  constructor() {
-    // Initial load happens automatically because refreshTrigger has a default value
-  }
-
   createPlaylist(title: string, desc: string) {
-    // Return the observable so the component can show a "loading" spinner
-    return this.ovaSdk.playlists.createPlaylist(title, desc).pipe(
-      tap(() => this.refresh()), // Trigger a reload after success
-    );
+    return this.ovaSdk.playlists
+      .createPlaylist(title, desc)
+      .pipe(tap(() => this.refresh()));
   }
 
   deletePlaylist(playlistId: string) {
@@ -41,10 +28,19 @@ export class PlaylistManagerService {
       .pipe(tap(() => this.refresh()));
   }
 
-  /**
-   * Simply calling .next() on the trigger forces playlists$ to update
-   */
-  public refresh() {
+  reorderPlaylists(ids: string[]) {
+    return this.ovaSdk.playlists
+      .reorderPlaylists(ids)
+      .pipe(tap(() => this.refresh()));
+  }
+
+  editPlaylist(playlistId: string, title: string, description: string) {
+    return this.ovaSdk.playlists
+      .editPlaylist(playlistId, title, description)
+      .pipe(tap(() => this.refresh()));
+  }
+
+  refresh() {
     this.refreshTrigger$.next();
   }
 }

@@ -6,8 +6,8 @@ import (
 )
 
 // GetTags retrieves the tags of a video by its ID.
-func (s *JsonDB) GetTags(videoID string) ([]string, error) {
-	video, err := s.GetVideoByID(videoID)
+func (s *JsonDB) GetTags(videoId string) ([]string, error) {
+	video, err := s.GetVideoByID(videoId)
 	if err != nil {
 		return nil, err
 	}
@@ -16,7 +16,7 @@ func (s *JsonDB) GetTags(videoID string) ([]string, error) {
 
 // AddTagToVideo adds a tag to the specified video if it doesn't already exist (case-insensitive).
 // Returns an error if the video is not found.
-func (s *JsonDB) AddTagToVideo(videoID, tag string) error {
+func (s *JsonDB) AddTagToVideo(videoId, tag string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -25,9 +25,9 @@ func (s *JsonDB) AddTagToVideo(videoID, tag string) error {
 		return fmt.Errorf("failed to load videos: %w", err)
 	}
 
-	video, exists := videos[videoID]
+	video, exists := videos[videoId]
 	if !exists {
-		return fmt.Errorf("video %q not found", videoID)
+		return fmt.Errorf("video %q not found", videoId)
 	}
 
 	// Normalize the tag to lowercase
@@ -42,14 +42,14 @@ func (s *JsonDB) AddTagToVideo(videoID, tag string) error {
 
 	// Add the normalized (lowercase) tag
 	video.Tags = append(video.Tags, normalizedTag)
-	videos[videoID] = video
+	videos[videoId] = video
 
 	return s.saveVideos(videos)
 }
 
 // RemoveTagFromVideo removes a tag from the specified video if it exists (case-insensitive).
 // Returns an error if the video is not found.
-func (s *JsonDB) RemoveTagFromVideo(videoID, tag string) error {
+func (s *JsonDB) RemoveTagFromVideo(videoId, tag string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -58,9 +58,9 @@ func (s *JsonDB) RemoveTagFromVideo(videoID, tag string) error {
 		return fmt.Errorf("failed to load videos: %w", err)
 	}
 
-	video, exists := videos[videoID]
+	video, exists := videos[videoId]
 	if !exists {
-		return fmt.Errorf("video %q not found", videoID)
+		return fmt.Errorf("video %q not found", videoId)
 	}
 
 	// Normalize the tag to be removed for case-insensitive comparison
@@ -80,7 +80,7 @@ func (s *JsonDB) RemoveTagFromVideo(videoID, tag string) error {
 	// Only save if a tag was actually removed to prevent unnecessary disk writes.
 	if foundAndRemoved {
 		video.Tags = newTags
-		videos[videoID] = video
+		videos[videoId] = video
 		return s.saveVideos(videos)
 	}
 

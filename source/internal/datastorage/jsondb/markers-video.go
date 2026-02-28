@@ -2,30 +2,30 @@ package jsondb
 
 import "ova-cli/source/internal/datatypes"
 
-func (jsdb *JsonDB) GetMarkersForVideo(videoID string) ([]datatypes.MarkerData, error) {
+func (jsdb *JsonDB) GetMarkersForVideo(videoId string) ([]datatypes.MarkerData, error) {
 	allMarkers, err := jsdb.loadMarkers()
 	if err != nil {
 		return nil, err
 	}
-	return allMarkers[videoID], nil
+	return allMarkers[videoId], nil
 }
 
 // InsertMarker adds a new marker to a video ID
-func (jsdb *JsonDB) InsertMarker(videoID string, markerData datatypes.MarkerData) error {
+func (jsdb *JsonDB) InsertMarker(videoId string, markerData datatypes.MarkerData) error {
 	allMarkers, err := jsdb.loadMarkers()
 	if err != nil {
 		allMarkers = make(map[string][]datatypes.MarkerData)
 	}
-	allMarkers[videoID] = append(allMarkers[videoID], markerData)
+	allMarkers[videoId] = append(allMarkers[videoId], markerData)
 	return jsdb.saveMarkers(allMarkers)
 }
 
 // RemoveAllMarkersFromVideo removes all markers for a video ID
-func (jsdb *JsonDB) DeleteMarkersForVideo(videoID string) error {
+func (jsdb *JsonDB) DeleteMarkersForVideo(videoId string) error {
 	allMarkers, err := jsdb.loadMarkers()
 	if err != nil {
 		return err
 	}
-	delete(allMarkers, videoID)
+	delete(allMarkers, videoId)
 	return jsdb.saveMarkers(allMarkers)
 }

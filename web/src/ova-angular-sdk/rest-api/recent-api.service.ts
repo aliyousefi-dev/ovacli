@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiSuccessResponse } from './api-types/core-response';
 
-import { VideoBucketContainer } from './api-types/video-bucket';
 import { PageContainer } from '../core-types/page-container';
 
 import { ApiMap } from './api-map';

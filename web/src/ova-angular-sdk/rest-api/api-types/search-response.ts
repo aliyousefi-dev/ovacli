@@ -1,11 +1,3 @@
-import { VideoBucketContainer } from './video-bucket';
-
-export interface SearchResult {
-  criteria: SearchCriteria;
-  filters: VideoFilters;
-  result: VideoBucketContainer;
-}
-
 export interface SearchCriteria {
   query: string;
   tags: string[];

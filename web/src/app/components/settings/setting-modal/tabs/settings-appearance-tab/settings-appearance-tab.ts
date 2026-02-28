@@ -20,22 +20,21 @@ export class SettingsAppearanceTab implements OnInit {
   useNativePlayer = false;
 
   // Search State
-  searchQuery: string = '';
+  themeSearchQuery: string = '';
 
   // Theme Data
   themes = APP_THEMES;
 
-  // Getter to filter themes based on search input
+
   get filteredThemes() {
-    if (!this.searchQuery.trim()) {
+    if (!this.themeSearchQuery.trim()) {
       return this.themes;
     }
     return this.themes.filter((theme) =>
-      theme.toLowerCase().includes(this.searchQuery.toLowerCase()),
+      theme.toLowerCase().includes(this.themeSearchQuery.toLowerCase()),
     );
   }
 
-  // Getter to stay in sync with the service memory
   get selectedTheme(): AppTheme {
     return this.appSettings.currentSettings.ActiveTheme;
   }

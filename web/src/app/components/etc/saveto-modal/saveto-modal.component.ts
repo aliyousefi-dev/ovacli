@@ -1,8 +1,6 @@
 import {
   Component,
   Input,
-  Output,
-  EventEmitter,
   OnChanges,
   SimpleChanges,
   inject,
@@ -10,6 +8,8 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+
+import { ViewChild, ElementRef } from '@angular/core';
 
 import { PlaylistSummary } from '../../../../ova-angular-sdk/core-types/playlist-summary';
 
@@ -21,22 +21,19 @@ export interface PlaylistWrapper extends PlaylistSummary {
 }
 
 @Component({
-  selector: 'app-sendto-modal',
+  selector: 'app-saveto-modal',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './sendto-modal.component.html',
+  templateUrl: './saveto-modal.component.html',
 })
 export class SendtoModalComponent implements OnChanges {
   @Input() showModal = false;
   @Input() selectedVideoId!: string; // Input for the video ID
-  // @Input() username!: string; // Removed: username will now be fetched via UtilsService
-
+  @ViewChild('dialog') dialog!: ElementRef<HTMLDialogElement>;
   // Internal state for playlists
   playlists: PlaylistWrapper[] = [];
   originalPlaylists: PlaylistWrapper[] = []; // To track initial state for comparison
   loading = false; // <-- new flag
-
-  @Output() close = new EventEmitter<void>(); // No longer emits data, just signals closure
 
   private username: string | null = null; // Internal property to store the fetched username
 
@@ -61,27 +58,18 @@ export class SendtoModalComponent implements OnChanges {
     }
   }
 
-  /**
-   * Closes the modal without saving changes.
-   */
-  closeModal(): void {
-    this.close.emit(); // Just emit close event
+  open() {
+    this.dialog.nativeElement.showModal();
   }
 
-  /**
-   * Saves changes to playlists by adding/removing the video.
-   */
+  close() {
+    this.dialog.nativeElement.close();
+  }
 
-  /**
-   * Tracks playlists by slug for NgFor optimization.
-   */
   trackBySlug(index: number, playlist: { slug: string }): string {
     return playlist.slug;
   }
 
-  /**
-   * Navigates to the playlists management page.
-   */
   navigateToPlaylists(): void {
     this.router.navigate(['/playlists']);
   }
