@@ -158,6 +158,9 @@ func (r *RepoManager) GetGlobalVideosPaginated(page int, sortMode SortMode, limi
 		return nil, 0, fmt.Errorf("failed to get video data: %v", err)
 	}
 
+	if sortMode != "" {
+		SortVideos(videoData, sortMode)
+	}
 	// Basic pagination logic.  Adjust calculations as needed for your requirements
 	startIndex := (page - 1) * limit
 	endIndex := startIndex + limit
@@ -171,10 +174,6 @@ func (r *RepoManager) GetGlobalVideosPaginated(page int, sortMode SortMode, limi
 	}
 
 	paginatedVideos := videoData[startIndex:endIndex]
-
-	if sortMode != "" {
-		SortVideos(paginatedVideos, sortMode)
-	}
 
 	totalCount := len(videoData) // This would become the accurate total count
 
