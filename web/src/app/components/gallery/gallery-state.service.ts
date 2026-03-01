@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 import { VideoData } from '../../../ova-angular-sdk/core-types/video-data';
 import { GalleryFetchFn, GalleryViewMode } from './types';
 import { take } from 'rxjs';
+import { SortMode } from './types';
 
 @Injectable()
 export class GalleryStateService implements OnInit {
@@ -40,13 +41,13 @@ export class GalleryStateService implements OnInit {
     this.viewModeSubject.next(mode);
   }
 
-  loadPage(page: number, append?: boolean) {
+  loadPage(page: number, sortMode?: SortMode, append?: boolean) {
     if (!this.activeFetchFn) {
       console.error('No fetch strategy provided');
       return;
     }
 
-    this.activeFetchFn(page)
+    this.activeFetchFn(page, sortMode)
       .pipe(take(1))
       .subscribe((response) => {
         const newVideos = response.videos ?? [];
@@ -63,7 +64,7 @@ export class GalleryStateService implements OnInit {
       });
   }
 
-  clear() {
+  clearVideos() {
     this.videosSubject.next([]);
   }
 }

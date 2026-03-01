@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { OVASDK } from '../../../../../ova-angular-sdk/ova-sdk';
 import { GalleryPreview } from '../../../../components/gallery/gallery-preview/gallery-preview';
 import { GalleryStateService } from '../../../../components/gallery/gallery-state.service';
-import { GalleryFetchFn } from '../../../../components/gallery/types';
+import { GalleryFetchFn, SortMode } from '../../../../components/gallery/types';
 import { map } from 'rxjs';
 
 @Component({
@@ -18,9 +18,9 @@ export class GlobalVideosComponent implements OnInit {
   private galleryState = inject(GalleryStateService);
 
   ngOnInit(): void {
-    const fetchProxy: GalleryFetchFn = (page: number) => {
+    const fetchProxy: GalleryFetchFn = (page: number, sortMode?: SortMode) => {
       return this.ovaSdk.global
-        .fetchGlobalVideos(page)
+        .fetchGlobalVideos(page, sortMode)
         .pipe(map((response) => response.data));
     };
 

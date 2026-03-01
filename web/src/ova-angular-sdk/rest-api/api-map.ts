@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { OVASDKConfig } from '../global-config';
+import { SortMode } from './api-types/sort';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,13 @@ export class ApiMap {
   };
 
   readonly videos = {
-    global: (page: number) => `${this.base}/videos/global?page=${page}`,
+    global: (page: number, sortMode?: SortMode) => {
+      let baseUrl = `${this.base}/videos/global?page=${page}`; // Assuming 'this.base' is available
+      if (sortMode) {
+        baseUrl += `&sort=${sortMode}`; // Append the sort mode to the URL
+      }
+      return baseUrl;
+    },
     byId: (id: string) => `${this.base}/videos/${id}`,
     batch: () => `${this.base}/videos/batch`,
     filters: () => `${this.base}/videos/global/filters`,

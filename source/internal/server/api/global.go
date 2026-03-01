@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"ova-cli/source/internal/repo"
 	apitypes "ova-cli/source/internal/server/api-types"
@@ -14,53 +13,27 @@ import (
 func RegisterLatestVideoRoute(rg *gin.RouterGroup, repoMgr *repo.RepoManager) {
 	videos := rg.Group("/videos")
 	{
-		videos.GET("/global", getLatestVideos(repoMgr))
+		videos.GET("/global", getGlobalVideos(repoMgr))
 	}
 }
 
-// getLatestVideos retrieves the latest video IDs based on the bucket provided in query params.
-func getLatestVideos(repoMgr *repo.RepoManager) gin.HandlerFunc {
+// getGlobalVideos retrieves the latest video IDs based on the bucket provided in query params.
+func getGlobalVideos(repoMgr *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Parse bucket from query parameters (default to 1 if not provided)
-		bucketStr := c.DefaultQuery("page", "1")
-
-		// Convert bucketBlockNumber to integer
-		bucketBlockNumber, err := strconv.Atoi(bucketStr)
-		if err != nil || bucketBlockNumber <= 0 {
-			apitypes.RespondError(c, http.StatusBadRequest, "Invalid bucket parameter")
+		pageParameterStr := c.DefaultQuery("page", "1")
+		page, err := strconv.Atoi(pageParameterStr)
+		if err != nil || page <= 0 {
+			apitypes.RespondError(c, http.StatusBadRequest, "Invalid page parameter")
 			return
 		}
+		maxPageSize := repoMgr.GetConfigs().MaxBucketSize
 
-		// Hardcode the bucket size to 20
-		maxBucketSize := repoMgr.GetConfigs().MaxBucketSize
+		sortParam := c.DefaultQuery("sort", "title_asc")
+		sortMode := repo.SortMode(sortParam)
 
-		// Call GetTotalIndexedVideoCount to get the total count of cached videos
-		totalVideos, err := repoMgr.GetTotalIndexedVideoCount()
-		if err != nil {
-			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to get total video count")
-			return
-		}
-
-		// Calculate the start and end indices based on bucket and hardcoded bucket_size (20)
-		start := (bucketBlockNumber - 1) * maxBucketSize
-		end := start + maxBucketSize
-
-		// Ensure the end index does not exceed the total number of videos
-		if end > totalVideos {
-			end = totalVideos
-		}
-
-		// Fetch video IDs in the calculated range from memory storage
-		videoIDsInRange, err := repoMgr.GetGlobalVideosInRange(start, end)
-		if err != nil {
-			// Respond with a formatted error message
-			apitypes.RespondError(c, http.StatusInternalServerError, fmt.Sprintf("Failed to retrieve videos: %v", err))
-			return
-		}
-
-		videos, err := repoMgr.GetVideosByIDs(videoIDsInRange)
+		videos, total, err := repoMgr.GetGlobalVideosPaginated(page, sortMode, maxPageSize)
 		if err != nil || videos == nil {
-			// Handle error retrieving video
 			apitypes.RespondError(c, http.StatusNotFound, ErrVideoNotFound)
 			return
 		}
@@ -68,11 +41,11 @@ func getLatestVideos(repoMgr *repo.RepoManager) gin.HandlerFunc {
 		// Prepare the response with video IDs and total video count
 		response := gin.H{
 			"videos":       videos,
-			"currentPage ": bucketBlockNumber,
-			"pageSize":     maxBucketSize,
-			"totalItems":   totalVideos,
-			"totalPages":   (totalVideos + maxBucketSize - 1) / maxBucketSize,
-			"hasNextPage":  end < totalVideos,
+			"currentPage ": page,
+			"pageSize":     maxPageSize,
+			"totalItems":   total,
+			"totalPages":   (total + maxPageSize - 1) / maxPageSize,
+			"hasNextPage":  (page*maxPageSize < total),
 		}
 
 		apitypes.RespondSuccess(c, http.StatusOK, response, "Latest videos retrieved successfully")

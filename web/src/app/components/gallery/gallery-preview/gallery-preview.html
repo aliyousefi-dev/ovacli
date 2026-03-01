@@ -13,21 +13,94 @@
         <!-- Pagination controls fixed at the top -->
         <div class="w-full flex justify-between items-center py-1 px-5  bg-base-100">
 
-            <div class="flex gap-2">
-                <div class="text-xs ">
-                    total results: {{this.totalVideos}}
+            <div class="flex gap-5">
+                <div class="text-xs">
+                    results: {{(this.loadedVideos * (this.currentPage - 1))+1 }}-{{this.loadedVideos *
+                    this.currentPage }}
+                    /
+                    {{this.totalVideos }}
+                </div>
+
+                <div class="text-xs">
+                    loaded: {{this.videos.length}}
                 </div>
             </div>
             <div class="flex">
-                <app-custom-pagination (goTo)="handlegoToPage($event)" [current]="this.currentPage"
+                <app-custom-pagination (goTo)="handleGoToPage($event)" [current]="this.currentPage"
                     [total]="this.totalPages" (next)="handleNext()" (prev)="handlePrev()"></app-custom-pagination>
+
+
+                <div class="dropdown dropdown-end">
+                    <div tabindex="0" role=" button" class="btn btn-sm btn-ghost btn-circle px-5 ml-5">
+                        <i class='bx bx-filter bx-xs'></i>
+                    </div>
+                    <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                        <li>
+                            <button class="w-full text-left px-3 py-1 text-xs hover:bg-base-300 rounded-t-md"
+                                (click)="sortVideos('title_asc')">
+                                <span>
+                                    Title (A-Z)
+                                </span>
+                                <span [ngClass]="{'hidden': currentSortOrder !== 'title_asc'}">
+                                    <i class='bx bx-check bx-xs'></i>
+                                </span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class=" w-full text-left px-3 py-1 text-xs hover:bg-base-300 rounded-t-md"
+                                (click)="sortVideos('title_desc')">
+                                <span>
+                                    Title (Z-A)
+                                </span>
+                                <span [ngClass]="{'hidden': currentSortOrder !== 'title_desc'}">
+                                    <i class='bx bx-check bx-xs'></i>
+                                </span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="w-full text-left px-3 py-1 text-xs hover:bg-base-300 rounded-b-md"
+                                (click)="sortVideos('duration_asc')">
+                                <span>
+                                    Duration (Shortest)
+                                </span>
+                                <span [ngClass]="{'hidden': currentSortOrder !== 'duration_asc'}">
+                                    <i class='bx bx-check bx-xs'></i>
+                                </span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="w-full text-left px-3 py-1 text-xs hover:bg-base-300 rounded-b-md"
+                                (click)="sortVideos('duration_desc')">
+                                <span>
+                                    Duration (Longest)
+                                </span>
+                                <span [ngClass]="{'hidden': currentSortOrder !== 'duration_desc'}">
+                                    <i class='bx bx-check bx-xs'></i>
+                                </span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+
             </div>
         </div>
 
         <!-- Scrollable Gallery Container -->
         <div class="flex-1 w-full  overflow-y-auto ">
-            <app-gallery-view class="w-full h-full" [videos]="this.videos"></app-gallery-view>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-0.5 w-full">
+                @for (video of videos; track $index) {
+                <mini-video-card [video]="video"></mini-video-card>
+                }
+            </div>
+            <div class="flex w-full justify-center items-center pb-30 pt-10">
+                <button class="btn btn-ghost w-1/2 py-8 " (click)="loadMore()" [disabled]="currentPage === totalPages">
+                    Load more
+                </button>
+            </div>
         </div>
+
+
     </div>
     }
 </div>

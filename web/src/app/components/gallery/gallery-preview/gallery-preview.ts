@@ -4,8 +4,9 @@ import { RouterModule } from '@angular/router';
 import { GalleryViewMode } from '../types';
 import { GalleryStateService } from '../gallery-state.service';
 import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
-import { GalleryViewComponent } from '../gallery-view/gallery-view.component';
 import { PaginationComponent } from '../pagination/pagination';
+import { MiniVideoCardComponent } from '../mini-video-card/mini-video-card';
+import { SortMode } from '../types';
 
 @Component({
   selector: 'gallery-preview',
@@ -13,7 +14,7 @@ import { PaginationComponent } from '../pagination/pagination';
   imports: [
     CommonModule,
     RouterModule,
-    GalleryViewComponent,
+    MiniVideoCardComponent,
     PaginationComponent,
   ],
   templateUrl: './gallery-preview.html',
@@ -24,25 +25,32 @@ export class GalleryPreview implements OnInit {
   videos: VideoData[] = [];
   viewMode: GalleryViewMode = 'infinite-scroll';
 
+  currentSortOrder: SortMode = 'title_asc';
   currentPage: number = 1;
   totalPages: number = 0;
   totalVideos: number = 0;
+  loadedVideos: number = 0;
+
+  sortVideos(order: SortMode): void {
+    this.currentSortOrder = order;
+    this.reload();
+  }
 
   handleNext() {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
-      this.galleryService.loadPage(this.currentPage);
+      this.galleryService.loadPage(this.currentPage, this.currentSortOrder);
     }
   }
 
   handlePrev() {
     if (this.currentPage > 1) {
       this.currentPage--;
-      this.galleryService.loadPage(this.currentPage);
+      this.galleryService.loadPage(this.currentPage, this.currentSortOrder);
     }
   }
 
-  handlegoToPage(num: number) {
+  handleGoToPage(num: number) {
     this.goToPage(num);
   }
 
@@ -52,6 +60,7 @@ export class GalleryPreview implements OnInit {
     });
 
     this.galleryService.videos$.subscribe((videos) => {
+      this.loadedVideos = videos.length;
       this.videos = videos;
     });
 
@@ -64,24 +73,33 @@ export class GalleryPreview implements OnInit {
     });
 
     this.galleryService.fetchStrategyChanged$.subscribe(() => {
-      this.galleryService.loadPage(this.currentPage);
+      this.galleryService.loadPage(this.currentPage, this.currentSortOrder);
     });
   }
 
   clear() {
-    this.galleryService.clear();
+    this.galleryService.clearVideos();
   }
 
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
-      this.galleryService.loadPage(this.currentPage);
+      this.galleryService.loadPage(this.currentPage, this.currentSortOrder);
     }
+  }
+
+  reload() {
+    this.goToPage(this.currentPage);
   }
 
   nextPage() {
     console.log('click');
     this.currentPage++;
-    this.galleryService.loadPage(this.currentPage);
+    this.galleryService.loadPage(this.currentPage, this.currentSortOrder);
+  }
+
+  loadMore() {
+    this.currentPage++;
+    this.galleryService.loadPage(this.currentPage, this.currentSortOrder, true);
   }
 }

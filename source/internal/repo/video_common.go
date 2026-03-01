@@ -2,8 +2,18 @@ package repo
 
 import (
 	"fmt"
+	"sort"
 
 	"ova-cli/source/internal/datatypes"
+)
+
+type SortMode string
+
+const (
+	SortModeTitleAsc     SortMode = "title_asc"
+	SortModeTitleDesc    SortMode = "title_desc"
+	SortModeDurationAsc  SortMode = "duration_asc"
+	SortModeDurationDesc SortMode = "duration_desc"
 )
 
 // AddVideo adds a new video if it does not already exist.
@@ -136,4 +146,62 @@ func (r *RepoManager) GetGlobalVideosInRange(start, end int) ([]string, error) {
 		videoIds = append(videoIds, video.VideoID)
 	}
 	return videoIds, nil
+}
+
+func (r *RepoManager) GetGlobalVideosPaginated(page int, sortMode SortMode, limit int) ([]datatypes.VideoData, int, error) {
+	if !r.IsDataStorageInitialized() {
+		return nil, 0, fmt.Errorf("data storage is not initialized")
+	}
+
+	videoData, err := r.diskDataStorage.GetAllVideos()
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to get video data: %v", err)
+	}
+
+	// Basic pagination logic.  Adjust calculations as needed for your requirements
+	startIndex := (page - 1) * limit
+	endIndex := startIndex + limit
+
+	if startIndex < 0 {
+		startIndex = 0
+	}
+
+	if endIndex > len(videoData) {
+		endIndex = len(videoData)
+	}
+
+	paginatedVideos := videoData[startIndex:endIndex]
+
+	if sortMode != "" {
+		SortVideos(paginatedVideos, sortMode)
+	}
+
+	totalCount := len(videoData) // This would become the accurate total count
+
+	return paginatedVideos, totalCount, nil
+}
+
+func SortVideos(videoData []datatypes.VideoData, sortMode SortMode) {
+	switch sortMode {
+	case SortModeTitleAsc:
+		sort.Slice(videoData, func(i, j int) bool {
+			return videoData[i].Title < videoData[j].Title // Sort by VideoID ascending
+		})
+	case SortModeTitleDesc:
+		sort.Slice(videoData, func(i, j int) bool {
+			return videoData[i].Title > videoData[j].Title // Sort by VideoID descending
+		})
+	case SortModeDurationAsc:
+		sort.Slice(videoData, func(i, j int) bool {
+			return videoData[i].Codecs.DurationSec < videoData[j].Codecs.DurationSec // Sort by VideoID ascending
+		})
+	case SortModeDurationDesc:
+		sort.Slice(videoData, func(i, j int) bool {
+			return videoData[i].Codecs.DurationSec > videoData[j].Codecs.DurationSec // Sort by VideoID descending
+		})
+	default:
+		sort.Slice(videoData, func(i, j int) bool {
+			return videoData[i].VideoID < videoData[j].VideoID
+		})
+	}
 }
