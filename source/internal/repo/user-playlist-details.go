@@ -13,14 +13,6 @@ func (r *RepoManager) GetPlaylistByID(userId, playlistId string) (*datatypes.Pla
 	return r.diskDataStorage.GetPlaylistByID(userId, playlistId)
 }
 
-// UpdatePlaylistInfo updates the title and description of a playlist.
-func (r *RepoManager) UpdateUserPlaylistDetails(userId, playlistId, title, description string) error {
-	if !r.IsDataStorageInitialized() {
-		return fmt.Errorf("data storage is not initialized")
-	}
-	return r.diskDataStorage.UpdatePlaylistInfo(userId, playlistId, title, description)
-}
-
 // AddVideoToPlaylist adds a video ID to a specific playlist.
 func (r *RepoManager) AddVideoToPlaylist(userId, playlistId, videoID string) error {
 	if !r.IsDataStorageInitialized() {

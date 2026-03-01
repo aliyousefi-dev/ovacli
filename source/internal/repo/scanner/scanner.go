@@ -1,10 +1,14 @@
 package scanner
 
-import "path/filepath"
+import (
+	"ova-cli/source/internal/datastorage"
+	"path/filepath"
+)
 
 type Scanner struct {
 	rootDir         string
 	VideoExtensions []string
+	diskDataStorage datastorage.DiskDataStorage
 }
 
 func NewScanner(rootDir string) (*Scanner, error) {

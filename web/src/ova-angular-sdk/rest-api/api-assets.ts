@@ -11,8 +11,20 @@ export class AssetMap {
   }
 
   stream = (id: string) => `${this.base}/stream/${id}`;
-  thumbnail = (id: string) => `${this.base}/thumbnail/${id}`;
-  preview = (id: string) => `${this.base}/preview/${id}`;
+  thumbnail = (id: string) => {
+    if (id) {
+      return `${this.base}/thumbnail/${id}`;
+    } else {
+      return '';
+    }
+  };
+  preview = (id: string) => {
+    if (id) {
+      return `${this.base}/preview/${id}`;
+    } else {
+      return '';
+    }
+  };
   previewVtt = (id: string) =>
     `${this.base}/preview-thumbnails/${id}/thumbnails.vtt`;
 

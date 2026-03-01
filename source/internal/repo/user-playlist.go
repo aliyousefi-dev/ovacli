@@ -26,7 +26,7 @@ func (r *RepoManager) CreatePlaylist(accountId string, title string, description
 	}
 
 	// 3. Persist to JSON storage
-	result, err := r.diskDataStorage.AddPlaylist(pl)
+	result, err := r.diskDataStorage.InsertPlaylist(pl)
 	if err != nil {
 		return nil, err
 	}

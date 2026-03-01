@@ -7,7 +7,7 @@ import (
 
 // --- User Playlist Management ---
 
-func (s *JsonDB) AddPlaylist(pl *datatypes.PlaylistData) (*datatypes.PlaylistData, error) {
+func (s *JsonDB) InsertPlaylist(pl *datatypes.PlaylistData) (*datatypes.PlaylistData, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 

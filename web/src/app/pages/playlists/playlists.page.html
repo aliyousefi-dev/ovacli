@@ -1,1 +1,61 @@
-<app-playlist-manager> </app-playlist-manager>
+<div class="w-full grid grid-cols-5 p-5 gap-4">
+
+    @for (item of playlists; track $index) {
+    <div class="card w-full max-w-md shadow-lg hover:bg-base-200/30 p-3">
+        <div class="relative h-50 overflow-clip select-none rounded-lg">
+            <a class="" (click)="goToPlaylistContent(item.id)">
+                @if ( getThumbnailUrl(item.coverImageUrl)) {
+                <img [src]="getThumbnailUrl(item.coverImageUrl)"
+                    class="object-cover w-full h-full transition-all duration-300 hover:scale-110" />
+                } @else {
+                <div class="flex items-center justify-center w-full h-full text-xs bg-base-300 rounded-box">
+                    No videos
+                </div>
+                }
+                <div class="absolute p-1 top-2 left-2 bg-neutral/80 text-neutral-content rounded-full">
+                    <i class='bx bxs-lock bx-xs'></i>
+                </div>
+                <div
+                    class="absolute h-full top-0 right-0 bg-neutral/80 text-neutral-content font-semibold flex flex-col justify-center items-center px-5">
+                    <i class='bx bxs-videos bx-sm'></i>
+                    <span>
+                        {{item.videoCount}} Videos
+                    </span>
+                </div>
+            </a>
+        </div>
+
+        <div class="card-body pr-0">
+            <h2 class="card-title flex justify-between items-center">
+                <div>
+                    {{item.title}}
+                </div>
+                <div class="dropdown dropdown-end">
+                    <div tabindex="0" role=" button" class="btn btn-xs btn-ghost"><i
+                            class='bx bx-dots-vertical-rounded bx-xs'></i>
+                    </div>
+                    <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                        <li>
+                            <button class="w-full text-left px-3 py-1 text-xs hover:bg-base-300 rounded-t-md">
+                                Edit
+                            </button>
+                        </li>
+                        <li>
+                            <button class="w-full text-left px-3 py-1 text-xs hover:bg-base-300 rounded-t-md">
+                                Share
+                            </button>
+                        </li>
+                        <li>
+                            <button class="w-full text-left px-3 py-1 text-xs hover:bg-base-300 rounded-b-md">
+                                Delete
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </h2>
+            <p class="">{{item.description || "No description provided."}}</p>
+        </div>
+    </div>
+    }
+
+</div>

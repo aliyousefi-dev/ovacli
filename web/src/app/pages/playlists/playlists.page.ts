@@ -1,12 +1,34 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { PlaylistManagerComponent } from '../../components/playlist/playlist-manager/playlist-manager.component';
+import { OVASDK } from '../../../ova-angular-sdk/ova-sdk';
+import { PlaylistSummary } from '../../../ova-angular-sdk/core-types/playlist-summary';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-playlists',
   standalone: true,
-  imports: [CommonModule, PlaylistManagerComponent],
+  imports: [CommonModule],
   templateUrl: './playlists.page.html',
 })
-export class PlaylistsPage {}
+export class PlaylistsPage implements OnInit {
+  private ovaSdk = inject(OVASDK);
+  private router = inject(Router);
+
+  playlists: PlaylistSummary[] = [];
+
+  getThumbnailUrl(videoId: string): string {
+    const url = this.ovaSdk.assets.thumbnail(videoId);
+    return url;
+  }
+
+  goToPlaylistContent(playlistId: string) {
+    this.router.navigate(['/playlists', playlistId]);
+  }
+
+  ngOnInit(): void {
+    this.ovaSdk.playlists.getUserPlaylists().subscribe((playlist) => {
+      this.playlists = playlist.data.playlists;
+    });
+  }
+}

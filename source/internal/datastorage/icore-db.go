@@ -7,33 +7,30 @@ type DiskDataStorage interface {
 	GetGlobalFilters() ([]datatypes.GlobalFilter, error)
 
 	// User management
-	InsertUser(user *datatypes.UserData) error
-	DeleteUser(username string) (*datatypes.UserData, error)
-	GetUserByUsername(username string) (*datatypes.UserData, error)
-	GetUserByAccountID(accountID string) (*datatypes.UserData, error)
+	InsertUser(userData *datatypes.UserData) error
+	DeleteUser(accountId string) (*datatypes.UserData, error)
+	GetUserByUsername(username string) (*datatypes.UserData, error) // slower than by account Id
+	GetUserByAccountID(accountId string) (*datatypes.UserData, error)
 	GetAllUsers() ([]datatypes.UserData, error)
 
 	// User favorites management
 	GetSavedVideosByUser(accountId string) ([]string, error)
-	AddVideoToSaved(accountId, videoID string) error
-	RemoveVideoFromSaved(accountId, videoID string) error
+	AddVideoToSaved(accountId, videoId string) error
+	RemoveVideoFromSaved(accountId, videoId string) error
 
 	// User playlists management
-	AddPlaylist(playlist *datatypes.PlaylistData) (*datatypes.PlaylistData, error)
-	GetPlaylistByID(username, playlistSlug string) (*datatypes.PlaylistData, error)
-	DeletePlaylistByID(username, playlistSlug string) error
-	AddVideoToPlaylist(username, playlistSlug, videoID string) error
-	RemoveVideoFromPlaylist(username, playlistSlug, videoID string) error
-	ReorderPlaylists(username string, newOrderSlugs []string) error
-	UpdatePlaylistInfo(username, playlistSlug, newTitle, newDescription string) error
-	UpdateUserPassword(username, newHashedPassword string) error
-	GetPlaylistVideoIDsPaginated(userId, playlistId string, page, limit int) ([]string, int, error)
-	GetPlaylistsByUser(userId string) ([]datatypes.PlaylistData, error)
+	InsertPlaylist(playlistData *datatypes.PlaylistData) (*datatypes.PlaylistData, error)
+	GetPlaylistByID(accountId, playlistId string) (*datatypes.PlaylistData, error)
+	DeletePlaylistByID(accountId, playlistId string) error
+	AddVideoToPlaylist(accountId, playlistId, videoId string) error
+	RemoveVideoFromPlaylist(accountId, playlistId, videoId string) error
+	ReorderPlaylists(accountId string, newOrderSlugs []string) error
+	UpdateUserPassword(accountId, newHashedPassword string) error
+	GetPlaylistVideoIDsPaginated(accountId, playlistId string, page, limit int) ([]string, int, error)
+	GetPlaylistsByUser(accountId string) ([]datatypes.PlaylistData, error)
 
-	// New method to get total video count
 	GetTotalVideoCount() (int, error)
 
-	// marker management
 	InsertMarker(videoId string, markerData datatypes.MarkerData) error
 	GetMarkersForVideo(videoID string) ([]datatypes.MarkerData, error)
 	DeleteMarkersForVideo(videoID string) error
@@ -47,8 +44,8 @@ type DiskDataStorage interface {
 	ClearUserWatchedHistory(accountId string) error
 
 	// Video tags management
-	AddTagToVideo(videoID, tag string) error
-	RemoveTagFromVideo(videoID, tag string) error
+	AddTagToVideo(videoId, tag string) error
+	RemoveTagFromVideo(videoId, tag string) error
 
 	// Video management
 	InsertVideo(video datatypes.VideoData) error

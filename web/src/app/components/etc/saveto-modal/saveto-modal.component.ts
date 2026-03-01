@@ -10,9 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { ViewChild, ElementRef } from '@angular/core';
-
 import { PlaylistSummary } from '../../../../ova-angular-sdk/core-types/playlist-summary';
-
 import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
 // Define PlaylistWrapper interface outside the component class
