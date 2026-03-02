@@ -24,7 +24,6 @@ type DiskDataStorage interface {
 	DeletePlaylistByID(accountId, playlistId string) error
 	AddVideoToPlaylist(accountId, playlistId, videoId string) error
 	RemoveVideoFromPlaylist(accountId, playlistId, videoId string) error
-	ReorderPlaylists(accountId string, newOrderSlugs []string) error
 	UpdateUserPassword(accountId, newHashedPassword string) error
 	GetPlaylistVideoIDsPaginated(accountId, playlistId string, page, limit int) ([]string, int, error)
 	GetPlaylistsByUser(accountId string) ([]datatypes.PlaylistData, error)

@@ -41,14 +41,3 @@ func (r *RepoManager) DeletePlaylistByID(accountId, playlistId string) error {
 	}
 	return r.diskDataStorage.DeletePlaylistByID(accountId, playlistId)
 }
-
-// ReorderPlaylists updates the orderPosition of all playlists for a specific user.
-func (r *RepoManager) ReorderPlaylists(userId string, playlistIds []string) error {
-	if !r.IsDataStorageInitialized() {
-		return fmt.Errorf("data storage is not initialized")
-	}
-
-	// We pass the userId to the storage layer to ensure the user
-	// only reorders playlists they actually own.
-	return r.diskDataStorage.ReorderPlaylists(userId, playlistIds)
-}

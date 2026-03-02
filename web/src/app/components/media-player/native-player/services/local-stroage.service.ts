@@ -12,6 +12,7 @@ export class LocalStorageService {
     enableDebugger: false,
     playbackSpeed: 1,
     timeTagEnabled: false,
+    mobileAutoOrientation: true,
   };
 
   // 1. Create the BehaviorSubject with default values

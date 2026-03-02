@@ -21,6 +21,29 @@ func (r *RepoManager) AddVideoToPlaylist(userId, playlistId, videoID string) err
 	return r.diskDataStorage.AddVideoToPlaylist(userId, playlistId, videoID)
 }
 
+func (r *RepoManager) AddVideosToPlaylists(userId string, videoIDs, playlistIDs []string) error {
+	if !r.IsDataStorageInitialized() {
+		return fmt.Errorf("data storage is not initialized")
+	}
+
+	// Validation - ensure both slices have content
+	if len(videoIDs) == 0 || len(playlistIDs) == 0 {
+		return fmt.Errorf("videoIDs or playlistIDs are empty")
+	}
+
+	// Iterate through the video IDs and add them to all playlists
+	for _, videoID := range videoIDs {
+		for _, playlistID := range playlistIDs {
+			err := r.diskDataStorage.AddVideoToPlaylist(userId, playlistID, videoID)
+			if err != nil {
+				return fmt.Errorf("failed to add video %s to playlist %s: %w", videoID, playlistID, err)
+			}
+		}
+	}
+
+	return nil
+}
+
 // RemoveVideoFromPlaylist removes a video ID from a specific playlist.
 func (r *RepoManager) RemoveVideoFromPlaylist(userId, playlistId, videoID string) error {
 	if !r.IsDataStorageInitialized() {

@@ -4,6 +4,7 @@ import { Component, ElementRef, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StateService } from '../../../services/state.service';
 import { MenuService } from '../../../services/menu.service';
+import { LocalStorageService } from '../../../services/local-stroage.service';
 
 // Define a type for your menu states for clarity
 type MenuViews = 'main' | 'playback';
@@ -22,7 +23,6 @@ export class SettingsButton implements OnInit {
   /**
    * The reference to the actual <video> element from the parent component.
    */
-
   // 🌟 New State Variable
   currentView: MenuViews = 'main';
 
@@ -30,14 +30,20 @@ export class SettingsButton implements OnInit {
 
   playerState = inject(StateService);
   playerUI = inject(MenuService);
+  localStorage = inject(LocalStorageService);
 
   debuggerEnabled: boolean = false;
   tagtimeEnabled: boolean = false;
   currentPlayerSpeed: number = 1;
+  autoOrientation: boolean = true;
 
   ngOnInit() {
     this.playerState.currentSpeed$.subscribe((s) => {
       this.currentPlayerSpeed = s;
+    });
+
+    this.localStorage.settings$.subscribe((s) => {
+      this.autoOrientation = s.mobileAutoOrientation;
     });
 
     this.playerUI.debuggerMenuVisible$.subscribe((enabled) => {
@@ -62,6 +68,13 @@ export class SettingsButton implements OnInit {
   toggleTagTimeVisibility() {
     this.playerUI.setTagTimeMenuVisible(
       !this.playerUI.tagTimeMenuVisible$.value,
+    );
+  }
+
+  toggleAutoOrientation() {
+    this.localStorage.updateSetting(
+      'mobileAutoOrientation',
+      !this.localStorage.currentSettings.mobileAutoOrientation,
     );
   }
 

@@ -7,19 +7,17 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { VideoData } from '../../../ova-angular-sdk/core-types/video-data';
 
 import { PlayerManager } from '../../components/media-player/player-manager/player-manager';
-import { GlobalSettingsService } from '../../global/global-settings.service';
-
-// Updated: Import new child components
 import { VideoTitleBarComponent } from './sections/video-title-bar.component'; // Path assuming it's in the same directory as watch.page.ts
 import { SimilarVideosPanelComponent } from './sections/similar-videos-panel.component';
 import { VideoActionBarComponent } from './sections/video-action-bar.component';
 import { WatchDetailSection } from './sections/watch-detail-section';
 import { VideoAdminTabsComponent } from './sections/video-admin-tabs.component';
-import { PlaylistContentAPIService } from '../../../ova-angular-sdk/rest-api/playlist-content-api.service';
+
+import { PlaylistWatchPanel } from './sections/playlist-panel';
 
 import { ViewChild } from '@angular/core';
 
@@ -37,34 +35,37 @@ import { OVASDK } from '../../../ova-angular-sdk/ova-sdk';
     VideoAdminTabsComponent,
     WatchDetailSection,
     VideoActionBarComponent,
+    PlaylistWatchPanel,
   ],
   templateUrl: './watch.page.html',
 })
 export class WatchPage implements AfterViewInit, OnInit {
   @ViewChild('adminTabs') adminTabs!: VideoAdminTabsComponent;
 
-  private activatedRoute = inject(ActivatedRoute);
   private ovaSdk = inject(OVASDK);
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
 
   loading = true;
   error = false;
-  videoId: string | null = null;
   video!: VideoData;
-  isSaved = false;
-  loadingSavedVideo = false;
-  username = '';
+
+  playlistVideos: VideoData[] = [];
 
   playlistModalVisible = false;
   playlists: { title: string; slug: string; checked: boolean }[] = [];
   originalPlaylists: { title: string; slug: string; checked: boolean }[] = [];
 
   ngOnInit(): void {
-    this.activatedRoute.params.subscribe((params) => {
-      const newId = params['videoId'];
-      if (newId) {
+    this.activatedRoute.queryParams.subscribe((params) => {
+      const videoId = params['video'];
+      const playlistId = params['playlist'];
+
+      if (playlistId) {
+        this.fetchPlaylist(playlistId);
+      } else {
         this.video = null as any;
-        this.videoId = newId;
-        this.fetchVideo(newId);
+        this.fetchVideo(videoId);
       }
     });
   }
@@ -73,27 +74,27 @@ export class WatchPage implements AfterViewInit, OnInit {
     window.scrollTo(0, 0);
   }
 
+  fetchPlaylist(playlistId: string) {
+    this.loading = true;
+    this.ovaSdk.playlistContent
+      .fetchPlaylistContent(playlistId, 1)
+      .subscribe((data) => {
+        const count = data.data.videos.length;
+        if (count > 0) {
+          this.video = data.data.videos[0];
+          this.playlistVideos = data.data.videos;
+        }
+        this.loading = false;
+      });
+  }
+
   fetchVideo(videoId: string) {
     this.loading = true;
     this.error = false;
     this.ovaSdk.videos.getVideoById(videoId).subscribe({
       next: (response) => {
         this.video = response.data;
-        (window as any).video = this.video; // Consider removing this if not debugging
         this.loading = false;
-
-        if (this.videoId) {
-          this.ovaSdk.history
-            .addUserWatched(this.username, this.videoId)
-            .subscribe({
-              next: () => {
-                console.log('Video marked as watched!');
-              },
-              error: (err) => {
-                console.error('Failed to mark video as watched:', err);
-              },
-            });
-        }
       },
       error: () => {
         this.error = true;
@@ -118,29 +119,5 @@ export class WatchPage implements AfterViewInit, OnInit {
     return this.ovaSdk.assets.previewVtt(this.video.videoId);
   }
 
-  toggleSaved() {
-    if (!this.username || !this.videoId) return;
-
-    this.loadingSavedVideo = true;
-
-    const done = () => (this.loadingSavedVideo = false);
-
-    if (this.isSaved) {
-      this.ovaSdk.saved.removeUserSaved(this.videoId).subscribe({
-        next: () => {
-          this.isSaved = false;
-          done();
-        },
-        error: () => done(),
-      });
-    } else {
-      this.ovaSdk.saved.addUserSaved(this.videoId).subscribe({
-        next: () => {
-          this.isSaved = true;
-          done();
-        },
-        error: () => done(),
-      });
-    }
-  }
+  toggleSaved() {}
 }

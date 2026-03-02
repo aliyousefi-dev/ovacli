@@ -6,18 +6,26 @@ import (
 	gonanoid "github.com/matoous/go-nanoid/v2"
 )
 
+type PrivacySetting string
+
+const (
+	Public   PrivacySetting = "public"
+	Private  PrivacySetting = "private"
+	Unlisted PrivacySetting = "unlisted"
+)
+
 // PlaylistData represents a single playlist.
 type PlaylistData struct {
-	ID          string   `json:"id"`
-	Title       string   `json:"title"`
-	Description string   `json:"description"`
-	Order       int      `json:"orderPosition"`
-	VideoIDs    []string `json:"videoIds"`    // Additional: necessary for backend
-	OwnerUserId string   `json:"ownerUserId"` // The owner/user who created this playlist
+	ID             string         `json:"id"`
+	Title          string         `json:"title"`
+	Description    string         `json:"description"`
+	Privacy        PrivacySetting `json:"privacy"`
+	VideoIDs       []string       `json:"videoIds"`       // Additional: necessary for backend
+	OwnerAccountId string         `json:"ownerAccountId"` // The owner/user who created this playlist
 }
 
 // NewPlaylistData returns an example playlist map.
-func NewPlaylistData(userId string, title string, desc string, videoIds []string) (*PlaylistData, error) {
+func NewPlaylistData(accountId string, title string, desc string, videoIds []string) (*PlaylistData, error) {
 	// 1. Handle NanoID safely
 	id, err := gonanoid.New(11)
 	if err != nil {
@@ -30,11 +38,11 @@ func NewPlaylistData(userId string, title string, desc string, videoIds []string
 	}
 
 	return &PlaylistData{
-		ID:          id,
-		Title:       title,
-		Description: desc, // Pass the actual desc, or "" if empty
-		Order:       0,    // DB logic will overwrite this based on MaxOrder
-		VideoIDs:    videoIds,
-		OwnerUserId: userId,
+		ID:             id,
+		Title:          title,
+		Description:    desc, // Pass the actual desc, or "" if empty
+		VideoIDs:       videoIds,
+		Privacy:        Private,
+		OwnerAccountId: accountId,
 	}, nil
 }

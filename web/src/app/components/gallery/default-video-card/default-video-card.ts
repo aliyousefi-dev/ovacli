@@ -12,7 +12,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { SendtoModalComponent } from '../../etc/saveto-modal/saveto-modal.component';
+import { SaveToModalComponent } from '../../playlist/saveto-modal/saveto-modal';
 
 import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
 import { TagLinkComponent } from '../../etc/tag-link/tag-link.component';
@@ -33,7 +33,7 @@ import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
     CommonModule,
     RouterModule,
     FormsModule,
-    SendtoModalComponent,
+    SaveToModalComponent,
     TagLinkComponent,
   ],
 })
@@ -54,9 +54,6 @@ export class VideoCardComponent implements OnChanges, OnInit {
   private cd = inject(ChangeDetectorRef);
 
   ngOnInit() {
-    this.isSaved = this.video.userVideoStatus.isSaved;
-    this.isWatched = this.video.userVideoStatus.isWatched;
-
     if (this.PreviewPlayback && this.videoElement) {
       const video_preview: HTMLVideoElement = this.videoElement.nativeElement;
 
@@ -154,7 +151,7 @@ export class VideoCardComponent implements OnChanges, OnInit {
     const streamUrl = this.ovaSdk.assets.download.full(this.video.videoId);
     const anchor = document.createElement('a');
     anchor.href = streamUrl;
-    anchor.download = `${this.video.fileName}.mp4`;
+    anchor.download = `${this.video.title}.mp4`;
     document.body.appendChild(anchor);
     anchor.click();
     document.body.removeChild(anchor);

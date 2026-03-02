@@ -7,6 +7,7 @@ import { PageContainer } from '../core-types/page-container';
 import { ApiSuccessResponse } from './api-types/core-response';
 
 import { ApiMap } from './api-map';
+import { PlaylistSummary } from '../core-types/playlist-summary';
 
 @Injectable({
   providedIn: 'root',
@@ -25,13 +26,15 @@ export class PlaylistContentAPIService {
   }
 
   addVideoToPlaylist(
-    slug: string,
     videoId: string,
-  ): Observable<ApiSuccessResponse<PageContainer>> {
-    const url = this.apiMap.me.playlists.content.addVideo(slug);
-    const body = videoId;
+    playlistId: string,
+  ): Observable<ApiSuccessResponse<PlaylistSummary>> {
+    const url = this.apiMap.me.playlists.content.addVideo(playlistId);
+    const body = {
+      videoId: videoId,
+    };
 
-    return this.http.post<ApiSuccessResponse<PageContainer>>(url, body);
+    return this.http.post<ApiSuccessResponse<PlaylistSummary>>(url, body);
   }
 
   deleteVideoFromPlaylist(

@@ -1,20 +1,25 @@
 import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { SendtoModalComponent } from '../../../components/etc/saveto-modal/saveto-modal.component';
+import { SaveToModalComponent } from '../../../components/playlist/saveto-modal/saveto-modal';
 import { RouterModule } from '@angular/router';
 
 import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
+import { ViewChild } from '@angular/core';
+import { VideoData } from '../../../../ova-angular-sdk/core-types/video-data';
+
 @Component({
   selector: 'app-video-action-bar',
   standalone: true,
-  imports: [CommonModule, SendtoModalComponent, RouterModule], // Add PlaylistModalComponent to imports
+  imports: [CommonModule, SaveToModalComponent, RouterModule], // Add PlaylistModalComponent to imports
   templateUrl: './video-action-bar.component.html',
   styles: [],
 })
 export class VideoActionBarComponent {
-  @Input() videoId?: string | null;
+  @ViewChild(SaveToModalComponent) saveToModal!: SaveToModalComponent;
+
+  @Input() videoData!: VideoData;
   @Input() getCurrentTimeFn?: () => number;
 
   @Input() isSaved = false;
@@ -29,35 +34,7 @@ export class VideoActionBarComponent {
   playlistModalVisible = false; // New property to control modal visibility
 
   downloadVideo(): void {
-    if (!this.videoId) return;
-    const url = this.ovaSdk.assets.download.full(this.videoId);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = '';
-    a.click();
-  }
-
-  setTrimStart(): void {
-    if (this.getCurrentTimeFn) {
-      this.trimStart = this.getCurrentTimeFn();
-      console.log('Set Start Time:', this.trimStart);
-    }
-  }
-
-  setTrimEnd(): void {
-    if (this.getCurrentTimeFn) {
-      this.trimEnd = this.getCurrentTimeFn();
-      console.log('Set End Time:', this.trimEnd);
-    }
-  }
-
-  downloadTrimmed(): void {
-    if (!this.videoId || this.trimStart == null) return;
-    const url = this.ovaSdk.assets.download.trim(
-      this.videoId,
-      this.trimStart,
-      this.trimEnd ?? undefined,
-    );
+    const url = this.ovaSdk.assets.download.full(this.videoData.videoId);
     const a = document.createElement('a');
     a.href = url;
     a.download = '';
@@ -75,30 +52,7 @@ export class VideoActionBarComponent {
     return `${pad(h)}:${pad(m)}:${pad(s)}`;
   }
 
-  get trimmedDuration(): number | null {
-    if (
-      this.trimStart != null &&
-      this.trimEnd != null &&
-      this.trimEnd > this.trimStart
-    ) {
-      return this.trimEnd - this.trimStart;
-    }
-    return null;
-  }
-
-  toggleTrimMode(): void {
-    this.trimMode = !this.trimMode;
-    if (!this.trimMode) {
-      this.trimStart = null;
-      this.trimEnd = null;
-    }
-  }
-
-  openPlaylistModal(): void {
-    this.playlistModalVisible = true;
-  }
-
-  closePlaylistModal(): void {
-    this.playlistModalVisible = false;
+  openSaveToModal(): void {
+    this.saveToModal.open();
   }
 }

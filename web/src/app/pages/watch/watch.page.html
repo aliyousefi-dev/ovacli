@@ -11,15 +11,13 @@
 
       <div class="flex justify-between items-center w-full py-2">
         <div class="text-xl truncate pr-5 font-semibold">
-          {{ video.fileName }}
+          {{ video.title }}
         </div>
       </div>
 
       <div class="flex items-center justify-between">
         <app-video-title-bar class="break-all" [videoData]="video"></app-video-title-bar>
-
-        <app-video-action-bar [videoId]="video.videoId" [isSaved]="isSaved" [loadingSavedVideo]="loadingSavedVideo"
-          (toggleSaved)="toggleSaved()"></app-video-action-bar>
+        <app-video-action-bar [videoData]="video" (toggleSaved)="toggleSaved()"></app-video-action-bar>
       </div>
 
 
@@ -31,12 +29,12 @@
           (tagsUpdated)="video.tags = $event"></app-video-admin-tabs>
       </div>
     </div>
-
   </div>
 
   <!-- Sidebar + Comments (30% width) on lg+ screens, full width on smaller screens -->
   <div class="w-full xl:w-[30%] flex flex-col gap-6 mt-6 lg:mt-0">
-    <app-similar-videos-panel [currentVideoId]="videoId!"></app-similar-videos-panel>
+    <app-playlist-panel [playlistVideos]="this.playlistVideos"></app-playlist-panel>
+    <app-similar-videos-panel></app-similar-videos-panel>
   </div>
   }@else {
   <div class="w-full h-full flex justify-center items-center">

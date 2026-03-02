@@ -15,7 +15,8 @@
         <li>
             <label class="label flex justify-between items-center p-2 cursor-pointer">
                 auto orientaion
-                <input type="checkbox" class="toggle toggle-xs" />
+                <input type="checkbox" class="toggle toggle-xs" (click)="toggleAutoOrientation()"
+                    [checked]="autoOrientation" />
             </label>
         </li>
         <li>

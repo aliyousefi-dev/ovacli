@@ -1,4 +1,3 @@
-@if(videoId){
 <div class="flex flex-col items-end gap-4 w-full">
   <!-- Actions + Trim Controls -->
   <div class="flex flex-wrap items-center justify-end gap-2 w-full">
@@ -14,15 +13,15 @@
 
     <div class="tooltip tooltip-bottom" data-tip="Version History">
       <!-- Version History -->
-      <a class="btn btn-ghost" [routerLink]="['/version-history', videoId]">
+      <a class="btn btn-ghost" [routerLink]="['/version-history', videoData.videoId]">
         <i class='bx bx-git-branch bx-xs'></i>
 
       </a>
     </div>
 
-    <div class="tooltip tooltip-bottom" data-tip="Send to">
+    <div class="tooltip tooltip-bottom" data-tip="Save to">
       <!-- Add to Playlist -->
-      <button class="btn btn-ghost" (click)="openPlaylistModal()">
+      <button class="btn btn-ghost" (click)="openSaveToModal()">
         <i class='bx  bxs-share bx-xs'></i>
 
       </button>
@@ -56,8 +55,6 @@
   </div>
 </div>
 
-}
 
 <!-- Playlist Modal -->
-<app-saveto-modal [showModal]="playlistModalVisible" [selectedVideoId]="videoId!"
-  (close)="closePlaylistModal()"></app-saveto-modal>
+<app-saveto-modal [selectedVideoId]="videoData.videoId"></app-saveto-modal>

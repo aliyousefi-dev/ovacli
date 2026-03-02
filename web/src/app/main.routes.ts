@@ -14,15 +14,16 @@ import { VersionHistoryPage } from './pages/version-history/version-history.page
 import { PlaylistContentPage } from './pages/playlists-content/playlist-content.page';
 import { StatsPage } from './pages/stats/stats.page';
 import { TestPage } from './pages/test/test.page';
+import { TagMapPage } from './pages/tagmap/tagmap.page';
 
 export const MainRoutes: Routes = [
   {
     path: '',
-    redirectTo: '/global',
+    redirectTo: '/library',
     pathMatch: 'full',
   },
   {
-    path: 'global',
+    path: 'library',
     component: GlobalPage,
     data: { reuse: true },
   },
@@ -48,9 +49,12 @@ export const MainRoutes: Routes = [
     component: ProfilePage,
   },
   {
-    path: 'watch/:videoId',
+    path: 'watch',
     component: WatchPage,
-    data: { reuse: true },
+  },
+  {
+    path: 'tagmap',
+    component: TagMapPage,
   },
   {
     path: 'upload',

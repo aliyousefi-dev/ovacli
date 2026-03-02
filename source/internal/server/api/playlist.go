@@ -12,8 +12,8 @@ import (
 func RegisterUserPlaylistRoutes(rg *gin.RouterGroup, rm *repo.RepoManager) {
 	users := rg.Group("/me")
 	{
-		users.GET("/playlists", GetPlaylistsByUser(rm))
-		users.POST("/playlists", CreatePlaylist(rm))
+		users.GET("/playlists", GetPlaylistsByUser(rm)) // get user Playlist
+		users.POST("/playlists", CreatePlaylist(rm))    // Create New User Playlist
 	}
 }
 
@@ -37,11 +37,11 @@ func GetPlaylistsByUser(rm *repo.RepoManager) gin.HandlerFunc {
 			Title       string `json:"title"`
 			Description string `json:"description"`
 			CoverImage  string `json:"coverImageUrl"`
-			Order       int    `json:"order"`
 			VideoCount  int    `json:"videoCount"`
 		}
 
 		resp := make([]PlaylistResponse, 0, len(playlists))
+
 		for _, pl := range playlists {
 
 			count := len(pl.VideoIDs)
@@ -57,15 +57,15 @@ func GetPlaylistsByUser(rm *repo.RepoManager) gin.HandlerFunc {
 				Title:       pl.Title,
 				CoverImage:  coverImage,
 				Description: pl.Description,
-				Order:       pl.Order,
 				VideoCount:  count,
 			})
 		}
 
-		apitypes.RespondSuccess(c, http.StatusOK, gin.H{
-			"playlists":      resp,
-			"totalPlaylists": len(resp),
-		}, "Playlists retrieved successfully")
+		response := gin.H{
+			"playlists": resp,
+		}
+
+		apitypes.RespondSuccess(c, http.StatusOK, response, "Playlists retrieved successfully")
 	}
 }
 

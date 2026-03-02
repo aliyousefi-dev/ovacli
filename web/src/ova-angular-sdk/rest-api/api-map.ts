@@ -79,7 +79,8 @@ export class ApiMap {
       content: {
         fetch: (playlistId: string, page: number) =>
           `${this.base}/me/playlists/${playlistId}?page=${page}`,
-        addVideo: (slug: string) => `${this.base}/me/playlists/${slug}/videos`,
+        addVideo: (playlistId: string) =>
+          `${this.base}/me/playlists/${playlistId}/videos`,
         removeVideo: (slug: string, videoId: string) =>
           `${this.base}/me/playlists/${slug}/videos/${videoId}`,
       },

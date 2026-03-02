@@ -1,9 +1,14 @@
-<div class="w-full grid grid-cols-5 p-5 gap-4">
+<div class="flex justify-center mb-4">
+    <input type="text" class="input input-bordered w-full max-w-md" placeholder="Filter playlists..." />
+</div>
+
+
+<div class="w-full grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 p-5 gap-4">
 
     @for (item of playlists; track $index) {
-    <div class="card w-full max-w-md hover:bg-base-200/30 p-3">
-        <div class="relative h-50 overflow-clip select-none rounded-lg">
-            <a class="" (click)="goToPlaylistContent(item.id)">
+    <div class="card w-full  hover:bg-base-200/30 p-3">
+        <div class="relative overflow-clip select-none rounded-lg cursor-pointer">
+            <a class="" (click)="navigateToWatch(item.id)">
                 @if ( getThumbnailUrl(item.coverImageUrl)) {
                 <img [src]="getThumbnailUrl(item.coverImageUrl)"
                     class="object-cover w-full h-full transition-all duration-300 hover:scale-110" />
@@ -24,7 +29,6 @@
                 </div>
             </a>
         </div>
-
         <div class="card-body pr-0">
             <h2 class="card-title flex justify-between items-center">
                 <div>

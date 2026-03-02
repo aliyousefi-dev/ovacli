@@ -88,6 +88,8 @@ export class MiniVideoCardComponent implements OnInit, AfterViewInit {
   }
 
   navigateToWatch(): void {
-    this.router.navigate(['/watch', this.video.videoId]);
+    this.router.navigate(['/watch'], {
+      queryParams: { video: this.video.videoId },
+    });
   }
 }

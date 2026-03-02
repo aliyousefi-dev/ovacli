@@ -3,12 +3,12 @@
   <div class="flex items-center justify-start gap-2">
     <div class="avatar avatar-placeholder">
       <div class="bg-neutral text-neutral-content w-12 rounded-full">
-        <span>{{ videoData.ownerAccountUsername.charAt(0).toUpperCase() }}</span>
+        <!-- <span>{{ videoData.uploaderId.charAt(0).toUpperCase() }}</span> -->
       </div>
     </div>
     <div class="flex flex-col">
-      <a [routerLink]="['/users', videoData.ownerAccountUsername]" class="text-xs truncate min-w-0">
-        {{ videoData.ownerAccountUsername }}
+      <a [routerLink]="['/users', videoData.uploaderId]" class="text-xs truncate min-w-0">
+        {{ videoData.uploaderId }}
       </a>
       <span class="text-xs">{{ timeSinceAdded }}</span>
     </div>

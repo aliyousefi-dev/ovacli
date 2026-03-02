@@ -14,6 +14,8 @@ const (
 	SortModeTitleDesc    SortMode = "title_desc"
 	SortModeDurationAsc  SortMode = "duration_asc"
 	SortModeDurationDesc SortMode = "duration_desc"
+	SortModeDateAsc      SortMode = "date_asc"
+	SortModeDateDesc     SortMode = "date_desc"
 )
 
 // AddVideo adds a new video if it does not already exist.
@@ -197,6 +199,14 @@ func SortVideos(videoData []datatypes.VideoData, sortMode SortMode) {
 	case SortModeDurationDesc:
 		sort.Slice(videoData, func(i, j int) bool {
 			return videoData[i].Codecs.DurationSec > videoData[j].Codecs.DurationSec // Sort by VideoID descending
+		})
+	case SortModeDateAsc:
+		sort.Slice(videoData, func(i, j int) bool {
+			return videoData[i].UploadedAt.After(videoData[j].UploadedAt) // Sort by VideoID descending
+		})
+	case SortModeDateDesc:
+		sort.Slice(videoData, func(i, j int) bool {
+			return videoData[i].UploadedAt.Before(videoData[j].UploadedAt) // Sort by UploadedAt descending
 		})
 	default:
 		sort.Slice(videoData, func(i, j int) bool {

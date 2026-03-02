@@ -22,8 +22,10 @@ export class PlaylistsPage implements OnInit {
     return url;
   }
 
-  goToPlaylistContent(playlistId: string) {
-    this.router.navigate(['/playlists', playlistId]);
+  navigateToWatch(playlistId: string) {
+    this.router.navigate(['/watch'], {
+      queryParams: { playlist: playlistId },
+    });
   }
 
   ngOnInit(): void {

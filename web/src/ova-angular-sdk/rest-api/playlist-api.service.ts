@@ -16,17 +16,30 @@ export class PlaylistAPIService {
   private apiMap = inject(ApiMap);
 
   getUserPlaylists(): Observable<
-    ApiSuccessResponse<{ playlists: PlaylistSummary[] }>
+    ApiSuccessResponse<{
+      playlists: PlaylistSummary[];
+    }>
   > {
     const url = this.apiMap.me.playlists.base();
 
     return this.http
-      .get<ApiSuccessResponse<{ playlists: PlaylistSummary[] }>>(url)
+      .get<
+        ApiSuccessResponse<{
+          playlists: PlaylistSummary[];
+        }>
+      >(url)
       .pipe(
         map((response) => {
-          if (response.data.playlists && response.data.playlists.length > 0) {
+          if (
+            response.data &&
+            response.data.playlists &&
+            response.data.playlists.length > 0
+          ) {
             response.data.playlists = [...response.data.playlists].sort(
-              (a, b) => (a.order ?? 0) - (b.order ?? 0),
+              (a, b) => {
+                const titleA = String(a.title).localeCompare(String(b.title));
+                return titleA;
+              },
             );
           }
           return response;

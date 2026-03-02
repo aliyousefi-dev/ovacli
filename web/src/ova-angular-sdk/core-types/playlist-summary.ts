@@ -4,5 +4,4 @@ export interface PlaylistSummary {
   description: string;
   coverImageUrl: string;
   videoCount: number;
-  order: number;
 }

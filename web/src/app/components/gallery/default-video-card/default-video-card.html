@@ -22,8 +22,7 @@
       <!-- Thumbnail if PreviewPlayback is false -->
       @if (!PreviewPlayback) {
       <div (click)="navigateToWatch()" class="relative w-full h-full">
-        <img [src]="getThumbnailUrl()" [alt]="video.fileName"
-          class="w-full h-full object-cover absolute top-0 left-0" />
+        <img [src]="getThumbnailUrl()" [alt]="video.title" class="w-full h-full object-cover absolute top-0 left-0" />
       </div>
       } @else {
       <!-- Video playback if PreviewPlayback is true -->
@@ -53,7 +52,7 @@
 
       <div class="avatar avatar-placeholder flex-shrink-0">
         <div class="bg-neutral text-neutral-content w-10 rounded-full border border-base-200">
-          <span class="text-sm">{{ video.ownerAccountUsername.charAt(0).toUpperCase() }}</span>
+          <span class="text-sm">{{ video.uploaderId.charAt(0).toUpperCase() }}</span>
         </div>
       </div>
 
@@ -61,8 +60,8 @@
 
         <div class="flex justify-between items-center">
           <div class="flex items-center gap-2 flex-1 min-w-0">
-            <a [routerLink]="['/users', video.ownerAccountUsername]" class="text-xs truncate min-w-0">
-              {{ video.ownerAccountUsername }}
+            <a [routerLink]="['/users', video.uploaderId]" class="text-xs truncate min-w-0">
+              {{ video.uploaderId }}
             </a>
             <div class="text-[10px] font-light flex-shrink-0">{{ timeSinceAdded }}</div>
           </div>
@@ -84,7 +83,7 @@
         </div>
 
         <div class="font-semibold text-sm text-start truncate pr-6 min-w-0 max-w-full">
-          {{ video.fileName }}
+          {{ video.title }}
         </div>
       </div>
 
@@ -103,6 +102,5 @@
   </div>
 </div>
 
-<app-saveto-modal [showModal]="playlistModalVisible" [selectedVideoId]="this.video.videoId"
-  (close)="closePlaylistModal()">
+<app-saveto-modal [selectedVideoId]="this.video.videoId" (close)="closePlaylistModal()">
 </app-saveto-modal>

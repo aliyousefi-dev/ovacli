@@ -1,22 +1,24 @@
 <div class="z-30 dock dock-xl  flex justify-around p-2 sticky w-full">
   <button routerLink="/global" routerLinkActive="dock-active" class="flex flex-col items-center " mat-ripple
     matRippleColor="rgba(0, 0, 0, 0.6)">
-    <i class="bx bx-play-circle bx-sm"></i>
-    <span class="dock-label text-xs">Global</span>
-  </button>
-  <button (click)="OpenSearchModal()" class="flex flex-col items-center" mat-ripple matRippleColor="rgba(0, 0, 0, 0.6)">
-    <i class="bx bx-search bx-sm"></i>
-    <span class="dock-label text-xs">Search</span>
-  </button>
-  <button routerLink="/upload" routerLinkActive="dock-active" class="flex flex-col items-center" mat-ripple
-    matRippleColor="rgba(0, 0, 0, 0.6)">
-    <i class='bx bx-plus-circle bx-sm'></i>
-    <span class="dock-label text-xs">Upload</span>
+    <i class="bx bxs-videos bx-sm"></i>
+    <span class="dock-label text-xs">Library</span>
   </button>
 
   <button routerLink="/playlists" routerLinkActive="dock-active" class="flex flex-col items-center" mat-ripple
     matRippleColor="rgba(0, 0, 0, 0.6)">
     <i class="bx bx-list-ul bx-sm"></i>
     <span class="dock-label text-xs">Playlist</span>
+  </button>
+
+  <button (click)="OpenSearchModal()" class="flex flex-col items-center" mat-ripple matRippleColor="rgba(0, 0, 0, 0.6)">
+    <i class="bx bx-search bx-sm"></i>
+    <span class="dock-label text-xs">Search</span>
+  </button>
+
+  <button routerLink="/upload" routerLinkActive="dock-active" class="flex flex-col items-center" mat-ripple
+    matRippleColor="rgba(0, 0, 0, 0.6)">
+    <i class='bx bx-plus-circle bx-sm'></i>
+    <span class="dock-label text-xs">Upload</span>
   </button>
 </div>

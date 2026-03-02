@@ -86,6 +86,7 @@ export class NativePlayer implements AfterViewInit, OnInit, OnDestroy {
   playerUi = inject(MenuService);
   fullscreenService = inject(FullScreenService);
   interactionService = inject(InteractionService);
+  localstorage = inject(LocalStorageService);
   private ovaSdk = inject(OVASDK);
 
   ngOnInit(): void {

@@ -15,15 +15,13 @@
 
             <div class="flex gap-5">
                 <div class="text-xs">
-                    results: {{(this.loadedVideos * (this.currentPage - 1))+1 }}-{{this.loadedVideos *
+                    {{(this.loadedVideos * (this.currentPage - 1))+1 }}-{{this.loadedVideos *
                     this.currentPage }}
                     /
                     {{this.totalVideos }}
                 </div>
 
-                <div class="text-xs">
-                    loaded: {{this.videos.length}}
-                </div>
+
             </div>
             <div class="flex">
                 <app-custom-pagination (goTo)="handleGoToPage($event)" [current]="this.currentPage"
@@ -75,6 +73,28 @@
                                     Duration (Longest)
                                 </span>
                                 <span [ngClass]="{'hidden': currentSortOrder !== 'duration_desc'}">
+                                    <i class='bx bx-check bx-xs'></i>
+                                </span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="w-full text-left px-3 py-1 text-xs hover:bg-base-300 rounded-b-md"
+                                (click)="sortVideos('date_asc')">
+                                <span>
+                                    Upload Date (Latest)
+                                </span>
+                                <span [ngClass]="{'hidden': currentSortOrder !== 'date_asc'}">
+                                    <i class='bx bx-check bx-xs'></i>
+                                </span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="w-full text-left px-3 py-1 text-xs hover:bg-base-300 rounded-b-md"
+                                (click)="sortVideos('date_desc')">
+                                <span>
+                                    Upload Date (Oldest)
+                                </span>
+                                <span [ngClass]="{'hidden': currentSortOrder !== 'date_desc'}">
                                     <i class='bx bx-check bx-xs'></i>
                                 </span>
                             </button>

@@ -20,9 +20,16 @@
       <li class="menu-title">General</li>
 
       <li>
-        <a routerLink="/global" [queryParams]="{ bucket: 1 }" routerLinkActive="menu-active">
-          <i class='bx bx-globe bx-xs'></i>
-          <span>Global</span>
+        <a routerLink="/library" routerLinkActive="menu-active">
+          <i class='bx bxs-videos bx-xs'></i>
+          <span>Library</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/tagmap" routerLinkActive="menu-active">
+          <i class='bx bxs-purchase-tag-alt bx-xs'></i>
+          <span>Tagmap</span>
         </a>
       </li>
 
@@ -61,7 +68,7 @@
       </li>
 
       <li><a routerLink="/playlists" routerLinkActive="menu-active">
-          <i class='bx bxs-videos bx-xs'></i>
+          <i class='bx bx-list-ul bx-xs'></i>
           <span>Playlists</span>
           <span class="badge badge-xs badge-neutral">3</span>
         </a>

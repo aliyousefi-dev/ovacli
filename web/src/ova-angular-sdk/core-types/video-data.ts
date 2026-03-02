@@ -27,14 +27,12 @@ export interface VideoStats {
 
 export interface VideoData {
   videoId: string;
-  fileName: string;
+  title: string;
   tags: string[];
   uploadedAt: string;
   stats: VideoStats;
   codecs: VideoCodecs;
-  markers: VideoMarker[];
   isCooked: boolean;
-  ownerAccountUsername: string;
+  uploaderId: string;
   isPublic: boolean;
-  userVideoStatus: userVideoStatus;
 }

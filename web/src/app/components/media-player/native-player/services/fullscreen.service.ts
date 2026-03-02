@@ -1,7 +1,14 @@
 // src/app/services/player-ui.service.ts
-import { Injectable, OnInit, OnDestroy, ElementRef } from '@angular/core';
+import {
+  Injectable,
+  OnInit,
+  OnDestroy,
+  ElementRef,
+  inject,
+} from '@angular/core';
 import { BehaviorSubject, fromEvent, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { LocalStorageService } from './local-stroage.service';
 
 @Injectable()
 export class FullScreenService implements OnInit, OnDestroy {
@@ -12,6 +19,8 @@ export class FullScreenService implements OnInit, OnDestroy {
 
   /** Cleanup subject used for unsubscription */
   private readonly destroy$ = new Subject<void>();
+
+  localStorage = inject(LocalStorageService);
 
   init(videoRef: ElementRef<HTMLElement>): void {
     const containerEl = videoRef?.nativeElement;
@@ -39,13 +48,19 @@ export class FullScreenService implements OnInit, OnDestroy {
     }
 
     const isFullscreen = this.fullscreenEnabled$.value;
+    const autoOrientation =
+      this.localStorage.currentSettings.mobileAutoOrientation;
 
     if (isFullscreen) {
       // Exit full‑screen
       if (document.exitFullscreen) {
         try {
-          // Unlock orientation before exiting
-          if (screen.orientation && screen.orientation.unlock) {
+          // Unlock orientation only if auto‑orientation is enabled
+          if (
+            autoOrientation &&
+            screen.orientation &&
+            screen.orientation.unlock
+          ) {
             screen.orientation.unlock();
           }
           await document.exitFullscreen();
@@ -59,8 +74,12 @@ export class FullScreenService implements OnInit, OnDestroy {
         try {
           await this.playerContainer.requestFullscreen();
 
-          // Try to lock the orientation to landscape on mobile devices
-          if (screen.orientation && (screen.orientation as any).lock) {
+          // Lock orientation to landscape only if auto‑orientation is enabled
+          if (
+            autoOrientation &&
+            screen.orientation &&
+            (screen.orientation as any).lock
+          ) {
             await (screen.orientation as any)
               .lock('landscape')
               .catch((err: any) => {

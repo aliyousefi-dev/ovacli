@@ -1,4 +1,5 @@
-<div class="relative w-full overflow-hidden bg-black rounded-xl" #playerWrap appPlayerControlsHost>
+<div class="relative w-full overflow-hidden bg-black rounded-xl flex items-center justify-center" #playerWrap
+  appPlayerControlsHost>
 
   <!-- Video element -->
   <video #videoRef [src]="videoUrl" [poster]="thumbnailUrl">
@@ -20,9 +21,7 @@
     <app-display-near-time-tag></app-display-near-time-tag>
   </div>
 
-
   <app-touch-screen class="absolute inset-0 z-31"></app-touch-screen>
-
 
   <!-- Controls black overlay -->
   <div class="absolute bottom-0 left-0 right-0 h-1/2 pointer-events-none z-40

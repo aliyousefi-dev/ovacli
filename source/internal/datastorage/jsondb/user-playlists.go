@@ -22,22 +22,6 @@ func (s *JsonDB) InsertPlaylist(pl *datatypes.PlaylistData) (*datatypes.Playlist
 		return nil, fmt.Errorf("playlist with ID %s already exists", pl.ID)
 	}
 
-	// 3. Calculate Order Position
-	// We only care about the max order of playlists owned by this specific user
-	maxOrder := 0
-	for _, p := range playlists {
-		if p.OwnerUserId == pl.OwnerUserId {
-			if p.Order > maxOrder {
-				maxOrder = p.Order
-			}
-		}
-	}
-
-	// 4. Assign the next position if it's a new playlist (Order == 0)
-	if pl.Order == 0 {
-		pl.Order = maxOrder + 1
-	}
-
 	// 5. Add to the map
 	playlists[pl.ID] = *pl
 
@@ -62,7 +46,7 @@ func (s *JsonDB) GetPlaylistByID(accountId, playlistId string) (*datatypes.Playl
 	}
 
 	for _, p := range playlists {
-		if p.OwnerUserId == accountId && p.ID == playlistId {
+		if p.OwnerAccountId == accountId && p.ID == playlistId {
 			// Return a copy to ensure callers cannot mutate internal state
 			plCopy := p
 			return &plCopy, nil
@@ -88,7 +72,7 @@ func (s *JsonDB) DeletePlaylistByID(accountId, playlistId string) error {
 	if !exists {
 		return fmt.Errorf("playlist with id %q not found", playlistId)
 	}
-	if playlist.OwnerUserId != accountId {
+	if playlist.OwnerAccountId != accountId {
 		return fmt.Errorf("playlist with id %q does not belong to user %q", playlistId, accountId)
 	}
 
@@ -116,7 +100,7 @@ func (s *JsonDB) AddVideoToPlaylist(accountId, playlistId, videoId string) error
 		return fmt.Errorf("playlist with id %q not found", playlistId)
 	}
 
-	if playlist.OwnerUserId != accountId {
+	if playlist.OwnerAccountId != accountId {
 		return fmt.Errorf("playlist with id %q does not belong to user %q", playlistId, accountId)
 	}
 
@@ -155,7 +139,7 @@ func (s *JsonDB) RemoveVideoFromPlaylist(accountId, playlistId, videoId string) 
 		return fmt.Errorf("playlist with id %q not found", playlistId)
 	}
 
-	if playlist.OwnerUserId != accountId {
+	if playlist.OwnerAccountId != accountId {
 		return fmt.Errorf("playlist with id %q does not belong to user %q", playlistId, accountId)
 	}
 
@@ -182,46 +166,6 @@ func (s *JsonDB) RemoveVideoFromPlaylist(accountId, playlistId, videoId string) 
 	return nil
 }
 
-func (s *JsonDB) ReorderPlaylists(accountId string, newOrderPlaylistIds []string) error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	// Load the existing playlist collection
-	playlists, err := s.LoadPlaylistCollection()
-	if err != nil {
-		return fmt.Errorf("failed to load playlist collection: %w", err)
-	}
-
-	// Create a map for quick lookup of playlist IDs that belong to the user
-	userPlaylistIds := make(map[string]struct{})
-	for _, p := range playlists {
-		if p.OwnerUserId == accountId {
-			userPlaylistIds[p.ID] = struct{}{}
-		}
-	}
-
-	// Validation: Make sure all playlistIds in newOrderPlaylistIds actually belong to the user
-	for _, pid := range newOrderPlaylistIds {
-		if _, ok := userPlaylistIds[pid]; !ok {
-			return fmt.Errorf("playlist id %q does not belong to user %q", pid, accountId)
-		}
-	}
-
-	// Set new order: The first id in the slice gets order 1, etc.
-	for order, pid := range newOrderPlaylistIds {
-		playlist := playlists[pid]
-		playlist.Order = order + 1
-		playlists[pid] = playlist
-	}
-
-	// Save updated playlists collection
-	if err := s.SavePlaylistCollection(playlists); err != nil {
-		return fmt.Errorf("failed to save reordered playlists: %w", err)
-	}
-
-	return nil
-}
-
 func (s *JsonDB) UpdatePlaylistInfo(accountId, playlistId, newTitle, newDescription string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -237,7 +181,7 @@ func (s *JsonDB) UpdatePlaylistInfo(accountId, playlistId, newTitle, newDescript
 	}
 
 	// Check if the playlist belongs to the given user
-	if playlist.OwnerUserId != accountId {
+	if playlist.OwnerAccountId != accountId {
 		return fmt.Errorf("playlist with id %q does not belong to user %q", playlistId, accountId)
 	}
 
@@ -269,7 +213,7 @@ func (s *JsonDB) GetPlaylistVideoIDsPaginated(accountId, playlistId string, page
 	}
 
 	// 2. Ownership Check
-	if playlist.OwnerUserId != accountId {
+	if playlist.OwnerAccountId != accountId {
 		return nil, 0, fmt.Errorf("access denied")
 	}
 
@@ -312,7 +256,7 @@ func (s *JsonDB) GetPlaylistsByUser(accountId string) ([]datatypes.PlaylistData,
 
 	var userPlaylists []datatypes.PlaylistData
 	for _, p := range playlists {
-		if p.OwnerUserId == accountId {
+		if p.OwnerAccountId == accountId {
 			userPlaylists = append(userPlaylists, p)
 		}
 	}

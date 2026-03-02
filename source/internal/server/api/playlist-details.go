@@ -14,8 +14,8 @@ import (
 func RegisterUserPlaylistContentRoutes(rg *gin.RouterGroup, rm *repo.RepoManager) {
 	me := rg.Group("/me")
 	{
-		me.GET("/playlists/:playlistId", GetPlaylistVideos(rm))
-		me.POST("/playlists/:playlistId/videos", AddVideoToPlaylist(rm))
+		me.GET("/playlists/:playlistId", GetPlaylistVideos(rm))          // Get Playlist Videos Content
+		me.POST("/playlists/:playlistId/videos", AddVideoToPlaylist(rm)) // ad multi videos to a playlist
 	}
 }
 
@@ -97,10 +97,31 @@ func AddVideoToPlaylist(rm *repo.RepoManager) gin.HandlerFunc {
 
 		updatedPl, err := rm.GetPlaylistByID(accountID.(string), playlistId)
 		if err != nil {
-			apitypes.RespondSuccess(c, http.StatusOK, nil, "Video added successfully")
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to get updated playlist")
 			return
 		}
 
-		apitypes.RespondSuccess(c, http.StatusOK, updatedPl, "Video added to playlist")
+		type PlaylistResponse struct {
+			ID          string `json:"id"`
+			Title       string `json:"title"`
+			Description string `json:"description"`
+			CoverImage  string `json:"coverImageUrl"`
+			VideoCount  int    `json:"videoCount"`
+		}
+
+		resp := PlaylistResponse{
+			ID:          updatedPl.ID,
+			Title:       updatedPl.Title,
+			Description: updatedPl.Description,
+			VideoCount:  len(updatedPl.VideoIDs),
+		}
+
+		if len(updatedPl.VideoIDs) > 0 {
+			resp.CoverImage = updatedPl.VideoIDs[0]
+		} else {
+			resp.CoverImage = ""
+		}
+
+		apitypes.RespondSuccess(c, http.StatusOK, resp, "Video added to playlist")
 	}
 }
