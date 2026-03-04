@@ -18,7 +18,10 @@
         </span>
       </div>
 
-      <span class="flex-1/2 text-start truncate min-w-0 max-w-full p-3">{{item.title}}</span>
+      <div class="flex-1/2 flex flex-col  min-w-0 max-w-full p-4">
+        <span class="text-start truncate ">{{item.title}}</span>
+        <span class="text-start truncate text-xs">{{timeSinceAdded(item.uploadedAt)}}</span>
+      </div>
 
     </div>
     }

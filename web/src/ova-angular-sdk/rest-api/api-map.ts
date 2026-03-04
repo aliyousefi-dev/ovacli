@@ -49,12 +49,20 @@ export class ApiMap {
   };
 
   readonly search = {
-    videos: (q: string, tags: string[], page: number = 1) => {
+    videos: (
+      q: string,
+      tags: string[],
+      page: number = 1,
+      sortMode?: SortMode,
+    ) => {
       let url = `${this.base}/search?q=${encodeURIComponent(q)}`;
       if (tags && tags.length > 0) {
         url += `&tags=${tags.map((t) => encodeURIComponent(t)).join(',')}`;
       }
       url += `&page=${page}`;
+      if (sortMode) {
+        url += `&sort=${sortMode}`; // Append the sort mode to the URL
+      }
       return url;
     },
     suggestions: () => `${this.base}/search/suggestions`,

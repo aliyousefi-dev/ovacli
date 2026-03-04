@@ -38,6 +38,9 @@ func searchVideos(repoManager *repo.RepoManager) gin.HandlerFunc {
 			return
 		}
 
+		sortParam := c.DefaultQuery("sort", "title_asc")
+		sortMode := repo.SortMode(sortParam)
+
 		// Get pagination params
 		currentPage := 0
 		pageSize := repoManager.GetConfigs().MaxBucketSize
@@ -55,27 +58,20 @@ func searchVideos(repoManager *repo.RepoManager) gin.HandlerFunc {
 			Tags:  tags,
 		}
 
-		result, err := repoManager.SearchVideosWithBuckets(criteria, currentPage, pageSize)
+		result, total, err := repoManager.SearchVideosPaginated(criteria, currentPage, pageSize, sortMode)
 		if err != nil {
 			apitypes.RespondError(c, http.StatusInternalServerError, err.Error())
 			return
 		}
 
-		videos, err := repoManager.GetVideosByIDs(result.VideoIDs)
-		if err != nil || videos == nil {
-			// Handle error retrieving video
-			apitypes.RespondError(c, http.StatusNotFound, ErrVideoNotFound)
-			return
-		}
-
 		// Construct response (matches SearchResponse as before)
 		response := gin.H{
-			"videos":       videos,
+			"videos":       result,
 			"currentPage ": currentPage,
 			"pageSize":     pageSize,
-			"totalItems":   result.TotalVideos,
-			"totalPages":   (result.TotalVideos + pageSize - 1) / pageSize,
-			"hasNextPage":  (currentPage+1)*pageSize < result.TotalVideos,
+			"totalItems":   total,
+			"totalPages":   (total + pageSize - 1) / pageSize,
+			"hasNextPage":  (currentPage+1)*pageSize < total,
 		}
 
 		apitypes.RespondSuccess(c, http.StatusOK, response, "Search completed successfully")

@@ -9,6 +9,7 @@ import { GalleryPreview } from '../../components/gallery/gallery-preview/gallery
 import { GalleryStateService } from '../../components/gallery/gallery-state.service';
 import { GalleryFetchFn } from '../../components/gallery/types';
 import { SearchCriteria } from '../../../ova-angular-sdk/rest-api/api-types/search-response';
+import { SortMode } from '../../components/gallery/types';
 
 @Component({
   selector: 'app-search',
@@ -27,10 +28,13 @@ export class SearchPage implements OnInit {
       const q: string | undefined = param['q'];
       const tags: string[] | undefined = this.normalizeTags(param['tags']);
 
-      const fetchProxy: GalleryFetchFn = (page: number) => {
+      const fetchProxy: GalleryFetchFn = (
+        page: number,
+        sortMode?: SortMode,
+      ) => {
         const searchCriteria: SearchCriteria = { query: q ?? '', tags: tags };
         return this.ovaSdk.search
-          .searchVideos(searchCriteria, page) 
+          .searchVideos(searchCriteria, page, sortMode)
           .pipe(map((response) => response.data));
       };
 

@@ -10,6 +10,8 @@ import { SearchCriteria } from './api-types/search-response';
 import { ApiMap } from './api-map';
 import { PageContainer } from '../core-types/page-container';
 
+import { SortMode } from './api-types/sort';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -21,8 +23,14 @@ export class SearchApiService {
   searchVideos(
     request: SearchCriteria,
     page: number,
+    sortMode?: SortMode,
   ): Observable<ApiSuccessResponse<PageContainer>> {
-    const url = this.apiMap.search.videos(request.query, request.tags, page);
+    const url = this.apiMap.search.videos(
+      request.query,
+      request.tags,
+      page,
+      sortMode,
+    );
 
     return this.http.get<ApiSuccessResponse<PageContainer>>(url);
   }

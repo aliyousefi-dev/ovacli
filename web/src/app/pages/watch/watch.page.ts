@@ -62,7 +62,8 @@ export class WatchPage implements AfterViewInit, OnInit {
       const playlistId = params['playlist'];
 
       if (playlistId) {
-        this.fetchPlaylist(playlistId);
+        this.playlistVideos = [];
+        this.fetchPlaylist(playlistId, 1);
       } else {
         this.video = null as any;
         this.fetchVideo(videoId);
@@ -74,15 +75,18 @@ export class WatchPage implements AfterViewInit, OnInit {
     window.scrollTo(0, 0);
   }
 
-  fetchPlaylist(playlistId: string) {
+  fetchPlaylist(playlistId: string, page: number) {
     this.loading = true;
     this.ovaSdk.playlistContent
-      .fetchPlaylistContent(playlistId, 1)
+      .fetchPlaylistContent(playlistId, page)
       .subscribe((data) => {
         const count = data.data.videos.length;
         if (count > 0) {
           this.video = data.data.videos[0];
-          this.playlistVideos = data.data.videos;
+          data.data.videos.forEach((video) => this.playlistVideos.push(video));
+          if (data.data.hasNextPage) {
+            this.fetchPlaylist(playlistId, page + 1);
+          }
         }
         this.loading = false;
       });
