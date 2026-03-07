@@ -14,7 +14,8 @@ import { AssetMap } from './rest-api/api-assets';
 import { WatchedApiService } from './rest-api/recent-api.service';
 import { SavedApiService } from './rest-api/saved-api.service';
 import { ScrubThumbApiService } from './rest-api/scrub-thumb-api.service';
-import { SuggestionApiService } from './rest-api/search-suggestion-api.service';
+import { QuickSearchApiService } from './rest-api/quick-search-api.service';
+import { RepoApiService } from './rest-api/repo-api.service';
 
 @Injectable({
   providedIn: 'root',
@@ -34,5 +35,6 @@ export class OVASDK {
   readonly history = inject(WatchedApiService);
   readonly saved = inject(SavedApiService);
   readonly scrub = inject(ScrubThumbApiService);
-  readonly searchSuggestion = inject(SuggestionApiService);
+  readonly searchSuggestion = inject(QuickSearchApiService);
+  readonly repo = inject(RepoApiService);
 }

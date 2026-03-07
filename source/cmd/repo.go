@@ -46,7 +46,7 @@ var repoInfoCmd = &cobra.Command{
 		}
 
 		// Fetch the repository info using the GetRepoInfo method
-		repoInfo, err := repository.GetRepoInfo()
+		repoInfo, err := repository.GetRepoInfo(repository.GetConfigs().RootUser)
 		if err != nil {
 			fmt.Printf("Error fetching repository info: %v\n", err)
 			return

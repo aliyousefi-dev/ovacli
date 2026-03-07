@@ -1,7 +1,7 @@
 <div class="flex flex-col justify-center items-center  bg-base-100">
     <div>
         <button class="btn btn-error btn-ghost">Clear History</button>
-        <button class="btn btn-primary">Publish New</button>
+        <button class="btn btn-primary">Uplaod New</button>
     </div>
 
     <ul class="timeline  timeline-vertical w-200">
@@ -20,9 +20,15 @@
                     <app-vidstack-player #vidstackPlayer [videoData]="videodata"></app-vidstack-player>
                     }
                 </div>
-                <div class="flex flex-col justify-start items-center w-full">
-                    <span>{{videodata.title}}</span>
-                    <span>Description</span>
+                <div class="flex flex-col justify-start items-start w-full bg-base-300 p-5">
+                    <pre>
+New Edits: 
+    - how we can doing this [00:30]
+    - new thing to doing other things [00:15]
+    - fixing the beggining of that [00:20]
+    - how we can put something in something else [01:28]
+    - what is the best thing to doing that [02:45]
+                    </pre>
                 </div>
             </div>
             <hr />
@@ -42,9 +48,15 @@
                     <app-vidstack-player #vidstackPlayer [videoData]="videodata"></app-vidstack-player>
                     }
                 </div>
-                <div class="flex flex-col justify-start items-center w-full">
-                    <span>{{videodata.title}}</span>
-                    <span>Description</span>
+                <div class="flex flex-col justify-start items-start w-full bg-base-300 p-5">
+                    <pre>
+Edits: 
+    - how we can doing this 
+    - new thing to doing other things
+    - fixing the beggining of that
+    - how we can put something in something else
+    - what is the best thing to doing that
+                    </pre>
                 </div>
             </div>
             <hr />
@@ -63,9 +75,15 @@
                     <app-vidstack-player #vidstackPlayer [videoData]="videodata"></app-vidstack-player>
                     }
                 </div>
-                <div class="flex flex-col justify-start items-center w-full">
-                    <span>{{videodata.title}}</span>
-                    <span>Description</span>
+                <div class="flex flex-col justify-start items-start w-full bg-base-300 p-5">
+                    <pre>
+Edits: 
+    - how we can doing this 
+    - new thing to doing other things
+    - fixing the beggining of that
+    - how we can put something in something else
+    - what is the best thing to doing that
+                    </pre>
                 </div>
             </div>
 

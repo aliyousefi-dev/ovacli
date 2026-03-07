@@ -42,13 +42,13 @@ func (r *RepoManager) GetUserSavedVideosInRange(username string, start, end int)
 }
 
 // GetUserSavedVideosCount returns the count of saved videos for a user.
-func (r *RepoManager) GetUserSavedVideosCount(username string) (int, error) {
+func (r *RepoManager) GetUserSavedVideosCount(accountId string) (int, error) {
 	if !r.IsDataStorageInitialized() {
 		return 0, fmt.Errorf("data storage is not initialized")
 	}
 
 	// Retrieve the full list of saved videos
-	videos, err := r.diskDataStorage.GetSavedVideosByUser(username)
+	videos, err := r.diskDataStorage.GetSavedVideosByUser(accountId)
 	if err != nil {
 		return 0, fmt.Errorf("failed to get saved videos: %v", err)
 	}

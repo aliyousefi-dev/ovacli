@@ -1,36 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatRippleModule } from '@angular/material/core';
+import { SearchModalComponent } from '../../../components/etc/search-modal/search-modal';
 
 @Component({
   selector: 'app-mobile-dock',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatRippleModule],
+  imports: [CommonModule, RouterModule, MatRippleModule, SearchModalComponent],
   templateUrl: './mobile-dock.component.html',
   styleUrls: ['./mobile-dock.component.css'],
 })
 export class MobileDockComponent {
-  constructor(
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-  ) {}
+  @ViewChild('searchModal') searchModal!: SearchModalComponent;
+
+  private router = inject(Router);
 
   OpenSearchModal(): void {
-    const modal: any = document.getElementById('my_modal_2');
-    const searchInput: any = document.getElementById('searchModalInput2');
-    if (modal && typeof modal.showModal === 'function') {
-      modal.showModal();
-
-      // Set a delay before focusing on the search input
-      setTimeout(() => {
-        if (searchInput) {
-          searchInput.value = '';
-          searchInput.focus();
-        }
-      }, 300);
-    }
+    this.searchModal.openModal();
   }
 
   // Method to check if the current route is active

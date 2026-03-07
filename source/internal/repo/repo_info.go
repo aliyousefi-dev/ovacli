@@ -1,19 +1,25 @@
 package repo
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // RepoInfo holds repository information: video count, user count, storage used, last updated time, and any error
 type RepoInfo struct {
-	VideoCount  int    `json:"video_count"`
-	UserCount   int    `json:"user_count"`
-	StorageUsed string `json:"storage_used"`
-	CreatedAt   string `json:"created_at"`
-	Host        string `json:"host"` // Fake host address
-	Port        int    `json:"port"` // Fake port number
+	RepositoryName string `json:"repositoryName"`
+	VideoCount     int    `json:"video_count"`
+	TagCount       int    `json:"tag_count"`
+	PlaylistCount  int    `json:"playlist_count"`
+	SavedCount     int    `json:"saved_count"`
+	UserCount      int    `json:"user_count"`
+	StorageUsed    string `json:"storage_used"`
+	CreatedAt      string `json:"created_at"`
+	Host           string `json:"host"` // Fake host address
+	Port           int    `json:"port"` // Fake port number
 }
 
 // GetRepoInfo returns repository information as a RepoInfo struct, including video count, user count, storage used, last updated, and server info
-func (r *RepoManager) GetRepoInfo() (RepoInfo, error) {
+func (r *RepoManager) GetRepoInfo(accountId string) (RepoInfo, error) {
 
 	// Load the repository configuration
 	err := r.LoadRepoConfig()
@@ -42,14 +48,24 @@ func (r *RepoManager) GetRepoInfo() (RepoInfo, error) {
 	// Format the storage size (in bytes) to a human-readable format
 	storageUsed := formatSize(repoSize) // Convert the repo size to a human-readable string
 
+	tags, _ := r.GetAllTags()
+
+	playlist, _ := r.GetPlaylistsByUser(accountId)
+
+	savedCount, _ := r.GetUserSavedVideosCount(accountId)
+
 	// Create a RepoInfo struct with the fetched and fake data
 	repoInfo := RepoInfo{
-		VideoCount:  count,
-		UserCount:   userCount,
-		StorageUsed: storageUsed,
-		CreatedAt:   r.GetConfigs().CreatedAt.Format("2006-01-02 15:04:05"),
-		Host:        r.GetConfigs().ServerHost,
-		Port:        r.GetConfigs().ServerPort,
+		RepositoryName: r.GetConfigs().RepositoryName,
+		VideoCount:     count,
+		TagCount:       len(tags),
+		PlaylistCount:  len(playlist),
+		SavedCount:     savedCount,
+		UserCount:      userCount,
+		StorageUsed:    storageUsed,
+		CreatedAt:      r.GetConfigs().CreatedAt.Format("2006-01-02 15:04:05"),
+		Host:           r.GetConfigs().ServerHost,
+		Port:           r.GetConfigs().ServerPort,
 	}
 
 	// Return the RepoInfo struct and nil for error (no error)

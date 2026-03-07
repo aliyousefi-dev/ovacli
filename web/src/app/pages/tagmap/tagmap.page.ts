@@ -23,8 +23,24 @@ export class TagMapPage implements OnInit {
   fetchTags() {
     this.tags = [];
     this.ovaSdk.globalFilters.getGlobalFilters().subscribe((data) => {
-      data.data.forEach((item) => {
-        this.tags.push(item.name);
+      const tagsFromData = data.data.tags;
+
+      // Sort the tags alphabetically
+      tagsFromData.sort((a, b) => {
+        const nameA = a.toUpperCase(); //Case-insensitive sorting
+        const nameB = b.toUpperCase();
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {  
+          return 1;
+        }
+        return 0;
+      });
+
+      // Push the sorted tags to the this.tags array
+      tagsFromData.forEach((item) => {
+        this.tags.push(item);
       });
     });
   }

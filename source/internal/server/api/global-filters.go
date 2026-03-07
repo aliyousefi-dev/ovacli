@@ -21,13 +21,17 @@ func RegisterGlobalFiltersRoute(rg *gin.RouterGroup, repoMgr *repo.RepoManager) 
 func getGlobalFilters(repoMgr *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		filters, err := repoMgr.GetGlobalFilters()
+		filters, err := repoMgr.GetAllTags()
 		if err != nil {
 			apitypes.RespondError(c, http.StatusNotFound, "global filter error")
 			return
 		}
 
+		response := gin.H{
+			"tags": filters,
+		}
+
 		// Respond with the filter presets
-		apitypes.RespondSuccess(c, http.StatusOK, filters, "Filters retrieved successfully")
+		apitypes.RespondSuccess(c, http.StatusOK, response, "Filters retrieved successfully")
 	}
 }

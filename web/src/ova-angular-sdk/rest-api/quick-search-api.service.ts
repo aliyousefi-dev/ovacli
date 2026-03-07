@@ -4,27 +4,24 @@ import { Observable } from 'rxjs';
 
 import { ApiSuccessResponse } from './api-types/core-response';
 
-import { SearchSuggestionsResponse } from './api-types/searchsuggestions-response';
+import { QuickSearchResponse } from './api-types/quick-search-response';
 
 import { ApiMap } from './api-map';
 
 @Injectable({
   providedIn: 'root',
 })
-export class SuggestionApiService {
+export class QuickSearchApiService {
   private http = inject(HttpClient);
 
   private apiMap = inject(ApiMap);
 
-  getSearchSuggestions(
+  quickSearch(
     query: string,
-  ): Observable<ApiSuccessResponse<SearchSuggestionsResponse>> {
-    const url = this.apiMap.search.suggestions();
+  ): Observable<ApiSuccessResponse<QuickSearchResponse>> {
+    const url = this.apiMap.search.quickSearchUrl();
     const body = { query };
 
-    return this.http.post<ApiSuccessResponse<SearchSuggestionsResponse>>(
-      url,
-      body,
-    );
+    return this.http.post<ApiSuccessResponse<QuickSearchResponse>>(url, body);
   }
 }

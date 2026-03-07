@@ -22,7 +22,7 @@ export class GlobalVideosService {
     page: number = 1,
     sortMode?: SortMode,
   ): Observable<ApiSuccessResponse<PageContainer>> {
-    const url = this.apiMap.videos.global(page, sortMode);
+    const url = this.apiMap.videos.libraryUrl(page, sortMode);
     return this.http.get<ApiSuccessResponse<PageContainer>>(url);
   }
 }

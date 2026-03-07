@@ -9,7 +9,7 @@
       @if(videoData.tags.length > 0){
       <div class="flex flex-wrap gap-2">
         @for (tag of videoData.tags; track $index) {
-        <app-tag-link [tag]="tag"></app-tag-link>
+        <app-tag-link class="text-xs" [tag]="tag"></app-tag-link>
         }
       </div>
       }

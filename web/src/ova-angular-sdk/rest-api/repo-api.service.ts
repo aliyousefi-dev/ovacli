@@ -6,16 +6,17 @@ import { GlobalFilter } from './api-types/global-filter';
 import { ApiSuccessResponse } from './api-types/core-response';
 
 import { ApiMap } from './api-map';
+import { RepoInfo } from './api-types/repo-info';
 
 @Injectable({
   providedIn: 'root',
 })
-export class GlobalFiltersApiService {
+export class RepoApiService {
   private http = inject(HttpClient);
   private apiMap = inject(ApiMap);
 
-  getGlobalFilters(): Observable<ApiSuccessResponse<GlobalFilter>> {
-    const url = this.apiMap.videos.filters();
-    return this.http.get<ApiSuccessResponse<GlobalFilter>>(url);
+  getRepoInfo(): Observable<ApiSuccessResponse<{ info: RepoInfo }>> {
+    const url = this.apiMap.repo.info();
+    return this.http.get<ApiSuccessResponse<{ info: RepoInfo }>>(url);
   }
 }

@@ -5,6 +5,7 @@ import (
 )
 
 type ConfigData struct {
+	RepositoryName       string    `json:"repositoryName"`
 	Version              string    `json:"version"`
 	ServerHost           string    `json:"serverHost"`
 	ServerPort           int       `json:"serverPort"`

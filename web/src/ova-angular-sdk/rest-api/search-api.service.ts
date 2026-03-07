@@ -25,7 +25,7 @@ export class SearchApiService {
     page: number,
     sortMode?: SortMode,
   ): Observable<ApiSuccessResponse<PageContainer>> {
-    const url = this.apiMap.search.videos(
+    const url = this.apiMap.search.defaultSearchUrl(
       request.query,
       request.tags,
       page,
@@ -38,7 +38,7 @@ export class SearchApiService {
   getSimilarVideos(
     videoId: string,
   ): Observable<ApiSuccessResponse<SimilarVideosResponse>> {
-    const url = this.apiMap.search.similar(videoId);
+    const url = this.apiMap.search.similarSearchUrl(videoId);
 
     return this.http.get<ApiSuccessResponse<SimilarVideosResponse>>(url);
   }

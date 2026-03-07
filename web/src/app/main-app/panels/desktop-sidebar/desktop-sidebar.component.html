@@ -1,11 +1,19 @@
-<app-ova-about-modal #aboutModal></app-ova-about-modal>
-
 <div class="flex flex-col h-full bg-base-100 overflow-hidden border-r-1 border-r-base-300">
 
   <div class="flex items-center p-5">
     <div class="flex gap-2 items-center">
       <i class='bx bxs-data bx-xs'></i>
-      <a routerLink="/library" class="font-semibold">OVA Platform</a>
+      <a routerLink="/library" class="font-semibold">
+        @if(repositoryInfo){
+        {{repositoryInfo.repositoryName}}
+        }
+
+        <span class="badge badge-xs badge-neutral">
+          @if(repositoryInfo){
+          {{repositoryInfo.storage_used}}
+          }
+        </span>
+      </a>
     </div>
 
 
@@ -22,14 +30,24 @@
       <li>
         <a routerLink="/library" routerLinkActive="menu-active">
           <i class='bx bxs-videos bx-xs'></i>
-          <span>Library</span>
+          <span>Global</span>
+          <span class="badge badge-xs badge-neutral">
+            @if(repositoryInfo){
+            {{repositoryInfo.video_count}}
+            }
+          </span>
         </a>
       </li>
 
       <li>
         <a routerLink="/tagmap" routerLinkActive="menu-active">
-          <i class='bx bxs-purchase-tag-alt bx-xs'></i>
-          <span>Tagmap</span>
+          <i class='bx bx-hash bx-xs'></i>
+          <span>Tags</span>
+          <span class="badge badge-xs badge-neutral">
+            @if(repositoryInfo){
+            {{repositoryInfo.tag_count}}
+            }
+          </span>
         </a>
       </li>
 
@@ -63,19 +81,23 @@
       <li> <a routerLink="/saved" routerLinkActive="menu-active">
           <i class='bx bxs-bookmark bx-xs'></i>
           <span>Saved</span>
-          <span class="badge badge-xs badge-neutral">10</span>
+          <span class="badge badge-xs badge-neutral">{{repositoryInfo.saved_count}}</span>
         </a>
       </li>
 
       <li><a routerLink="/playlists" routerLinkActive="menu-active">
           <i class='bx bx-list-ul bx-xs'></i>
           <span>Playlists</span>
-          <span class="badge badge-xs badge-neutral">3</span>
+          <span class="badge badge-xs badge-neutral">
+            @if(repositoryInfo){
+            {{repositoryInfo.playlist_count}}
+            }
+          </span>
         </a>
       </li>
       <li><a routerLink="/history" routerLinkActive="menu-active">
           <i class="bx bx-history bx-xs"></i>
-          <span>History</span>
+          <span>Watched History</span>
         </a>
       </li>
       <li></li>
@@ -147,14 +169,7 @@
             Settings
           </a>
         </li>
-        <li>
-          <a>
-            <i class='bx  bxs-keyboard bx-xs'></i>
-            Keyboard shortcut
-          </a>
-        </li>
 
-        <div class="divider my-0"></div>
         <li>
           <a routerLink="/docs">
             <i class='bx  bx-help-circle bx-xs'></i>
@@ -170,6 +185,10 @@
       </ul>
     </div>
 
-    <div class="text-xs text-center opacity-60">OVA Web UI {{ this.config.version }}</div>
+    <div class="text-xs text-center opacity-60"> {{ this.config.version }}</div>
   </div>
 </div>
+
+
+<app-search-modal #searchModal></app-search-modal>
+<app-ova-about-modal #aboutModal></app-ova-about-modal>

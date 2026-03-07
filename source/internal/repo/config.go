@@ -16,6 +16,7 @@ func (r *RepoManager) GetDefaultConfig() *datatypes.ConfigData {
 		log.Printf("Error getting default config: %v", err)
 		// Return a fallback config in case of error
 		return &datatypes.ConfigData{
+			RepositoryName:       "Repository Name",
 			Version:              "1.0.0",
 			ServerHost:           "0.0.0.0",
 			ServerPort:           8080,
@@ -35,6 +36,7 @@ func (r *RepoManager) GetDefaultConfigTemplate() (*datatypes.ConfigData, error) 
 	if _, err := os.Stat(templatepath); os.IsNotExist(err) {
 		// File doesn't exist, create it with the default config
 		defaultConfig := &datatypes.ConfigData{
+			RepositoryName:       "Repository Name",
 			Version:              "1.0.0",
 			ServerHost:           "0.0.0.0",
 			ServerPort:           8080,

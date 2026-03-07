@@ -9,6 +9,10 @@ export class ApiMap {
   private config = inject(OVASDKConfig);
   private base = this.config.apiBaseUrl;
 
+  readonly repo = {
+    info: () => `${this.base}/repo/info`,
+  };
+
   readonly auth = {
     login: () => `${this.base}/auth/login`,
     logout: () => `${this.base}/auth/logout`,
@@ -17,7 +21,7 @@ export class ApiMap {
   };
 
   readonly videos = {
-    global: (page: number, sortMode?: SortMode) => {
+    libraryUrl: (page: number, sortMode?: SortMode) => {
       let baseUrl = `${this.base}/videos/global?page=${page}`; // Assuming 'this.base' is available
       if (sortMode) {
         baseUrl += `&sort=${sortMode}`; // Append the sort mode to the URL
@@ -39,7 +43,6 @@ export class ApiMap {
   };
 
   readonly users = {
-    // Dynamic username section
     recent: (username: string) => `${this.base}/users/${username}/recent`,
   };
 
@@ -49,7 +52,7 @@ export class ApiMap {
   };
 
   readonly search = {
-    videos: (
+    defaultSearchUrl: (
       q: string,
       tags: string[],
       page: number = 1,
@@ -65,8 +68,8 @@ export class ApiMap {
       }
       return url;
     },
-    suggestions: () => `${this.base}/search/suggestions`,
-    similar: (id: string) => `${this.base}/videos/${id}/similar`,
+    quickSearchUrl: () => `${this.base}/search/suggestions`,
+    similarSearchUrl: (id: string) => `${this.base}/videos/${id}/similar`,
   };
 
   readonly upload = {

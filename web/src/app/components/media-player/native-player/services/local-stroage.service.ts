@@ -7,6 +7,7 @@ export class LocalStorageService {
   private readonly SETTINGS_KEY = 'ova_player_settings';
 
   private defaultSettings: PlayerSettings = {
+    horizontalFlip: false,
     soundLevel: 1,
     isMuted: false,
     enableDebugger: false,

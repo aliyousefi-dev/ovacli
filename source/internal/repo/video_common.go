@@ -214,3 +214,28 @@ func SortVideos(videoData []datatypes.VideoData, sortMode SortMode) {
 		})
 	}
 }
+
+func (r *RepoManager) GetAllTags() ([]string, error) {
+	if !r.IsDataStorageInitialized() {
+		return nil, fmt.Errorf("data storage is not initialized")
+	}
+
+	allVideos, err := r.diskDataStorage.GetAllVideos()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get tags: %v", err)
+	}
+
+	tags := []string{}
+	seenTags := make(map[string]bool) // Use a map to track seen tags
+
+	for _, v := range allVideos {
+		for _, tag := range v.Tags {
+			if !seenTags[tag] { // Check if the tag has already been seen
+				tags = append(tags, tag)
+				seenTags[tag] = true // Mark the tag as seen
+			}
+		}
+	}
+
+	return tags, nil
+}

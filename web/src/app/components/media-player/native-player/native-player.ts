@@ -89,9 +89,15 @@ export class NativePlayer implements AfterViewInit, OnInit, OnDestroy {
   localstorage = inject(LocalStorageService);
   private ovaSdk = inject(OVASDK);
 
+  horizontalFlipped: boolean = false;
+
   ngOnInit(): void {
     this.interactionService.uiControlsVisibility$.subscribe((visible) => {
       this.controlsVisible = visible;
+    });
+
+    this.localstorage.settings$.subscribe((s) => {
+      this.horizontalFlipped = s.horizontalFlip;
     });
   }
 

@@ -36,6 +36,7 @@ export class SettingsButton implements OnInit {
   tagtimeEnabled: boolean = false;
   currentPlayerSpeed: number = 1;
   autoOrientation: boolean = true;
+  flipHorizontal: boolean = false;
 
   ngOnInit() {
     this.playerState.currentSpeed$.subscribe((s) => {
@@ -44,6 +45,7 @@ export class SettingsButton implements OnInit {
 
     this.localStorage.settings$.subscribe((s) => {
       this.autoOrientation = s.mobileAutoOrientation;
+      this.flipHorizontal = s.horizontalFlip;
     });
 
     this.playerUI.debuggerMenuVisible$.subscribe((enabled) => {
@@ -75,6 +77,13 @@ export class SettingsButton implements OnInit {
     this.localStorage.updateSetting(
       'mobileAutoOrientation',
       !this.localStorage.currentSettings.mobileAutoOrientation,
+    );
+  }
+
+  toggleFlipHorizontally() {
+    this.localStorage.updateSetting(
+      'horizontalFlip',
+      !this.localStorage.currentSettings.horizontalFlip,
     );
   }
 

@@ -1,15 +1,18 @@
-<div class="bg-base-100 p-4 ">
+<div class="bg-base-200 p-4  ">
 
   <div class="flex justify-between items-center mb-4 px-5">
-    <h2 class="text-base font-semibold">Playlists</h2>
+    <div class="flex items-center justify-center gap-2">
+      <i class='bx bx-list-ul bx-xs'></i>
+      <h2 class="text-base font-semibold">Playlists</h2>
+    </div>
 
     <span>{{playlistVideos.length}} videos</span>
   </div>
 
   <div class="flex flex-col h-150 overflow-y-auto gap-2">
     @for (item of playlistVideos; track $index) {
-    <div [ngClass]="{ 'bg-base-300': this.selectedVideoId == item.videoId}" class="flex hover:bg-base-300 p-3"
-      (click)="navigate(item.videoId)">
+    <div [ngClass]="{ 'bg-base-300': this.selectedVideoId == item.videoId}"
+      class="flex hover:bg-base-300 p-3 cursor-pointer" (click)="navigate(item.videoId)">
       <div class="relative">
         <img class="w-full h-full rounded-lg" [src]="this.ovaSdk.assets.thumbnail(item.videoId)" alt="">
 

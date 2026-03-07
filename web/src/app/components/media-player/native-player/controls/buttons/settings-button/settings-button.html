@@ -8,6 +8,13 @@
         @if(currentView === 'main'){
         <li>
             <label class="label flex justify-between items-center p-2 cursor-pointer">
+                Flip Horizontally
+                <input type="checkbox" class="toggle toggle-xs" (click)="toggleFlipHorizontally()"
+                    [checked]="flipHorizontal" />
+            </label>
+        </li>
+        <li>
+            <label class="label flex justify-between items-center p-2 cursor-pointer">
                 VR Mode
                 <input type="checkbox" class="toggle toggle-xs" />
             </label>
