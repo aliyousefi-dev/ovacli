@@ -55,5 +55,5 @@ type DiskDataStorage interface {
 
 	SearchVideos(criteria datatypes.VideoSearchCriteria) ([]string, error)
 	SimilarSearch(videoId string) ([]datatypes.VideoData, error)
-	QuickSearch(query string) ([]string, error)
+	QuickSearch(query string) ([]datatypes.QuickSearchItemResult, error)
 }

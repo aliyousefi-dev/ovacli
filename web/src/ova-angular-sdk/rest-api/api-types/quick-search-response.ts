@@ -1,4 +1,9 @@
+export interface QuickSearchResultItem {
+  type: string;
+  label: string;
+}
+
 export interface QuickSearchResponse {
   query: string;
-  suggestions: string[];
+  results: QuickSearchResultItem[];
 }

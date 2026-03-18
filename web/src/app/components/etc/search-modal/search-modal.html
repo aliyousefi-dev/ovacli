@@ -15,38 +15,45 @@
         }
 
         <!-- Search Results -->
-        @if (!loading && quickSearchResults && quickSearchResults.suggestions.length > 0) {
+        @if (!loading && quickSearchResults && quickSearchResults.results.length > 0) {
         <div class="py-5 overflow-y-auto flex-1 w-full space-y-1">
-            @for ( result of quickSearchResults.suggestions; track $index) {
-            <a (click)="CloseModal()" [routerLink]="['/search']" [queryParams]="{ q: result }" class="btn w-full">
+            @for ( result of quickSearchResults.results; track $index) {
+
+            @if(result.type == "video"){
+            <a (click)="CloseModal()" [routerLink]="['/search']" [queryParams]="{ q: result.label}" class="btn w-full">
                 <div class="flex justify-between items-center w-full gap-2">
                     <div class="flex items-center justify-start gap-2 flex-1 min-w-0">
-
                         <i class='bx bx-play-circle bx-xs'></i>
                         <div class="truncate text-start min-w-0">
-                            {{ result }}
+                            {{ result.label }}
                         </div>
                     </div>
                 </div>
             </a>
-
             }
-            <a class="btn w-full">
+
+            @if(result.type == "tag"){
+            <a (click)="CloseModal()" [routerLink]="['/search']" [queryParams]="{ tags: result.label}"
+                class="btn w-full">
                 <div class="flex justify-between items-center w-full gap-2">
                     <div class="flex items-center justify-start gap-2 flex-1 min-w-0">
-
                         <i class='bx bx-hash bx-xs'></i>
                         <div class="truncate text-start min-w-0">
-                            tag
+                            {{ result.label }}
                         </div>
                     </div>
                 </div>
             </a>
+            }
+
+
+
+            }
         </div>
         }
 
         <!-- No Results Found Message -->
-        @if (!loading && quickSearchResults.suggestions.length === 0) {
+        @if (!loading && quickSearchResults.results.length === 0) {
         <div class="py-5">
             <span>No results found for "{{ query }}"</span>
         </div>
@@ -54,7 +61,7 @@
 
         <!-- See All Results Link -->
         <div class="w-full flex justify-center pt-4">
-            <a href="#">Total Results {{ quickSearchResults.suggestions.length }}</a>
+            <a href="#">Total Results {{ quickSearchResults.results.length }}</a>
         </div>
 
         <!-- Keyboard Shortcuts -->

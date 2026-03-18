@@ -43,7 +43,7 @@ var infoCmd = &cobra.Command{
 		repoSize, _ := repository.GetRepoSize()
 		unindexedVideos = totalVideos - indexedVideos
 
-		storageUsed = formatSize(repoSize)
+		storageUsed = formatByteToHumanSize(repoSize)
 
 		fmt.Printf("Scanning repository...\n")
 		fmt.Printf("total videos founded: %d\n", totalVideos)
@@ -60,8 +60,8 @@ func InitCommandStatus(rootCmd *cobra.Command) {
 	rootCmd.AddCommand(infoCmd)
 }
 
-// formatSize formats the size in bytes to a human-readable string (e.g., 50 MB, 1 GB)
-func formatSize(size int64) string {
+// formatByteToHumanSize formats the size in bytes to a human-readable string (e.g., 50 MB, 1 GB)
+func formatByteToHumanSize(size int64) string {
 	const (
 		_  = iota
 		KB = 1 << (10 * iota)

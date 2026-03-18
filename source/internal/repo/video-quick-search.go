@@ -2,10 +2,11 @@ package repo
 
 import (
 	"fmt"
+	"ova-cli/source/internal/datatypes"
 )
 
-// GetSearchSuggestions fetches video titles based on a partial query.
-func (r *RepoManager) GetSearchSuggestions(query string) ([]string, error) {
+// QuickSearch fetches video titles based on a partial query.
+func (r *RepoManager) QuickSearch(query string) ([]datatypes.QuickSearchItemResult, error) {
 	if !r.IsDataStorageInitialized() {
 		return nil, fmt.Errorf("data storage is not initialized")
 	}

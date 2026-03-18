@@ -68,7 +68,7 @@ export class ApiMap {
       }
       return url;
     },
-    quickSearchUrl: () => `${this.base}/search/suggestions`,
+    quickSearchUrl: () => `${this.base}/quick-search`,
     similarSearchUrl: (id: string) => `${this.base}/videos/${id}/similar`,
   };
 

@@ -35,6 +35,6 @@ export class OVASDK {
   readonly history = inject(WatchedApiService);
   readonly saved = inject(SavedApiService);
   readonly scrub = inject(ScrubThumbApiService);
-  readonly searchSuggestion = inject(QuickSearchApiService);
+  readonly quickSearch = inject(QuickSearchApiService);
   readonly repo = inject(RepoApiService);
 }

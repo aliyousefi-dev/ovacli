@@ -18,7 +18,7 @@ export class SearchModalComponent {
   private ovaSdk = inject(OVASDK);
 
   loading = false;
-  quickSearchResults: QuickSearchResponse = { query: '', suggestions: [] }; // Initialize searchResults with the proper structure
+  quickSearchResults: QuickSearchResponse = { query: '', results: [] }; // Initialize searchResults with the proper structure
   query: string = '';
   private loadingTimeout: any;
 
@@ -37,16 +37,16 @@ export class SearchModalComponent {
   // Perform the search using SuggestionApiService
   quickSearch(): void {
     if (this.query.trim().length > 0) {
-      this.ovaSdk.searchSuggestion.quickSearch(this.query).subscribe({
+      this.ovaSdk.quickSearch.quickSearch(this.query).subscribe({
         next: (response) => {
           this.quickSearchResults = response.data;
         },
         error: () => {
-          this.quickSearchResults = { query: this.query, suggestions: [] }; // Clear results in case of error
+          this.quickSearchResults = { query: this.query, results: [] }; // Clear results in case of error
         },
       });
     } else {
-      this.quickSearchResults = { query: this.query, suggestions: [] }; // Clear results when query is empty
+      this.quickSearchResults = { query: this.query, results: [] }; // Clear results when query is empty
     }
   }
 
@@ -67,7 +67,6 @@ export class SearchModalComponent {
     console.log('open');
     this.dialog.nativeElement.showModal();
     const searchInput: any = document.getElementById('searchModalInput2');
-    // Set a delay before focusing on the search input
     setTimeout(() => {
       if (searchInput) {
         searchInput.value = '';
@@ -76,7 +75,6 @@ export class SearchModalComponent {
     }, 300);
   }
 
-  // Close modal and clear the input after a short delay
   CloseModal(): void {
     const modal: HTMLDialogElement | null = document.getElementById(
       'searchModal',
@@ -87,7 +85,7 @@ export class SearchModalComponent {
 
     setTimeout(() => {
       this.query = ''; // Reset the input field
-      this.quickSearchResults = { query: '', suggestions: [] }; // Optionally clear the search results
+      this.quickSearchResults = { query: '', results: [] }; // Optionally clear the search results
     }, 1000);
   }
 }
