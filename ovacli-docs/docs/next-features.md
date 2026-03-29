@@ -42,12 +42,11 @@ here we demonstrate what features we want to add to next versions.
 - (native-player) ctrl+(left & right) arrow key move cursor to the next or previouse timetag positions
 - (native-player) support for compare two video frames.
 
-
 i thinking about a feature that we can create timeing
 for example we need a specifig time video like 30 min and it give us that video
 i think its a part of advance searching .
 
+the similar videos feature have a
 
-the similar videos feature have a 
-
- - (quick-search): support result type (video,tag,mark)
+- (quick-search): support result type (video,tag,mark)
+- (videodata): adding the videoSize too

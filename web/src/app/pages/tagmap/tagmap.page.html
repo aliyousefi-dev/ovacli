@@ -1,11 +1,12 @@
 <div class="flex justify-center mb-10  mt-5">
-    <input type="text" class="input input-bordered w-full max-w-md" placeholder="Filter tags..." />
+    <input type="text" class="input input-bordered w-full max-w-md" placeholder="Filter tags..."
+        [(ngModel)]="filterInput" (ngModelChange)="applyFilter()" />
 </div>
 
-<div class="">Total tags: {{tags.length}}</div>
+<div class="">Total tags: {{fetchedTags.length}}</div>
 
 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6  gap-2 w-full p-5">
-    @for (item of tags; track $index) {
+    @for (item of filteredTags; track $index) {
     <app-tag-link class="text-lg" [tag]="item"></app-tag-link>
     }
 </div>

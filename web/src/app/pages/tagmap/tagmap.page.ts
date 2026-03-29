@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TagLinkComponent } from '../../components/etc/tag-link/tag-link.component';
 import { OnInit } from '@angular/core';
@@ -9,19 +9,21 @@ import { OVASDK } from '../../../ova-angular-sdk/ova-sdk';
   selector: 'app-tagmap',
   standalone: true,
   templateUrl: './tagmap.page.html',
-  imports: [CommonModule, TagLinkComponent],
+  imports: [CommonModule, TagLinkComponent, FormsModule],
 })
 export class TagMapPage implements OnInit {
   private ovaSdk = inject(OVASDK);
 
-  tags: string[] = [];
+  fetchedTags: string[] = [];
+  filteredTags: string[] = []; // Tags to be displayed after filtering
+  filterInput: string = ''; // Property to hold the user's filter input
 
   ngOnInit(): void {
     this.fetchTags();
   }
 
   fetchTags() {
-    this.tags = [];
+    this.fetchedTags = [];
     this.ovaSdk.globalFilters.getGlobalFilters().subscribe((data) => {
       const tagsFromData = data.data.tags;
 
@@ -32,16 +34,26 @@ export class TagMapPage implements OnInit {
         if (nameA < nameB) {
           return -1;
         }
-        if (nameA > nameB) {  
+        if (nameA > nameB) {
           return 1;
         }
         return 0;
       });
 
-      // Push the sorted tags to the this.tags array
-      tagsFromData.forEach((item) => {
-        this.tags.push(item);
-      });
+      this.fetchedTags = [...tagsFromData]; // Store all sorted tags
+      this.filteredTags = [...this.fetchedTags]; // Initially, display all tags
     });
+  }
+
+  applyFilter() {
+    if (!this.filterInput) {
+      this.filteredTags = [...this.fetchedTags]; // If input is empty, show all tags
+      return;
+    }
+
+    const filterLower = this.filterInput.toLowerCase();
+    this.filteredTags = this.fetchedTags.filter((tag) =>
+      tag.toLowerCase().includes(filterLower),
+    );
   }
 }

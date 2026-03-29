@@ -81,7 +81,9 @@
       <li> <a routerLink="/saved" routerLinkActive="menu-active">
           <i class='bx bxs-bookmark bx-xs'></i>
           <span>Saved</span>
+          @if(repositoryInfo){
           <span class="badge badge-xs badge-neutral">{{repositoryInfo.saved_count}}</span>
+          }
         </a>
       </li>
 
@@ -93,6 +95,11 @@
             {{repositoryInfo.playlist_count}}
             }
           </span>
+        </a>
+      </li>
+      <li><a routerLink="/mixes" routerLinkActive="menu-active">
+          <i class='bx bx-play bx-xs'></i>
+          <span>Mixes</span>
         </a>
       </li>
       <li><a routerLink="/history" routerLinkActive="menu-active">

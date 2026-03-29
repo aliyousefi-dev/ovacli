@@ -38,42 +38,25 @@ func getVideoByID(repoMgr *repo.RepoManager) gin.HandlerFunc {
 			return
 		}
 
-		markers, err := repoMgr.GetMarkersByVideoID(videoId)
-		if err != nil {
-			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to retrieve markers")
-			return
-		}
-
-		markersCoverted := []apitypes.MarkerDataRequest{}
-		for _, marker := range markers {
-			markersCoverted = append(markersCoverted, apitypes.MarkerDataRequest{
-				TimeSecond:  marker.TimeSecond,
-				Label:       marker.Label,
-				Description: marker.Description,
-			})
-		}
-
 		video_stats := apitypes.VideoStats{
 			Views:     video.TotalViews,
 			Downloads: video.TotalDownloads,
 		}
 
-		// Create the VideoDataAPIResponse from VideoData
-		videoResponse := apitypes.VideoDataAPIResponse{
-			VideoID:              video.VideoID,
-			FileName:             video.Title,
-			Tags:                 video.Tags,
-			Codecs:               video.Codecs,
-			Markers:              markersCoverted,
-			IsCooked:             video.IsCooked,
-			OwnerAccountUsername: userdata.Username,
-			VideoStats:           video_stats,
-			IsPublic:             video.IsPublic,
-			UploadedAt:           video.UploadedAt,
+		response := gin.H{
+			"videoId":    video.VideoID,
+			"title":      video.Title,
+			"tags":       video.Tags,
+			"uploadedAt": video.UploadedAt,
+			"stats":      video_stats,
+			"codecs":     video.Codecs,
+			"isCooked":   video.IsCooked,
+			"uploaderId": userdata.Username,
+			"isPublic":   video.IsPublic,
 		}
 
 		// Respond with the converted video data
-		apitypes.RespondSuccess(c, http.StatusOK, videoResponse, "Video retrieved successfully")
+		apitypes.RespondSuccess(c, http.StatusOK, response, "Video retrieved successfully")
 	}
 }
 
