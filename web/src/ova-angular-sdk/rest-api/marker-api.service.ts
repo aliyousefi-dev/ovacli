@@ -31,4 +31,14 @@ export class MarkerApiService {
 
     return this.http.post<ApiSuccessResponse<null>>(url, body);
   }
+
+  removeMarker(videoId: string, timeSecond: number) {
+    const url = this.apiMap.videos.markers(videoId);
+    const body = { timeSecond: timeSecond };
+
+    return this.http.delete<ApiSuccessResponse<null>>(url, {
+      body: body, // The actual body
+      observe: 'body',
+    });
+  }
 }

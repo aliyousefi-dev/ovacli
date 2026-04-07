@@ -9,6 +9,7 @@ export class MenuService implements OnInit, OnDestroy {
 
   readonly debuggerMenuVisible$ = new BehaviorSubject<boolean>(false);
   readonly tagTimeMenuVisible$ = new BehaviorSubject<boolean>(false);
+  readonly playlistMenuVisible$ = new BehaviorSubject<boolean>(false);
 
   /** Cleanup subject used for unsubscription */
   private readonly destroy$ = new Subject<void>();
@@ -31,6 +32,10 @@ export class MenuService implements OnInit, OnDestroy {
   setTagTimeMenuVisible(v: boolean): void {
     this.tagTimeMenuVisible$.next(v);
     this.playerSettings.updateSetting('timeTagEnabled', v);
+  }
+
+  setPlaylistMenuVisibility(v: boolean): void {
+    this.playlistMenuVisible$.next(v);
   }
 
   ngOnInit(): void {}

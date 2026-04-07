@@ -24,6 +24,8 @@ export class SaveToModalComponent {
   @ViewChild(PlaylistCreateModal) playlistCreateModal!: PlaylistCreateModal;
 
   availablePlaylist: PlaylistSummary[] = [];
+  allPlaylists: PlaylistSummary[] = []; // <-- keep original list
+  filterInput: string = '';
 
   private ovaSdk = inject(OVASDK);
 
@@ -41,8 +43,22 @@ export class SaveToModalComponent {
 
   fetchPlaylists() {
     this.ovaSdk.playlists.getUserPlaylists().subscribe((p) => {
-      this.availablePlaylist = p.data.playlists;
+      this.allPlaylists = p.data.playlists;
+      this.availablePlaylist = [...this.allPlaylists];
     });
+  }
+
+  applyFilter() {
+    const query = this.filterInput.toLowerCase().trim();
+
+    if (!query) {
+      this.availablePlaylist = [...this.allPlaylists];
+      return;
+    }
+
+    this.availablePlaylist = this.allPlaylists.filter((item) =>
+      item.title.toLowerCase().includes(query),
+    );
   }
 
   open() {

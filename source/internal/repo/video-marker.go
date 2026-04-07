@@ -25,3 +25,16 @@ func (r *RepoManager) GetMarkersByVideoID(videoID string) ([]datatypes.MarkerDat
 	}
 	return r.diskDataStorage.GetMarkersForVideo(videoID)
 }
+
+func (r *RepoManager) RemoveMarkerFromVideo(videoID string, timeSeconds int) error {
+
+	if !r.IsDataStorageInitialized() {
+		return fmt.Errorf("data storage is not initialized")
+	}
+	err := r.diskDataStorage.RemoveMarker(videoID, timeSeconds)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

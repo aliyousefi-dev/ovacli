@@ -29,3 +29,33 @@ func (jsdb *JsonDB) DeleteMarkersForVideo(videoId string) error {
 	delete(allMarkers, videoId)
 	return jsdb.saveMarkers(allMarkers)
 }
+
+func (jsdb *JsonDB) RemoveMarker(videoId string, timeSeconds int) error {
+	allMarkers, err := jsdb.loadMarkers()
+	if err != nil {
+		return err
+	}
+
+	// If no markers exist for the video, nothing to remove
+	markers, ok := allMarkers[videoId]
+	if !ok || len(markers) == 0 {
+		return nil
+	}
+
+	// Filter out the marker with matching timestamp
+	newList := make([]datatypes.MarkerData, 0, len(markers))
+	for _, m := range markers {
+		if m.TimeSecond != timeSeconds {
+			newList = append(newList, m)
+		}
+	}
+
+	// Update the map
+	if len(newList) == 0 {
+		delete(allMarkers, videoId)
+	} else {
+		allMarkers[videoId] = newList
+	}
+
+	return jsdb.saveMarkers(allMarkers)
+}

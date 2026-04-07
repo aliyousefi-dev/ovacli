@@ -1,5 +1,5 @@
-<label class="btn btn-ghost btn-sm btn-square swap swap-rotate" [ngClass]="{'swap-active': isFullscreen}"
-  (click)="toggleFullscreen()">
+<label class="btn btn-ghost btn-sm btn-square swap swap-rotate"
+  [ngClass]="{'swap-active': isFullscreen,'btn-active':isFullscreen}" (click)="toggleFullscreen()">
 
   <i class='bx bx-fullscreen bx-sm swap-off'></i>
 

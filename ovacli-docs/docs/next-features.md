@@ -37,6 +37,7 @@ here we demonstrate what features we want to add to next versions.
 - (native-player) adding playlist label on vidoe player for when playing playlist
 - (native-player) i think its good the video version history just be visible for the owner user
 - (database) support a unique digital asset db for better management of video registry.
+- (markers) support for delete and edit the markers
 
 - (native-player) change video marker name to time-tag feature.
 - (native-player) ctrl+(left & right) arrow key move cursor to the next or previouse timetag positions
@@ -50,3 +51,4 @@ the similar videos feature have a
 
 - (quick-search): support result type (video,tag,mark)
 - (videodata): adding the videoSize too
+- (autocomplete): when want to add a tag also show the tags suggestion autocomplete

@@ -1,0 +1,41 @@
+<div class="flex flex-col h-full bg-base-100 rounded-2xl">
+    <div class="flex overflow-x-auto gap-1 h-full p-2">
+        @for (item of playlistVideos; track $index) {
+        <div [id]="'playlist-item-' + item.videoId"
+            class="flex flex-col h-full hover:bg-base-200 justify-between w-60 flex-none relative rounded-2xl"
+            [ngClass]="{'bg-base-300': item.videoId == this.activeVideo.videoId}" (click)="selectVideo(item)">
+
+            <div class="relative aspect-video">
+                <img class="h-full w-full rounded-2xl" [src]="getThumbnail(item.videoId)">
+                <span class="absolute top-1 left-1 text-xs bg-black/80 text-white p-1 rounded-full select-none">
+                    #{{ $index + 1 }}
+                </span>
+                <span class="absolute bottom-1 right-1 text-xs bg-black/80 text-white p-1 rounded-full select-none">
+                    {{ formatTime(item.codecs.durationSec) }}
+                </span>
+            </div>
+
+            <div class="flex flex-col p-2">
+                <span class="text-xs truncate w-full select-none">{{item.title}}</span>
+            </div>
+        </div>
+        }
+    </div>
+    <div class="p-2 flex items-center justify-between select-none">
+        <span class="text-xs">
+            total-videos: {{playlistVideos.length}}
+        </span>
+
+        <div class="flex gap-2">
+            <div class="btn btn-neutral btn-xs " (click)="scrollToVideo(activeVideo.videoId)">
+                scroll to active
+            </div>
+            <div class="btn btn-ghost btn-xs " (click)="closeMenu()">
+                close
+            </div>
+        </div>
+    </div>
+
+
+
+</div>

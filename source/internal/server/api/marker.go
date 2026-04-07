@@ -19,6 +19,9 @@ func RegisterMarkerRoutes(rg *gin.RouterGroup, rm *repo.RepoManager) {
 	// add markers
 	rg.POST("/videos/:videoId/markers", addMarker(rm))
 
+	// remove marker
+	rg.DELETE("/videos/:videoId/markers", removeMarker(rm))
+
 }
 
 func getMarkers(rm *repo.RepoManager) gin.HandlerFunc {
@@ -73,5 +76,33 @@ func addMarker(rm *repo.RepoManager) gin.HandlerFunc {
 		})
 
 		apitypes.RespondSuccess(c, http.StatusCreated, nil, "Marker added successfully")
+	}
+}
+
+func removeMarker(rm *repo.RepoManager) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		videoId := c.Param("videoId")
+
+		//
+		var body struct {
+			TimeSecond int `json:"timeSecond"`
+		}
+
+		if err := c.ShouldBindJSON(&body); err != nil {
+			apitypes.RespondError(c, http.StatusBadRequest, "Invalid JSON payload")
+			return
+		}
+
+		// 3. Verify the video exists
+		_, err := rm.GetVideoByID(videoId)
+		if err != nil {
+			apitypes.RespondError(c, http.StatusNotFound, ErrVideoNotFound)
+			return
+		}
+
+		// 4. Pass the bound data to your repository
+		rm.RemoveMarkerFromVideo(videoId, body.TimeSecond)
+
+		apitypes.RespondSuccess(c, http.StatusCreated, nil, "Marker removed successfully")
 	}
 }

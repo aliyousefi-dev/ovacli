@@ -18,9 +18,11 @@
                     <span>{{ marker.label }}</span>
                     <span class="text-[10px]">{{ formatTime(marker.timeSecond) }}</span>
                 </a>
-                <button class="btn btn-ghost btn-xs px-1 ">
-                    <i class='bx bx-dots-vertical-rounded bx-xs'></i>
-                </button>
+                <div>
+                    <button class="btn btn-error btn-ghost btn-xs px-1 " (click)="removeMarker(marker)">
+                        <i class='bx bx-x bx-xs'></i>
+                    </button>
+                </div>
             </div>
         </li>
         }

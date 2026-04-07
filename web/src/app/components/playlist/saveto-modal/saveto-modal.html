@@ -18,7 +18,8 @@
 
     <!-- Playlist -->
     <div class="flex flex-col overflow-y-auto">
-
+      <input type="text" class="input input-bordered w-full max-w-md" placeholder="Filter playlist..."
+        [(ngModel)]="filterInput" (ngModelChange)="applyFilter()" />
       <!-- No playlists available -->
       @if (availablePlaylist.length === 0 ) {
       <div class="text-center py-4 text-gray-500">

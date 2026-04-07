@@ -31,6 +31,7 @@ type DiskDataStorage interface {
 	GetTotalVideoCount() (int, error)
 
 	InsertMarker(videoId string, markerData datatypes.MarkerData) error
+	RemoveMarker(videoId string, timeSeconds int) error
 	GetMarkersForVideo(videoID string) ([]datatypes.MarkerData, error)
 	DeleteMarkersForVideo(videoID string) error
 

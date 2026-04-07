@@ -5,10 +5,12 @@ import { Resolution } from '../data-types/resolution';
 import { LocalStorageService } from './local-stroage.service';
 import { InteractionService } from './interaction.service';
 import { GlobalPlayerConfig } from '../config';
-import { TimeTagService } from './time-tag.service';
+import { OVASDK } from '../../../../../ova-angular-sdk/ova-sdk';
+import { VideoData } from '../../../../../ova-angular-sdk/core-types/video-data';
 
 @Injectable()
 export class StateService implements OnDestroy {
+  readonly activeSource$ = new BehaviorSubject<VideoData | null>(null);
   readonly currentTime$ = new BehaviorSubject<number>(0);
   readonly currentTimepct$ = new BehaviorSubject<number>(0);
   readonly remainingTime$ = new BehaviorSubject<number>(0);
@@ -28,11 +30,12 @@ export class StateService implements OnDestroy {
   private playerSettings = inject(LocalStorageService);
   private interactionService = inject(InteractionService);
   private configs = inject(GlobalPlayerConfig);
-  private timeTagService = inject(TimeTagService);
 
   private readonly destroy$ = new Subject<void>();
 
   private videoEl: HTMLVideoElement | null = null;
+
+  private ovaSdk = inject(OVASDK);
 
   loadLocalStorage() {
     if (!this.videoEl) return;
@@ -173,36 +176,6 @@ export class StateService implements OnDestroy {
     this.interactionService.triggerStepBackwardIconVisibility();
   }
 
-  stepForwardTimeTag() {
-    if (!this.videoEl) return;
-
-    const currentTime = this.videoEl.currentTime;
-    const timeTags = this.timeTagService.timeTags$.value;
-
-    const nextTag = timeTags.find((tag) => tag.timeSecond > currentTime + 0.5);
-
-    if (nextTag) {
-      this.seekToTime(nextTag.timeSecond);
-      this.interactionService.triggerStepForwardIconVisibility();
-    }
-  }
-
-  stepBackwardTimeTag() {
-    if (!this.videoEl) return;
-
-    const currentTime = this.videoEl.currentTime;
-    const timeTags = this.timeTagService.timeTags$.value;
-
-    const previousTag = [...timeTags]
-      .reverse()
-      .find((tag) => tag.timeSecond < currentTime - 0.5);
-
-    if (previousTag) {
-      this.seekToTime(previousTag.timeSecond);
-      this.interactionService.triggerStepBackwardIconVisibility();
-    }
-  }
-
   /** Sets the volume (0 – 1). */
   setVolume(v: number): void {
     if (!this.videoEl) return;
@@ -231,9 +204,14 @@ export class StateService implements OnDestroy {
   }
 
   /** Loads a new source.  (Useful if you want to change the stream.) */
-  setSource(src: string): void {
+  setSource(video: VideoData): void {
     if (!this.videoEl) return;
-    this.videoEl.src = src;
+    const videoUrl = this.ovaSdk.assets.stream(video.videoId);
+    const posterUrl = this.ovaSdk.assets.thumbnail(video.videoId);
+    this.pause();
+    this.activeSource$.next(video);
+    this.videoEl.src = videoUrl;
+    this.videoEl.poster = posterUrl;
     this.videoEl.load();
   }
 

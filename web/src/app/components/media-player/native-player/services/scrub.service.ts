@@ -23,9 +23,14 @@ export class ScrubService implements OnInit, OnDestroy {
   /** Cleanup subject used for unsubscription */
   private readonly destroy$ = new Subject<void>();
 
-  init(videoId: string): void {
-    this.ovaSdk.scrub.loadScrubThumbnails(videoId).subscribe((thumbnails) => {
-      this.scrubThumbStream$.next(thumbnails);
+  init(): void {
+    this.playerState.activeSource$.subscribe((video) => {
+      if (!video) return;
+      this.ovaSdk.scrub
+        .loadScrubThumbnails(video.videoId)
+        .subscribe((thumbnails) => {
+          this.scrubThumbStream$.next(thumbnails);
+        });
     });
 
     this.playerState.currentTime$.subscribe((t) => {

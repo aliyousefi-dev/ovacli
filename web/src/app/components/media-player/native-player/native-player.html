@@ -2,65 +2,81 @@
   appPlayerControlsHost>
 
   <!-- Video element -->
-  <video #videoRef [src]="videoUrl" [poster]="thumbnailUrl" [ngClass]="{'transform -scale-x-100': horizontalFlipped}">
+  <video #videoRef>
   </video>
 
 
-  <!-- Marker display -->
-  <div class="absolute inset-0 w-full h-full flex justify-between items-start p-5 z-50 pointer-events-none">
-    <div>
-      <app-debugger [videoData]="this.videoData" [hidden]="!(playerUi.debuggerMenuVisible$ | async)"></app-debugger>
+  <div class="absolute w-full h-full" [hidden]="!this.uiVisible">
+
+
+
+    <!-- Marker display -->
+    <div class="absolute inset-0 w-full h-full flex justify-between items-start p-5 z-50 pointer-events-none">
+      <div>
+        <app-debugger [videoData]="this.videoData" [hidden]="!(playerUi.debuggerMenuVisible$ | async)"></app-debugger>
+      </div>
+      <div>
+        <app-marker-display [hidden]="!(playerUi.tagTimeMenuVisible$ | async)"
+          class="pointer-events-auto"></app-marker-display>
+      </div>
     </div>
-    <div>
-      <app-marker-display [hidden]="!(playerUi.tagTimeMenuVisible$ | async)"
-        class="pointer-events-auto"></app-marker-display>
+
+
+
+    <div class="absolute w-full h-full flex justify-center items-center inset-0">
+      <app-display-near-time-tag></app-display-near-time-tag>
     </div>
-  </div>
 
-  <div class="absolute w-full h-full flex justify-center items-center inset-0">
-    <app-display-near-time-tag></app-display-near-time-tag>
-  </div>
+    <app-touch-screen class="absolute inset-0 z-31"></app-touch-screen>
 
-  <app-touch-screen class="absolute inset-0 z-31"></app-touch-screen>
-
-  <!-- Controls black overlay -->
-  <div class="absolute bottom-0 left-0 right-0 h-1/2 pointer-events-none z-40
+    <!-- Controls black overlay -->
+    <div class="absolute bottom-0 left-0 right-0 h-1/2 pointer-events-none z-40
     bg-gradient-to-t from-black/90 to-transparent transition-opacity duration-300"
-    [ngClass]="{ 'opacity-0': !controlsVisible }">
-  </div>
+      [ngClass]="{ 'opacity-0': !controlsVisible }">
+    </div>
 
-  <!-- Bottom Controls container -->
-  <div class="absolute inset-0 flex flex-col justify-end px-4 pb-4 transition-all duration-300 z-50 pointer-events-none"
-    [ngClass]="{ 'opacity-0': !controlsVisible }">
+    <!-- Bottom Controls container -->
+    <div
+      class="absolute inset-0 flex flex-col justify-end px-4 pb-4 transition-all duration-300 z-50 pointer-events-none"
+      [ngClass]="{ 'opacity-0': !controlsVisible }">
 
-    @if(videoReady){
-    <div (touchstart)="$event.stopPropagation()" class="pointer-events-auto">
-
-
-      <!-- Timeline / Display time -->
-      <div class="flex flex-col justify-center items-start gap-5 px-3 text-sm text-white">
-        <app-main-timeline class="w-full" #mainTimelineRef>
-        </app-main-timeline>
+      <div class="pointer-events-auto w-full mb-3" [hidden]="!(playerUi.playlistMenuVisible$ | async)">
+        <player-playlist-menu [activeVideo]="this.videoData" [playlistVideos]="this.playlistVideos">
+        </player-playlist-menu>
       </div>
 
-      <!-- Pause / Sound / Settings / Fullscreen -->
-      <div class="flex items-center justify-between gap-2 mt-2 text-white">
-        <div class="flex items-center gap-2 ">
-          <app-play-pause-button></app-play-pause-button>
-          <app-mute-button class="hidden md:block"></app-mute-button>
-          <div class="flex justify-center items-center gap-1">
-            <app-display-current-time></app-display-current-time>
-            <span class="select-none">/</span>
-            <app-display-total-time></app-display-total-time>
+
+      @if(videoReady){
+      <div (touchstart)="$event.stopPropagation()" class="pointer-events-auto">
+
+
+        <!-- Timeline / Display time -->
+        <div class="flex flex-col justify-center items-start gap-5 px-3 text-sm text-white">
+          <app-main-timeline class="w-full" #mainTimelineRef>
+          </app-main-timeline>
+        </div>
+
+        <!-- Pause / Sound / Settings / Fullscreen -->
+        <div class="flex items-center justify-between gap-2 mt-2 text-white">
+          <div class="flex items-center gap-2 ">
+            <app-play-pause-button></app-play-pause-button>
+            <app-mute-button class="hidden md:block"></app-mute-button>
+            <div class="flex justify-center items-center gap-1">
+              <app-display-current-time></app-display-current-time>
+              <span class="select-none">/</span>
+              <app-display-total-time></app-display-total-time>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <player-playlist-button></player-playlist-button>
+            <app-time-tag-button></app-time-tag-button>
+            <app-settings-button></app-settings-button>
+            <app-full-screen-button></app-full-screen-button>
           </div>
         </div>
-        <div class="flex items-center gap-2">
-          <app-time-tag-button></app-time-tag-button>
-          <app-settings-button></app-settings-button>
-          <app-full-screen-button></app-full-screen-button>
-        </div>
       </div>
+      }
     </div>
-    }
   </div>
+
 </div>

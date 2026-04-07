@@ -15,6 +15,7 @@ import { GlobalSettingsService } from '../../../global/global-settings.service';
 })
 export class PlayerManager implements OnInit {
   @Input() videoData!: VideoData;
+  @Input() playlistVideos: VideoData[] = [];
 
   useNativePlayer: boolean = false;
 

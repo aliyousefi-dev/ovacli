@@ -1,6 +1,7 @@
 import { Injectable, OnInit, OnDestroy, inject } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { MarkerData } from '../data-types/marker-data';
+import { StateService } from './state.service';
 import { OVASDK } from '../../../../../ova-angular-sdk/ova-sdk';
 
 @Injectable()
@@ -9,12 +10,17 @@ export class TimeTagService implements OnInit, OnDestroy {
   private videoId: string = '';
   private ovaSdk = inject(OVASDK);
 
+  private playerState = inject(StateService);
   /** Cleanup subject used for unsubscription */
   private readonly destroy$ = new Subject<void>();
 
-  init(videoId: string): void {
-    this.videoId = videoId;
-    this.fetch();
+  init(): void {
+    this.playerState.activeSource$.subscribe((video) => {
+      if (!video) return;
+
+      this.videoId = video.videoId;
+      this.fetch();
+    });
   }
 
   fetch() {
@@ -47,6 +53,23 @@ export class TimeTagService implements OnInit, OnDestroy {
         if (response.status === 'success') {
           // refresh markers after creating
           this.fetch();
+        }
+      });
+  }
+
+  removeTimeTag(time: number) {
+    // Use Math.trunc to match how timeSecond is handled in addMarker
+    const timeToRemove = Math.trunc(time);
+
+    this.ovaSdk.marker
+      .removeMarker(this.videoId, timeToRemove)
+      .subscribe((response) => {
+        if (response.status === 'success') {
+          // refresh markers after removing
+          this.fetch();
+        } else {
+          // Handle potential errors if the API response status is not 'success'
+          console.error('Failed to remove time tag:', response);
         }
       });
   }

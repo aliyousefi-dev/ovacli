@@ -28,6 +28,9 @@ import { TouchScreen } from './touch-screen/touch-screen';
 import { DisplayNearTimeTag } from './controls/display-near-time-tag/display-near-time-tag';
 import { FullScreenService } from './services/fullscreen.service';
 import { InteractionService } from './services/interaction.service';
+import { PlaylistButton } from './controls/buttons/playlist-button/playlist-button';
+import { formatTime } from './utils/formatTime';
+import { PlaylistMenu } from './menus/playlist-menu/playlist-menu';
 
 import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
@@ -51,7 +54,9 @@ import { LocalStorageService } from './services/local-stroage.service';
     MarkerDisplay,
     SettingsButton,
     TimeTagButton,
+    PlaylistButton,
     TouchScreen,
+    PlaylistMenu,
     DisplayNearTimeTag,
   ],
   providers: [
@@ -66,15 +71,19 @@ import { LocalStorageService } from './services/local-stroage.service';
 })
 export class NativePlayer implements AfterViewInit, OnInit, OnDestroy {
   @Input() videoData!: VideoData;
+  @Input() playlistVideos: VideoData[] = [];
 
   @ViewChild('videoRef') videoRef!: ElementRef<HTMLVideoElement>;
   @ViewChild('playerWrap') playerWrap!: ElementRef<HTMLDivElement>;
   @ViewChild('mainTimelineRef') mainTimelineRef!: MainTimeline;
 
+  formatTime = formatTime;
+
   videoReady = false;
   controlsVisible = false;
   overlayVisible = false;
   isPaused = true;
+  uiVisible = true;
 
   private hideControlsTimeout: any;
   private overlayTimeout: any;
@@ -96,6 +105,10 @@ export class NativePlayer implements AfterViewInit, OnInit, OnDestroy {
       this.controlsVisible = visible;
     });
 
+    this.interactionService.uiVisibility$.subscribe((visible) => {
+      this.uiVisible = visible;
+    });
+
     this.localstorage.settings$.subscribe((s) => {
       this.horizontalFlipped = s.horizontalFlip;
     });
@@ -105,14 +118,14 @@ export class NativePlayer implements AfterViewInit, OnInit, OnDestroy {
     const video = this.videoRef.nativeElement;
 
     this.playerState.init(this.videoRef);
+    this.playerState.setSource(this.videoData);
     this.playerUi.init();
     this.interactionService.init();
     this.fullscreenService.init(this.playerWrap);
-    this.timeTagService.init(this.videoData.videoId);
-    this.scrubTimeline.init(this.videoData.videoId);
+    this.timeTagService.init();
+    this.scrubTimeline.init();
 
     console.log('natvie view init');
-    // Handle metadata loading for markers/timeline
     if (video.readyState >= 1) {
       this.initVideoState();
     } else {
@@ -124,11 +137,8 @@ export class NativePlayer implements AfterViewInit, OnInit, OnDestroy {
     this.videoReady = true;
   }
 
-  get videoUrl() {
-    return this.ovaSdk.assets.stream(this.videoData.videoId);
-  }
-  get thumbnailUrl() {
-    return this.ovaSdk.assets.thumbnail(this.videoData.videoId);
+  getThumbnailUrl(videoId: string) {
+    return this.ovaSdk.assets.thumbnail(videoId);
   }
 
   ngOnDestroy() {

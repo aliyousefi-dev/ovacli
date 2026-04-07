@@ -56,6 +56,10 @@ export class MarkerDisplay implements OnInit {
     this.timeTagService.addTimeTag(currentTime, finalLabel);
   }
 
+  removeMarker(marker: MarkerData) {
+    this.timeTagService.removeTimeTag(marker.timeSecond);
+  }
+
   openMarkerCreator() {
     this.markerCreator.open();
   }

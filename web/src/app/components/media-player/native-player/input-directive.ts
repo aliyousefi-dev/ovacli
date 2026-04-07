@@ -46,13 +46,17 @@ export class PlayerInputHostDirective {
       return;
     }
 
+    if (event.key === 'h' || event.key === 'H') {
+      event.preventDefault();
+      this.interactionService.ToggleUIVisibility();
+      return;
+    }
+
     if (event.key === 'ArrowRight') {
       event.preventDefault();
       this.interactionService.triggerUIControlsVisibility();
       if (event.shiftKey) {
         this.stateService.shiftStepForward();
-      } else if (event.ctrlKey) {
-        this.stateService.stepForwardTimeTag();
       } else {
         this.stateService.stepForward();
       }
@@ -62,8 +66,6 @@ export class PlayerInputHostDirective {
       this.interactionService.triggerUIControlsVisibility();
       if (event.shiftKey) {
         this.stateService.shiftStepBackward();
-      } else if (event.ctrlKey) {
-        this.stateService.stepBackwardTimeTag();
       } else {
         this.stateService.stepBackward();
       }

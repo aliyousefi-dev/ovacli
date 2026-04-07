@@ -1,5 +1,5 @@
 @if (this.useNativePlayer) {
-<app-native-player [videoData]="videoData"></app-native-player>
+<app-native-player [videoData]="videoData" [playlistVideos]="playlistVideos"></app-native-player>
 }
 @else {
 <app-vidstack-player [videoData]="videoData"></app-vidstack-player>

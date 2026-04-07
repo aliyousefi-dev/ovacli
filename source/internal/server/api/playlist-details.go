@@ -55,9 +55,39 @@ func GetPlaylistVideos(rm *repo.RepoManager) gin.HandlerFunc {
 			return
 		}
 
+		var newVideoList []map[string]interface{}
+
+		for _, video := range videos {
+			userdata, err := rm.GetUserByAccountID(video.UploaderID)
+			if err != nil {
+				apitypes.RespondError(c, http.StatusInternalServerError, "Failed to retrieve user data")
+				return
+			}
+
+			video_stats := apitypes.VideoStats{
+				Views:     video.TotalViews,
+				Downloads: video.TotalDownloads,
+			}
+
+			// Create the map for the current item.
+			itemArray := map[string]interface{}{
+				"videoId":    video.VideoID,
+				"title":      video.Title,
+				"tags":       video.Tags,
+				"uploadedAt": video.UploadedAt,
+				"stats":      video_stats,  // This will be an apitypes.VideoStats struct
+				"codecs":     video.Codecs, // Assuming video.Codecs is a type that can be put in interface{}
+				"isCooked":   video.IsCooked,
+				"uploaderId": userdata.Username, // Use the username from userdata
+				"isPublic":   video.IsPublic,
+			}
+
+			newVideoList = append(newVideoList, itemArray)
+		}
+
 		// 4. Construct response
 		response := gin.H{
-			"videos":      videos,
+			"videos":      newVideoList,
 			"currentPage": currentPage, // Fixed trailing space
 			"pageSize":    pageSize,
 			"totalItems":  total,

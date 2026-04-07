@@ -1,10 +1,4 @@
-import {
-  Component,
-  AfterViewInit,
-  ChangeDetectorRef,
-  OnInit,
-  inject,
-} from '@angular/core';
+import { Component, AfterViewInit, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -44,7 +38,6 @@ export class WatchPage implements AfterViewInit, OnInit {
 
   private ovaSdk = inject(OVASDK);
   private activatedRoute = inject(ActivatedRoute);
-  private router = inject(Router);
 
   loading = true;
   error = false;
@@ -82,10 +75,11 @@ export class WatchPage implements AfterViewInit, OnInit {
       .subscribe((data) => {
         const count = data.data.videos.length;
         if (count > 0) {
-          this.video = data.data.videos[0];
           data.data.videos.forEach((video) => this.playlistVideos.push(video));
           if (data.data.hasNextPage) {
             this.fetchPlaylist(playlistId, page + 1);
+          } else {
+            this.video = this.playlistVideos[0];
           }
         }
         this.loading = false;

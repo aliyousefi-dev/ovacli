@@ -7,7 +7,6 @@
         @if(repositoryInfo){
         {{repositoryInfo.repositoryName}}
         }
-
         <span class="badge badge-xs badge-neutral">
           @if(repositoryInfo){
           {{repositoryInfo.storage_used}}
@@ -111,8 +110,15 @@
       <li class="menu-title">Admin</li>
       <li>
         <a routerLink="/stats" routerLinkActive="menu-active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class='bx bx-server bx-xs'></i>
+          <span>Server Stats</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/admin/account-manager" routerLinkActive="menu-active"
+          [routerLinkActiveOptions]="{ exact: true }">
           <i class='bx bx-stats bx-xs'></i>
-          <span>Stats</span>
+          <span>Deduplication</span>
         </a>
       </li>
       <li>

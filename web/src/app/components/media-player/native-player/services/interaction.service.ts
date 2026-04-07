@@ -9,6 +9,8 @@ export class InteractionService implements OnInit, OnDestroy {
   private stepForwardIconVisibilityTimeout: any;
   private stepBackwardIconVisibilityTimeout: any;
 
+  uiVisibility$ = new BehaviorSubject<boolean>(true);
+
   readonly uiControlsVisibility$ = new BehaviorSubject<boolean>(false);
   readonly stepForwardIconVisibility$ = new BehaviorSubject<boolean>(false);
   readonly stepBackwardIconVisibility$ = new BehaviorSubject<boolean>(false);
@@ -26,6 +28,11 @@ export class InteractionService implements OnInit, OnDestroy {
     this.playerControlsVisibilityTimeout = setTimeout(() => {
       this.uiControlsVisibility$.next(false);
     }, 3000);
+  }
+
+  ToggleUIVisibility(): void {
+    console.log('print');
+    this.uiVisibility$.next(!this.uiVisibility$.value);
   }
 
   triggerStepForwardIconVisibility(): void {
