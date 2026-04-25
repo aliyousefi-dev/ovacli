@@ -5,6 +5,7 @@ package datatypes
 type VideoSearchCriteria struct {
 	Query       string   `json:"query,omitempty"`
 	Tags        []string `json:"tags,omitempty"`
+	Marker      string   `json:"marker,omitempty"` // Marker string on the video timeline
 	MinRating   float64  `json:"minRating,omitempty"`
 	MaxDuration int      `json:"maxDuration,omitempty"` // Duration in seconds
 }

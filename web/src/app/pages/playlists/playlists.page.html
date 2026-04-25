@@ -1,12 +1,13 @@
 <div class="flex justify-center mb-4">
-    <input type="text" class="input input-bordered w-full max-w-md" placeholder="Filter playlists..." />
+    <input type="text" class="input input-bordered w-full max-w-md" placeholder="Filter playlists..."
+        [(ngModel)]="filterInput" (ngModelChange)="applyFilter()" />
 </div>
 
 <div class="p-5">Total Playlists: {{playlists.length}}</div>
 
 <div class="w-full grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 p-5 gap-4">
 
-    @for (item of playlists; track $index) {
+    @for (item of filteredPlaylists; track $index) {
     <div class="card w-full  hover:bg-base-200/30 p-3">
         <div class="relative overflow-clip select-none rounded-lg cursor-pointer">
             <a class="" (click)="navigateToWatch(item.id)">
@@ -51,7 +52,8 @@
                             </button>
                         </li>
                         <li>
-                            <button class="w-full text-left px-3 py-1 text-xs hover:bg-base-300 rounded-b-md">
+                            <button class="w-full text-left px-3 py-1 text-xs hover:bg-base-300 rounded-b-md"
+                                (click)="initiatePlaylistRemoval(item)">
                                 Delete
                             </button>
                         </li>
@@ -64,3 +66,6 @@
     }
 
 </div>
+
+
+<app-confirm-modal (confirmed)="this.onConfirmPlaylistRemoval()"></app-confirm-modal>

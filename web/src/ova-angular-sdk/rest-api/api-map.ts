@@ -57,10 +57,14 @@ export class ApiMap {
       tags: string[],
       page: number = 1,
       sortMode?: SortMode,
+      markerLabel?: string,
     ) => {
       let url = `${this.base}/search?q=${encodeURIComponent(q)}`;
       if (tags && tags.length > 0) {
         url += `&tags=${tags.map((t) => encodeURIComponent(t)).join(',')}`;
+      }
+      if (markerLabel && markerLabel.length > 0) {
+        url += `&marker=${encodeURIComponent(markerLabel)}`;
       }
       url += `&page=${page}`;
       if (sortMode) {

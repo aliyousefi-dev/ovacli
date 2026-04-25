@@ -31,13 +31,7 @@ export class PlaylistMenu implements OnInit {
     return num.toString();
   }
 
-  ngOnInit() {
-    this.MenuManagerService.playlistMenuVisible$.subscribe((v) => {
-      if (true) {
-        console.log('yesyes');
-      }
-    });
-  }
+  ngOnInit() {}
 
   getThumbnail(videoId: string) {
     return this.ovaSdk.assets.thumbnail(videoId);
@@ -47,6 +41,7 @@ export class PlaylistMenu implements OnInit {
     this.activeVideo = item;
     this.playerState.pause();
     this.playerState.setSource(item);
+    this.scrollToVideo(item.videoId);
   }
 
   scrollToVideo(videoId: string) {

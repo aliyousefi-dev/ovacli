@@ -14,6 +14,7 @@ func RegisterUserPlaylistRoutes(rg *gin.RouterGroup, rm *repo.RepoManager) {
 	{
 		users.GET("/playlists", GetPlaylistsByUser(rm)) // get user Playlist
 		users.POST("/playlists", CreatePlaylist(rm))    // Create New User Playlist
+		users.DELETE("/playlists/:id", DeletePlaylist(rm))
 	}
 }
 
@@ -97,5 +98,35 @@ func CreatePlaylist(rm *repo.RepoManager) gin.HandlerFunc {
 
 		// Return the FULL generated object (including ID and Order)
 		apitypes.RespondSuccess(c, http.StatusCreated, newPl, "Playlist created successfully")
+	}
+}
+
+func DeletePlaylist(rm *repo.RepoManager) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		accountID, exists := c.Get("accountId")
+		if !exists {
+			apitypes.RespondError(c, http.StatusUnauthorized, "Account ID not found")
+			return
+		}
+
+		playlistID := c.Param("id")
+		if playlistID == "" {
+			apitypes.RespondError(c, http.StatusBadRequest, "Playlist ID is required")
+			return
+		}
+
+		// Attempt to delete playlist
+		err := rm.DeletePlaylistByID(accountID.(string), playlistID)
+		if err != nil {
+			apitypes.RespondError(c, http.StatusInternalServerError, "Failed to delete playlist")
+			return
+		}
+
+		apitypes.RespondSuccess(
+			c,
+			http.StatusOK,
+			gin.H{"id": playlistID},
+			"Playlist deleted successfully",
+		)
 	}
 }

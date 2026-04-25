@@ -28,6 +28,7 @@
     "cowsay": "^1.6.0",
     "daisyui": "^5.5.14",
     "media-icons": "^1.1.5",
+    "monaco-editor": "^0.55.1",
     "ng-apexcharts": "^2.0.3",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",

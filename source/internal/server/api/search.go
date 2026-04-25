@@ -17,12 +17,13 @@ func RegisterSearchRoutes(rg *gin.RouterGroup, repoManager *repo.RepoManager) {
 	rg.GET("/search", searchVideos(repoManager))
 }
 
-// searchVideos handles GET /search with query parameters: q, tags, and optional bucket.
+// searchVideos handles GET /search with query parameters: q, tags, marker, and optional bucket.
 func searchVideos(repoManager *repo.RepoManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Parse query parameters
 		query := strings.TrimSpace(c.DefaultQuery("q", ""))
 		tagsParam := c.DefaultQuery("tags", "")
+		marker := strings.TrimSpace(c.DefaultQuery("marker", ""))
 		var tags []string
 		if tagsParam != "" {
 			// Comma-separated tags
@@ -33,8 +34,8 @@ func searchVideos(repoManager *repo.RepoManager) gin.HandlerFunc {
 		}
 
 		// Validate that at least one filter is provided
-		if query == "" && len(tags) == 0 {
-			apitypes.RespondError(c, http.StatusBadRequest, "At least one search criteria must be provided (q, tags)")
+		if query == "" && len(tags) == 0 && marker == "" {
+			apitypes.RespondError(c, http.StatusBadRequest, "At least one search criteria must be provided (q, tags, marker)")
 			return
 		}
 
@@ -54,8 +55,9 @@ func searchVideos(repoManager *repo.RepoManager) gin.HandlerFunc {
 		}
 
 		criteria := datatypes.VideoSearchCriteria{
-			Query: query,
-			Tags:  tags,
+			Query:  query,
+			Tags:   tags,
+			Marker: marker,
 		}
 
 		result, total, err := repoManager.SearchVideosPaginated(criteria, currentPage, pageSize, sortMode)
@@ -66,12 +68,12 @@ func searchVideos(repoManager *repo.RepoManager) gin.HandlerFunc {
 
 		// Construct response (matches SearchResponse as before)
 		response := gin.H{
-			"videos":       result,
-			"currentPage ": currentPage,
-			"pageSize":     pageSize,
-			"totalItems":   total,
-			"totalPages":   (total + pageSize - 1) / pageSize,
-			"hasNextPage":  (currentPage+1)*pageSize < total,
+			"videos":      result,
+			"currentPage": currentPage,
+			"pageSize":    pageSize,
+			"totalItems":  total,
+			"totalPages":  (total + pageSize - 1) / pageSize,
+			"hasNextPage": (currentPage+1)*pageSize < total,
 		}
 
 		apitypes.RespondSuccess(c, http.StatusOK, response, "Search completed successfully")

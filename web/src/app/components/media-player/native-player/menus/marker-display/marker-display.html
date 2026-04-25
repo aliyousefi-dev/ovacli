@@ -1,16 +1,26 @@
 <ul tabindex="0" class="menu p-2 shadow bg-base-300/80 w-64 text-xs flex-nowrap " (click)="$event.stopPropagation()">
-    <li class="menu-title uppercase text-[10px] select-none">Time Tag Links</li>
-    <li class="pb-2 border-b border-base-300">
-        <button class="btn btn-xs w-full" (click)="openMarkerCreator()">
-            <i class='bx bx-plus'></i> New Time Tag
-        </button>
+    <li class="menu-title uppercase text-[10px] select-none">
+        <div class="flex items-center justify-between">
+            <span>Time Tag Links</span>
+            <span>total: {{ this.filteredMarkers.length }}</span>
+        </div>
+    </li>
+    <li class="w-full flex flex-row items-center gap-2">
+        <label class="flex-1 input input-xs focus:outline-none flex items-center mb-0">
+            <i class="bx bx-search bx-xs"></i>
+            <input autocomplete="off" #searchInput type="search" class="flex-1" placeholder="Search"
+                [(ngModel)]="markerSearch" (input)="filterMarkers()" />
+        </label>
+        <div class="tooltip tooltip-bottom" data-tip="New Marker">
+            <button class="btn btn-xs ml-2" (click)="openMarkerCreator()">
+                <i class='bx bx-plus'></i>
+            </button>
+        </div>
     </li>
 
     <div class="max-h-60 overflow-y-auto mt-2 custom-scrollbar">
-        @if (this.markers.length > 0) {
-
-
-        @for (marker of this.markers; track $index) {
+        @if (this.filteredMarkers.length > 0) {
+        @for (marker of this.filteredMarkers; track $index) {
         <li class="group">
             <div class="flex items-center justify-between gap-2  hover:bg-base-200 rounded-md cursor-pointer"
                 (click)="selectMarker(marker)">
@@ -19,7 +29,8 @@
                     <span class="text-[10px]">{{ formatTime(marker.timeSecond) }}</span>
                 </a>
                 <div>
-                    <button class="btn btn-error btn-ghost btn-xs px-1 " (click)="removeMarker(marker)">
+                    <button class="btn btn-error btn-ghost btn-xs px-1 "
+                        (click)="removeMarker(marker); $event.stopPropagation();">
                         <i class='bx bx-x bx-xs'></i>
                     </button>
                 </div>

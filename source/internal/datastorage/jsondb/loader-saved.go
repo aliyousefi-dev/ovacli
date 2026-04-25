@@ -5,10 +5,10 @@ import (
 	"os"
 )
 
-// LoadLookupCollection reads the video-to-path mapping.
-// Now returns map[string]string for the flat format: {"hash": "path"}
-func (jsdb *JsonDB) LoadSavedCollection() (map[string]string, error) {
-	path := jsdb.getSavedCollectionFilePath()
+// LoadCollection reads the account ID to video IDs mapping.
+// Returns map[string][]string where key is AccountID and value is slice of VideoIDs.
+func (jsdb *JsonDB) LoadSavedCollection() (map[string][]string, error) {
+	path := jsdb.getSavedCollectionFilePath() // Assuming you have a method to get the file path
 
 	// Ensure the file exists with "{}" if missing to avoid EOF errors
 	if err := jsdb.createEmptyJSONFileIfMissing(path); err != nil {
@@ -21,23 +21,23 @@ func (jsdb *JsonDB) LoadSavedCollection() (map[string]string, error) {
 	}
 	defer file.Close()
 
-	// Map: Key = VideoID (Hash), Value = FilePath (String)
-	var data map[string]string
+	// Map: Key = AccountID (String), Value = VideoIDs (Slice of Strings)
+	var data map[string][]string
 	decoder := json.NewDecoder(file)
 	if err := decoder.Decode(&data); err != nil {
 		// If file is empty or corrupted, return an empty map
-		return make(map[string]string), nil
+		return make(map[string][]string), nil
 	}
 
 	return data, nil
 }
 
-// SaveLookupCollection writes the flat mapping to lookup.json
-func (jsdb *JsonDB) SaveSavedCollection(videoIds map[string]string) error {
-	path := jsdb.getSavedCollectionFilePath()
+// SaveCollection writes the account ID to video IDs mapping to a JSON file.
+func (jsdb *JsonDB) SaveSavedCollection(accountVideos map[string][]string) error {
+	path := jsdb.getSavedCollectionFilePath() // Assuming you have a method to get the file path
 
-	// Marshal the map[string]string into the flat JSON structure
-	data, err := json.MarshalIndent(videoIds, "", "  ")
+	// Marshal the map[string][]string into the JSON structure
+	data, err := json.MarshalIndent(accountVideos, "", "  ")
 	if err != nil {
 		return err
 	}

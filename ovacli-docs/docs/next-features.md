@@ -52,3 +52,7 @@ the similar videos feature have a
 - (quick-search): support result type (video,tag,mark)
 - (videodata): adding the videoSize too
 - (autocomplete): when want to add a tag also show the tags suggestion autocomplete
+
+i thinking about deleting the video
+i think we need to delete the data from disk and also the metadata ?
+or just metadata ?

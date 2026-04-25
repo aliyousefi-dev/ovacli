@@ -26,13 +26,18 @@ export class SearchPage implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.subscribe((param) => {
       const q: string | undefined = param['q'];
-      const tags: string[] | undefined = this.normalizeTags(param['tags']);
+      const marker: string | undefined = param['marker'];
+      const tags: string[] = this.normalizeTags(param['tags']);
 
       const fetchProxy: GalleryFetchFn = (
         page: number,
         sortMode?: SortMode,
       ) => {
-        const searchCriteria: SearchCriteria = { query: q ?? '', tags: tags };
+        const searchCriteria: SearchCriteria = {
+          query: q ?? '',
+          tags: tags,
+          marker: marker ?? '',
+        };
         return this.ovaSdk.search
           .searchVideos(searchCriteria, page, sortMode)
           .pipe(map((response) => response.data));

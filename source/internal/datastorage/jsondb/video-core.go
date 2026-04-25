@@ -25,22 +25,6 @@ func (s *JsonDB) InsertVideo(videoData datatypes.VideoData) error {
 	return s.saveVideos(videos)
 }
 
-// DeleteVideo removes a video by its ID.
-// If the video does not exist, it's considered a no-op (no error is returned).
-func (s *JsonDB) DeleteVideoByID(videoId string) error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	videos, err := s.loadVideos()
-	if err != nil {
-		return fmt.Errorf("failed to load videos: %w", err)
-	}
-
-	// The delete operation is safe even if the key doesn't exist.
-	delete(videos, videoId)
-	return s.saveVideos(videos)
-}
-
 // GetVideoByID finds a video by its ID.
 // Returns a pointer to VideoData if found, or an error if the video does not exist.
 func (s *JsonDB) GetVideoByID(videoId string) (*datatypes.VideoData, error) {

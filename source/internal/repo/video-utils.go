@@ -21,8 +21,8 @@ func (r *RepoManager) GetVideosByIDs(ids []string) ([]*datatypes.VideoData, erro
 	videos := make([]*datatypes.VideoData, 0, len(ids))
 	for _, id := range ids {
 		video, err := r.GetVideoByID(id)
-		if err != nil {
-			return nil, err
+		if err != nil {	
+			continue
 		}
 		videos = append(videos, video)
 	}

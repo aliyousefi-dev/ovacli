@@ -30,6 +30,7 @@ export class SearchApiService {
       request.tags,
       page,
       sortMode,
+      request.marker,
     );
 
     return this.http.get<ApiSuccessResponse<PageContainer>>(url);

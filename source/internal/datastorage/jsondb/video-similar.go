@@ -1,0 +1,124 @@
+package jsondb
+
+import (
+	"fmt"
+	"math/rand/v2"
+	"ova-cli/source/internal/datatypes"
+	"path/filepath"
+	"sort"
+	"strings"
+)
+
+// GetSimilarVideos returns videos that share at least one tag with the given videoID.
+// The target video itself is excluded from the results.
+func (s *JsonDB) SimilarSearch(videoId string) ([]datatypes.VideoData, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	videos, err := s.loadVideos()
+	if err != nil {
+		return nil, fmt.Errorf("failed to load videos: %w", err)
+	}
+
+	targetVideo, exists := videos[videoId]
+	if !exists {
+		return nil, fmt.Errorf("video %q not found", videoId)
+	}
+
+	type scoredVideo struct {
+		video datatypes.VideoData
+		score float64
+	}
+
+	var results []scoredVideo
+
+	for id, video := range videos {
+		if id == videoId {
+			continue
+		}
+
+		score := 0.0
+
+		// Tag overlap (if tags exist)
+		if len(targetVideo.Tags) > 0 && len(video.Tags) > 0 {
+			targetTags := make(map[string]struct{})
+			for _, tag := range targetVideo.Tags {
+				targetTags[strings.ToLower(tag)] = struct{}{}
+			}
+			for _, tag := range video.Tags {
+				if _, ok := targetTags[strings.ToLower(tag)]; ok {
+					score += 2.0
+				}
+			}
+		}
+
+		// Title word overlap (case-insensitive)
+		targetWords := strings.Fields(strings.ToLower(targetVideo.Title))
+		videoWords := strings.Fields(strings.ToLower(video.Title))
+		wordMatch := 0
+		for _, w1 := range targetWords {
+			for _, w2 := range videoWords {
+				if w1 == w2 {
+					wordMatch++
+				}
+			}
+		}
+		score += float64(wordMatch)
+
+		// Duration similarity (closer durations are better)
+		diff := float64(abs(targetVideo.Codecs.DurationSec - video.Codecs.DurationSec))
+		if diff < 30 {
+			score += 1.5
+		} else if diff < 60 {
+			score += 1.0
+		} else if diff < 120 {
+			score += 0.5
+		}
+
+		// Optional: folder similarity
+		if filepath.Dir(video.Title) == filepath.Dir(targetVideo.Title) {
+			score += 1.0
+		}
+
+		// Add if score is non-zero
+		if score > 0 {
+			results = append(results, scoredVideo{video: video, score: score})
+		}
+	}
+
+	// Sort by descending score
+	sort.Slice(results, func(i, j int) bool {
+		return results[i].score > results[j].score
+	})
+
+	// Return top N similar videos
+	var similar []datatypes.VideoData
+	for i := 0; i < len(results) && i < 20; i++ {
+		similar = append(similar, results[i].video)
+	}
+
+	// Fallback: if no results, return top-viewed or random
+	if len(similar) == 0 {
+		for _, v := range videos {
+			if v.VideoID != videoId {
+				similar = append(similar, v)
+			}
+		}
+		// Shuffle and limit
+		rand.Shuffle(len(similar), func(i, j int) {
+			similar[i], similar[j] = similar[j], similar[i]
+		})
+		if len(similar) > 20 {
+			similar = similar[:20]
+		}
+	}
+
+	return similar, nil
+}
+
+func abs(n int) int {
+	if n < 0 {
+		return -n
+	}
+	return n
+}

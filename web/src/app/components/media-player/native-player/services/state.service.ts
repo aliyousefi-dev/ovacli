@@ -11,6 +11,7 @@ import { VideoData } from '../../../../../ova-angular-sdk/core-types/video-data'
 @Injectable()
 export class StateService implements OnDestroy {
   readonly activeSource$ = new BehaviorSubject<VideoData | null>(null);
+  readonly playlistTracks$ = new BehaviorSubject<VideoData[] | null>(null);
   readonly currentTime$ = new BehaviorSubject<number>(0);
   readonly currentTimepct$ = new BehaviorSubject<number>(0);
   readonly remainingTime$ = new BehaviorSubject<number>(0);
@@ -62,8 +63,6 @@ export class StateService implements OnDestroy {
 
     this.videoEl = videoEl; // keep a reference for the helper methods
 
-    this.loadLocalStorage();
-
     /* ---------- Raw event streams ---------- */
     const timeUpdate$ = fromEvent(videoEl, 'timeupdate');
     const speedRate$ = fromEvent(videoEl, 'ratechange');
@@ -87,11 +86,15 @@ export class StateService implements OnDestroy {
       .subscribe(() => this.currentSpeed$.next(videoEl.playbackRate));
 
     metadata$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      if (!this.videoEl) return;
+
+      this.loadLocalStorage();
       this.duration$.next(videoEl.duration);
       this.resolution$.next({
         width: videoEl.videoWidth,
         height: videoEl.videoHeight,
       });
+      console.log('metadata loaded');
     });
 
     volume$.pipe(takeUntil(this.destroy$)).subscribe(() => {
@@ -203,6 +206,10 @@ export class StateService implements OnDestroy {
     this.playerSettings.updateSetting('playbackSpeed', speedValue);
   }
 
+  setPlaylistTracks(tracks: VideoData[]) {
+    this.playlistTracks$.next(tracks);
+  }
+
   /** Loads a new source.  (Useful if you want to change the stream.) */
   setSource(video: VideoData): void {
     if (!this.videoEl) return;
@@ -210,6 +217,7 @@ export class StateService implements OnDestroy {
     const posterUrl = this.ovaSdk.assets.thumbnail(video.videoId);
     this.pause();
     this.activeSource$.next(video);
+
     this.videoEl.src = videoUrl;
     this.videoEl.poster = posterUrl;
     this.videoEl.load();

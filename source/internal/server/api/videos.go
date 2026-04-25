@@ -2,6 +2,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
 	"ova-cli/source/internal/repo"
@@ -14,8 +15,28 @@ import (
 func RegisterVideoRoutes(rg *gin.RouterGroup, repoMgr *repo.RepoManager) {
 	videos := rg.Group("/videos")
 	{
-		videos.GET("/:videoId", getVideoByID(repoMgr)) // GET /api/v1/videos/{videoId}
+		videos.GET("/:videoId", getVideoByID(repoMgr))       // GET /api/v1/videos/{videoId}
+		videos.DELETE("/:videoId", deleteVideoByID(repoMgr)) // GET /api/v1/videos/{videoId}
 		videos.GET("/:videoId/similar", getSimilarVideos(repoMgr))
+	}
+}
+
+func deleteVideoByID(repoMgr *repo.RepoManager) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		videoId := c.Param("videoId")
+		fmt.Printf("called")
+		err := repoMgr.RemoveVideo(videoId)
+		if err != nil {
+			if fmt.Sprintf("%v", err) == "data storage is not initialized" {
+				apitypes.RespondError(c, http.StatusServiceUnavailable, "Data storage is not initialized")
+			} else {
+				apitypes.RespondError(c, http.StatusInternalServerError, fmt.Sprintf("Failed to delete video: %v", err))
+			}
+			return
+		}
+
+		// Respond with success
+		apitypes.RespondSuccess(c, http.StatusOK, nil, "Video deleted successfully")
 	}
 }
 

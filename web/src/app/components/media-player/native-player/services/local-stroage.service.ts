@@ -38,7 +38,6 @@ export class LocalStorageService {
         currentSettings = { ...this.defaultSettings, ...JSON.parse(saved) };
       }
 
-      // 3. Update the Subject with loaded data
       this.settingsSubject.next(currentSettings);
     } catch (error) {
       console.error('Could not load settings', error);

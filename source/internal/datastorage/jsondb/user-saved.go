@@ -6,21 +6,21 @@ import (
 
 // GetUserSavedVideos retrieves the full VideoData for a user's favorite videos.
 // Returns an error if the user is not found or loading videos fails.
-func (s *JsonDB) GetSavedVideosByUser(accountId string) ([]string, error) {
+func (s *JsonDB) GetSavedVideosByAccountId(accountId string) ([]string, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	users, err := s.loadUsers()
+	saved, err := s.LoadSavedCollection()
 	if err != nil {
 		return nil, fmt.Errorf("failed to load users: %w", err)
 	}
 
-	user, exists := users[accountId]
+	videoIds, exists := saved[accountId]
 	if !exists {
 		return nil, fmt.Errorf("user %q not found", accountId)
 	}
 
-	return user.Favorites, nil
+	return videoIds, nil
 }
 
 // AddVideoToSaved adds a video ID to a user's favorites list.
@@ -29,17 +29,18 @@ func (s *JsonDB) AddVideoToSaved(accountId, videoID string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	// Load users to ensure the accountId exists.
 	users, err := s.loadUsers()
 	if err != nil {
 		return fmt.Errorf("failed to load users: %w", err)
 	}
 
-	user, exists := users[accountId]
-	if !exists {
+	_, userExists := users[accountId]
+	if !userExists {
 		return fmt.Errorf("user %q not found", accountId)
 	}
 
-	// Check if video exists in main video storage before adding to favorites
+	// Check if video exists in main video storage before adding to saved
 	videos, err := s.loadVideos()
 	if err != nil {
 		return fmt.Errorf("failed to load videos to check existence: %w", err)
@@ -48,16 +49,28 @@ func (s *JsonDB) AddVideoToSaved(accountId, videoID string) error {
 		return fmt.Errorf("video %q not found in video storage", videoID)
 	}
 
-	// Check if video is already in favorites
-	for _, favID := range user.Favorites {
-		if favID == videoID { // VideoID is a hash, so exact match is appropriate.
-			return fmt.Errorf("video %q is already in %q's favorites", videoID, accountId)
+	// Load the saved collection
+	saved, err := s.LoadSavedCollection()
+	if err != nil {
+		return fmt.Errorf("failed to load saved collection: %w", err)
+	}
+
+	// Check if the video is already in the saved collection for this accountId
+	savedVideoIDs, exists := saved[accountId]
+	if exists {
+		for _, savedID := range savedVideoIDs {
+			if savedID == videoID {
+				return fmt.Errorf("video %q is already in %q's saved collection", videoID, accountId)
+			}
 		}
 	}
 
-	user.Favorites = append(user.Favorites, videoID)
-	users[accountId] = user // Update the map with the modified user struct
-	return s.saveUsers(users)
+	// If the video is not already saved, append it.
+	// This will also create the entry in 'saved' if accountId did not exist yet.
+	saved[accountId] = append(saved[accountId], videoID)
+
+	// Save the updated collection
+	return s.SaveSavedCollection(saved)
 }
 
 // RemoveVideoFromSaved removes a video ID from a user's favorites list.
@@ -66,31 +79,52 @@ func (s *JsonDB) RemoveVideoFromSaved(accountId, videoID string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	// Load users to ensure the accountId exists.
 	users, err := s.loadUsers()
 	if err != nil {
 		return fmt.Errorf("failed to load users: %w", err)
 	}
 
-	user, exists := users[accountId]
-	if !exists {
+	_, userExists := users[accountId]
+	if !userExists {
 		return fmt.Errorf("user %q not found", accountId)
 	}
 
+	// Load the saved collection
+	saved, err := s.LoadSavedCollection()
+	if err != nil {
+		return fmt.Errorf("failed to load saved collection: %w", err)
+	}
+
+	// Get the current list of saved videos for the account
+	savedVideoIDs, exists := saved[accountId]
+	if !exists {
+		// If the account has no saved videos, then the video can't be removed.
+		return fmt.Errorf("no saved videos found for user %q", accountId)
+	}
+
+	// Create a new slice to hold videos that are *not* the one to be removed
+	newSavedVideoIDs := make([]string, 0, len(savedVideoIDs))
 	foundAndRemoved := false
-	newFavorites := make([]string, 0, len(user.Favorites))
-	for _, favID := range user.Favorites {
-		if favID == videoID {
+
+	for _, currentVideoID := range savedVideoIDs {
+		if currentVideoID == videoID {
 			foundAndRemoved = true
-			continue // Skip this video ID
+			// Skip this video ID, effectively removing it
+			continue
 		}
-		newFavorites = append(newFavorites, favID)
+		// Keep all other video IDs
+		newSavedVideoIDs = append(newSavedVideoIDs, currentVideoID)
 	}
 
 	if !foundAndRemoved {
-		return fmt.Errorf("video %q not found in %q's favorites", videoID, accountId)
+		// If the videoID was not found in the saved list for this account
+		return fmt.Errorf("video %q not found in %q's saved collection", videoID, accountId)
 	}
 
-	user.Favorites = newFavorites
-	users[accountId] = user // Update the map with the modified user struct
-	return s.saveUsers(users)
+	// Update the saved collection with the new list (video removed)
+	saved[accountId] = newSavedVideoIDs
+
+	// Save the updated collection
+	return s.SaveSavedCollection(saved)
 }

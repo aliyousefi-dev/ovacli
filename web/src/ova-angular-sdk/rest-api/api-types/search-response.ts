@@ -1,6 +1,7 @@
 export interface SearchCriteria {
   query: string;
   tags: string[];
+  marker: string;
 }
 
 export interface VideoFilters {

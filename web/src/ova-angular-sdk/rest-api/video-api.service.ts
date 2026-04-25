@@ -13,7 +13,6 @@ import { ApiMap } from './api-map';
 })
 export class VideoApiService {
   private http = inject(HttpClient);
-  private config = inject(OVASDKConfig);
   private apiMap = inject(ApiMap);
 
   getVideoById(videoId: string): Observable<ApiSuccessResponse<VideoData>> {
@@ -47,5 +46,11 @@ export class VideoApiService {
     const body = { tag };
 
     return this.http.post<ApiSuccessResponse<{ tags: string[] }>>(url, body);
+  }
+
+  deleteVideoById(videoId: string): Observable<ApiSuccessResponse<void>> {
+    console.log("do")
+    const url = this.apiMap.videos.byId(videoId); // Assuming byId generates the correct DELETE URL
+    return this.http.delete<ApiSuccessResponse<void>>(url);
   }
 }

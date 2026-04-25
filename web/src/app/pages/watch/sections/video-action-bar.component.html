@@ -37,10 +37,11 @@
     </div>
 
 
+
     <div class="tooltip tooltip-bottom" data-tip="Save/Unsave">
       <!-- Save/Unsave -->
       <button class="btn btn-ghost flex items-center" [ngClass]="isSaved ? 'btn-error' : ''"
-        [disabled]="loadingSavedVideo">
+        [disabled]="loadingSavedVideo" (click)="toggleSaved()">
 
         @if(isSaved){
         <i class="bx bxs-bookmark bx-xs"></i>
@@ -52,9 +53,19 @@
       </button>
     </div>
 
+    <div class="tooltip tooltip-bottom" data-tip="Remove Video">
+      <!-- Add to Playlist -->
+      <button class="btn btn-ghost" (click)="initiateVideoRemoval()">
+        <i class='bx  bx-trash bx-xs'></i>
+      </button>
+
+    </div>
   </div>
 </div>
 
 
 <!-- Playlist Modal -->
 <app-saveto-modal [selectedVideoId]="videoData.videoId"></app-saveto-modal>
+
+<app-confirm-modal (confirmed)="onConfirmVideoRemoval()">
+</app-confirm-modal>

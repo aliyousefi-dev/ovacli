@@ -7,6 +7,24 @@
                 placeholder="Search" [(ngModel)]="query" (input)="onInput()" (keydown.enter)="onEnter()" />
         </label>
 
+        <div class="flex flex-row gap-4 justify-center">
+            <label class="cursor-pointer label flex flex-row items-center gap-2">
+                <input type="checkbox" name="searchTypeVideo" value="video" class="checkbox checkbox-xs"
+                    [(ngModel)]="searchTypeVideo" />
+                <span class="label-text text-xs">Video</span>
+            </label>
+            <label class="cursor-pointer label flex flex-row items-center gap-2">
+                <input type="checkbox" name="searchTypeTags" value="tags" class="checkbox checkbox-xs"
+                    [(ngModel)]="searchTypeTags" />
+                <span class="label-text text-xs">Tags</span>
+            </label>
+            <label class="cursor-pointer label flex flex-row items-center gap-2">
+                <input type="checkbox" name="searchTypeMarker" value="marker" class="checkbox checkbox-xs"
+                    [(ngModel)]="searchTypeMarker" />
+                <span class="label-text text-xs">Marker</span>
+            </label>
+        </div>
+
         <!-- Loading Spinner -->
         @if (loading) {
         <div class="flex justify-center py-5">
@@ -14,13 +32,13 @@
         </div>
         }
 
-        <!-- Search Results -->
-        @if (!loading && quickSearchResults && quickSearchResults.results.length > 0) {
+        <!-- Search Results (Filtered Based on Type Checkboxes) -->
+        @if (!loading && quickSearchResults && quickSearchResults.results && quickSearchResults.results.length > 0) {
         <div class="py-5 overflow-y-auto flex-1 w-full space-y-1">
-            @for ( result of quickSearchResults.results; track $index) {
+            @for (result of quickSearchResults.results; track $index) {
 
-            @if(result.type == "video"){
-            <a (click)="CloseModal()" [routerLink]="['/search']" [queryParams]="{ q: result.label}" class="btn w-full">
+            @if(result.type == "video" && searchTypeVideo){
+            <a (click)="CloseModal()" [routerLink]="['/search']" [queryParams]="{ q: result.label }" class="btn w-full">
                 <div class="flex justify-between items-center w-full gap-2">
                     <div class="flex items-center justify-start gap-2 flex-1 min-w-0">
                         <i class='bx bx-play-circle bx-xs'></i>
@@ -32,8 +50,8 @@
             </a>
             }
 
-            @if(result.type == "tag"){
-            <a (click)="CloseModal()" [routerLink]="['/search']" [queryParams]="{ tags: result.label}"
+            @if(result.type == "tag" && searchTypeTags){
+            <a (click)="CloseModal()" [routerLink]="['/search']" [queryParams]="{ tags: result.label }"
                 class="btn w-full">
                 <div class="flex justify-between items-center w-full gap-2">
                     <div class="flex items-center justify-start gap-2 flex-1 min-w-0">
@@ -46,22 +64,37 @@
             </a>
             }
 
-
+            @if(result.type == "marker" && searchTypeMarker){
+            <a (click)="CloseModal()" [routerLink]="['/search']" [queryParams]="{ marker: result.label }"
+                class="btn w-full">
+                <div class="flex justify-between items-center w-full gap-2">
+                    <div class="flex items-center justify-start gap-2 flex-1 min-w-0">
+                        <i class='bx bx-fast-forward bx-xs'></i>
+                        <div class="truncate text-start min-w-0">
+                            {{ result.label }}
+                        </div>
+                    </div>
+                </div>
+            </a>
+            }
 
             }
         </div>
         }
 
-        <!-- No Results Found Message -->
-        @if (!loading && quickSearchResults.results.length === 0) {
-        <div class="py-5">
-            <span>No results found for "{{ query }}"</span>
+        @if (!loading && quickSearchResults && quickSearchResults.results && quickSearchResults.results.length === 0) {
+        <div class="py-5 text-center">
+            <span>No results</span>
         </div>
         }
 
-        <!-- See All Results Link -->
+        <!-- See All Results Link (dynamic count with filters)
+             Moved filter logic to a template method to satisfy Angular template parser. -->
         <div class="w-full flex justify-center pt-4">
-            <a href="#">Total Results {{ quickSearchResults.results.length }}</a>
+            <a href="#">
+                Total Results
+                {{ getFilteredResultsCount() }}
+            </a>
         </div>
 
         <!-- Keyboard Shortcuts -->
@@ -80,9 +113,9 @@
                 <span>Close</span>
             </div>
         </div>
-    </div>
 
-    <form method="dialog" class="modal-backdrop">
-        <button>close</button>
-    </form>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </div>
 </dialog>

@@ -2,7 +2,7 @@
   appPlayerControlsHost>
 
   <!-- Video element -->
-  <video #videoRef>
+  <video #videoRef class="w-full h-full" [ngClass]="{'transform -scale-x-100': horizontalFlipped}">
   </video>
 
 
@@ -66,6 +66,7 @@
               <span class="select-none">/</span>
               <app-display-total-time></app-display-total-time>
             </div>
+            <player-next-video-button></player-next-video-button>
           </div>
           <div class="flex items-center gap-2">
             <player-playlist-button></player-playlist-button>

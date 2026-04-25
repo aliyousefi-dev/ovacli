@@ -2,206 +2,126 @@ package jsondb
 
 import (
 	"fmt"
-	"math/rand/v2"
 	"ova-cli/source/internal/datatypes"
-	"path/filepath"
-	"sort"
 	"strings"
 )
 
-// GetSimilarVideos returns videos that share at least one tag with the given videoID.
-// The target video itself is excluded from the results.
-func (s *JsonDB) SimilarSearch(videoId string) ([]datatypes.VideoData, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
+// matchVideosByQuery returns video IDs matching the query string.
+func matchVideosByQuery(videos map[string]datatypes.VideoData, query string) []string {
+	query = strings.ToLower(strings.TrimSpace(query))
+	var results []string
 
-	videos, err := s.loadVideos()
-	if err != nil {
-		return nil, fmt.Errorf("failed to load videos: %w", err)
+	if query == "" {
+		return results
 	}
 
-	targetVideo, exists := videos[videoId]
-	if !exists {
-		return nil, fmt.Errorf("video %q not found", videoId)
-	}
-
-	type scoredVideo struct {
-		video datatypes.VideoData
-		score float64
-	}
-
-	var results []scoredVideo
-
-	for id, video := range videos {
-		if id == videoId {
-			continue
+	for _, video := range videos {
+		if strings.Contains(strings.ToLower(video.Title), query) {
+			results = append(results, video.VideoID)
 		}
+	}
+	return results
+}
 
-		score := 0.0
+// matchVideosByTags returns video IDs matching any of the provided tags.
+func matchVideosByTags(videos map[string]datatypes.VideoData, tags []string) []string {
+	normalizedTags := make([]string, len(tags))
+	for i, tag := range tags {
+		normalizedTags[i] = strings.ToLower(strings.TrimSpace(tag))
+	}
 
-		// Tag overlap (if tags exist)
-		if len(targetVideo.Tags) > 0 && len(video.Tags) > 0 {
-			targetTags := make(map[string]struct{})
-			for _, tag := range targetVideo.Tags {
-				targetTags[strings.ToLower(tag)] = struct{}{}
-			}
-			for _, tag := range video.Tags {
-				if _, ok := targetTags[strings.ToLower(tag)]; ok {
-					score += 2.0
+	var results []string
+	if len(normalizedTags) == 0 {
+		return results
+	}
+
+	for _, video := range videos {
+		found := false
+		for _, searchTag := range normalizedTags {
+			for _, videoTag := range video.Tags {
+				if strings.EqualFold(searchTag, videoTag) {
+					results = append(results, video.VideoID)
+					found = true
+					break
 				}
 			}
-		}
-
-		// Title word overlap (case-insensitive)
-		targetWords := strings.Fields(strings.ToLower(targetVideo.Title))
-		videoWords := strings.Fields(strings.ToLower(video.Title))
-		wordMatch := 0
-		for _, w1 := range targetWords {
-			for _, w2 := range videoWords {
-				if w1 == w2 {
-					wordMatch++
-				}
+			if found {
+				break // Already matched with one tag, don't add duplicates for the same video
 			}
 		}
-		score += float64(wordMatch)
+	}
+	return results
+}
 
-		// Duration similarity (closer durations are better)
-		diff := float64(abs(targetVideo.Codecs.DurationSec - video.Codecs.DurationSec))
-		if diff < 30 {
-			score += 1.5
-		} else if diff < 60 {
-			score += 1.0
-		} else if diff < 120 {
-			score += 0.5
-		}
+// matchVideosByMarker returns video IDs matching the marker label in markers map.
+func matchVideosByMarker(markers map[string][]datatypes.MarkerData, markerLabel string) []string {
+	markerLabel = strings.ToLower(strings.TrimSpace(markerLabel))
+	var results []string
 
-		// Optional: folder similarity
-		if filepath.Dir(video.Title) == filepath.Dir(targetVideo.Title) {
-			score += 1.0
-		}
-
-		// Add if score is non-zero
-		if score > 0 {
-			results = append(results, scoredVideo{video: video, score: score})
-		}
+	if markerLabel == "" {
+		return results
 	}
 
-	// Sort by descending score
-	sort.Slice(results, func(i, j int) bool {
-		return results[i].score > results[j].score
-	})
-
-	// Return top N similar videos
-	var similar []datatypes.VideoData
-	for i := 0; i < len(results) && i < 20; i++ {
-		similar = append(similar, results[i].video)
-	}
-
-	// Fallback: if no results, return top-viewed or random
-	if len(similar) == 0 {
-		for _, v := range videos {
-			if v.VideoID != videoId {
-				similar = append(similar, v)
+	for videoID, markerList := range markers {
+		for _, m := range markerList {
+			if strings.Contains(strings.ToLower(m.Label), markerLabel) {
+				results = append(results, videoID)
+				break // Found a match for this video, move to next videoID
 			}
 		}
-		// Shuffle and limit
-		rand.Shuffle(len(similar), func(i, j int) {
-			similar[i], similar[j] = similar[j], similar[i]
-		})
-		if len(similar) > 20 {
-			similar = similar[:20]
-		}
 	}
 
-	return similar, nil
+	return results
+}
+
+// mergeAndDedupVideoIDs merges video ID slices and removes duplicates, maintaining insertion order.
+func mergeAndDedupVideoIDs(lists ...[]string) []string {
+	seen := make(map[string]struct{})
+	var result []string
+
+	for _, list := range lists {
+		for _, id := range list {
+			if _, exists := seen[id]; !exists {
+				seen[id] = struct{}{}
+				result = append(result, id)
+			}
+		}
+	}
+	return result
 }
 
 // SearchVideos searches videos based on the provided criteria.
-// It returns a slice of matching videos.
-// Returns an error if no meaningful search criteria are provided.
+// It returns a slice of matching video IDs.
 func (s *JsonDB) SearchVideos(criteria datatypes.VideoSearchCriteria) ([]string, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-
-	query := strings.ToLower(strings.TrimSpace(criteria.Query))
-	tags := make([]string, len(criteria.Tags))
-	for i, tag := range criteria.Tags {
-		tags[i] = strings.ToLower(strings.TrimSpace(tag))
-	}
-
-	if query == "" && len(tags) == 0 && criteria.MinRating == 0 && criteria.MaxDuration == 0 {
-		return nil, fmt.Errorf("at least one search criteria must be provided (query, tags, minRating, or maxDuration)")
-	}
 
 	videos, err := s.loadVideos()
 	if err != nil {
 		return nil, fmt.Errorf("failed to load videos for search: %w", err)
 	}
 
-	// Use a map to track video IDs
-	resultsMap := make(map[string]struct{})
-
-	// Helper function to apply rating and duration filters
-	filterExtras := func(video datatypes.VideoData) bool {
-		if criteria.MaxDuration > 0 && video.Codecs.DurationSec > criteria.MaxDuration {
-			return false
-		}
-		return true
+	markers, err := s.loadMarkers()
+	if err != nil {
+		return nil, fmt.Errorf("failed to load markers for search: %w", err)
 	}
 
-	// Search by query
-	if query != "" {
-		for _, video := range videos {
-			if strings.Contains(strings.ToLower(video.Title), query) {
-				if filterExtras(video) {
-					resultsMap[video.VideoID] = struct{}{}
-				}
-			}
-		}
+	var matchedByQuery, matchedByTags, matchedByMarker []string
+
+	if criteria.Query != "" {
+		matchedByQuery = matchVideosByQuery(videos, criteria.Query)
 	}
 
-	// Search by tags
-	if len(tags) > 0 {
-		for _, video := range videos {
-			matchesTags := false
-			for _, searchTag := range tags {
-				for _, videoTag := range video.Tags {
-					if strings.EqualFold(searchTag, videoTag) {
-						matchesTags = true
-						break
-					}
-				}
-				if matchesTags {
-					break
-				}
-			}
-			if matchesTags && filterExtras(video) {
-				resultsMap[video.VideoID] = struct{}{}
-			}
-		}
+	if len(criteria.Tags) > 0 {
+		matchedByTags = matchVideosByTags(videos, criteria.Tags)
 	}
 
-	// If no query or tags provided (but minRating or maxDuration were), include all that pass filters
-	if query == "" && len(tags) == 0 {
-		for _, video := range videos {
-			if filterExtras(video) {
-				resultsMap[video.VideoID] = struct{}{}
-			}
-		}
+	if criteria.Marker != "" {
+		matchedByMarker = matchVideosByMarker(markers, criteria.Marker)
 	}
 
-	// Convert map keys (video IDs) to slice
-	var results []string
-	for videoID := range resultsMap {
-		results = append(results, videoID)
-	}
+	// Merge and deduplicate all found video IDs
+	results := mergeAndDedupVideoIDs(matchedByQuery, matchedByTags, matchedByMarker)
 
 	return results, nil
-}
-
-func abs(n int) int {
-	if n < 0 {
-		return -n
-	}
-	return n
 }

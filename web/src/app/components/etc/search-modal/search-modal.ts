@@ -22,6 +22,10 @@ export class SearchModalComponent {
   query: string = '';
   private loadingTimeout: any;
 
+  searchTypeTags: boolean = true;
+  searchTypeVideo: boolean = true;
+  searchTypeMarker: boolean = true;
+
   // This method will be called when the input changes
   onInput(): void {
     this.loading = true;
@@ -87,5 +91,22 @@ export class SearchModalComponent {
       this.query = ''; // Reset the input field
       this.quickSearchResults = { query: '', results: [] }; // Optionally clear the search results
     }, 1000);
+  }
+
+  getFilteredResultsCount(): number {
+    if (
+      !this.quickSearchResults ||
+      !this.quickSearchResults.results ||
+      this.quickSearchResults.results.length === 0
+    ) {
+      return 0;
+    }
+
+    return this.quickSearchResults.results.filter((result: any) => {
+      if (result.type === 'video' && this.searchTypeVideo) return true;
+      if (result.type === 'tag' && this.searchTypeTags) return true;
+      if (result.type === 'marker' && this.searchTypeMarker) return true;
+      return false;
+    }).length;
   }
 }

@@ -23,6 +23,8 @@ import { TimeTagService } from '../../services/time-tag.service';
 })
 export class MarkerDisplay implements OnInit {
   markers: MarkerData[] = [];
+  filteredMarkers: MarkerData[] = [];
+  markerSearch = '';
 
   formatTime = formatTime;
   private playerUI = inject(MenuService);
@@ -42,7 +44,24 @@ export class MarkerDisplay implements OnInit {
 
     this.timeTagService.timeTags$.subscribe((data) => {
       this.markers = data;
+      this.filterMarkers(); // Keep filteredMarkers up to date on source data change
     });
+  }
+
+  filterMarkers() {
+    const search = this.markerSearch.trim().toLowerCase();
+    if (!search) {
+      this.filteredMarkers = [...this.markers];
+    } else {
+      this.filteredMarkers = this.markers.filter((marker) => {
+        // Check both label and formatted time
+        const labelMatch = marker.label?.toLowerCase().includes(search);
+        const timeMatch = this.formatTime(marker.timeSecond)
+          .toLowerCase()
+          .includes(search);
+        return labelMatch || timeMatch;
+      });
+    }
   }
 
   // Add marker optionally using provided label/description

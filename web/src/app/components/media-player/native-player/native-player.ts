@@ -31,6 +31,7 @@ import { InteractionService } from './services/interaction.service';
 import { PlaylistButton } from './controls/buttons/playlist-button/playlist-button';
 import { formatTime } from './utils/formatTime';
 import { PlaylistMenu } from './menus/playlist-menu/playlist-menu';
+import { NextVideoButton } from './controls/buttons/next-video-button/next-video-button';
 
 import { OVASDK } from '../../../../ova-angular-sdk/ova-sdk';
 
@@ -50,6 +51,7 @@ import { LocalStorageService } from './services/local-stroage.service';
     MainTimeline,
     PlayerInputHostDirective,
     FullScreenButton,
+    NextVideoButton,
     ScreenDebugger,
     MarkerDisplay,
     SettingsButton,
@@ -119,6 +121,7 @@ export class NativePlayer implements AfterViewInit, OnInit, OnDestroy {
 
     this.playerState.init(this.videoRef);
     this.playerState.setSource(this.videoData);
+    this.playerState.setPlaylistTracks(this.playlistVideos);
     this.playerUi.init();
     this.interactionService.init();
     this.fullscreenService.init(this.playerWrap);
